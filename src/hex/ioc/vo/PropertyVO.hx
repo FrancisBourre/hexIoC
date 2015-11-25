@@ -43,5 +43,4 @@ class PropertyVO
 					+ "method:"     		+ method       + ", "
 					+ "staticRef:"     		+ staticRef     + ")";
 		}
-	
 }

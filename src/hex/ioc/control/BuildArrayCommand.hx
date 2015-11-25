@@ -11,7 +11,6 @@ import hex.ioc.vo.ConstructorVO;
  */
 class BuildArrayCommand extends AbstractBuildCommand
 {
-
 	public function new() 
 	{
 		

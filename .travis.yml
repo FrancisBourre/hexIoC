@@ -1,0 +1,14 @@
+language: haxe
+
+haxe:
+  - "3.2.1"
+  - development
+
+install:
+  - git clone --recursive https://github.com/DoclerLabs/hexUnit.git ~/hexunit
+  - git clone --recursive https://github.com/DoclerLabs/hexCore.git ~/hexcore
+  - git clone --recursive https://github.com/DoclerLabs/hexInject.git ~/hexinject
+  - git clone --recursive https://github.com/DoclerLabs/hexMVC.git ~/hexmvc
+
+script:
+  - haxe build-js.hxml           && node bin/MainMachinaTest.js
