@@ -1,4 +1,5 @@
 package hex.ioc.locator;
+
 import hex.collection.Locator;
 import hex.ioc.core.BuilderFactory;
 import hex.ioc.vo.ConstructorVO;

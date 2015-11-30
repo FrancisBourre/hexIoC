@@ -24,10 +24,11 @@ class MethodCallVOLocator extends Locator<String, MethodCallVO>
 	{
 		var method : MethodCallVO 	= this.locate( id );
 		var cons : ConstructorVO 	= new ConstructorVO( null, ContextTypeList.FUNCTION, [ method.ownerID + "." + method.name ] );
-		var func : Function 		= this._builderFactory.build( cons );
+		var func : Dynamic 			= this._builderFactory.build( cons );
 
 		var args : Array<Dynamic> = this._builderFactory.getPropertyVOLocator().deserializeArguments( method.arguments );
-		func.apply( null, args );
+		//func.apply( null, args );
+		Reflect.callMethod( this.locate( method.ownerID ), func, args )
 	}
 
 	public function callAllMethods() : Void

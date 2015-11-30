@@ -1,5 +1,7 @@
 package hex.ioc.locator;
 
+import hex.domain.Domain;
+import hex.collection.Locator;
 import hex.ioc.core.BuilderFactory;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.DomainListenerVOArguments;
@@ -56,13 +58,13 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO>
 				var noteType : String = domainListenerArgument.name ? domainListenerArgument.name : this._builderFactory.getCoreFactory().getStaticReference( domainListenerArgument.staticRef );
 
 				//if ( method != null && listener.hasOwnProperty( method ) && listener[ method ] is Function )
-				if ( method != null && Reflect.hasField( listener, method ) &&  Reflect.isFunction( Reflect.field( listener, method ) )
+				if ( method != null && Reflect.hasField( listener, method ) &&  Reflect.isFunction( Reflect.field( listener, method ) ) )
 				{
-					var callback : Function = domainListenerArgument.strategy ? this.getStrategyCallback( listener, method, domainListenerArgument.strategy, domainListenerArgument.injectedInModule ) : listener[ method ];
+					var callback : Dynamic = domainListenerArgument.strategy ? this.getStrategyCallback( listener, method, domainListenerArgument.strategy, domainListenerArgument.injectedInModule ) : listener[ method ];
 
 					if ( service == null )
 					{
-						this._builderFactory.getApplicationHub().addHandler( noteType, callback, Domain.getInstance( domainListener.listenedDomainName ) );
+						this._builderFactory.getApplicationHub().addHandler( noteType, callback, new Domain( domainListener.listenedDomainName ) );
 					}
 					else
 					{
@@ -88,7 +90,7 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO>
 															);
 		return adapter.getCallbackAdapter();
 	}
-	
+}
 	/*
 	 protected function getStrategyCallback( listener : Object, method : String, strategyClassName : String, injectedInModule : Boolean = false ) : Function
 	{
@@ -100,4 +102,3 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO>
 		return adapter.getCallbackAdapter();
 	}
 	 * /
-}
