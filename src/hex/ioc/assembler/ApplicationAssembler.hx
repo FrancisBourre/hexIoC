@@ -1,5 +1,7 @@
 package hex.ioc.assembler;
 
+import hex.core.HashCodeFactory;
+import hex.ioc.vo.DomainListenerVO;
 import hex.collection.HashMap;
 import hex.ioc.core.ApplicationContext;
 import hex.ioc.core.BuilderFactory;
@@ -81,17 +83,17 @@ class ApplicationAssembler
 	{
 		if ( args != null )
 		{
-			var length : int = args.length;
-			var index : int;
-			var obj : Object;
+			var length : Int = args.length;
+			var index : Int;
+			var obj : Dynamic;
 
 			if ( type == ContextTypeList.HASHMAP )
 			{
-				for ( index = 0; index < length ; index++ )
+				for ( index in 0...length )
 				{
 					obj = args[ index ];
-					var keyDic 		: Object 		= obj.key;
-					var valueDic 	: Object 		= obj.value;
+					var keyDic 		: Dynamic 		= obj.key;
+					var valueDic 	: Dynamic 		= obj.value;
 					var pKeyDic 	: PropertyVO 	= this.getBuilderFactory( applicationContext ).getPropertyVOLocator().buildProperty( ownerID, keyDic.name, keyDic.value, keyDic.type, keyDic.ref, keyDic.method, keyDic.staticRef );
 					var pValueDic 	: PropertyVO 	= this.getBuilderFactory( applicationContext ).getPropertyVOLocator().buildProperty( ownerID, valueDic.name, valueDic.value, valueDic.type, valueDic.ref, valueDic.method, valueDic.staticRef );
 					args[ index ] 					= new DictionaryItemVO( pKeyDic, pValueDic );
@@ -99,11 +101,11 @@ class ApplicationAssembler
 			}
 			else if ( type == ContextTypeList.SERVICE_LOCATOR )
 			{
-				for ( index = 0; index < length ; index++ )
+				for ( index in 0...length )
 				{
 					obj = args[ index ];
-					var keySC 		: Object 		= obj.key;
-					var valueSC 	: Object 		= obj.value;
+					var keySC 		: Dynamic 		= obj.key;
+					var valueSC 	: Dynamic 		= obj.value;
 					var pKeySC 		: PropertyVO 	= this.getBuilderFactory( applicationContext ).getPropertyVOLocator().buildProperty( ownerID, keySC.name, keySC.value, keySC.type, keySC.ref, keySC.method, keySC.staticRef );
 					var pValueSC 	: PropertyVO 	= this.getBuilderFactory( applicationContext ).getPropertyVOLocator().buildProperty( ownerID, valueSC.name, valueSC.value, valueSC.type, valueSC.ref, valueSC.method, valueSC.staticRef );
 					args[ index ] 					= new ServiceConfigItemVO( pKeySC, pValueSC, obj.mapName );
@@ -111,7 +113,7 @@ class ApplicationAssembler
 			}
 			else
 			{
-				for ( index = 0; index < length ; index++ )
+				for ( index in 0...length )
 				{
 					obj = args[ index ];
 					var propertyVO : PropertyVO = this.getBuilderFactory( applicationContext ).getPropertyVOLocator().buildProperty( ownerID, obj.name, obj.value, obj.type, obj.ref, obj.method, obj.staticRef );
@@ -131,8 +133,8 @@ class ApplicationAssembler
 
 		if ( args != null )
 		{
-			var length : int = args.length;
-			for ( i in ...length )
+			var length : Int = args.length;
+			for ( i in 0...length )
 			{
 				var obj : Dynamic = args[ i ];
 				var prop : PropertyVO = new PropertyVO( obj.id, obj.name, obj.value, obj.type, obj.ref, obj.method, obj.staticRef );
@@ -217,16 +219,17 @@ class ApplicationAssembler
 
 	static private function _getStringKeyFromInt( index : Int ) : String
 	{
-		var value : Int 	= 5 - index.toString( ).length;
+		var value : Int 	= 5 - Std.string( index ).length;
 		var src : String 	= "";
 
-		if( value > 0 )
+		if ( value > 0 )
 		{
-			for( var i : Number = 0; i < value ; i++ )
+			for( i in 0...value )
 			{
 				src += "0";
 			}
 		}
+		
 		return src + index;
 	}
 }
