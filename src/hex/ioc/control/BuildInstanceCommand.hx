@@ -1,5 +1,7 @@
 package hex.ioc.control;
 
+import hex.domain.DomainExpert;
+import hex.ioc.vo.ConstructorVO;
 import hex.domain.Domain;
 import hex.error.Exception;
 import hex.event.IEvent;
@@ -17,7 +19,7 @@ class BuildInstanceCommand extends AbstractBuildCommand
 		
 	}
 	
-	public function execute( ?e : IEvent ) : Void
+	override public function execute( ?e : IEvent ) : Void
 	{
 		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
 
@@ -52,7 +54,7 @@ class BuildInstanceCommand extends AbstractBuildCommand
 			}
 
 
-			if ( constructorVO.result is IModule )
+			if ( Std.is( constructorVO.result, IModule ) )
 			{
 				this._buildHelperVO.moduleLocator.register( constructorVO.ID, constructorVO.result );
 			}

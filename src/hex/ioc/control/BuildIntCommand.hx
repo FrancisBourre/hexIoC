@@ -1,4 +1,5 @@
 package hex.ioc.control;
+
 import hex.error.IllegalArgumentException;
 import hex.event.IEvent;
 import hex.ioc.vo.ConstructorVO;
@@ -14,7 +15,7 @@ class BuildIntCommand extends AbstractBuildCommand
 		
 	}
 	
-	public function execute( ?e : IEvent ) : Void
+	override public function execute( ?e : IEvent ) : Void
 	{
 		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
 

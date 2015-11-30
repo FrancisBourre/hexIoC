@@ -29,7 +29,6 @@ class BuildBooleanCommand extends AbstractBuildCommand
 		if ( value.length < 0 || Std.parseInt( value ) == 0 )
 		{
 			throw new IllegalArgumentException( this + ".build(" + value + ") failed." );
-			//constructorVO.result = false;
 		}
 		else
 		{

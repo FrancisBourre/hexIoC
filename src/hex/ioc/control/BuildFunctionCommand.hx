@@ -1,5 +1,6 @@
 package hex.ioc.control;
 
+import hex.event.IEvent;
 import hex.error.Exception;
 import hex.ioc.vo.ConstructorVO;
 
@@ -14,14 +15,14 @@ class BuildFunctionCommand extends AbstractBuildCommand
 		
 	}
 	
-	override function execute( ?e : IEvent ) : Void
+	override public function execute( ?e : IEvent ) : Void
 	{
 		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
 
 		var method : Dynamic;
 		var msg : String;
 
-		var args : Array<String> = ( constructorVO.arguments[ 0 ] ).split(".");
+		var args : Array<String> = constructorVO.arguments[ 0 ].split(".");
 		var targetID : String = args[ 0 ];
 		var path : String = args.slice( 1 ).join( "." );
 
@@ -36,12 +37,11 @@ class BuildFunctionCommand extends AbstractBuildCommand
 		{
 			method = ObjectUtil.evalFromTarget( target, path, this._buildHelperVO.coreFactory );
 
-		} catch ( error : Exception )
+		} catch ( error : Dynamic )
 		{
-			msg = error.message;
-			msg += " " + this + ".execute() failed on " + target + " with id '" + targetID + "'. ";
+			msg = " " + this + ".execute() failed on " + target + " with id '" + targetID + "'. ";
 			msg += path + " method can't be found.";
-			throw new Error( msg );
+			throw new Exception( msg );
 		}
 
 		constructorVO.result = method;

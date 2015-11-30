@@ -1,6 +1,6 @@
 package hex.ioc.control;
 
-import hex.error.Exception;
+import hex.error.IllegalArgumentException;
 import hex.event.IEvent;
 import hex.ioc.vo.ConstructorVO;
 
@@ -15,7 +15,7 @@ class BuildClassCommand extends AbstractBuildCommand
 		
 	}
 
-	public function execute( ?e : IEvent ) : Void
+	override public function execute( ?e : IEvent ) : Void
 	{
 		var constructorVO 		: ConstructorVO = this._buildHelperVO.constructorVO;
 
@@ -27,7 +27,7 @@ class BuildClassCommand extends AbstractBuildCommand
 
 		if ( args != null && args.length > 0 )
 		{
-			if ( Std.is( args[0], Class ) )
+			if ( Std.is( args[ 0 ], Class ) )
 			{
 				constructorVO.result = args[0];
 				return;
@@ -42,11 +42,10 @@ class BuildClassCommand extends AbstractBuildCommand
 		{
 			clazz = Type.resolveClass( qualifiedClassName );
 
-		} catch ( error : Exception )
+		} catch ( e : Dynamic )
 		{
-			msg = error.message;
-			msg += " '" + qualifiedClassName + "' is not available";
-			throw new Error( msg );
+			msg = " '" + qualifiedClassName + "' is not available";
+			throw new IllegalArgumentException( msg );
 		}
 
 		constructorVO.result = clazz;
