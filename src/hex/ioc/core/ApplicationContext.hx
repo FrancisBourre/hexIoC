@@ -1,7 +1,8 @@
 package hex.ioc.core;
-import hex.di.IDependencyInjector;
+
+import hex.ioc.assembler.ApplicationAssembler;
+import hex.di.IBasicInjector;
 import hex.inject.Injector;
-import hex.module.IModuleInjector;
 
 /**
  * ...
@@ -13,12 +14,12 @@ class ApplicationContext
 	private var _applicationAssembler 	: ApplicationAssembler;
 	//private var _rootTarget 			: DisplayObjectContainer;
 	
-	private var _injector 				: IModuleInjector = new Injector();
+	private var _injector 				: IBasicInjector;
 		
 	public function new( applicationAssembler : ApplicationAssembler, name : String/*, rootTarget : DisplayObjectContainer = null*/ )
 	{
-		this._injector.mapToValue( IDependencyInjector, this._injector );
-		this._injector.mapToValue( IModuleInjector, this._injector );
+		this._injector = new Injector();
+		this._injector.mapToValue( IBasicInjector, this._injector );
 
 		this._name 					= name;
 		this._applicationAssembler 	= applicationAssembler;
@@ -30,7 +31,7 @@ class ApplicationContext
 		return this._name;
 	}
 
-	public function getInjector() : IModuleInjector
+	public function getInjector() : IBasicInjector
 	{
 		return this._injector;
 	}

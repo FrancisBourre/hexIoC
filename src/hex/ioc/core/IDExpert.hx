@@ -1,6 +1,5 @@
 package hex.ioc.core;
 
-import hex.error.Exception;
 import hex.error.IllegalArgumentException;
 
 /**

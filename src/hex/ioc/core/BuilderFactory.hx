@@ -1,6 +1,8 @@
 package hex.ioc.core;
 
-import haxe.ds.HashMap;
+import hex.domain.ApplicationDomainDispatcher;
+import hex.ioc.control.BuildUIntCommand;
+import hex.ioc.locator.DomainListenerVOLocator;
 import hex.domain.IApplicationDomainDispatcher;
 import hex.ioc.control.BuildArrayCommand;
 import hex.ioc.control.BuildBooleanCommand;
@@ -26,7 +28,7 @@ class BuilderFactory
 {
 	private var _moduleLocator				: ModuleLocator;
 	private var _applicationContext 		: ApplicationContext;
-	private var _commandMap 				: HashMap<String, Class<IBuildCommand>>;
+	private var _commandMap 				: Map<String, Class<IBuildCommand>>;
 	private var _coreFactory 				: CoreFactory;
 	private var _applicationDomainHub 		: IApplicationDomainDispatcher;
 	private var _IDExpert 					: IDExpert;
@@ -82,17 +84,17 @@ class BuilderFactory
 		return this._domainListenerVOLocator;
 	}
 
-	public function getDisplayObjectBuilder() : DisplayObjectBuilder
+	/*public function getDisplayObjectBuilder() : DisplayObjectBuilder
 	{
 		return this._displayObjectBuilder;
-	}
+	}*/
 
-	public function init( applicationContext : ApplicationContext ) : void
+	public function init( applicationContext : ApplicationContext ) : Void
 	{
 		this._applicationContext 		= applicationContext;
-		this._commandMap 				= new HashMap( String, Class<IBuildCommand> );
+		this._commandMap 				= new Map<String, Class<IBuildCommand>>();
 		this._coreFactory 				= new CoreFactory();
-		this._applicationDomainHub 		= ApplicationDomainHub.getInstance();
+		this._applicationDomainHub 		= ApplicationDomainDispatcher.getInstance();
 		this._IDExpert 					= new IDExpert();
 		this._constructorVOLocator 		= new ConstructorVOLocator( this );
 		this._propertyVOLocator 		= new PropertyVOLocator( this );
@@ -112,8 +114,8 @@ class BuilderFactory
 		this.addType( ContextTypeList.STRING, BuildStringCommand );
 		this.addType( ContextTypeList.UINT, BuildUIntCommand );
 		this.addType( ContextTypeList.DEFAULT, BuildStringCommand );
-		this.addType( ContextTypeList.DICTIONARY, BuildDictionaryCommand );
-		this.addType( ContextTypeList.SERVICECONFIG, BuildServiceConfigCommand );
+		this.addType( ContextTypeList.HASHMAP, BuildDictionaryCommand );
+		this.addType( ContextTypeList.SERVICE_LOCATOR, BuildServiceLocatorCommand );
 		this.addType( ContextTypeList.CLASS, BuildClassCommand );
 		this.addType( ContextTypeList.XML, BuildXMLCommand );
 		this.addType( ContextTypeList.FUNCTION, BuildFunctionCommand );
@@ -122,7 +124,7 @@ class BuilderFactory
 
 	public function addType( type : String, build : Class<IBuildCommand> ) : Void
 	{
-		this._commandMap.put( type, build );
+		this._commandMap.set( type, build );
 	}
 
 	public function build( constructorVO : ConstructorVO, ?id : String ) : Dynamic
