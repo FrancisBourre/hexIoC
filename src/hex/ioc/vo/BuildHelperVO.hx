@@ -1,5 +1,9 @@
 package hex.ioc.vo;
 
+import hex.ioc.core.BuilderFactory;
+import hex.ioc.core.CoreFactory;
+import hex.ioc.core.ModuleLocator;
+
 /**
  * ...
  * @author Francis Bourre
