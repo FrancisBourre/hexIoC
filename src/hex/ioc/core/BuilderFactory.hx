@@ -1,10 +1,6 @@
 package hex.ioc.core;
 
 import hex.domain.ApplicationDomainDispatcher;
-import hex.ioc.control.BuildMapCommand;
-import hex.ioc.control.BuildServiceLocatorCommand;
-import hex.ioc.control.BuildUIntCommand;
-import hex.ioc.locator.DomainListenerVOLocator;
 import hex.domain.IApplicationDomainDispatcher;
 import hex.ioc.control.BuildArrayCommand;
 import hex.ioc.control.BuildBooleanCommand;
@@ -13,10 +9,16 @@ import hex.ioc.control.BuildFloatCommand;
 import hex.ioc.control.BuildFunctionCommand;
 import hex.ioc.control.BuildInstanceCommand;
 import hex.ioc.control.BuildIntCommand;
+import hex.ioc.control.BuildMapCommand;
 import hex.ioc.control.BuildNullCommand;
+import hex.ioc.control.BuildObjectCommand;
+import hex.ioc.control.BuildServiceLocatorCommand;
 import hex.ioc.control.BuildStringCommand;
+import hex.ioc.control.BuildUIntCommand;
+import hex.ioc.control.BuildXMLCommand;
 import hex.ioc.control.IBuildCommand;
 import hex.ioc.locator.ConstructorVOLocator;
+import hex.ioc.locator.DomainListenerVOLocator;
 import hex.ioc.locator.MethodCallVOLocator;
 import hex.ioc.locator.PropertyVOLocator;
 import hex.ioc.vo.BuildHelperVO;
