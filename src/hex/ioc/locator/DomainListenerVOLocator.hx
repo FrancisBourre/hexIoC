@@ -91,7 +91,7 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO>
 		return adapter.getCallbackAdapter();
 	}
 }
-	/*
+	/**
 	 protected function getStrategyCallback( listener : Object, method : String, strategyClassName : String, injectedInModule : Boolean = false ) : Function
 	{
 		var callback : Function 			= listener[ method ];
@@ -100,5 +100,4 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO>
 																( ( injectedInModule && listener is BaseModule ) ? ( listener as BaseModule ).instantiateUnmapped  :  this._builderFactory.getApplicationContext().getInjector().instantiateUnmapped )
 															);
 		return adapter.getCallbackAdapter();
-	}
-	 * /
+	}**/

@@ -1,6 +1,8 @@
 package hex.ioc.core;
 
 import hex.domain.ApplicationDomainDispatcher;
+import hex.ioc.control.BuildMapCommand;
+import hex.ioc.control.BuildServiceLocatorCommand;
 import hex.ioc.control.BuildUIntCommand;
 import hex.ioc.locator.DomainListenerVOLocator;
 import hex.domain.IApplicationDomainDispatcher;
@@ -114,7 +116,7 @@ class BuilderFactory
 		this.addType( ContextTypeList.STRING, BuildStringCommand );
 		this.addType( ContextTypeList.UINT, BuildUIntCommand );
 		this.addType( ContextTypeList.DEFAULT, BuildStringCommand );
-		this.addType( ContextTypeList.HASHMAP, BuildDictionaryCommand );
+		this.addType( ContextTypeList.HASHMAP, BuildMapCommand );
 		this.addType( ContextTypeList.SERVICE_LOCATOR, BuildServiceLocatorCommand );
 		this.addType( ContextTypeList.CLASS, BuildClassCommand );
 		this.addType( ContextTypeList.XML, BuildXMLCommand );
