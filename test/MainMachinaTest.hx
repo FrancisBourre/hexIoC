@@ -1,10 +1,14 @@
 package;
 
 import hex.HexMachinaSuite;
-import hex.unittest.notifier.ConsoleNotifier;
-import hex.unittest.notifier.TraceNotifier;
 import hex.unittest.runner.ExMachinaUnitCore;
 import hex.unittest.runner.TestRunner;
+
+#if flash
+import hex.unittest.notifier.TraceNotifier;
+#else
+import hex.unittest.notifier.ConsoleNotifier;
+#end
 
 /**
  * ...
