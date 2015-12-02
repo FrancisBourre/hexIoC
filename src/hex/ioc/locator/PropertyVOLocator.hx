@@ -1,9 +1,10 @@
 package hex.ioc.locator;
 
+import hex.collection.ILocatorListener;
 import hex.collection.Locator;
+import hex.collection.LocatorEvent;
 import hex.ioc.core.BuilderFactory;
 import hex.ioc.core.ContextTypeList;
-import hex.ioc.core.ICoreFactoryListener;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.MapVO;
 import hex.ioc.vo.PropertyVO;
@@ -12,7 +13,7 @@ import hex.ioc.vo.PropertyVO;
  * ...
  * @author Francis Bourre
  */
-class PropertyVOLocator  extends Locator<String, Array<PropertyVO>> implements ICoreFactoryListener
+class PropertyVOLocator  extends Locator<String, Array<PropertyVO>> implements ILocatorListener<String, Dynamic>
 {
 	private var _builderFactory : BuilderFactory;
 
@@ -120,8 +121,8 @@ class PropertyVOLocator  extends Locator<String, Array<PropertyVO>> implements I
 
 		return propertyVO;
 	}
-
-	public function onRegisterInstance( key : String, instance : Dynamic ) : Void
+	
+	function onRegister( event : LocatorEvent<String, Dynamic> ) : Void
 	{
 		if ( this.isRegisteredWithKey( key ) )
 		{
@@ -133,5 +134,5 @@ class PropertyVOLocator  extends Locator<String, Array<PropertyVO>> implements I
 		}
 	}
 
-	public function onUnRegisterInstance( key : String, instance : Dynamic ) : Void  {}
+    function onUnregister( event : LocatorEvent<String, Dynamic> ) : Void  { }
 }

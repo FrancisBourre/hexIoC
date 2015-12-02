@@ -1,6 +1,7 @@
 package hex.ioc;
 
 import hex.ioc.control.ControlSuite;
+import hex.ioc.core.IOCCoreSuite;
 import hex.ioc.vo.VOSuite;
 
 /**
@@ -10,5 +11,5 @@ import hex.ioc.vo.VOSuite;
 class IOCSuite
 {
 	@suite( "IOC suite" )
-    public var list : Array<Class<Dynamic>> = [ControlSuite, VOSuite];
+    public var list : Array<Class<Dynamic>> = [ControlSuite, IOCCoreSuite, VOSuite];
 }
