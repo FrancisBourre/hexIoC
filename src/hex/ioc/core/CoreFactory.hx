@@ -181,7 +181,6 @@ class CoreFactory implements ILocator<String, Dynamic>
 	
 	public function buildInstance( qualifiedClassName : String, ?args : Array<Dynamic>, ?factoryMethod : String, ?singletonAccess : String ) : Dynamic
 	{
-		var message 		: String;
 		var classReference 	: Class<Dynamic>;
 
 		try
@@ -190,8 +189,7 @@ class CoreFactory implements ILocator<String, Dynamic>
 		}
 		catch ( e : IllegalArgumentException )
 		{
-			message = "'" + qualifiedClassName + "' class is not available in current domain";
-			throw( message );
+			throw( "'" + qualifiedClassName + "' class is not available in current domain" );
 		}
 
 		var obj : Dynamic = null;
@@ -200,39 +198,37 @@ class CoreFactory implements ILocator<String, Dynamic>
 		{
 			if ( singletonAccess != null )
 			{
-				var inst : Dynamic;
+				var inst : Dynamic = null;
 
-				try
+				var singletonCall : Dynamic = Reflect.field( classReference, singletonAccess );
+				if ( singletonCall != null )
 				{
-					var singletonCall : Dynamic = Reflect.field( classReference, singletonAccess );
 					inst = singletonCall();
-					//inst = classReference[ singletonAccess ].call();
 				}
-				catch ( eFirst : Dynamic )
+				else
 				{
 					throw new IllegalArgumentException( qualifiedClassName + "." + singletonAccess + "()' singleton access failed." );
 				}
 
-				try
+				var methodReference : Dynamic = Reflect.field( inst, factoryMethod );
+				if ( methodReference != null )
 				{
-					var methodReference : Dynamic = Reflect.field( inst, factoryMethod );
-					Reflect.callMethod( inst, methodReference, args );
-					//obj = inst[factoryMethod].apply(inst, args);
+					obj = Reflect.callMethod( inst, methodReference, args );
 				}
-				catch ( eSecond : Dynamic )
+				else 
 				{
 					throw new IllegalArgumentException( qualifiedClassName + "." + singletonAccess + "()." + factoryMethod + "()' factory method call failed." );
 				}
 			}
 			else
 			{
-				try
+				var methodReference : Dynamic = Reflect.field( classReference, factoryMethod );
+				
+				if ( methodReference != null )
 				{
-					var methodReference : Dynamic = Reflect.field( classReference, factoryMethod );
-					Reflect.callMethod( classReference, methodReference, args );
-					//obj = classReference[factoryMethod].apply(classReference, args);
+					obj = Reflect.callMethod( classReference, methodReference, args );
 				}
-				catch( eThird : Dynamic )
+				else 
 				{
 					throw new IllegalArgumentException( qualifiedClassName + "." + factoryMethod + "()' factory method call failed." );
 				}
@@ -240,13 +236,12 @@ class CoreFactory implements ILocator<String, Dynamic>
 
 		} else if ( singletonAccess != null )
 		{
-			try
+			var singletonCall : Dynamic = Reflect.field( classReference, singletonAccess );
+			if ( singletonCall != null )
 			{
-				var singletonCall : Dynamic = Reflect.field( classReference, singletonAccess );
 				obj = singletonCall();
-				//obj = classReference[ singletonAccess ].call();
 			}
-			catch ( eFourth : Dynamic )
+			else
 			{
 				throw new IllegalArgumentException( qualifiedClassName + "." + singletonAccess + "()' singleton call failed." );
 			}

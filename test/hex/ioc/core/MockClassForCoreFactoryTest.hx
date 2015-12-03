@@ -23,7 +23,7 @@ class MockClassForCoreFactoryTest
 			MockClassForCoreFactoryTest._Instance = new MockClassForCoreFactoryTest();
 		}
 		
-		return MockServiceProvider._Instance;
+		return MockClassForCoreFactoryTest._Instance;
 	}
 	
 	public function getPoint( x : Float, y : Float ) : Point
