@@ -29,23 +29,23 @@ class CoreFactoryTest
 	@test( "Test getClassReference" )
     public function testGetClassReference() : Void
     {
-		Assert.assertEquals( CoreFactoryTest, this._coreFactory.getClassReference( "hex.ioc.core.CoreFactoryTest" ), "'getClassReference' should return the right class reference" );
-		Assert.assertMethodCallThrows( IllegalArgumentException, this._coreFactory, this._coreFactory.getClassReference, ["dummy.unavailable.Class"], "'getClassReference' should throw IllegalArgumentException" );
+		Assert.equals( CoreFactoryTest, this._coreFactory.getClassReference( "hex.ioc.core.CoreFactoryTest" ), "'getClassReference' should return the right class reference" );
+		Assert.methodCallThrows( IllegalArgumentException, this._coreFactory, this._coreFactory.getClassReference, ["dummy.unavailable.Class"], "'getClassReference' should throw IllegalArgumentException" );
 	}
 	
 	@test( "Test getStaticReference" )
     public function testGetStaticReference() : Void
     {
-		Assert.assertEquals( "static_ref", this._coreFactory.getStaticReference( "hex.ioc.core.CoreFactoryTest.STATIC_REF" ), "'getStaticReference' should return the right static property" );
-		Assert.assertMethodCallThrows( IllegalArgumentException, this._coreFactory, this._coreFactory.getStaticReference, ["hex.ioc.core.CoreFactoryTest.UnavailableStaticRef"], "'getStaticReference' should throw IllegalArgumentException" );
+		Assert.equals( "static_ref", this._coreFactory.getStaticReference( "hex.ioc.core.CoreFactoryTest.STATIC_REF" ), "'getStaticReference' should return the right static property" );
+		Assert.methodCallThrows( IllegalArgumentException, this._coreFactory, this._coreFactory.getStaticReference, ["hex.ioc.core.CoreFactoryTest.UnavailableStaticRef"], "'getStaticReference' should throw IllegalArgumentException" );
 	}
 	
 	@test( "Test buildInstance with arguments" )
     public function testBuildInstanceWithArguments() : Void
     {
 		var p : Point = this._coreFactory.buildInstance( "hex.structures.Point", [2, 3] );
-		Assert.failIsNull( p, "'p' should not be null" );
-		Assert.assertEquals( 2, p.x, "'p.x' should return 2" );
-		Assert.assertEquals( 3, p.y, "'p.x' should return 3" );
+		Assert.isNotNull( p, "'p' should not be null" );
+		Assert.equals( 2, p.x, "'p.x' should return 2" );
+		Assert.equals( 3, p.y, "'p.x' should return 3" );
 	}
 }
