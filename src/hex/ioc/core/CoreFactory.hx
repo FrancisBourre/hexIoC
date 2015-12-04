@@ -70,7 +70,7 @@ class CoreFactory implements ILocator<String, Dynamic>
 	
 	public function isRegisteredWithKey( key : Dynamic ) : Bool 
 	{
-		return this._map.containsValue( key );
+		return this._map.containsKey( key );
 	}
 	
 	public function isInstanceRegistered( instance : Dynamic ) : Bool

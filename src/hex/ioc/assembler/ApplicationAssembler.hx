@@ -3,7 +3,7 @@ package hex.ioc.assembler;
 import hex.core.HashCodeFactory;
 import hex.ioc.vo.DomainListenerVO;
 import hex.collection.HashMap;
-import hex.ioc.core.ApplicationContext;
+import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.core.BuilderFactory;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.core.ModuleLocator;

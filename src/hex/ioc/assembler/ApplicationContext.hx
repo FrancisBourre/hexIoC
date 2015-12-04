@@ -1,14 +1,16 @@
-package hex.ioc.core;
+package hex.ioc.assembler;
 
+import hex.error.IllegalArgumentException;
 import hex.ioc.assembler.ApplicationAssembler;
 import hex.di.IBasicInjector;
 import hex.inject.Injector;
+import hex.log.Logger;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class ApplicationContext
+class ApplicationContext implements Dynamic<String>
 {
 	private var _name 					: String;
 	private var _applicationAssembler 	: ApplicationAssembler;
@@ -16,7 +18,8 @@ class ApplicationContext
 	
 	private var _injector 				: IBasicInjector;
 		
-	public function new( applicationAssembler : ApplicationAssembler, name : String/*, rootTarget : DisplayObjectContainer = null*/ )
+	@:allow(hex.ioc.assembler)
+	private function new( applicationAssembler : ApplicationAssembler, name : String/*, rootTarget : DisplayObjectContainer = null*/ )
 	{
 		this._injector = new Injector();
 		this._injector.mapToValue( IBasicInjector, this._injector );
@@ -48,9 +51,14 @@ class ApplicationContext
 	override flash_proxy function hasProperty( name : * ) : Boolean
 	{
 		return this._applicationAssembler.getBuilderFactory( this ).getCoreFactory().isRegisteredWithKey( name );
+	}*/
+	
+	function resolve( field : String )
+	{
+		return this._applicationAssembler.getBuilderFactory( this ).getCoreFactory().locate( field );
 	}
 
-	override flash_proxy function getProperty( name : * ) : *
+	/*override flash_proxy function getProperty( name : * ) : *
 	{
 		return this._applicationAssembler.getBuilderFactory( this ).getCoreFactory().locate( name );
 	}*/
@@ -58,7 +66,18 @@ class ApplicationContext
 	public function addChild( applicationContext : ApplicationContext ) : Bool
 	{
 		//this._rootTarget.addChild( applicationContext.getRootTarget() );
-		return this._applicationAssembler.getBuilderFactory( this ).getCoreFactory().register( applicationContext.getName(), applicationContext );
+		
+		try
+		{
+			return this._applicationAssembler.getBuilderFactory( this ).getCoreFactory().register( applicationContext.getName(), applicationContext );
+		}
+		catch ( ex : IllegalArgumentException )
+		{
+			#if debug
+			Logger.ERROR( "addChild failed with applicationContext named '" + applicationContext.getName() + "'" );
+			#end
+			return false;
+		}
 	}
 
 }

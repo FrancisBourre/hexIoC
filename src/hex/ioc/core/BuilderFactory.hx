@@ -4,6 +4,7 @@ import hex.collection.HashMap;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.IApplicationDomainDispatcher;
 import hex.event.IEventListener;
+import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.control.BuildArrayCommand;
 import hex.ioc.control.BuildBooleanCommand;
 import hex.ioc.control.BuildClassCommand;
@@ -140,7 +141,7 @@ class BuilderFactory
 		var commandClass : Class<IBuildCommand> = ( this._commandMap.containsKey( type ) ) ? this._commandMap.get( type ) : this._commandMap.get( ContextTypeList.INSTANCE );
 		var buildCommand : IBuildCommand = Type.createInstance( commandClass, [] );
 
-		var builderHelperVO:BuildHelperVO 		= new BuildHelperVO();
+		var builderHelperVO : BuildHelperVO 	= new BuildHelperVO();
 		builderHelperVO.type 					= type;
 		builderHelperVO.builderFactory 			= this;
 		builderHelperVO.coreFactory 			= this._coreFactory;
@@ -162,7 +163,6 @@ class BuilderFactory
 	{
 		this._coreFactory.removeListener( this._propertyVOLocator );
 		this._coreFactory.clear();
-
 		this._constructorVOLocator.release();
 		this._propertyVOLocator.release();
 		this._methodCallVOLocator.release();
