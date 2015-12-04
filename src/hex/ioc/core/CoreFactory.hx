@@ -11,6 +11,7 @@ import hex.event.EventDispatcher;
 import hex.event.IEventDispatcher;
 import hex.metadata.MetadataProvider;
 import hex.service.IService;
+import hex.util.ObjectUtil;
 
 /**
  * ...
@@ -55,13 +56,13 @@ class CoreFactory implements ILocator<String, Dynamic>
         }
         else if ( key.indexOf(".") != -1 )
         {
-            /*var props : Array<String> = key.split( "." );
+            var props : Array<String> = key.split( "." );
 			var baseKey : String = props.shift();
 			if ( this.isRegisteredWithKey( baseKey ) )
 			{
 				var target : Dynamic = this._map.get( baseKey );
-				return ObjectUtil.evalFromTarget( target, props.join("."), this );
-			}*/
+				return ObjectUtil.fastEvalFromTarget( target, props.join("."), this );
+			}
         }
 		
 		throw new NoSuchElementException( "Can't find item with '" + key + "' key in " + this );
@@ -74,7 +75,7 @@ class CoreFactory implements ILocator<String, Dynamic>
 	
 	public function isInstanceRegistered( instance : Dynamic ) : Bool
 	{
-		return this._map.containsValue( instance ) ;
+		return this._map.containsValue( instance );
 	}
 	
 	public function register( key : String, element : Dynamic ) : Bool 
@@ -262,5 +263,10 @@ class CoreFactory implements ILocator<String, Dynamic>
 		}
 
 		return obj;
+	}
+	
+	public function clear() : Void
+	{
+		this._map.clear();
 	}
 }

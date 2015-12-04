@@ -1,5 +1,6 @@
 package hex.ioc.error;
 
+import haxe.PosInfos;
 import hex.error.Exception;
 
 /**

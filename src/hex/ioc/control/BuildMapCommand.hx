@@ -12,17 +12,12 @@ import hex.ioc.vo.MapVO;
  */
 class BuildMapCommand extends AbstractBuildCommand
 {
-	public function new() 
-	{
-		
-	}
-	
 	override public function execute( ?e : IEvent ) : Void
 	{
 		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
 
-		var map : HashMap = new HashMap();
-		var args : Array<MapVO> = constructorVO.arguments;
+		var map : HashMap<Dynamic, Dynamic> = new HashMap();
+		var args : Array<MapVO> = cast constructorVO.arguments;
 
 		if ( args.length == 0 )
 		{
@@ -47,7 +42,7 @@ class BuildMapCommand extends AbstractBuildCommand
 
 		if ( constructorVO.mapType != null )
 		{
-			this._buildHelperVO.builderFactory.getApplicationContext().getInjector().mapToValue( Dictionary, constructorVO.result, constructorVO.ID );
+			this._buildHelperVO.builderFactory.getApplicationContext().getInjector().mapToValue( HashMap, constructorVO.result, constructorVO.ID );
 		}
 	}
 }

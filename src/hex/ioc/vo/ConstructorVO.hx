@@ -8,7 +8,7 @@ class ConstructorVO
 {
 	public var              ID              : String;
 	public var              type            : String;
-	public var              arguments       : Array;
+	public var              arguments       : Array<Dynamic>;
 	public var              factory         : String;
 	public var              singleton       : String;
 	public var              ref             : String;

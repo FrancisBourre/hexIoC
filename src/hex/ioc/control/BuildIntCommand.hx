@@ -10,16 +10,11 @@ import hex.ioc.vo.ConstructorVO;
  */
 class BuildIntCommand extends AbstractBuildCommand
 {
-	public function new() 
-	{
-		
-	}
-	
 	override public function execute( ?e : IEvent ) : Void
 	{
 		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
 
-		var args 	: Array 	= constructorVO.arguments;
+		var args 	: Array<Dynamic> 	= constructorVO.arguments;
 		var number 	: Float 	= Math.NaN;
 
 		if ( args != null && args.length > 0 ) number = Std.parseInt( Std.string( args[0] ) );

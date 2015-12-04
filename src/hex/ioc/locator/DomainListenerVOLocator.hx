@@ -1,12 +1,16 @@
 package hex.ioc.locator;
 
-import hex.domain.Domain;
 import hex.collection.Locator;
+import hex.domain.Domain;
+import hex.event.EventProxy;
+import hex.event.IEventAdapterStrategy;
+import hex.event.IOAdapter;
 import hex.ioc.core.BuilderFactory;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.DomainListenerVOArguments;
 import hex.module.IModule;
 import hex.service.IService;
+import hex.service.Service;
 
 /**
  * ...
@@ -40,7 +44,7 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO>
 		var args : Array<DomainListenerVOArguments> 	= domainListener.arguments;
 
 		// Check if event provider is a service
-		var service : IService;
+		var service : Service = null;
 		if ( this._builderFactory.getCoreFactory().isRegisteredWithKey( domainListener.listenedDomainName ) )
 		{
 			var located : Dynamic = this._builderFactory.getCoreFactory().locate( domainListener.listenedDomainName );
@@ -55,16 +59,16 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO>
 			for ( domainListenerArgument in args )
 			{
 				var method : String = Std.is( listener, EventProxy ) ? "handleEvent" : domainListenerArgument.method;
-				var noteType : String = domainListenerArgument.name ? domainListenerArgument.name : this._builderFactory.getCoreFactory().getStaticReference( domainListenerArgument.staticRef );
+				var noteType : String = domainListenerArgument.name != null ? domainListenerArgument.name : this._builderFactory.getCoreFactory().getStaticReference( domainListenerArgument.staticRef );
 
 				//if ( method != null && listener.hasOwnProperty( method ) && listener[ method ] is Function )
 				if ( method != null && Reflect.hasField( listener, method ) &&  Reflect.isFunction( Reflect.field( listener, method ) ) )
 				{
-					var callback : Dynamic = domainListenerArgument.strategy ? this.getStrategyCallback( listener, method, domainListenerArgument.strategy, domainListenerArgument.injectedInModule ) : listener[ method ];
+					var callback : Dynamic = domainListenerArgument.strategy != null ? this.getStrategyCallback( listener, method, domainListenerArgument.strategy, domainListenerArgument.injectedInModule ) : Reflect.field( listener, method );
 
 					if ( service == null )
 					{
-						this._builderFactory.getApplicationHub().addHandler( noteType, callback, new Domain( domainListener.listenedDomainName ) );
+						this._builderFactory.getApplicationHub().addEventListener( noteType, callback, new Domain( domainListener.listenedDomainName ) );
 					}
 					else
 					{
@@ -77,16 +81,18 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO>
 
 		} else
 		{
-			return this._builderFactory.getApplicationHub().addHandlerForAll( listener, Domain.getInstance( domainListener.listenedDomainName ) );
+			return this._builderFactory.getApplicationHub().addListener( listener, new Domain( domainListener.listenedDomainName ) );
 		}
 	}
 
 	private function getStrategyCallback( listener : Dynamic, method : String, strategyClassName : String, injectedInModule : Bool = false ) : Dynamic
 	{
-		var callback : Dynamic 				= Reflect.field( listener, method );
-		var strategyClassReference : Class 	= this._builderFactory.getCoreFactory().getClassReference( strategyClassName );
-		var adapter : IOAdapter 			= new IOAdapter ( 	callback, strategyClassReference,
-																( ( injectedInModule && Std.is( listener, IModule ) ) ? ( cast listener ).instantiateUnmapped  :  this._builderFactory.getApplicationContext().getInjector().instantiateUnmapped )
+		var callback : Dynamic 								= Reflect.field( listener, method );
+		var strategyClass : Class<IEventAdapterStrategy> 	= cast this._builderFactory.getCoreFactory().getClassReference( strategyClassName );
+		var adapter : IOAdapter 							= new IOAdapter ( 	callback, strategyClass,
+																( ( injectedInModule && Std.is( listener, IModule ) ) ? 
+																( cast listener ).instantiateUnmapped  :  
+																this._builderFactory.getApplicationContext().getInjector().instantiateUnmapped )
 															);
 		return adapter.getCallbackAdapter();
 	}

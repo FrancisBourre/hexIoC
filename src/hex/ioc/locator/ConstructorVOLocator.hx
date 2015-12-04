@@ -22,7 +22,7 @@ class ConstructorVOLocator extends Locator<String, ConstructorVO>
 	{
 		if ( this.isRegisteredWithKey( id ) )
 		{
-			var cons : ConstructorVO = this.locate( id ) as ConstructorVO;
+			var cons : ConstructorVO = this.locate( id );
 			if ( cons.arguments != null )
 			{
 				cons.arguments = this._builderFactory.getPropertyVOLocator().deserializeArguments( cons.arguments );

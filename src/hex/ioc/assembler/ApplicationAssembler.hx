@@ -10,8 +10,10 @@ import hex.ioc.core.ModuleLocator;
 import hex.ioc.locator.MethodCallVOLocator;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVOArguments;
+import hex.ioc.vo.MapVO;
 import hex.ioc.vo.MethodCallVO;
 import hex.ioc.vo.PropertyVO;
+import hex.ioc.vo.ServiceLocatorVO;
 import hex.module.IModule;
 
 /**
@@ -96,7 +98,7 @@ class ApplicationAssembler
 					var valueDic 	: Dynamic 		= obj.value;
 					var pKeyDic 	: PropertyVO 	= this.getBuilderFactory( applicationContext ).getPropertyVOLocator().buildProperty( ownerID, keyDic.name, keyDic.value, keyDic.type, keyDic.ref, keyDic.method, keyDic.staticRef );
 					var pValueDic 	: PropertyVO 	= this.getBuilderFactory( applicationContext ).getPropertyVOLocator().buildProperty( ownerID, valueDic.name, valueDic.value, valueDic.type, valueDic.ref, valueDic.method, valueDic.staticRef );
-					args[ index ] 					= new DictionaryItemVO( pKeyDic, pValueDic );
+					args[ index ] 					= new MapVO( pKeyDic, pValueDic );
 				}
 			}
 			else if ( type == ContextTypeList.SERVICE_LOCATOR )
@@ -108,7 +110,7 @@ class ApplicationAssembler
 					var valueSC 	: Dynamic 		= obj.value;
 					var pKeySC 		: PropertyVO 	= this.getBuilderFactory( applicationContext ).getPropertyVOLocator().buildProperty( ownerID, keySC.name, keySC.value, keySC.type, keySC.ref, keySC.method, keySC.staticRef );
 					var pValueSC 	: PropertyVO 	= this.getBuilderFactory( applicationContext ).getPropertyVOLocator().buildProperty( ownerID, valueSC.name, valueSC.value, valueSC.type, valueSC.ref, valueSC.method, valueSC.staticRef );
-					args[ index ] 					= new ServiceConfigItemVO( pKeySC, pValueSC, obj.mapName );
+					args[ index ] 					= new ServiceLocatorVO( pKeySC, pValueSC, obj.mapName );
 				}
 			}
 			else
@@ -143,14 +145,14 @@ class ApplicationAssembler
 		}
 
 		var method : MethodCallVO = new MethodCallVO( ownerID, methodCallName, args );
-		var index : Int = methodCallVOLocator.keys.length++;
+		var index : Int = methodCallVOLocator.keys().length +1;
 		methodCallVOLocator.register( ApplicationAssembler._getStringKeyFromInt( index ), method );
 	}
 
 	public function buildDomainListener( applicationContext : ApplicationContext, ownerID : String, listenedDomainName : String, args : Array<DomainListenerVOArguments> = null ) : Void
 	{
 		var domainListenerVO : DomainListenerVO = new DomainListenerVO( ownerID, listenedDomainName, args );
-		this.getBuilderFactory( applicationContext ).getDomainListenerVOLocator().register( HashCodeFactory.getKey( domainListenerVO ), domainListenerVO );
+		this.getBuilderFactory( applicationContext ).getDomainListenerVOLocator().register( "" + HashCodeFactory.getKey( domainListenerVO ), domainListenerVO );
 	}
 
 	public function registerID( applicationContext : ApplicationContext, ID : String ) : Bool

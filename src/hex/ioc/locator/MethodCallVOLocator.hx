@@ -14,7 +14,7 @@ class MethodCallVOLocator extends Locator<String, MethodCallVO>
 {
 	private var _builderFactory : BuilderFactory;
 
-	public function MethodCallVOLocator( builderFactory : BuilderFactory )
+	public function new( builderFactory : BuilderFactory )
 	{
 		super();
 		this._builderFactory = builderFactory;
@@ -28,12 +28,12 @@ class MethodCallVOLocator extends Locator<String, MethodCallVO>
 
 		var args : Array<Dynamic> = this._builderFactory.getPropertyVOLocator().deserializeArguments( method.arguments );
 		//func.apply( null, args );
-		Reflect.callMethod( this.locate( method.ownerID ), func, args )
+		Reflect.callMethod( this.locate( method.ownerID ), func, args );
 	}
 
 	public function callAllMethods() : Void
 	{
-		var keyList : Array<MethodCallVO> = this.keys();
+		var keyList : Array<String> = this.keys();
 		for ( key in keyList )
 		{
 			this.callMethod(  key );

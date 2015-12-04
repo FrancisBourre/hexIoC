@@ -11,11 +11,6 @@ import hex.ioc.vo.ConstructorVO;
  */
 class BuildXMLCommand extends AbstractBuildCommand
 {
-	public function new() 
-	{
-		
-	}
-	
 	override public function execute( ?e : IEvent ) : Void
 	{
 		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
@@ -25,19 +20,19 @@ class BuildXMLCommand extends AbstractBuildCommand
 
 		if ( args != null ||  args.length > 0 )
 		{
-			var source : String = args[ 0 ] as String;
+			var source : String = args[ 0 ];
 
 			if ( source.length > 0 )
 			{
 				if ( factory == null )
 				{
-					constructorVO.result = new XML( source );
+					constructorVO.result = Xml.parse( source );
 				}
 				else
 				{
 					try
 					{
-						var parser : IParser = this._buildHelperVO.coreFactory.buildInstance( factory ) as IParser;
+						var parser : IParser = this._buildHelperVO.coreFactory.buildInstance( factory );
 						constructorVO.result = parser.parse( Xml.parse( source ) );
 					}
 					catch ( error : Dynamic )

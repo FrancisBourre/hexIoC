@@ -2,6 +2,7 @@ package hex.ioc.control;
 
 import hex.config.stateful.ServiceLocator;
 import hex.event.IEvent;
+import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.ServiceLocatorVO;
 
 /**
@@ -10,17 +11,12 @@ import hex.ioc.vo.ServiceLocatorVO;
  */
 class BuildServiceLocatorCommand extends AbstractBuildCommand
 {
-	public function new() 
-	{
-		
-	}
-	
 	override public function execute( ?e : IEvent ) : Void
 	{
 		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
 
 		var serviceLocator : ServiceLocator = new ServiceLocator();
-		var args : Array<ServiceLocatorVO> = constructorVO.arguments;
+		var args : Array<ServiceLocatorVO> = cast constructorVO.arguments;
 
 		if ( args.length <= 0 )
 		{

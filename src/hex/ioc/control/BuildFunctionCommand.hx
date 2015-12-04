@@ -3,6 +3,7 @@ package hex.ioc.control;
 import hex.event.IEvent;
 import hex.error.Exception;
 import hex.ioc.vo.ConstructorVO;
+import hex.util.ObjectUtil;
 
 /**
  * ...
@@ -10,11 +11,6 @@ import hex.ioc.vo.ConstructorVO;
  */
 class BuildFunctionCommand extends AbstractBuildCommand
 {
-	public function new() 
-	{
-		
-	}
-	
 	override public function execute( ?e : IEvent ) : Void
 	{
 		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
@@ -35,7 +31,7 @@ class BuildFunctionCommand extends AbstractBuildCommand
 
 		try
 		{
-			method = ObjectUtil.evalFromTarget( target, path, this._buildHelperVO.coreFactory );
+			method = ObjectUtil.fastEvalFromTarget( target, path, this._buildHelperVO.coreFactory );
 
 		} catch ( error : Dynamic )
 		{

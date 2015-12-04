@@ -10,11 +10,6 @@ import hex.ioc.vo.ConstructorVO;
  */
 class BuildClassCommand extends AbstractBuildCommand
 {
-	private function new() 
-	{
-		
-	}
-
 	override public function execute( ?e : IEvent ) : Void
 	{
 		var constructorVO 		: ConstructorVO = this._buildHelperVO.constructorVO;

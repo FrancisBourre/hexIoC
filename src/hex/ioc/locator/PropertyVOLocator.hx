@@ -3,11 +3,13 @@ package hex.ioc.locator;
 import hex.collection.ILocatorListener;
 import hex.collection.Locator;
 import hex.collection.LocatorEvent;
+import hex.event.IEvent;
 import hex.ioc.core.BuilderFactory;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.MapVO;
 import hex.ioc.vo.PropertyVO;
+import hex.util.ObjectUtil;
 
 /**
  * ...
@@ -15,9 +17,11 @@ import hex.ioc.vo.PropertyVO;
  */
 class PropertyVOLocator  extends Locator<String, Array<PropertyVO>> implements ILocatorListener<String, Dynamic>
 {
+	static public inline var BUILD_PROPERTY:String = "buildProperty";
+
 	private var _builderFactory : BuilderFactory;
 
-	public function PropertyVOLocator( builderFactory : BuilderFactory )
+	public function new( builderFactory : BuilderFactory )
 	{
 		super();
 		this._builderFactory = builderFactory;
@@ -28,49 +32,51 @@ class PropertyVOLocator  extends Locator<String, Array<PropertyVO>> implements I
 		var propertyName : String = property.name;
 		if ( propertyName.indexOf(".") == -1 )
 		{
-			target[ propertyName ] = this.getValue( property );
+			Reflect.setField( target, propertyName, this.getValue( property ) );
 		}
 		else
 		{
 			var props : Array<String> = propertyName.split( "." );
 			propertyName = props.pop();
-			var target : Dynamic = ObjectUtil.evalFromTarget( target, props.join("."), this._builderFactory.getCoreFactory() );
-			target[ propertyName ] = this.getValue( property );
+			var target : Dynamic = ObjectUtil.fastEvalFromTarget( target, props.join("."), this._builderFactory.getCoreFactory() );
+			Reflect.setField( target, propertyName, this.getValue( property ) );
 		}
 
 	}
 
 	public function getValue( property : PropertyVO ) : Dynamic
 	{
-		if ( property.method )
+		if ( property.method != null )
 		{
 			return this._builderFactory.build( new ConstructorVO( null, ContextTypeList.FUNCTION, [ property.method ] ) );
 
-		} else if ( property.ref )
+		} else if ( property.ref != null )
 		{
 			return this._builderFactory.build( new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, property.ref ) );
 
-		} else if ( property.staticRef )
+		} else if ( property.staticRef != null )
 		{
 			return this._builderFactory.getCoreFactory().getStaticReference( property.staticRef );
 
 		} else
 		{
-			var type : String = property.type ? property.type : ContextTypeList.STRING;
+			var type : String = property.type != null ? property.type : ContextTypeList.STRING;
 			return this._builderFactory.build( new ConstructorVO( property.ownerID, type, [ property.value ] ) );
 		}
 	}
 
 	public function deserializeArguments( arguments : Array<Dynamic> ) : Array<Dynamic>
 	{
-		var result : Array<Dynamic>;
+		var result : Array<Dynamic> = null;
 		var length : Int = arguments.length;
 
-		if ( length > 0 ) result = [];
-
-		for ( var i : int = 0; i < length; i++ )
+		if ( length > 0 ) 
 		{
-			var obj : Dynamic = arguments[i];
+			result = [];
+		}
+
+		for ( obj in arguments )
+		{
 			if ( Std.is( obj, PropertyVO ) )
 			{
 				result.push( this.getValue( cast obj ) );
@@ -78,8 +84,8 @@ class PropertyVOLocator  extends Locator<String, Array<PropertyVO>> implements I
 			else if ( Std.is( obj, MapVO ) )
 			{
 				var mapVO : MapVO = cast obj;
-				mapVO.key = this.getValue( mapVO.propertyKey );
-				mapVO.value = this.getValue( mapVO.propertyValue );
+				mapVO.key = this.getValue( mapVO.getPropertyKey() );
+				mapVO.value = this.getValue( mapVO.getPropertyValue() );
 				result.push( mapVO );
 			}
 		}
@@ -96,7 +102,7 @@ class PropertyVOLocator  extends Locator<String, Array<PropertyVO>> implements I
 									staticRef  	: String = null  ) : PropertyVO
 	{
 		var propertyVO : PropertyVO = new PropertyVO( ownerID, name, value, type, ref, method, staticRef );
-		this.getHub().sendNote( PropertyVOLocatorNote.BUILD_PROPERTY, null, propertyVO );
+		this._ed.dispatchEvent( new LocatorEvent( PropertyVOLocator.BUILD_PROPERTY, this, null, [propertyVO] ) );
 		return propertyVO;
 	}
 
@@ -122,8 +128,16 @@ class PropertyVOLocator  extends Locator<String, Array<PropertyVO>> implements I
 		return propertyVO;
 	}
 	
-	function onRegister( event : LocatorEvent<String, Dynamic> ) : Void
+	public function handleEvent(e:IEvent):Void 
 	{
+		
+	}
+	
+	public function onRegister( event : LocatorEvent<String, Dynamic> ) : Void
+	{
+		var key : String = event.getKey();
+		var instance : Dynamic = event.getValue();
+		
 		if ( this.isRegisteredWithKey( key ) )
 		{
 			var properties : Array<PropertyVO> = this.locate( key );
@@ -134,5 +148,5 @@ class PropertyVOLocator  extends Locator<String, Array<PropertyVO>> implements I
 		}
 	}
 
-    function onUnregister( event : LocatorEvent<String, Dynamic> ) : Void  { }
+    public function onUnregister( event : LocatorEvent<String, Dynamic> ) : Void  { }
 }

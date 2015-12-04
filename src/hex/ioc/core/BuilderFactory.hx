@@ -1,7 +1,9 @@
 package hex.ioc.core;
 
+import hex.collection.HashMap;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.IApplicationDomainDispatcher;
+import hex.event.IEventListener;
 import hex.ioc.control.BuildArrayCommand;
 import hex.ioc.control.BuildBooleanCommand;
 import hex.ioc.control.BuildClassCommand;
@@ -23,6 +25,7 @@ import hex.ioc.locator.MethodCallVOLocator;
 import hex.ioc.locator.PropertyVOLocator;
 import hex.ioc.vo.BuildHelperVO;
 import hex.ioc.vo.ConstructorVO;
+import hex.module.IModuleListener;
 
 /**
  * ...
@@ -32,9 +35,9 @@ class BuilderFactory
 {
 	private var _moduleLocator				: ModuleLocator;
 	private var _applicationContext 		: ApplicationContext;
-	private var _commandMap 				: Map<String, Class<IBuildCommand>>;
+	private var _commandMap 				: HashMap<String, Class<IBuildCommand>>;
 	private var _coreFactory 				: CoreFactory;
-	private var _applicationDomainHub 		: IApplicationDomainDispatcher;
+	private var _applicationDomainHub 		: IApplicationDomainDispatcher<IModuleListener>;
 	private var _IDExpert 					: IDExpert;
 	private var _constructorVOLocator 		: ConstructorVOLocator;
 	private var _propertyVOLocator 			: PropertyVOLocator;
@@ -42,7 +45,7 @@ class BuilderFactory
 	private var _domainListenerVOLocator 	: DomainListenerVOLocator;
 	//private var _displayObjectBuilder 		: DisplayObjectBuilder;
 
-	public function BuilderFactory( applicationContext : ApplicationContext, moduleLocator : ModuleLocator )
+	public function new( applicationContext : ApplicationContext, moduleLocator : ModuleLocator )
 	{
 		this._moduleLocator = moduleLocator;
 		this.init( applicationContext );
@@ -58,7 +61,7 @@ class BuilderFactory
 		return this._coreFactory;
 	}
 
-	public function getApplicationHub() : IApplicationDomainDispatcher
+	public function getApplicationHub() : IApplicationDomainDispatcher<IModuleListener>
 	{
 		return this._applicationDomainHub;
 	}
@@ -96,7 +99,7 @@ class BuilderFactory
 	public function init( applicationContext : ApplicationContext ) : Void
 	{
 		this._applicationContext 		= applicationContext;
-		this._commandMap 				= new Map<String, Class<IBuildCommand>>();
+		this._commandMap 				= new HashMap<String, Class<IBuildCommand>>();
 		this._coreFactory 				= new CoreFactory();
 		this._applicationDomainHub 		= ApplicationDomainDispatcher.getInstance();
 		this._IDExpert 					= new IDExpert();
@@ -128,7 +131,7 @@ class BuilderFactory
 
 	public function addType( type : String, build : Class<IBuildCommand> ) : Void
 	{
-		this._commandMap.set( type, build );
+		this._commandMap.put( type, build );
 	}
 
 	public function build( constructorVO : ConstructorVO, ?id : String ) : Dynamic
@@ -147,7 +150,7 @@ class BuilderFactory
 		buildCommand.setHelper( builderHelperVO );
 		buildCommand.execute();
 
-		if ( id )
+		if ( id != null )
 		{
 			this._coreFactory.register( id, constructorVO.result );
 		}
@@ -165,7 +168,6 @@ class BuilderFactory
 		this._methodCallVOLocator.release();
 		this._domainListenerVOLocator.release();
 		this._commandMap.clear();
-
 		this._IDExpert.clear();
 	}
 }

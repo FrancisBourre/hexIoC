@@ -33,7 +33,7 @@ class IDExpert
 
 		} else
 		{
-			this._map.set( id, true )
+			this._map.set( id, true );
 			return true;
 		}
 

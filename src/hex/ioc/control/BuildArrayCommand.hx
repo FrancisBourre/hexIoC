@@ -11,17 +11,12 @@ import hex.ioc.vo.ConstructorVO;
  */
 class BuildArrayCommand extends AbstractBuildCommand
 {
-	public function new() 
-	{
-		
-	}
-	
 	override public function execute( ?e : IEvent ) : Void
 	{
 		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
 
 		var array : Array<Dynamic>;
-		var args : Array = constructorVO.arguments;
+		var args : Array<Dynamic> = constructorVO.arguments;
 
 		if ( args == null )
 		{
@@ -29,7 +24,7 @@ class BuildArrayCommand extends AbstractBuildCommand
 		}
 		else
 		{
-			array = args.concat();
+			array = args.copy();
 		}
 
 		if ( array.length == 0 )

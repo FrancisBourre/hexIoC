@@ -2,6 +2,7 @@ package hex.ioc.control;
 
 import hex.event.IEvent;
 import hex.ioc.vo.ConstructorVO;
+import hex.util.ObjectUtil;
 
 /**
  * ...
@@ -9,11 +10,6 @@ import hex.ioc.vo.ConstructorVO;
  */
 class BuildRefCommand extends AbstractBuildCommand
 {
-	public function new() 
-	{
-		
-	}
-	
 	override public function execute( ?e : IEvent ) : Void
 	{
 		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
@@ -34,7 +30,7 @@ class BuildRefCommand extends AbstractBuildCommand
 			var args : Array<String> = constructorVO.ref.split( "." );
 			args.shift();
 
-			var tmp : Dynamic = ObjectUtils.evalFromTarget( constructorVO.result, args.join( "." ), this._buildHelperVO.coreFactory );
+			var tmp : Dynamic = ObjectUtil.fastEvalFromTarget( constructorVO.result, args.join( "." ), this._buildHelperVO.coreFactory );
 			var result : Dynamic = tmp;
 
 			constructorVO.result = result;

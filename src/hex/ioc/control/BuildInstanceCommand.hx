@@ -14,16 +14,11 @@ import hex.util.ClassUtil;
  */
 class BuildInstanceCommand extends AbstractBuildCommand
 {
-	public function new() 
-	{
-		
-	}
-	
 	override public function execute( ?e : IEvent ) : Void
 	{
 		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
 
-		if ( constructorVO.ref )
+		if ( constructorVO.ref != null )
 		{
 			var cmd : IBuildCommand = new BuildRefCommand();
 			cmd.setHelper( this._buildHelperVO );
@@ -31,7 +26,7 @@ class BuildInstanceCommand extends AbstractBuildCommand
 		}
 		else
 		{
-			if ( constructorVO.staticRef )
+			if ( constructorVO.staticRef != null )
 			{
 				constructorVO.result = this._buildHelperVO.coreFactory.getStaticReference( constructorVO.staticRef );
 			}
@@ -42,7 +37,7 @@ class BuildInstanceCommand extends AbstractBuildCommand
 					var isModule : Bool = ClassUtil.classExtendsOrImplements( Type.resolveClass( constructorVO.type ), IModule );
 					if ( isModule && constructorVO.ID != null && constructorVO.ID.length > 0 )
 					{
-						DomainExpert.getInstance().registerDomainForFutureSubscription( new Domain( constructorVO.ID ) );
+						DomainExpert.getInstance().registerDomain( new Domain( constructorVO.ID ) );
 					}
 
 				} catch ( err : Exception )
@@ -50,7 +45,7 @@ class BuildInstanceCommand extends AbstractBuildCommand
 					// do nothing as expected
 				}
 
-				constructorVO.result = this._buildHelperVO.coreFactory.buildInstanceFromConstructorVO( constructorVO );
+				constructorVO.result = this._buildHelperVO.coreFactory.buildInstance( constructorVO.type, constructorVO.arguments, constructorVO.factory, constructorVO.singleton );
 			}
 
 
