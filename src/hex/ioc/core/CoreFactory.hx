@@ -17,25 +17,25 @@ import hex.util.ObjectUtil;
  * ...
  * @author Francis Bourre
  */
-class CoreFactory implements ILocator<String, Dynamic>
+class CoreFactory implements ILocator<String, Dynamic, LocatorEvent<String, Dynamic>>
 {
-	private var _hub : IEventDispatcher<ILocatorListener<String, Dynamic>, LocatorEvent<String, Dynamic>>;
+	private var _dispatcher : IEventDispatcher<ILocatorListener<LocatorEvent<String, Dynamic>>, LocatorEvent<String, Dynamic>>;
 	private var _map : HashMap<String, Dynamic>;
 
 	public function new() 
 	{
-		this._hub = new EventDispatcher();
+		this._dispatcher = new EventDispatcher<ILocatorListener<LocatorEvent<String, Dynamic>>, LocatorEvent<String, Dynamic>>();
 		this._map = new HashMap();
 	}
 	
-	public function addListener( listener : ILocatorListener<String, Dynamic> ) : Bool
+	public function addListener( listener : ILocatorListener<LocatorEvent<String, Dynamic>> ) : Bool
 	{
-		return this._hub.addListener( listener );
+		return this._dispatcher.addListener( listener );
 	}
 
-	public function removeListener( listener : ILocatorListener<String, Dynamic> ) : Bool
+	public function removeListener( listener : ILocatorListener<LocatorEvent<String, Dynamic>> ) : Bool
 	{
-		return this._hub.removeListener( listener );
+		return this._dispatcher.removeListener( listener );
 	}
 	
 	public function keys() : Array<String> 
@@ -50,7 +50,7 @@ class CoreFactory implements ILocator<String, Dynamic>
 	
 	public function locate( key: String ) : Dynamic 
 	{
-		if ( this.isRegisteredWithKey( key ) )
+		if ( this._map.containsKey( key ) )
         {
             return this._map.get( key );
         }
@@ -58,7 +58,7 @@ class CoreFactory implements ILocator<String, Dynamic>
         {
             var props : Array<String> = key.split( "." );
 			var baseKey : String = props.shift();
-			if ( this.isRegisteredWithKey( baseKey ) )
+			if ( this._map.containsKey( baseKey ) )
 			{
 				var target : Dynamic = this._map.get( baseKey );
 				return ObjectUtil.fastEvalFromTarget( target, props.join("."), this );
@@ -80,10 +80,10 @@ class CoreFactory implements ILocator<String, Dynamic>
 	
 	public function register( key : String, element : Dynamic ) : Bool 
 	{
-		if ( !this.isRegisteredWithKey( key ) )
+		if ( !this._map.containsKey( key ) )
 		{
 			this._map.put( key, element ) ;
-			this._hub.dispatchEvent( new LocatorEvent( LocatorEvent.REGISTER, this, key, element ) ) ;
+			this._dispatcher.dispatchEvent( new LocatorEvent( LocatorEvent.REGISTER, this, key, element ) ) ;
 			return true ;
 		}
 		else
@@ -94,11 +94,11 @@ class CoreFactory implements ILocator<String, Dynamic>
 	
 	public function unregisterWithKey( key : String ) : Bool
 	{
-		if ( this.isRegisteredWithKey( key ) )
+		if ( this._map.containsKey( key ) )
 		{
 			var instance : Dynamic = this._map.get( key );
 			this._map.remove( key ) ;
-			this._hub.dispatchEvent( new LocatorEvent( LocatorEvent.UNREGISTER, this, key, instance ) );
+			this._dispatcher.dispatchEvent( new LocatorEvent( LocatorEvent.UNREGISTER, this, key, instance ) );
 			return true ;
 		}
 		else
@@ -116,14 +116,12 @@ class CoreFactory implements ILocator<String, Dynamic>
 	public function getKeyOfInstance( instance : Dynamic ) : String
 	{
 		var key : String;
-		var isRegistered : Bool = this.isInstanceRegistered( instance );
-
-		if ( isRegistered )
+		if ( this._map.containsValue( instance ) )
 		{
 			var keys : Array<String> = this._map.getKeys();
 			for( key in keys )
 			{
-				if ( this.locate( key ) == instance ) 
+				if ( this._map.get( key ) == instance ) 
 				{
 					return key;
 				}

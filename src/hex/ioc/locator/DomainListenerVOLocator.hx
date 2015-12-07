@@ -1,6 +1,7 @@
 package hex.ioc.locator;
 
 import hex.collection.Locator;
+import hex.collection.LocatorEvent;
 import hex.domain.Domain;
 import hex.event.EventProxy;
 import hex.event.IEventAdapterStrategy;
@@ -16,7 +17,7 @@ import hex.service.Service;
  * ...
  * @author Francis Bourre
  */
-class DomainListenerVOLocator extends Locator<String, DomainListenerVO>
+class DomainListenerVOLocator extends Locator<String, DomainListenerVO, LocatorEvent<String, DomainListenerVO>>
 {
 	private var _builderFactory : BuilderFactory;
 

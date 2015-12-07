@@ -15,7 +15,7 @@ import hex.util.ObjectUtil;
  * ...
  * @author Francis Bourre
  */
-class PropertyVOLocator  extends Locator<String, Array<PropertyVO>> implements ILocatorListener<String, Dynamic>
+class PropertyVOLocator extends Locator<String, Array<PropertyVO>, PropertyVOLocatorEvent> implements ILocatorListener<LocatorEvent<String, Dynamic>>
 {
 	static public inline var BUILD_PROPERTY:String = "buildProperty";
 
@@ -102,7 +102,7 @@ class PropertyVOLocator  extends Locator<String, Array<PropertyVO>> implements I
 									staticRef  	: String = null  ) : PropertyVO
 	{
 		var propertyVO : PropertyVO = new PropertyVO( ownerID, name, value, type, ref, method, staticRef );
-		this._ed.dispatchEvent( new LocatorEvent( PropertyVOLocator.BUILD_PROPERTY, this, null, [propertyVO] ) );
+		this._dispatcher.dispatchEvent( new PropertyVOLocatorEvent( PropertyVOLocator.BUILD_PROPERTY, this, propertyVO ) );
 		return propertyVO;
 	}
 
@@ -135,8 +135,8 @@ class PropertyVOLocator  extends Locator<String, Array<PropertyVO>> implements I
 	
 	public function onRegister( event : LocatorEvent<String, Dynamic> ) : Void
 	{
-		var key : String = event.getKey();
-		var instance : Dynamic = event.getValue();
+		var key : String = event.key;
+		var instance : Dynamic = event.value;
 		
 		if ( this.isRegisteredWithKey( key ) )
 		{

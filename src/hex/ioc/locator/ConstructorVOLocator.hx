@@ -1,6 +1,7 @@
 package hex.ioc.locator;
 
 import hex.collection.Locator;
+import hex.collection.LocatorEvent;
 import hex.ioc.core.BuilderFactory;
 import hex.ioc.vo.ConstructorVO;
 
@@ -8,7 +9,7 @@ import hex.ioc.vo.ConstructorVO;
  * ...
  * @author Francis Bourre
  */
-class ConstructorVOLocator extends Locator<String, ConstructorVO>
+class ConstructorVOLocator extends Locator<String, ConstructorVO, LocatorEvent<String, ConstructorVO>>
 {
 	private var _builderFactory : BuilderFactory;
 
