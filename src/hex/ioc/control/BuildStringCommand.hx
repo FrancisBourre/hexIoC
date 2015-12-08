@@ -10,6 +10,11 @@ import hex.ioc.vo.ConstructorVO;
  */
 class BuildStringCommand extends AbstractBuildCommand
 {
+	public function new()
+	{
+		super();
+	}
+	
 	override public function execute( ?e : IEvent ) : Void
 	{
 		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
@@ -17,7 +22,7 @@ class BuildStringCommand extends AbstractBuildCommand
 		var value : String 	= "";
 		var args 			= constructorVO.arguments;
 
-		if ( args != null && args.length > 0 && args[ 0 ] )
+		if ( args != null && args.length > 0 && args[ 0 ] != null )
 		{
 			value = Std.string( args[0] );
 		}

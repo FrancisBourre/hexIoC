@@ -10,16 +10,24 @@ import hex.ioc.vo.ConstructorVO;
  */
 class BuildIntCommand extends AbstractBuildCommand
 {
+	public function new()
+	{
+		super();
+	}
+	
 	override public function execute( ?e : IEvent ) : Void
 	{
 		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
 
 		var args 	: Array<Dynamic> 	= constructorVO.arguments;
-		var number 	: Float 	= Math.NaN;
+		var number 	: Int 				= null;
 
-		if ( args != null && args.length > 0 ) number = Std.parseInt( Std.string( args[0] ) );
+		if ( args != null && args.length > 0 ) 
+		{
+			number = Std.parseInt( Std.string( args[0] ) );
+		}
 
-		if ( !Math.isNaN( number ) && number <= Math.POSITIVE_INFINITY && number >= Math.NEGATIVE_INFINITY )
+		if ( number != null )
 		{
 			constructorVO.result = number;
 		}

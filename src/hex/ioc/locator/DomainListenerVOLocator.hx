@@ -97,6 +97,16 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO, LocatorE
 															);
 		return adapter.getCallbackAdapter();
 	}
+	
+	override function _dispatchRegisterEvent( key : String, element : DomainListenerVO ) : Void 
+	{
+		this._dispatcher.dispatchEvent( new LocatorEvent( LocatorEvent.REGISTER, this, key, element ) );
+	}
+	
+	override function _dispatchUnregisterEvent( key : String ) : Void 
+	{
+		this._dispatcher.dispatchEvent( new LocatorEvent( LocatorEvent.UNREGISTER, this, key ) );
+	}
 }
 	/**
 	 protected function getStrategyCallback( listener : Object, method : String, strategyClassName : String, injectedInModule : Boolean = false ) : Function

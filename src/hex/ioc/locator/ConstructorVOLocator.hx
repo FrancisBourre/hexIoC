@@ -42,4 +42,14 @@ class ConstructorVOLocator extends Locator<String, ConstructorVO, LocatorEvent<S
 			this.buildObject( key );
 		}
 	}
+	
+	override function _dispatchRegisterEvent( key : String, element : ConstructorVO ) : Void 
+	{
+		this._dispatcher.dispatchEvent( new LocatorEvent( LocatorEvent.REGISTER, this, key, element ) );
+	}
+	
+	override function _dispatchUnregisterEvent( key : String ) : Void 
+	{
+		this._dispatcher.dispatchEvent( new LocatorEvent( LocatorEvent.UNREGISTER, this, key ) );
+	}
 }
