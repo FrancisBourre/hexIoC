@@ -11,26 +11,21 @@ import hex.ioc.vo.ConstructorVO;
  */
 class BuildArrayCommand extends AbstractBuildCommand
 {
+	public function new()
+	{
+		super();
+	}
+	
 	override public function execute( ?e : IEvent ) : Void
 	{
 		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
 
-		var array : Array<Dynamic>;
+		var array : Array<Dynamic> = [];
 		var args : Array<Dynamic> = constructorVO.arguments;
 
-		if ( args == null )
-		{
-			array = [];
-		}
-		else
+		if ( args != null )
 		{
 			array = args.copy();
-		}
-
-		if ( array.length == 0 )
-		{
-			var errorMessage : String = this + ".build(" + args + ") returns an empty Array.";
-			throw new IllegalArgumentException( errorMessage );
 		}
 
 		constructorVO.result = array;

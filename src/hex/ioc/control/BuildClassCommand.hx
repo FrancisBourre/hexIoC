@@ -10,37 +10,36 @@ import hex.ioc.vo.ConstructorVO;
  */
 class BuildClassCommand extends AbstractBuildCommand
 {
+	public function new()
+	{
+		super();
+	}
+	
 	override public function execute( ?e : IEvent ) : Void
 	{
 		var constructorVO 		: ConstructorVO = this._buildHelperVO.constructorVO;
-
 		var clazz 				: Class<Dynamic>;
-		var msg 				: String;
 		var qualifiedClassName 	: String = "";
 		
 		var args = constructorVO.arguments;
 
 		if ( args != null && args.length > 0 )
 		{
-			if ( Std.is( args[ 0 ], Class ) )
-			{
-				constructorVO.result = args[0];
-				return;
-
-			} else
-			{
-				qualifiedClassName = Std.string( args[0] );
-			}
+			qualifiedClassName = Std.string( args[0] );
 		}
 
 		try
 		{
 			clazz = Type.resolveClass( qualifiedClassName );
-
-		} catch ( e : Dynamic )
+		}
+		catch ( e : Dynamic )
 		{
-			msg = " '" + qualifiedClassName + "' is not available";
-			throw new IllegalArgumentException( msg );
+			clazz = null;
+		}
+		
+		if ( clazz == null )
+		{
+			throw new IllegalArgumentException( "'" + qualifiedClassName + "' is not available" );
 		}
 
 		constructorVO.result = clazz;

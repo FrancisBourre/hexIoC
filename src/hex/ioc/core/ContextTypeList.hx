@@ -7,14 +7,14 @@ package hex.ioc.core;
 class ContextTypeList
 {
 	public inline static var ARRAY 				: String = "Array";
-	public inline static var BOOLEAN 			: String = "Boolean";
+	public inline static var BOOLEAN 			: String = "Bool";
 	public inline static var INSTANCE 			: String = "Instance";
-	public inline static var INT 				: String = "int";
+	public inline static var INT 				: String = "Int";
 	public inline static var NULL 				: String = "null";
-	public inline static var NUMBER 			: String = "Number";
+	public inline static var FLOAT 				: String = "Float";
 	public inline static var OBJECT 			: String = "Object";
 	public inline static var STRING 			: String = "String";
-	public inline static var UINT 				: String = "uint";
+	public inline static var UINT 				: String = "UInt";
 	public inline static var DEFAULT 			: String = "Default";
 	public inline static var HASHMAP 			: String = "hex.core.HashMap";
 	public inline static var SERVICE_LOCATOR 	: String = "hex.config.stateful.ServiceLocator";

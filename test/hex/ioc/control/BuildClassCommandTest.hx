@@ -3,31 +3,42 @@ package hex.ioc.control;
 import hex.error.IllegalArgumentException;
 import hex.ioc.vo.BuildHelperVO;
 import hex.ioc.vo.ConstructorVO;
+import hex.structures.Point;
 import hex.unittest.assertion.Assert;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class BuildStringCommandTest
+class BuildClassCommandTest
 {
-	@test( "Test execute" )
+	@test( "Test executet" )
     public function testExecute() : Void
     {
-		var cmd : BuildStringCommand	= new BuildStringCommand();
+		var cmd : BuildClassCommand 	= new BuildClassCommand();
 		var helper : BuildHelperVO 		= new BuildHelperVO();
-		helper.constructorVO 			= new ConstructorVO( "test", "String", ["hello world"] );
+		helper.constructorVO 			= new ConstructorVO( "test", "Class", ["hex.structures.Point"] );
 		cmd.setHelper( helper );
 		cmd.execute();
-		Assert.equals( "hello world", helper.constructorVO.result, "constructorVO.result should equal 'hello world'" );
+		Assert.equals( helper.constructorVO.result, Point, "constructorVO.result should be an instance of Point class" );
+	}
+	
+	@test( "Test execute with invalid argument" )
+    public function testExecuteWithInvalidArgument() : Void
+    {
+		var cmd : BuildClassCommand 	= new BuildClassCommand();
+		var helper : BuildHelperVO 		= new BuildHelperVO();
+		helper.constructorVO 			= new ConstructorVO( "test", "Class", ["a"] );
+		cmd.setHelper( helper );
+		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
 	}
 	
 	@test( "Test execute with no argument array" )
     public function testExecuteWithNoArgumentArray() : Void
     {
-		var cmd : BuildStringCommand 	= new BuildStringCommand();
+		var cmd : BuildClassCommand 	= new BuildClassCommand();
 		var helper : BuildHelperVO 		= new BuildHelperVO();
-		helper.constructorVO 			= new ConstructorVO( "test", "String", null );
+		helper.constructorVO 			= new ConstructorVO( "test", "Class", null );
 		cmd.setHelper( helper );
 		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
 	}
@@ -35,9 +46,9 @@ class BuildStringCommandTest
 	@test( "Test execute with empty argument array" )
     public function testExecuteWithEmptyArgumentArray() : Void
     {
-		var cmd : BuildStringCommand 	= new BuildStringCommand();
+		var cmd : BuildClassCommand 	= new BuildClassCommand();
 		var helper : BuildHelperVO 		= new BuildHelperVO();
-		helper.constructorVO 			= new ConstructorVO( "test", "String", [] );
+		helper.constructorVO 			= new ConstructorVO( "test", "Class", [] );
 		cmd.setHelper( helper );
 		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
 	}
@@ -45,21 +56,10 @@ class BuildStringCommandTest
 	@test( "Test execute with null argument" )
     public function testExecuteWithNullArgument() : Void
     {
-		var cmd : BuildStringCommand 	= new BuildStringCommand();
+		var cmd : BuildClassCommand 	= new BuildClassCommand();
 		var helper : BuildHelperVO 		= new BuildHelperVO();
-		helper.constructorVO 			= new ConstructorVO( "test", "String", [null] );
+		helper.constructorVO 			= new ConstructorVO( "test", "Class", [null] );
 		cmd.setHelper( helper );
 		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
-	}
-	
-	@test( "Test execute with argument zero length" )
-    public function testExecuteWithArgumentZeroLength() : Void
-    {
-		var cmd : BuildStringCommand 	= new BuildStringCommand();
-		var helper : BuildHelperVO 		= new BuildHelperVO();
-		helper.constructorVO 			= new ConstructorVO( "test", "String", [""] );
-		cmd.setHelper( helper );
-		cmd.execute();
-		Assert.equals( "", helper.constructorVO.result, "constructorVO.result should equal ''" );
 	}
 }

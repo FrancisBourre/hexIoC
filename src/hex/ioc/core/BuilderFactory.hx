@@ -117,7 +117,7 @@ class BuilderFactory
 		this.addType( ContextTypeList.INSTANCE, BuildInstanceCommand );
 		this.addType( ContextTypeList.INT, BuildIntCommand );
 		this.addType( ContextTypeList.NULL, BuildNullCommand );
-		this.addType( ContextTypeList.NUMBER, BuildFloatCommand );
+		this.addType( ContextTypeList.FLOAT, BuildFloatCommand );
 		this.addType( ContextTypeList.OBJECT, BuildObjectCommand );
 		this.addType( ContextTypeList.STRING, BuildStringCommand );
 		this.addType( ContextTypeList.UINT, BuildUIntCommand );
