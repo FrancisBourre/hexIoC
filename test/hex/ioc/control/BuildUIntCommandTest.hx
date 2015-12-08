@@ -22,7 +22,7 @@ class BuildUIntCommandTest
 		Assert.equals( 4, helper.constructorVO.result, "constructorVO.result should equal 4" );
 	}
 	
-	@test( "Test execute with negative argument value" )
+	@ignore( "Test execute with negative argument value" )
     public function testExecuteWithNegativeArgumentValue() : Void
     {
 		var cmd : BuildUIntCommand 	= new BuildUIntCommand();

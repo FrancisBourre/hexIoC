@@ -32,7 +32,11 @@ class BuildUIntCommand extends AbstractBuildCommand
 			throw new IllegalArgumentException( this + ".execute(" + number + ") failed." );
 		}
 
+		#if js
 		if ( number != null && number >= 0 )
+		#else
+		if ( Math.isNaN( number ) )
+		#end
 		{
 			constructorVO.result = number;
 		}
