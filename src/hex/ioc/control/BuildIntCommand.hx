@@ -18,13 +18,16 @@ class BuildIntCommand extends AbstractBuildCommand
 	override public function execute( ?e : IEvent ) : Void
 	{
 		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
-
 		var args 	: Array<Dynamic> 	= constructorVO.arguments;
-		var number 	: Int 				= null;
+		var number 	: Int 				= 0;
 
 		if ( args != null && args.length > 0 ) 
 		{
 			number = Std.parseInt( Std.string( args[0] ) );
+		}
+		else
+		{
+			throw new IllegalArgumentException( this + ".execute(" + number + ") failed." );
 		}
 
 		if ( number != null )

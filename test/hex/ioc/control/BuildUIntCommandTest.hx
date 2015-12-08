@@ -22,6 +22,16 @@ class BuildUIntCommandTest
 		Assert.equals( 4, helper.constructorVO.result, "constructorVO.result should equal 4" );
 	}
 	
+	@test( "Test execute with negative argument value" )
+    public function testExecuteWithNegativeArgumentValue() : Void
+    {
+		var cmd : BuildUIntCommand 	= new BuildUIntCommand();
+		var helper : BuildHelperVO 	= new BuildHelperVO();
+		helper.constructorVO 		= new ConstructorVO( "test", "UInt", ["-4"] );
+		cmd.setHelper( helper );
+		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
+	}
+	
 	@test( "Test execute with invalid argument" )
     public function testExecuteWithInvalidArgument() : Void
     {

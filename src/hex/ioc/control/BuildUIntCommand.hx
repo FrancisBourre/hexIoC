@@ -21,14 +21,18 @@ class BuildUIntCommand extends AbstractBuildCommand
 		var constructorVO : ConstructorVO 	= this._buildHelperVO.constructorVO;
 
 		var args 	: Array<Dynamic> 		= constructorVO.arguments;
-		var number 	: Float 				= null;
+		var number 	: UInt 					= 0;
 
 		if ( args != null && args.length > 0 ) 
 		{
 			number = Std.parseInt( Std.string( args[0] ) );
 		}
+		else
+		{
+			throw new IllegalArgumentException( this + ".execute(" + number + ") failed." );
+		}
 
-		if ( number != null )
+		if ( number != null && number >= 0 )
 		{
 			constructorVO.result = number;
 		}
