@@ -20,14 +20,14 @@ class BuildFloatCommand extends AbstractBuildCommand
 		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
 
 		var args : Array<Dynamic> 	= constructorVO.arguments;
-		var number : Float 	= null;
+		var number : Float 	= Math.NaN;
 
 		if ( args != null && args.length > 0 ) 
 		{
 			number = Std.parseFloat( args[ 0 ] );
 		}
 
-		if ( number != null && !Math.isNaN( number ) )
+		if ( !Math.isNaN( number ) )
 		{
 			constructorVO.result = number;
 		}

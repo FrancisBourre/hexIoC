@@ -5,6 +5,7 @@ import hex.event.IEvent;
 import hex.ioc.control.AbstractBuildCommand;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.MapVO;
+import hex.log.Logger;
 
 /**
  * ...
@@ -21,7 +22,9 @@ class BuildMapCommand extends AbstractBuildCommand
 
 		if ( args.length == 0 )
 		{
-			trace( this + ".execute(" + args + ") returns an empty Dictionary." );
+			#if debug
+			Logger.WARN( this + ".execute(" + args + ") returns an empty HashMap." );
+			#end
 
 		} else
 		{

@@ -1,4 +1,5 @@
 package hex.ioc.control;
+
 import hex.error.IllegalArgumentException;
 import hex.ioc.vo.BuildHelperVO;
 import hex.ioc.vo.ConstructorVO;
@@ -33,14 +34,15 @@ class BuildArrayCommandTest
 		Assert.isInstanceOf( helper.constructorVO.result, Array, "constructorVO.result should be an instance of Array class" );
 	}
 	
-	/*@test( "Test execute with empty argument array" )
+	@test( "Test execute with empty argument array" )
     public function testExecuteWithEmptyArgumentArray() : Void
     {
 		var cmd : BuildArrayCommand 	= new BuildArrayCommand();
 		var helper : BuildHelperVO 		= new BuildHelperVO();
 		helper.constructorVO 			= new ConstructorVO( "test", "Array", [] );
 		cmd.setHelper( helper );
-		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
+		cmd.execute();
+		Assert.isInstanceOf( helper.constructorVO.result, Array, "constructorVO.result should be an instance of Array class" );
 	}
 	
 	@test( "Test execute with null argument" )
@@ -50,7 +52,9 @@ class BuildArrayCommandTest
 		var helper : BuildHelperVO 		= new BuildHelperVO();
 		helper.constructorVO 			= new ConstructorVO( "test", "Array", [null] );
 		cmd.setHelper( helper );
-		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
-	}*/
+		cmd.execute();
+		Assert.isInstanceOf( helper.constructorVO.result, Array, "constructorVO.result should be an instance of Array class" );
+		Assert.deepEquals( [null], helper.constructorVO.result, "constructorVO.result should agregate the same elements" );
+	}
 	
 }
