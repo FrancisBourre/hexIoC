@@ -1,6 +1,6 @@
 package hex;
 
-import hex.ioc.IOCSuite;
+import hex.ioc.MachinaIOCSuite;
 
 /**
  * ...
@@ -9,5 +9,5 @@ import hex.ioc.IOCSuite;
 class HexMachinaSuite
 {
 	@suite( "HexMachina suite" )
-    public var list : Array<Class<Dynamic>> = [IOCSuite];
+    public var list : Array<Class<Dynamic>> = [MachinaIOCSuite];
 }

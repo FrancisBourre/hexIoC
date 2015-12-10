@@ -4,8 +4,8 @@ package hex.ioc.vo;
  * ...
  * @author Francis Bourre
  */
-class VOSuite
+class MachinaVOSuite
 {
-	@suite( "VO suite" )
+	@suite( "VO" )
     public var list : Array<Class<Dynamic>> = [PropertyVOTest];
 }

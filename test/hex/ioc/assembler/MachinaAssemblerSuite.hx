@@ -4,8 +4,8 @@ package hex.ioc.assembler;
  * ...
  * @author Francis Bourre
  */
-class AssemblerSuite
+class MachinaAssemblerSuite
 {
-	@suite( "Assembler suite" )
+	@suite( "Assembler" )
     public var list : Array<Class<Dynamic>> = [ApplicationContextTest];
 }

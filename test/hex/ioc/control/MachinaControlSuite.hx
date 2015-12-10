@@ -4,8 +4,8 @@ package hex.ioc.control;
  * ...
  * @author Francis Bourre
  */
-class ControlSuite
+class MachinaControlSuite
 {
-	@suite( "Control suite" )
+	@suite( "Control" )
     public var list : Array<Class<Dynamic>> = [BuildArrayCommandTest, BuildBooleanCommandTest, BuildClassCommandTest, BuildFloatCommandTest, BuildIntcommandTest, BuildNullCommandTest, BuildStringCommandTest, BuildUIntCommandTest];
 }

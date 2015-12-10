@@ -4,8 +4,8 @@ package hex.ioc.core;
  * ...
  * @author Francis Bourre
  */
-class IOCCoreSuite
+class MachinaCoreSuite
 {
-	@suite( "IOC core suite" )
+	@suite( "Core" )
     public var list : Array<Class<Dynamic>> = [CoreFactoryTest];
 }

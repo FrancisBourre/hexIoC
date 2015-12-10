@@ -5,7 +5,7 @@ import hex.collection.LocatorEvent;
 import hex.domain.Domain;
 import hex.event.EventProxy;
 import hex.event.IEventAdapterStrategy;
-import hex.event.IOAdapter;
+import hex.event.CallbackAdapter;
 import hex.ioc.core.BuilderFactory;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.DomainListenerVOArguments;
@@ -88,14 +88,15 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO, LocatorE
 
 	private function getStrategyCallback( listener : Dynamic, method : String, strategyClassName : String, injectedInModule : Bool = false ) : Dynamic
 	{
-		var callback : Dynamic 								= Reflect.field( listener, method );
+		/*var callback : Dynamic 								= Reflect.field( listener, method );
 		var strategyClass : Class<IEventAdapterStrategy> 	= cast this._builderFactory.getCoreFactory().getClassReference( strategyClassName );
-		var adapter : IOAdapter 							= new IOAdapter ( 	callback, strategyClass,
+		var adapter : CallbackAdapter 							= new CallbackAdapter ( 	callback, strategyClass,
 																( ( injectedInModule && Std.is( listener, IModule ) ) ? 
 																( cast listener ).instantiateUnmapped  :  
 																this._builderFactory.getApplicationContext().getInjector().instantiateUnmapped )
 															);
-		return adapter.getCallbackAdapter();
+		return adapter.getCallbackAdapter();*/
+		return null;
 	}
 	
 	override function _dispatchRegisterEvent( key : String, element : DomainListenerVO ) : Void 
