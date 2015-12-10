@@ -4,7 +4,7 @@ import hex.collection.Locator;
 import hex.collection.LocatorEvent;
 import hex.domain.Domain;
 import hex.event.EventProxy;
-import hex.event.IEventAdapterStrategy;
+import hex.event.IAdapterStrategy;
 import hex.event.CallbackAdapter;
 import hex.ioc.core.BuilderFactory;
 import hex.ioc.vo.DomainListenerVO;
