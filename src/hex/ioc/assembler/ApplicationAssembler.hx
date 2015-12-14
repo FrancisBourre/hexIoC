@@ -1,6 +1,7 @@
 package hex.ioc.assembler;
 
 import hex.core.HashCodeFactory;
+import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.vo.DomainListenerVO;
 import hex.collection.HashMap;
 import hex.ioc.assembler.ApplicationContext;
@@ -20,7 +21,7 @@ import hex.module.IModule;
  * ...
  * @author Francis Bourre
  */
-class ApplicationAssembler
+class ApplicationAssembler implements IApplicationAssembler
 {
 	public function new() 
 	{

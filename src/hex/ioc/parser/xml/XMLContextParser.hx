@@ -1,6 +1,6 @@
 package hex.ioc.parser.xml;
 import hex.error.NullPointerException;
-import hex.ioc.assembler.ApplicationAssembler;
+import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.assembler.ApplicationContext;
 
 /**
@@ -10,15 +10,15 @@ import hex.ioc.assembler.ApplicationContext;
 class XMLContextParser
 {
 	private var _contextData 		: Dynamic;
-	private var _assembler 			: ApplicationAssembler;
+	private var _assembler 			: IApplicationAssembler;
 	private var _parserCollection 	: IParserCollection;
 
-	public function setApplicationAssembler( applicationAssembler : ApplicationAssembler ) : void
+	public function setApplicationAssembler( applicationAssembler : IApplicationAssembler ) : void
 	{
 		this._assembler = applicationAssembler;
 	}
 
-	public function getApplicationAssembler() : ApplicationAssembler
+	public function getApplicationAssembler() : IApplicationAssembler
 	{
 		return this._contextData;
 	}
@@ -33,7 +33,7 @@ class XMLContextParser
 		return this._contextData;
 	}
 
-	public function parse( applicationContext : ApplicationContext, applicationAssembler : ApplicationAssembler, context : Dynamic, ?autoBuild : Bool = false ) : void
+	public function parse( applicationContext : ApplicationContext, applicationAssembler : IApplicationAssembler, context : Dynamic, ?autoBuild : Bool = false ) : void
 	{
 		if ( applicationAssembler != null )
 		{
@@ -80,5 +80,4 @@ class XMLContextParser
 	{
 		this._parserCollection = collection;
 	}
-	
 }

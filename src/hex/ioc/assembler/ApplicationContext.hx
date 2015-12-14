@@ -1,7 +1,7 @@
 package hex.ioc.assembler;
 
 import hex.error.IllegalArgumentException;
-import hex.ioc.assembler.ApplicationAssembler;
+import hex.ioc.assembler.IApplicationAssembler;
 import hex.di.IBasicInjector;
 import hex.inject.Injector;
 import hex.log.Logger;
@@ -13,13 +13,13 @@ import hex.log.Logger;
 class ApplicationContext implements Dynamic<String>
 {
 	private var _name 					: String;
-	private var _applicationAssembler 	: ApplicationAssembler;
+	private var _applicationAssembler 	: IApplicationAssembler;
 	//private var _rootTarget 			: DisplayObjectContainer;
 	
 	private var _injector 				: IBasicInjector;
 		
 	@:allow(hex.ioc.assembler)
-	private function new( applicationAssembler : ApplicationAssembler, name : String/*, rootTarget : DisplayObjectContainer = null*/ )
+	private function new( applicationAssembler : IApplicationAssembler, name : String/*, rootTarget : DisplayObjectContainer = null*/ )
 	{
 		this._injector = new Injector();
 		this._injector.mapToValue( IBasicInjector, this._injector );

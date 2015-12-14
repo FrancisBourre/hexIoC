@@ -3,7 +3,7 @@ package hex.ioc.parser;
 import hex.control.async.AsyncCommand;
 import hex.error.NullPointerException;
 import hex.event.IEvent;
-import hex.ioc.assembler.ApplicationAssembler;
+import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.assembler.ApplicationContext;
 
 /**
@@ -12,7 +12,7 @@ import hex.ioc.assembler.ApplicationContext;
  */
 class AbstractParserCommand extends AsyncCommand implements IParserCommand
 {
-	private var _applicationAssembler 	: ApplicationAssembler;
+	private var _applicationAssembler 	: IApplicationAssembler;
 	private var _contextData 			: Dynamic;
 	private var _applicationContext 	: ApplicationContext;
 
@@ -35,13 +35,13 @@ class AbstractParserCommand extends AsyncCommand implements IParserCommand
 	}
 	
 	@final
-	public function setApplicationAssembler( applicationAssembler : ApplicationAssembler ) : Void
+	public function setApplicationAssembler( applicationAssembler : IApplicationAssembler ) : Void
 	{
 		this._applicationAssembler = applicationAssembler;
 	}
 
 	@final
-	public function getApplicationAssembler() : ApplicationAssembler
+	public function getApplicationAssembler() : IApplicationAssembler
 	{
 		return this._applicationAssembler;
 	}
