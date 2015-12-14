@@ -12,8 +12,13 @@ class XMLContextParser
 	private var _contextData 		: Dynamic;
 	private var _assembler 			: IApplicationAssembler;
 	private var _parserCollection 	: IParserCollection;
+	
+	public function new()
+	{
+		
+	}
 
-	public function setApplicationAssembler( applicationAssembler : IApplicationAssembler ) : void
+	public function setApplicationAssembler( applicationAssembler : IApplicationAssembler ) : Void
 	{
 		this._assembler = applicationAssembler;
 	}
@@ -33,7 +38,7 @@ class XMLContextParser
 		return this._contextData;
 	}
 
-	public function parse( applicationContext : ApplicationContext, applicationAssembler : IApplicationAssembler, context : Dynamic, ?autoBuild : Bool = false ) : void
+	public function parse( applicationContext : ApplicationContext, applicationAssembler : IApplicationAssembler, context : Dynamic, ?autoBuild : Bool = false ) : Void
 	{
 		if ( applicationAssembler != null )
 		{
@@ -50,7 +55,7 @@ class XMLContextParser
 
 		} else
 		{
-			throw new Error ( this + ".parse() can't retrieve IoC context data" );
+			throw new NullPointerException ( this + ".parse() can't retrieve IoC context data" );
 		}
 
 		if ( this._parserCollection == null )

@@ -13,9 +13,9 @@ class XMLParserCollection extends AbstractParserCollection
 		super();
 	}
 	
-	override protected function _buildParserList() : Void
+	override private function _buildParserList() : Void
 	{
 		//this._parserCommandCollection.push( new DisplayObjectXMLParser() );
-		//this._parserCommandCollection.push( new ObjectXMLParser() );
+		this._parserCommandCollection.push( new ObjectXMLParser() );
 	}
 }

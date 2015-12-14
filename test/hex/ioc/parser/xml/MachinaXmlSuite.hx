@@ -7,6 +7,6 @@ package hex.ioc.parser.xml;
 class MachinaXmlSuite
 {
 	@suite( "Xml" )
-    public var list : Array<Class<Dynamic>> = [XmlParserUtilTest];
+    public var list : Array<Class<Dynamic>> = [ObjectXMLParserTest, XmlParserUtilTest];
 	
 }
