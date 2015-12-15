@@ -16,12 +16,4 @@ class MethodCallVO
 		this.name       = name ;
 		this.arguments  = args ;
 	}
-
-	public function toString() : String
-	{
-		return 	this   	+ "("
-						+ "ownerID:"    + ownerID       + ", "
-						+ "name:"       + name          + ", "
-						+ "arguments:[" + arguments 	+ "])";
-	}
 }

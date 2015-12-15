@@ -51,7 +51,7 @@ class ObjectXMLParserTest
 	@test( "test bulding anonymous object" )
 	public function testBuildingAnonymousObject() : Void
 	{
-		/*var source : String = '<root><test id="obj" type="Object"><property name="name" value="Francis"/><property name="age" type="Int" value="44"/><property name="height" type="Float" value="1.75"/><property name="isWorking" type="Bool" value="true"/><property name="isSleeping" type="Bool" value="false"/></test></root>';
+		var source : String = '<root><test id="obj" type="Object"><property name="name" value="Francis"/><property name="age" type="Int" value="44"/><property name="height" type="Float" value="1.75"/><property name="isWorking" type="Bool" value="true"/><property name="isSleeping" type="Bool" value="false"/></test></root>';
 		var xml : Xml = Xml.parse( source );
 		this._build( xml );
 
@@ -62,20 +62,20 @@ class ObjectXMLParserTest
 		Assert.equals( 1.75, obj.height, "" );
 		Assert.isTrue( obj.isWorking, "" );
 		Assert.isFalse( obj.isSleeping, "" );
-		Assert.equals( 1.75, this._builderFactory.getCoreFactory().locate( "obj.height" ), "" );*/
+		Assert.equals( 1.75, this._builderFactory.getCoreFactory().locate( "obj.height" ), "" );
 	}
 	
 	@test( "test building simple instance with arguments" )
 	public function testBuildingSimpleInstanceWithArguments() : Void
 	{
-		/*var source : String = '<root><bean id="size" type="hex.structures.Size"><argument type="Int" value="10"/><argument type="Int" value="20"/></bean></root>';
+		var source : String = '<root><bean id="size" type="hex.structures.Size"><argument type="Int" value="10"/><argument type="Int" value="20"/></bean></root>';
 		var xml : Xml = Xml.parse( source );
 		this._build( xml );
 
 		var size : Size = this._builderFactory.getCoreFactory().locate( "size" );
 		Assert.isInstanceOf( size, Size, "" );
 		Assert.equals( 10, size.width, "" );
-		Assert.equals( 20, size.height, "" );*/
+		Assert.equals( 20, size.height, "" );
 	}
 	
 	@test( "" )
@@ -102,5 +102,38 @@ class ObjectXMLParserTest
 		Assert.equals( 20, rect.y, "" );
 		Assert.equals( 30, rect.size.x, "" );
 		Assert.equals( 40, rect.size.y, "" );
+	}
+	
+	@test( "" )
+	public function testBuildingMultipleInstancesWithMethodCall() : Void
+	{
+		var source : String = '<root><rectangle id="rect" type="hex.ioc.parser.xml.mock.MockRectangle"><property name="size" ref="rectSize" /><method-call name="offsetPoint"><argument ref="rectPosition"/></method-call></rectangle><size id="rectSize" type="hex.structures.Point"><argument type="Int" value="30"/><argument type="Int" value="40"/></size><position id="rectPosition" type="hex.structures.Point"><property type="Int" name="x" value="10"/><property type="Int" name="y" value="20"/></position><rectangle id="anotherRect" type="hex.ioc.parser.xml.mock.MockRectangle"><property name="size" ref="rectSize" /><method-call name="reset"/></rectangle></root>';
+		var xml : Xml = Xml.parse( source );
+		this._build( xml );
+
+		var rectSize : Point = this._builderFactory.getCoreFactory().locate( "rectSize" );
+		Assert.isInstanceOf( rectSize, Point, "" );
+		Assert.equals( 30, rectSize.x, "" );
+		Assert.equals( 40, rectSize.y, "" );
+
+		var rectPosition : Point = this._builderFactory.getCoreFactory().locate( "rectPosition" );
+		Assert.isInstanceOf( rectPosition, Point, "" );
+		Assert.equals( 10, rectPosition.x, "" );
+		Assert.equals( 20, rectPosition.y, "" );
+
+
+		var rect : MockRectangle = this._builderFactory.getCoreFactory().locate( "rect" );
+		Assert.isInstanceOf( rect, MockRectangle, "" );
+		Assert.equals( 10, rect.x, "" );
+		Assert.equals( 20, rect.y, "" );
+		Assert.equals( 30, rect.width, "" );
+		Assert.equals( 40, rect.height, "" );
+
+		var anotherRect : MockRectangle = this._builderFactory.getCoreFactory().locate( "anotherRect" );
+		Assert.isInstanceOf( anotherRect, MockRectangle, "" );
+		Assert.equals( 0, anotherRect.x, "" );
+		Assert.equals( 0, anotherRect.y, "" );
+		Assert.equals( 0, anotherRect.width, "" );
+		Assert.equals( 0, anotherRect.height, "" );
 	}
 }

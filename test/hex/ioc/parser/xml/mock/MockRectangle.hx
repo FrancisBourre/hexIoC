@@ -34,4 +34,18 @@ class MockRectangle
 
 		return size;
 	}
+	
+	public function reset() : Void
+	{
+		this.x 		= 0;
+		this.y 		= 0;
+		this.width 	= 0;
+		this.height = 0;
+	}
+	
+	public function offsetPoint( p : Point ) : Void
+	{
+		this.x += p.x;
+		this.y += p.y;
+	}
 }
