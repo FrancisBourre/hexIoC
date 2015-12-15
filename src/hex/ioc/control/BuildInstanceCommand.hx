@@ -1,10 +1,11 @@
 package hex.ioc.control;
 
-import hex.domain.DomainExpert;
-import hex.ioc.vo.ConstructorVO;
 import hex.domain.Domain;
+import hex.domain.DomainExpert;
+import hex.domain.DomainUtil;
 import hex.error.Exception;
 import hex.event.IEvent;
+import hex.ioc.vo.ConstructorVO;
 import hex.module.IModule;
 import hex.util.ClassUtil;
 
@@ -37,7 +38,7 @@ class BuildInstanceCommand extends AbstractBuildCommand
 					var isModule : Bool = ClassUtil.classExtendsOrImplements( Type.resolveClass( constructorVO.type ), IModule );
 					if ( isModule && constructorVO.ID != null && constructorVO.ID.length > 0 )
 					{
-						DomainExpert.getInstance().registerDomain( new Domain( constructorVO.ID ) );
+						DomainExpert.getInstance().registerDomain( DomainUtil.getDomain( constructorVO.ID, Domain ) );
 					}
 
 				} catch ( err : Exception )
@@ -47,7 +48,6 @@ class BuildInstanceCommand extends AbstractBuildCommand
 
 				constructorVO.result = this._buildHelperVO.coreFactory.buildInstance( constructorVO.type, constructorVO.arguments, constructorVO.factory, constructorVO.singleton );
 			}
-
 
 			if ( Std.is( constructorVO.result, IModule ) )
 			{

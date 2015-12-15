@@ -16,7 +16,10 @@ class BuildRefCommand extends AbstractBuildCommand
 
 		var key : String = constructorVO.ref;
 
-		if ( key.indexOf(".") != -1 ) key = Std.string( ( key.split( "." ) ).shift() );
+		if ( key.indexOf(".") != -1 ) 
+		{
+			key = Std.string( ( key.split( "." ) ).shift() );
+		}
 
 		if ( !( this._buildHelperVO.coreFactory.isRegisteredWithKey( key ) ) )
 		{

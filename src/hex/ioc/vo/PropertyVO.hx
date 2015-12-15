@@ -32,7 +32,7 @@ class PropertyVO
 			this.staticRef 	= staticRef;
 		}
 
-		public function toString() : String
+		/*public function toString() : String
 		{
 			return 	"("
 					+ "ownerID:"    		+ ownerID       + ", "
@@ -42,5 +42,5 @@ class PropertyVO
 					+ "ref:"                + ref           + ", "
 					+ "method:"     		+ method       + ", "
 					+ "staticRef:"     		+ staticRef     + ")";
-		}
+		}*/
 }

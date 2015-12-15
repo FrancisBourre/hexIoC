@@ -247,7 +247,14 @@ class CoreFactory implements ILocator<String, Dynamic, LocatorEvent<String, Dyna
 		}
 		else
 		{
-			obj = Type.createInstance( classReference, args );
+			try
+			{
+				obj = Type.createInstance( classReference, args != null ? args : [] );
+			}
+			catch ( e : Dynamic )
+			{
+				throw new IllegalArgumentException( "Instantiation of class '" + qualifiedClassName + "' failed with arguments: " + args );
+			}
 
 			if ( Std.is( obj, IMetaDataParsable ) )
 			{

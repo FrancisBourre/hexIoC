@@ -32,14 +32,14 @@ class PropertyVOLocator extends Locator<String, Array<PropertyVO>, PropertyVOLoc
 		var propertyName : String = property.name;
 		if ( propertyName.indexOf(".") == -1 )
 		{
-			Reflect.setField( target, propertyName, this.getValue( property ) );
+			Reflect.setProperty( target, propertyName, this.getValue( property ) );
 		}
 		else
 		{
 			var props : Array<String> = propertyName.split( "." );
 			propertyName = props.pop();
 			var target : Dynamic = ObjectUtil.fastEvalFromTarget( target, props.join("."), this._builderFactory.getCoreFactory() );
-			Reflect.setField( target, propertyName, this.getValue( property ) );
+			Reflect.setProperty( target, propertyName, this.getValue( property ) );
 		}
 
 	}
@@ -128,7 +128,7 @@ class PropertyVOLocator extends Locator<String, Array<PropertyVO>, PropertyVOLoc
 		return propertyVO;
 	}
 	
-	public function handleEvent(e:IEvent):Void 
+	public function handleEvent( e : IEvent ) : Void 
 	{
 		
 	}

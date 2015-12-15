@@ -163,9 +163,9 @@ class ApplicationAssembler implements IApplicationAssembler
 
 	public function buildEverything() : Void
 	{
-		var builderFactories : Array<BuilderFactory> = this._mBuilderFactories.getValues();
-		var len : Int = builderFactories.length;
-		var i : Int;
+		var builderFactories 	: Array<BuilderFactory> = this._mBuilderFactories.getValues();
+		var len 				: Int 					= builderFactories.length;
+		var i 					: Int;
 
 		//for ( i in 0...len ) ApplicationAssembler._buildDisplayList( builderFactories[ i ] );
 		for ( i in 0...len ) ApplicationAssembler._buildAllObjects( builderFactories[ i ] );
