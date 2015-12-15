@@ -17,9 +17,4 @@ class DomainListenerVO
 		this.listenedDomainName 	= listenedDomainName;
 		this.arguments 				= arguments;
 	}
-
-	public function toString() : String
-	{
-		return this + "(" + "ownerID:" + ownerID + ", " + "listenedDomainName:" + listenedDomainName + ", " + "arguments:[" + arguments + "])";
-	}
 }

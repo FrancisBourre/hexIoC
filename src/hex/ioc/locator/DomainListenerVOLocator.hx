@@ -3,6 +3,8 @@ package hex.ioc.locator;
 import hex.collection.Locator;
 import hex.collection.LocatorEvent;
 import hex.domain.Domain;
+import hex.domain.DomainExpert;
+import hex.domain.DomainUtil;
 import hex.event.EventProxy;
 import hex.event.IAdapterStrategy;
 import hex.event.CallbackAdapter;
@@ -69,7 +71,8 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO, LocatorE
 
 					if ( service == null )
 					{
-						this._builderFactory.getApplicationHub().addEventListener( noteType, callback, new Domain( domainListener.listenedDomainName ) );
+						var domain : Domain = DomainUtil.getDomain( domainListener.listenedDomainName, Domain );
+						this._builderFactory.getApplicationHub().addEventListener( noteType, callback, domain );
 					}
 					else
 					{
@@ -82,7 +85,8 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO, LocatorE
 
 		} else
 		{
-			return this._builderFactory.getApplicationHub().addListener( listener, new Domain( domainListener.listenedDomainName ) );
+			var domain : Domain = DomainUtil.getDomain( domainListener.listenedDomainName, Domain );
+			return this._builderFactory.getApplicationHub().addListener( listener, domain );
 		}
 	}
 

@@ -1,4 +1,5 @@
 package hex.ioc.parser.xml;
+import hex.error.IllegalArgumentException;
 import hex.error.NullPointerException;
 import hex.error.PrivateConstructorException;
 import hex.ioc.assembler.ApplicationContext;
@@ -20,8 +21,15 @@ class AbstractXMLParser extends AbstractParserCommand
 	{
 		if ( data != null )
 		{
-			this._contextData 			= Xml.parse( data );
-			this._applicationContext 	= applicationContext;
+			if ( Std.is( data, Xml ) )
+			{
+				this._contextData 			= data;
+				this._applicationContext 	= applicationContext;
+			}
+			else
+			{
+				throw new IllegalArgumentException( this + ".setContext() failed. Data should be an instance of Xml." );
+			}
 		}
 		else
 		{
