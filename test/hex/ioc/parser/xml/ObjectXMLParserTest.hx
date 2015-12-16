@@ -1,5 +1,6 @@
 package hex.ioc.parser.xml;
 
+import hex.collection.HashMap;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.assembler.IApplicationAssembler;
@@ -57,7 +58,18 @@ class ObjectXMLParserTest
 	@test( "test bulding anonymous object" )
 	public function testBuildingAnonymousObject() : Void
 	{
-		var source : String = '<root><test id="obj" type="Object"><property name="name" value="Francis"/><property name="age" type="Int" value="44"/><property name="height" type="Float" value="1.75"/><property name="isWorking" type="Bool" value="true"/><property name="isSleeping" type="Bool" value="false"/></test></root>';
+		var source : String = '
+		<root>
+			<test id="obj" type="Object">
+				<property name="name" value="Francis"/>
+				<property name="age" type="Int" value="44"/>
+				<property name="height" type="Float" value="1.75"/>
+				<property name="isWorking" type="Bool" value="true"/>
+				<property name="isSleeping" type="Bool" value="false"/>
+			</test>
+		</root>';
+		
+		
 		var xml : Xml = Xml.parse( source );
 		this._build( xml );
 
@@ -74,7 +86,14 @@ class ObjectXMLParserTest
 	@test( "test building simple instance with arguments" )
 	public function testBuildingSimpleInstanceWithArguments() : Void
 	{
-		var source : String = '<root><bean id="size" type="hex.structures.Size"><argument type="Int" value="10"/><argument type="Int" value="20"/></bean></root>';
+		var source : String = '
+		<root>
+			<bean id="size" type="hex.structures.Size">
+				<argument type="Int" value="10"/>
+				<argument type="Int" value="20"/>
+			</bean>
+		</root>';
+			
 		var xml : Xml = Xml.parse( source );
 		this._build( xml );
 
@@ -87,7 +106,25 @@ class ObjectXMLParserTest
 	@test( "test building multiple instances with references" )
 	public function testBuildingMultipleInstancesWithReferences() : Void
 	{
-		var source : String = '<root><rectangle id="rect" type="hex.ioc.parser.xml.mock.MockRectangle"><argument ref="rectPosition.x"/><argument ref="rectPosition.y"/><property name="size" ref="rectSize" /></rectangle><size id="rectSize" type="hex.structures.Point"><argument type="Int" value="30"/><argument type="Int" value="40"/></size><position id="rectPosition" type="hex.structures.Point"><property type="Int" name="x" value="10"/><property type="Int" name="y" value="20"/></position></root>';
+		var source : String = '
+		<root>
+			<rectangle id="rect" type="hex.ioc.parser.xml.mock.MockRectangle">
+				<argument ref="rectPosition.x"/>
+				<argument ref="rectPosition.y"/>
+				<property name="size" ref="rectSize" />
+			</rectangle>
+			
+			<size id="rectSize" type="hex.structures.Point">
+				<argument type="Int" value="30"/>
+				<argument type="Int" value="40"/>
+			</size>
+			
+			<position id="rectPosition" type="hex.structures.Point">
+				<property type="Int" name="x" value="10"/>
+				<property type="Int" name="y" value="20"/>
+			</position>
+		</root>';
+		
 		var xml : Xml = Xml.parse( source );
 		this._build( xml );
 
@@ -233,17 +270,18 @@ class ObjectXMLParserTest
 	@test( "test building XML with parser class" )
 	public function testBuildingXMLWithParserClass() : Void
 	{
-		var source : String = '<root>
+		var source : String = '
+		<root>
 
-					<data id="fruits" type="XML" parser-class="hex.ioc.parser.xml.mock.MockXMLParser">
-						<root>
-							<node>orange</node>
-							<node>apple</node>
-							<node>banana</node>
-						</root>
-					</data>
+			<data id="fruits" type="XML" parser-class="hex.ioc.parser.xml.mock.MockXMLParser">
+				<root>
+					<node>orange</node>
+					<node>apple</node>
+					<node>banana</node>
+				</root>
+			</data>
 
-				</root>';
+		</root>';
 
 		var xml : Xml = Xml.parse( source );
 		this._build( xml );
@@ -254,6 +292,77 @@ class ObjectXMLParserTest
 		var orange : MockFruitVO = fruits[0];
 		var apple : MockFruitVO = fruits[1];
 		var banana : MockFruitVO = fruits[2];
+
+		Assert.equals( "orange", orange.toString(), "" );
+		Assert.equals( "apple", apple.toString(), "" );
+		Assert.equals( "banana", banana.toString(), "" );
+	}
+	
+	@test( "test Array ref" )
+	public function testArrayRef() : Void
+	{
+		var source : String = '
+		<root>
+
+			<collection id="fruits" type="Array">
+				<argument ref="fruit0" />
+				<argument ref="fruit1" />
+				<argument ref="fruit2" />
+			</collection>
+
+			<fruit id="fruit0" type="hex.ioc.parser.xml.mock.MockFruitVO"><argument value="orange"/></fruit>
+			<fruit id="fruit1" type="hex.ioc.parser.xml.mock.MockFruitVO"><argument value="apple"/></fruit>
+			<fruit id="fruit2" type="hex.ioc.parser.xml.mock.MockFruitVO"><argument value="banana"/></fruit>
+
+		</root>';
+
+		var xml : Xml = Xml.parse( source );
+		this._build( xml );
+
+		var fruits : Array<MockFruitVO> = this._builderFactory.getCoreFactory().locate( "fruits" );
+		Assert.equals( 3, fruits.length, "" );
+
+		var orange 	: MockFruitVO = fruits[0];
+		var apple 	: MockFruitVO = fruits[1];
+		var banana 	: MockFruitVO = fruits[2];
+
+		Assert.equals( "orange", orange.toString(), "" );
+		Assert.equals( "apple", apple.toString(), "" );
+		Assert.equals( "banana", banana.toString(), "" );
+	}
+	
+	@test( "test Map ref" )
+	public function testMapRef() : Void
+	{
+		var source : String = '
+		<root>
+
+			<collection id="fruits" type="hex.core.HashMap">
+				<item> <key value="0"/> <value ref="fruit0"/></item>
+				<item> <key type="Int" value="1"/> <value ref="fruit1"/></item>
+				<item> <key ref="stubKey"/> <value ref="fruit2"/></item>
+			</collection>
+
+			<fruit id="fruit0" type="hex.ioc.parser.xml.mock.MockFruitVO"><argument value="orange"/></fruit>
+			<fruit id="fruit1" type="hex.ioc.parser.xml.mock.MockFruitVO"><argument value="apple"/></fruit>
+			<fruit id="fruit2" type="hex.ioc.parser.xml.mock.MockFruitVO"><argument value="banana"/></fruit>
+
+			<point id="stubKey" type="hex.structures.Point"/>
+
+		</root>';
+
+		var xml : Xml = Xml.parse( source );
+		this._build( xml );
+
+		var fruits : HashMap<Dynamic, MockFruitVO> = this._builderFactory.getCoreFactory().locate( "fruits" );
+		Assert.isNotNull( fruits, "" );
+
+		var stubKey : Point = this._builderFactory.getCoreFactory().locate( "stubKey" );
+		Assert.isNotNull( stubKey, "" );
+
+		var orange 	: MockFruitVO = fruits.get( '0' );
+		var apple 	: MockFruitVO = fruits.get( 1 );
+		var banana 	: MockFruitVO = fruits.get( stubKey );
 
 		Assert.equals( "orange", orange.toString(), "" );
 		Assert.equals( "apple", apple.toString(), "" );
