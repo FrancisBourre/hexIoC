@@ -54,7 +54,7 @@ class ObjectXMLParser extends AbstractXMLParser
 		if ( type == ContextTypeList.XML )
 		{
 			args = [];
-			args.push( { ownerID:identifier, value:xml.firstElement() } );
+			args.push( { ownerID:identifier, value:xml.firstElement().toString() } );
 			factory = XMLAttributeUtil.getParserClass( xml );
 			this.getApplicationAssembler().buildObject( applicationContext, identifier, type, args, factory );
 		}

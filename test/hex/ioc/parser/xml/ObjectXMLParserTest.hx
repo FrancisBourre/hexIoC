@@ -4,7 +4,9 @@ import hex.domain.ApplicationDomainDispatcher;
 import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.assembler.MockApplicationContextFactory;
+import hex.ioc.parser.xml.mock.MockFruitVO;
 import hex.ioc.parser.xml.mock.MockRectangle;
+import hex.ioc.parser.xml.mock.MockServiceProvider;
 import hex.ioc.vo.DomainListenerVOArguments;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.PropertyVO;
@@ -13,6 +15,10 @@ import hex.ioc.core.BuilderFactory;
 import hex.structures.Point;
 import hex.structures.Size;
 import hex.unittest.assertion.Assert;
+
+import hex.ioc.parser.xml.mock.MockRectangleFactory;
+import hex.ioc.parser.xml.mock.MockPointFactory;
+import hex.ioc.parser.xml.mock.MockXMLParser;
 
 /**
  * ...
@@ -78,7 +84,7 @@ class ObjectXMLParserTest
 		Assert.equals( 20, size.height, "" );
 	}
 	
-	@test( "" )
+	@test( "test building multiple instances with references" )
 	public function testBuildingMultipleInstancesWithReferences() : Void
 	{
 		var source : String = '<root><rectangle id="rect" type="hex.ioc.parser.xml.mock.MockRectangle"><argument ref="rectPosition.x"/><argument ref="rectPosition.y"/><property name="size" ref="rectSize" /></rectangle><size id="rectSize" type="hex.structures.Point"><argument type="Int" value="30"/><argument type="Int" value="40"/></size><position id="rectPosition" type="hex.structures.Point"><property type="Int" name="x" value="10"/><property type="Int" name="y" value="20"/></position></root>';
@@ -104,10 +110,33 @@ class ObjectXMLParserTest
 		Assert.equals( 40, rect.size.y, "" );
 	}
 	
-	@test( "" )
+	@test( "test building multiple instances with method calls" )
 	public function testBuildingMultipleInstancesWithMethodCall() : Void
 	{
-		var source : String = '<root><rectangle id="rect" type="hex.ioc.parser.xml.mock.MockRectangle"><property name="size" ref="rectSize" /><method-call name="offsetPoint"><argument ref="rectPosition"/></method-call></rectangle><size id="rectSize" type="hex.structures.Point"><argument type="Int" value="30"/><argument type="Int" value="40"/></size><position id="rectPosition" type="hex.structures.Point"><property type="Int" name="x" value="10"/><property type="Int" name="y" value="20"/></position><rectangle id="anotherRect" type="hex.ioc.parser.xml.mock.MockRectangle"><property name="size" ref="rectSize" /><method-call name="reset"/></rectangle></root>';
+		var source : String = '
+		<root>
+			<rectangle id="rect" type="hex.ioc.parser.xml.mock.MockRectangle">
+				<property name="size" ref="rectSize" />
+				<method-call name="offsetPoint">
+					<argument ref="rectPosition"/>
+				</method-call></rectangle>
+			
+			<size id="rectSize" type="hex.structures.Point">
+				<argument type="Int" value="30"/>
+				<argument type="Int" value="40"/>
+			</size>
+			
+			<position id="rectPosition" type="hex.structures.Point">
+				<property type="Int" name="x" value="10"/>
+				<property type="Int" name="y" value="20"/>
+			</position>
+			
+			<rectangle id="anotherRect" type="hex.ioc.parser.xml.mock.MockRectangle">
+				<property name="size" ref="rectSize" />
+				<method-call name="reset"/>
+			</rectangle>
+		</root>';
+		
 		var xml : Xml = Xml.parse( source );
 		this._build( xml );
 
@@ -135,5 +164,99 @@ class ObjectXMLParserTest
 		Assert.equals( 0, anotherRect.y, "" );
 		Assert.equals( 0, anotherRect.width, "" );
 		Assert.equals( 0, anotherRect.height, "" );
+	}
+	
+	@test( "test building singleton instance" )
+	public function testBuildingSingletonInstance() : Void
+	{
+		var source : String = '
+		<root>
+			<gateway id="gateway" value="http://localhost/amfphp/gateway.php"/>
+			<service id="service" type="hex.ioc.parser.xml.mock.MockServiceProvider" singleton-access="getInstance">
+				<method-call name="setGateway">
+					<argument ref="gateway" />
+				</method-call>
+			</service>
+		</root>';
+		
+		var xml : Xml = Xml.parse( source );
+		this._build( xml );
+
+		var service : MockServiceProvider = this._builderFactory.getCoreFactory().locate( "service" );
+		Assert.isInstanceOf( service, MockServiceProvider, "" );
+		Assert.equals( "http://localhost/amfphp/gateway.php", MockServiceProvider.getInstance().getGateway(), "" );
+	}
+	
+	@test( "test factory with static method" )
+	public function testFactoryWithStaticMethod() : Void
+	{
+		var source : String = '
+		<root>
+			<rectangle id="rect" type="hex.ioc.parser.xml.mock.MockRectangleFactory" factory="getRectangle">
+				<argument type="Int" value="10"/><argument type="Int" value="20"/>
+				<argument type="Int" value="30"/><argument type="Int" value="40"/>
+			</rectangle>
+		</root>';
+		
+		var xml : Xml = Xml.parse( source );
+		this._build( xml );
+
+		var rect : MockRectangle = this._builderFactory.getCoreFactory().locate( "rect" );
+		Assert.isInstanceOf( rect, MockRectangle, "" );
+		Assert.equals( 10, rect.x, "" );
+		Assert.equals( 20, rect.y, "" );
+		Assert.equals( 30, rect.width, "" );
+		Assert.equals( 40, rect.height, "" );
+	}
+	
+	@test( "test factory with singleton" )
+	public function testFactoryWithSingleton() : Void
+	{
+		var source : String = '
+		
+		<root>
+			<point id="point" type="hex.ioc.parser.xml.mock.MockPointFactory" singleton-access="getInstance" factory="getPoint">
+				<argument type="Int" value="10"/>
+				<argument type="Int" value="20"/>
+			</point>
+		</root>';
+		
+		var xml : Xml = Xml.parse( source );
+		this._build( xml );
+
+		var point : Point = this._builderFactory.getCoreFactory().locate( "point" );
+		Assert.isInstanceOf( point, Point, "" );
+		Assert.equals( 10, point.x, "" );
+		Assert.equals( 20, point.y, "" );
+	}
+	
+	@test( "test building XML with parser class" )
+	public function testBuildingXMLWithParserClass() : Void
+	{
+		var source : String = '<root>
+
+					<data id="fruits" type="XML" parser-class="hex.ioc.parser.xml.mock.MockXMLParser">
+						<root>
+							<node>orange</node>
+							<node>apple</node>
+							<node>banana</node>
+						</root>
+					</data>
+
+				</root>';
+
+		var xml : Xml = Xml.parse( source );
+		this._build( xml );
+
+		var fruits : Array<MockFruitVO> = this._builderFactory.getCoreFactory().locate( "fruits" );
+		Assert.equals( 3, fruits.length, "" );
+
+		var orange : MockFruitVO = fruits[0];
+		var apple : MockFruitVO = fruits[1];
+		var banana : MockFruitVO = fruits[2];
+
+		Assert.equals( "orange", orange.toString(), "" );
+		Assert.equals( "apple", apple.toString(), "" );
+		Assert.equals( "banana", banana.toString(), "" );
 	}
 }

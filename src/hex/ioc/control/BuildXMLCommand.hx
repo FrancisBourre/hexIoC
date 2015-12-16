@@ -43,15 +43,19 @@ class BuildXMLCommand extends AbstractBuildCommand
 			}
 			else
 			{
-
+				#if debug
 				trace( this + ".execute() returns an empty XML." );
+				#end
+				
 				constructorVO.result = Xml.parse( "" );
 			}
 		}
 		else
 		{
-
+			#if debug
 			trace( this + ".execute() returns an empty XML." );
+			#end
+			
 			constructorVO.result = Xml.parse( "" );
 		}
 	}
