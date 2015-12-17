@@ -8,9 +8,11 @@ import hex.domain.DomainUtil;
 import hex.event.EventProxy;
 import hex.event.IAdapterStrategy;
 import hex.event.CallbackAdapter;
+import hex.event.IEvent;
 import hex.ioc.core.BuilderFactory;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.DomainListenerVOArguments;
+import hex.log.Stringifier;
 import hex.module.IModule;
 import hex.service.IService;
 import hex.service.Service;
@@ -64,15 +66,20 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO, LocatorE
 				var method : String = Std.is( listener, EventProxy ) ? "handleEvent" : domainListenerArgument.method;
 				var noteType : String = domainListenerArgument.name != null ? domainListenerArgument.name : this._builderFactory.getCoreFactory().getStaticReference( domainListenerArgument.staticRef );
 
-				//if ( method != null && listener.hasOwnProperty( method ) && listener[ method ] is Function )
-				if ( method != null && Reflect.hasField( listener, method ) &&  Reflect.isFunction( Reflect.field( listener, method ) ) )
+				if ( method != null && Reflect.isFunction( Reflect.field( listener, method ) ) )
 				{
 					var callback : Dynamic = domainListenerArgument.strategy != null ? this.getStrategyCallback( listener, method, domainListenerArgument.strategy, domainListenerArgument.injectedInModule ) : Reflect.field( listener, method );
 
 					if ( service == null )
 					{
 						var domain : Domain = DomainUtil.getDomain( domainListener.listenedDomainName, Domain );
-						this._builderFactory.getApplicationHub().addEventListener( noteType, callback, domain );
+						this._builderFactory.getApplicationHub().addEventListener( 	noteType, 
+																					function ( e : IEvent ) : Void
+																					{
+																						trace( "!!function:", e );
+																						Reflect.callMethod( listener, callback, [e] );
+																					}, 
+																					domain );
 					}
 					else
 					{

@@ -1,13 +1,17 @@
 package hex.ioc.parser.xml;
 
 import hex.collection.HashMap;
+import hex.control.payload.ExecutionPayload;
+import hex.control.payload.PayloadEvent;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.assembler.MockApplicationContextFactory;
+import hex.ioc.parser.xml.mock.MockChatModule;
 import hex.ioc.parser.xml.mock.MockFruitVO;
 import hex.ioc.parser.xml.mock.MockRectangle;
 import hex.ioc.parser.xml.mock.MockServiceProvider;
+import hex.ioc.parser.xml.mock.MockTranslationModule;
 import hex.ioc.vo.DomainListenerVOArguments;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.PropertyVO;
@@ -367,5 +371,38 @@ class ObjectXMLParserTest
 		Assert.equals( "orange", orange.toString(), "" );
 		Assert.equals( "apple", apple.toString(), "" );
 		Assert.equals( "banana", banana.toString(), "" );
+	}
+	
+	@test( "test domain listening" )
+	public function testDomainListening() : Void
+	{
+		var source : String = '
+		<root>
+
+			<chat id="chat" type="hex.ioc.parser.xml.mock.MockChatModule">
+				<listen ref="translation"/>
+			</chat>
+
+			<translation id="translation" type="hex.ioc.parser.xml.mock.MockTranslationModule">
+				<listen ref="chat">
+					<event name="onTextInput" method="onSomethingToTranslate"/>
+				</listen>
+			</translation>
+
+		</root>';
+
+		var xml : Xml = Xml.parse( source );
+		this._build( xml );
+
+		var chat : MockChatModule = this._builderFactory.getCoreFactory().locate( "chat" );
+		Assert.isNotNull( chat, "" );
+		Assert.isNull( chat.translatedMessage, "" );
+
+		var translation : MockTranslationModule = this._builderFactory.getCoreFactory().locate( "translation" );
+		Assert.isNotNull( translation, "" );
+
+		chat.dispatchDomainEvent( new PayloadEvent( "onTextInput", chat, [ new ExecutionPayload( "Bonjour", String ) ] ) );
+		Assert.equals( "Hello", chat.translatedMessage, "" );
+
 	}
 }
