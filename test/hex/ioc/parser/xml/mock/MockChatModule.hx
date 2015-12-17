@@ -1,4 +1,6 @@
 package hex.ioc.parser.xml.mock;
+
+import hex.control.payload.ExecutionPayload;
 import hex.control.payload.PayloadEvent;
 
 /**
@@ -7,6 +9,8 @@ import hex.control.payload.PayloadEvent;
  */
 class MockChatModule extends MockModule
 {
+	static public inline var TEXT_INPUT : String = "onTextInput";
+	
 	public function new() 
 	{
 		super();
@@ -17,12 +21,12 @@ class MockChatModule extends MockModule
 
 	public function onTranslation( event : PayloadEvent ) : Void
 	{
-		this.translatedMessage = event.getExecutionPayloads()[0].getData();
+		var payloads : Array<ExecutionPayload> 	= event.getExecutionPayloads();
+		this.translatedMessage 					= payloads[0].getData();
+		
+		if ( payloads.length > 1 )
+		{trace( payloads[1].getData() );
+			this.date = payloads[1].getData();
+		}
 	}
-
-	/*public function onAnotherTranslation( event : PayloadEvent ) : Void
-	{
-		this.translatedMessage = event.getExecutionPayloads()[0].getData();
-		this.date = event.getExecutionPayloads()[1].getData();
-	}*/
 }

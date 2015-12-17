@@ -2,9 +2,12 @@ package hex.ioc.locator;
 
 import hex.collection.Locator;
 import hex.collection.LocatorEvent;
+import hex.di.IBasicInjector;
 import hex.domain.Domain;
 import hex.domain.DomainExpert;
 import hex.domain.DomainUtil;
+import hex.error.IllegalArgumentException;
+import hex.event.ClassAdapter;
 import hex.event.EventProxy;
 import hex.event.IAdapterStrategy;
 import hex.event.CallbackAdapter;
@@ -76,7 +79,6 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO, LocatorE
 						this._builderFactory.getApplicationHub().addEventListener( 	noteType, 
 																					function ( e : IEvent ) : Void
 																					{
-																						trace( "!!function:", e );
 																						Reflect.callMethod( listener, callback, [e] );
 																					}, 
 																					domain );
@@ -85,6 +87,10 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO, LocatorE
 					{
 						service.addHandler( noteType, callback );
 					}
+				}
+				else
+				{
+					throw new IllegalArgumentException( this + ".assignDomainListener failed. Method '" + method + "' not found on:" + listener );
 				}
 			}
 
@@ -99,15 +105,28 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO, LocatorE
 
 	private function getStrategyCallback( listener : Dynamic, method : String, strategyClassName : String, injectedInModule : Bool = false ) : Dynamic
 	{
-		/*var callback : Dynamic 								= Reflect.field( listener, method );
-		var strategyClass : Class<IEventAdapterStrategy> 	= cast this._builderFactory.getCoreFactory().getClassReference( strategyClassName );
-		var adapter : CallbackAdapter 							= new CallbackAdapter ( 	callback, strategyClass,
-																( ( injectedInModule && Std.is( listener, IModule ) ) ? 
-																( cast listener ).instantiateUnmapped  :  
-																this._builderFactory.getApplicationContext().getInjector().instantiateUnmapped )
-															);
-		return adapter.getCallbackAdapter();*/
-		return null;
+		var callback : Dynamic 							= Reflect.field( listener, method );
+		var strategyClass : Class<IAdapterStrategy> 	= cast this._builderFactory.getCoreFactory().getClassReference( strategyClassName );
+		
+		
+		var adapter : ClassAdapter = new ClassAdapter();
+		adapter.setCallBackMethod( listener, callback );
+		adapter.setAdapterClass( strategyClass );
+		
+		if ( injectedInModule && Std.is( listener, IModule ) )
+		{
+			var basicInjector : IBasicInjector = listener.getDependencyInjector();
+			adapter.setFactoryMethod( basicInjector, basicInjector.instantiateUnmapped );
+		}
+		else 
+		{
+			adapter.setFactoryMethod( this._builderFactory.getApplicationContext().getInjector(), this._builderFactory.getApplicationContext().getInjector().instantiateUnmapped );
+		}
+		
+		return function ( e : IEvent ) : Void
+		{
+			( adapter.getCallbackAdapter() )( [ e ] );
+		}
 	}
 	
 	override function _dispatchRegisterEvent( key : String, element : DomainListenerVO ) : Void 

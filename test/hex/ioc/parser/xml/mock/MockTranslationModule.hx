@@ -3,6 +3,7 @@ package hex.ioc.parser.xml.mock;
 import hex.collection.HashMap;
 import hex.control.payload.ExecutionPayload;
 import hex.control.payload.PayloadEvent;
+import hex.inject.dependencyproviders.FallbackDependencyProvider;
 
 /**
  * ...
@@ -20,13 +21,21 @@ class MockTranslationModule extends MockModule
 	
 	public function onSomethingToTranslate( event : PayloadEvent ) : Void
 	{
-		var textToTranslate : String = event.getExecutionPayloads()[0].getData();
+		var payloads : Array<ExecutionPayload> = event.getExecutionPayloads();
+		var textToTranslate : String = payloads[0].getData();
 		var translation : String = this._map.get( textToTranslate );
-		this.dispatchDomainEvent( new PayloadEvent( "onTranslation", this, [new ExecutionPayload( translation, String )] ) );
+		
+		payloads[0] = new ExecutionPayload( translation, String );
+		this.dispatchDomainEvent( new PayloadEvent( "onTranslation", this, payloads ) );
 	}
-
-	/*public function onAnotherTextInput( text : String, date : Date ) : Void
+	
+	public function onTranslateWithTime( textToTranslate : String, date : Date ) : Void
 	{
-		this.dispatchDomainEvent( new PayloadEvent( "onTranslation", this, [new ExecutionPayload( "hello", String ), new ExecutionPayload( date, Date )] ) );
-	}*/
+		var payloads : Array<ExecutionPayload> = [];
+		payloads.push( new ExecutionPayload( this._map.get( textToTranslate ), String ) );
+		payloads.push( new ExecutionPayload( date, Date ) );
+		
+		this.dispatchDomainEvent( new PayloadEvent( "onTranslation", this, payloads ) );
+	}
+	
 }

@@ -24,6 +24,7 @@ import hex.unittest.assertion.Assert;
 import hex.ioc.parser.xml.mock.MockRectangleFactory;
 import hex.ioc.parser.xml.mock.MockPointFactory;
 import hex.ioc.parser.xml.mock.MockXMLParser;
+import hex.ioc.parser.xml.mock.MockChatAdapterStrategy;
 
 /**
  * ...
@@ -403,6 +404,38 @@ class ObjectXMLParserTest
 
 		chat.dispatchDomainEvent( new PayloadEvent( "onTextInput", chat, [ new ExecutionPayload( "Bonjour", String ) ] ) );
 		Assert.equals( "Hello", chat.translatedMessage, "" );
+	}
+	
+	@test( "test domain listening with classAdapter" )
+	public function testDomainListeningWithEventAdapter() : Void
+	{
+		var source : String = '
+		<root>
 
+			<chat id="chat" type="hex.ioc.parser.xml.mock.MockChatModule">
+				<listen ref="translation"/>
+			</chat>
+
+			<translation id="translation" type="hex.ioc.parser.xml.mock.MockTranslationModule">
+				<listen ref="chat">
+					<event static-ref="hex.ioc.parser.xml.mock.MockChatModule.TEXT_INPUT" method="onTranslateWithTime" strategy="hex.ioc.parser.xml.mock.MockChatAdapterStrategy"/>
+				</listen>
+			</translation>
+
+		</root>';
+
+		var xml : Xml = Xml.parse( source );
+		this._build( xml );
+
+		var chat : MockChatModule = this._builderFactory.getCoreFactory().locate( "chat" );
+		Assert.isNotNull( chat, "" );
+		Assert.isNull( chat.translatedMessage, "" );
+
+		var translation : MockTranslationModule = this._builderFactory.getCoreFactory().locate( "translation" );
+		Assert.isNotNull( translation, "" );
+
+		chat.dispatchDomainEvent( new PayloadEvent( "onTextInput", chat, [ new ExecutionPayload( "Bonjour", String ) ] ) );
+		Assert.equals( "Hello", chat.translatedMessage, "" );
+		Assert.isInstanceOf( chat.date, Date, "" );
 	}
 }
