@@ -9,7 +9,10 @@ import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.assembler.MockApplicationContextFactory;
 import hex.ioc.parser.xml.mock.MockChatModule;
 import hex.ioc.parser.xml.mock.MockFruitVO;
+import hex.ioc.parser.xml.mock.MockMessageParserModule;
+import hex.ioc.parser.xml.mock.MockReceiverModule;
 import hex.ioc.parser.xml.mock.MockRectangle;
+import hex.ioc.parser.xml.mock.MockSenderModule;
 import hex.ioc.parser.xml.mock.MockServiceProvider;
 import hex.ioc.parser.xml.mock.MockTranslationModule;
 import hex.ioc.vo.DomainListenerVOArguments;
@@ -25,6 +28,7 @@ import hex.ioc.parser.xml.mock.MockRectangleFactory;
 import hex.ioc.parser.xml.mock.MockPointFactory;
 import hex.ioc.parser.xml.mock.MockXMLParser;
 import hex.ioc.parser.xml.mock.MockChatAdapterStrategy;
+import hex.ioc.parser.xml.mock.MockChatEventAdapterStrategyWithInjection;
 
 /**
  * ...
@@ -434,8 +438,70 @@ class ObjectXMLParserTest
 		var translation : MockTranslationModule = this._builderFactory.getCoreFactory().locate( "translation" );
 		Assert.isNotNull( translation, "" );
 
-		chat.dispatchDomainEvent( new PayloadEvent( "onTextInput", chat, [ new ExecutionPayload( "Bonjour", String ) ] ) );
+		chat.dispatchDomainEvent( new PayloadEvent( MockChatModule.TEXT_INPUT, chat, [ new ExecutionPayload( "Bonjour", String ) ] ) );
 		Assert.equals( "Hello", chat.translatedMessage, "" );
 		Assert.isInstanceOf( chat.date, Date, "" );
+	}
+	
+	@test( "test domain listening with classAdapter and injection" )
+	public function testDomainListeningWithClassAdapterAndInjection() : Void
+	{
+		var source : String = '
+		<root>
+
+			<chat id="chat" type="hex.ioc.parser.xml.mock.MockChatModule"/>
+
+			<receiver id="receiver" type="hex.ioc.parser.xml.mock.MockReceiverModule">
+				<listen ref="chat">
+					<event static-ref="hex.ioc.parser.xml.mock.MockChatModule.TEXT_INPUT" method="onMessage" strategy="hex.ioc.parser.xml.mock.MockChatEventAdapterStrategyWithInjection"/>
+				</listen>
+			</receiver>
+
+			<parser id="parser" type="hex.ioc.parser.xml.mock.MockMessageParserModule" map-type="hex.ioc.parser.xml.mock.IMockMessageParserModule"/>
+
+		</root>';
+
+		var xml : Xml = Xml.parse( source );
+		this._build( xml );
+
+		var chat : MockChatModule = this._builderFactory.getCoreFactory().locate( "chat" );
+		Assert.isNotNull( chat, "" );
+
+		var receiver : MockReceiverModule = this._builderFactory.getCoreFactory().locate( "receiver" );
+		Assert.isNotNull( receiver, "" );
+
+		var parser : MockMessageParserModule = this._builderFactory.getCoreFactory().locate( "parser" );
+		Assert.isNotNull( parser, "" );
+
+		chat.dispatchDomainEvent( new PayloadEvent( MockChatModule.TEXT_INPUT, chat, [ new ExecutionPayload( "Bonjour", String ) ] ) );
+		Assert.equals( "BONJOUR", receiver.message, "" );
+	}
+	
+	@test( "test domain dispatch after module initialisation" )
+	public function testDomainDispatchAfterModuleInitialisation() : Void
+	{
+		var source : String = '
+		<root>
+
+			<sender id="sender" type="hex.ioc.parser.xml.mock.MockSenderModule"/>
+
+			<receiver id="receiver" type="hex.ioc.parser.xml.mock.MockReceiverModule">
+				<listen ref="sender">
+					<event static-ref="hex.ioc.parser.xml.mock.MockChatModule.TEXT_INPUT" method="onMessageEvent"/>
+				</listen>
+			</receiver>
+
+		</root>';
+
+		var xml : Xml = Xml.parse( source );
+		this._build( xml );
+
+		var sender : MockSenderModule = this._builderFactory.getCoreFactory().locate( "sender" );
+		Assert.isNotNull( sender, "" );
+
+		var receiver : MockReceiverModule = this._builderFactory.getCoreFactory().locate( "receiver" );
+		Assert.isNotNull( receiver, "" );
+
+		Assert.equals( "hello receiver", receiver.message, "" );
 	}
 }
