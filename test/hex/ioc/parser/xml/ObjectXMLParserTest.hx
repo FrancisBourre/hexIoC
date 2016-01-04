@@ -1,15 +1,25 @@
 package hex.ioc.parser.xml;
 
 import hex.collection.HashMap;
+import hex.config.stateful.ServiceLocator;
 import hex.control.payload.ExecutionPayload;
 import hex.control.payload.PayloadEvent;
+import hex.di.IBasicInjector;
+import hex.di.IDependencyInjector;
 import hex.domain.ApplicationDomainDispatcher;
+import hex.event.EventDispatcher;
+import hex.inject.Injector;
 import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.assembler.MockApplicationContextFactory;
+import hex.ioc.parser.xml.mock.IMockAmazonService;
+import hex.ioc.parser.xml.mock.IMockFacebookService;
+import hex.ioc.parser.xml.mock.MockAmazonService;
 import hex.ioc.parser.xml.mock.MockChatModule;
+import hex.ioc.parser.xml.mock.MockFacebookService;
 import hex.ioc.parser.xml.mock.MockFruitVO;
 import hex.ioc.parser.xml.mock.MockMessageParserModule;
+import hex.ioc.parser.xml.mock.MockObjectWithRegtangleProperty;
 import hex.ioc.parser.xml.mock.MockReceiverModule;
 import hex.ioc.parser.xml.mock.MockRectangle;
 import hex.ioc.parser.xml.mock.MockSenderModule;
@@ -503,5 +513,174 @@ class ObjectXMLParserTest
 		Assert.isNotNull( receiver, "" );
 
 		Assert.equals( "hello receiver", receiver.message, "" );
+	}
+	
+	@ignore( "test building different applicationContext" )
+	public function testBuildingDifferentApplicationContext() : Void
+	{
+		var parentSource : String = '
+		<root>
+
+			<bean id="rect0" type="hex.ioc.parser.xml.mock.MockRectangle">
+				<argument type="Int" value="10"/>
+				<argument type="Int" value="20"/>
+				<argument type="Int" value="30"/>
+				<argument ref="applicationContextChild.applicationContextSubChild.rect0.height"/>
+			</bean>
+
+		</root>';
+
+		var childSource : String = '
+		<root>
+
+			<bean id="rect0" type="hex.ioc.parser.xml.mock.MockRectangle">
+				<argument type="Int" value="40"/>
+				<argument type="Int" value="50"/>
+				<argument type="Int" value="60"/>
+				<argument type="Int" value="70"/>
+			</bean>
+
+		</root>';
+
+		var subChildSource : String = '
+		<root>
+
+			<bean id="rect0" type="hex.ioc.parser.xml.mock.MockRectangle">
+				<argument type="Int" value="80"/>
+				<argument type="Int" value="90"/>
+				<argument type="Int" value="100"/>
+				<argument type="Int" value="110"/>
+			</bean>
+
+		</root>';
+
+		var applicationContextParent : ApplicationContext	= this._applicationAssembler.getApplicationContext( "applicationContextParent" );
+		var applicationContextChild 	= this._applicationAssembler.getApplicationContext( "applicationContextChild" );
+		var applicationContextSubChild 	= this._applicationAssembler.getApplicationContext( "applicationContextSubChild" );
+
+		applicationContextParent.addChild( applicationContextChild );
+		applicationContextChild.addChild( applicationContextSubChild );
+
+		this._build( Xml.parse( subChildSource ), applicationContextSubChild );
+		this._build( Xml.parse( childSource ), applicationContextChild );
+		this._build( Xml.parse( parentSource ), applicationContextParent );
+
+		var builderFactory : BuilderFactory;
+
+		builderFactory = this._applicationAssembler.getBuilderFactory( applicationContextParent );
+		var parentRectangle  : MockRectangle = builderFactory.getCoreFactory().locate( "rect0" );
+		Assert.isInstanceOf( parentRectangle, MockRectangle, "" );
+		Assert.equals( 10, parentRectangle.x, "" );
+		Assert.equals( 20, parentRectangle.y, "" );
+		Assert.equals( 30, parentRectangle.width, "" );
+		Assert.equals( 110, parentRectangle.height, "" );
+
+		builderFactory = this._applicationAssembler.getBuilderFactory( applicationContextChild );
+		var childRectangle : MockRectangle = builderFactory.getCoreFactory().locate( "rect0" );
+		Assert.isInstanceOf( childRectangle, MockRectangle, "" );
+		Assert.equals( 40, childRectangle.x, "" );
+		Assert.equals( 50, childRectangle.y, "" );
+		Assert.equals( 60, childRectangle.width, "" );
+		Assert.equals( 70, childRectangle.height, "" );
+
+		builderFactory = this._applicationAssembler.getBuilderFactory( applicationContextSubChild );
+		var subChildRectangle : MockRectangle = builderFactory.getCoreFactory().locate( "rect0" );
+		Assert.isInstanceOf( subChildRectangle, MockRectangle, "" );
+		Assert.equals( 80, subChildRectangle.x, "" );
+		Assert.equals( 90, subChildRectangle.y, "" );
+		Assert.equals( 100, subChildRectangle.width, "" );
+		Assert.equals( 110, subChildRectangle.height, "" );
+
+		Assert.equals( applicationContextChild, applicationContextParent.applicationContextChild, "" );
+		Assert.equals( childRectangle, applicationContextParent.applicationContextChild.rect0, "" );
+		Assert.equals( subChildRectangle, applicationContextParent.applicationContextChild.applicationContextSubChild.rect0, "" );
+	}
+	
+	@test( "test targeting sub property" )
+	public function testTargetingSubProperty() : Void
+	{
+		var source : String = '
+		<root>
+
+			<test id="mockObject" type="hex.ioc.parser.xml.mock.MockObjectWithRegtangleProperty">
+				<property name="rectangle.x" type="Float" value="1.5"/>
+			</test>
+
+		</root>';
+
+		var xml : Xml = Xml.parse( source );
+		this._build( xml );
+
+		var mockObject : MockObjectWithRegtangleProperty = this._builderFactory.getCoreFactory().locate( "mockObject" );
+		Assert.isInstanceOf( mockObject, MockObjectWithRegtangleProperty, "" );
+		Assert.equals( 1.5, mockObject.rectangle.x, "" );
+	}
+	
+	@test( "test building class reference" )
+	public function testBuildingClassReference() : Void
+	{
+		var source : String = '
+		<root>
+
+			<RectangleClass id="RectangleClass" type="Class" value="hex.ioc.parser.xml.mock.MockRectangle"/>
+			
+			<test id="classContainer" type="Object">
+				<property name="AnotherRectangleClass" ref="RectangleClass"/>
+			</test>
+			
+		</root>';
+
+		var xml : Xml = Xml.parse( source );
+		this._build( xml );
+
+		var rectangleClass : Class<MockRectangle> = this._builderFactory.getCoreFactory().locate( "RectangleClass" );
+		Assert.isInstanceOf( rectangleClass, Class, "" );
+		Assert.isInstanceOf( Type.createInstance( rectangleClass, [] ), MockRectangle, "" );
+
+		var classContainer = this._builderFactory.getCoreFactory().locate( "classContainer" );
+
+		var anotherRectangleClass : Class<MockRectangle> = classContainer.AnotherRectangleClass;
+		Assert.isInstanceOf( anotherRectangleClass, Class, "" );
+		Assert.isInstanceOf( Type.createInstance( anotherRectangleClass, [] ), MockRectangle, "" );
+
+		Assert.equals( rectangleClass, anotherRectangleClass, "" );
+
+		var anotherRectangleClassRef : Class<MockRectangle> = this._builderFactory.getCoreFactory().locate( "classContainer.AnotherRectangleClass" );
+		Assert.isInstanceOf( anotherRectangleClassRef, Class, "" );
+		Assert.equals( anotherRectangleClass, anotherRectangleClassRef, "" );
+	}
+	
+	@test( "test building serviceLocator" )
+	public function testBuildingServiceLocator() : Void
+	{
+		var source : String = '
+		<root>
+		
+			<serviceLocator id="serviceLocator" type="hex.config.stateful.ServiceLocator">
+				<item> <key type="Class" value="hex.ioc.parser.xml.mock.IMockAmazonService"/> <value type="Class" value="hex.ioc.parser.xml.mock.MockAmazonService"/></item>
+				<item> <key type="Class" value="hex.ioc.parser.xml.mock.IMockFacebookService"/> <value ref="facebookService"/></item>
+			</serviceLocator>
+
+			<facebookService id="facebookService" type="hex.ioc.parser.xml.mock.MockFacebookService"/>
+
+		</root>';
+
+		var xml : Xml = Xml.parse( source );
+		this._build( xml );
+
+		var serviceLocator : ServiceLocator = this._builderFactory.getCoreFactory().locate( "serviceLocator" );
+		Assert.isInstanceOf( serviceLocator, ServiceLocator, "" );
+
+		var amazonService : IMockAmazonService = serviceLocator.getService( IMockAmazonService );
+		var facebookService : IMockFacebookService = serviceLocator.getService( IMockFacebookService );
+		Assert.isInstanceOf( amazonService, MockAmazonService, "" );
+		Assert.isInstanceOf( facebookService, MockFacebookService, "" );
+
+		var injector : IDependencyInjector = new Injector();
+		serviceLocator.configure( injector, new EventDispatcher(), null );
+
+		Assert.isInstanceOf( injector.getInstance( IMockAmazonService ), MockAmazonService, "" );
+		Assert.isInstanceOf( injector.getInstance( IMockFacebookService ), MockFacebookService, "" );
+		Assert.equals( facebookService, injector.getInstance( IMockFacebookService ), "" );
 	}
 }

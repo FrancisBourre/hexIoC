@@ -1,16 +1,16 @@
 package hex.ioc.assembler;
 
-import hex.error.IllegalArgumentException;
-import hex.ioc.assembler.IApplicationAssembler;
 import hex.di.IBasicInjector;
+import hex.error.IllegalArgumentException;
 import hex.inject.Injector;
+import hex.ioc.assembler.IApplicationAssembler;
 import hex.log.Logger;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class ApplicationContext implements Dynamic<String>
+class ApplicationContext implements Dynamic<ApplicationContext>
 {
 	private var _name 					: String;
 	private var _applicationAssembler 	: IApplicationAssembler;
@@ -42,26 +42,12 @@ class ApplicationContext implements Dynamic<String>
 	/*public function getRootTarget() : DisplayObjectContainer
 	{
 		return this._rootTarget;
-	}
-
-	override flash_proxy function callProperty(name:*,... rest):* {
-		trace(name, rest);
-	}
-
-	override flash_proxy function hasProperty( name : * ) : Boolean
-	{
-		return this._applicationAssembler.getBuilderFactory( this ).getCoreFactory().isRegisteredWithKey( name );
 	}*/
 	
 	function resolve( field : String )
 	{
 		return this._applicationAssembler.getBuilderFactory( this ).getCoreFactory().locate( field );
 	}
-
-	/*override flash_proxy function getProperty( name : * ) : *
-	{
-		return this._applicationAssembler.getBuilderFactory( this ).getCoreFactory().locate( name );
-	}*/
 
 	public function addChild( applicationContext : ApplicationContext ) : Bool
 	{

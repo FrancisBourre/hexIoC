@@ -12,7 +12,7 @@ import hex.unittest.assertion.Assert;
  */
 class BuildClassCommandTest
 {
-	@test( "Test executet" )
+	@test( "Test execute" )
     public function testExecute() : Void
     {
 		var cmd : BuildClassCommand 	= new BuildClassCommand();

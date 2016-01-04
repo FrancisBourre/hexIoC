@@ -25,7 +25,7 @@ class BuildClassCommand extends AbstractBuildCommand
 
 		if ( args != null && args.length > 0 )
 		{
-			qualifiedClassName = Std.string( args[0] );
+			qualifiedClassName = "" + args[0];
 		}
 
 		try

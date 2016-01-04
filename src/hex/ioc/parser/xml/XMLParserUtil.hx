@@ -2,6 +2,7 @@ package hex.ioc.parser.xml;
 
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
+import hex.ioc.core.ContextTypeList;
 import hex.ioc.vo.DomainListenerVOArguments;
 
 /**
@@ -10,13 +11,12 @@ import hex.ioc.vo.DomainListenerVOArguments;
  */
 class XMLParserUtil
 {
-
 	private function new() 
 	{
 		
 	}
 	
-	public static function getArguments( xml : Xml ) : Array<Dynamic>
+	public static function getArguments( xml : Xml, type : String ) : Array<Dynamic>
 	{
 		var args : Array<Dynamic> = [];
 		var iterator = xml.elementsNamed( ContextNameList.ARGUMENT );
@@ -40,7 +40,7 @@ class XMLParserUtil
 			var value : String = XMLAttributeUtil.getValue( xml );
 			if ( value != null ) 
 			{
-				args.push( { type:xml.get( ContextAttributeList.TYPE ), value:xml.get( ContextAttributeList.VALUE ) } );
+				args.push( { type:ContextTypeList.STRING, value:xml.get( ContextAttributeList.VALUE ) } );
 			}
 		}
 
