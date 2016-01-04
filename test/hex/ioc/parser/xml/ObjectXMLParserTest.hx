@@ -12,6 +12,7 @@ import hex.inject.Injector;
 import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.assembler.MockApplicationContextFactory;
+import hex.ioc.parser.xml.mock.AnotherMockAmazonService;
 import hex.ioc.parser.xml.mock.IMockAmazonService;
 import hex.ioc.parser.xml.mock.IMockFacebookService;
 import hex.ioc.parser.xml.mock.MockAmazonService;
@@ -682,5 +683,81 @@ class ObjectXMLParserTest
 		Assert.isInstanceOf( injector.getInstance( IMockAmazonService ), MockAmazonService, "" );
 		Assert.isInstanceOf( injector.getInstance( IMockFacebookService ), MockFacebookService, "" );
 		Assert.equals( facebookService, injector.getInstance( IMockFacebookService ), "" );
+	}
+	
+	@test( "test building serviceLocator with map names" )
+	public function testBuildingServiceLocatorWithMapNames() : Void
+	{
+		var source : String = '
+		<root>
+		
+			<serviceLocator id="serviceLocator" type="hex.config.stateful.ServiceLocator">
+				<item map-name="amazon0"> <key type="Class" value="hex.ioc.parser.xml.mock.IMockAmazonService"/> <value type="Class" value="hex.ioc.parser.xml.mock.MockAmazonService"/></item>
+				<item map-name="amazon1"> <key type="Class" value="hex.ioc.parser.xml.mock.IMockAmazonService"/> <value type="Class" value="hex.ioc.parser.xml.mock.AnotherMockAmazonService"/></item>
+			</serviceLocator>
+				
+		</root>';
+
+		var xml : Xml = Xml.parse( source );
+		this._build( xml );
+
+		var serviceLocator : ServiceLocator = this._builderFactory.getCoreFactory().locate( "serviceLocator" );
+		Assert.isInstanceOf( serviceLocator, ServiceLocator, "" );
+
+		var amazonService0 : IMockAmazonService = serviceLocator.getService( IMockAmazonService, "amazon0" );
+		var amazonService1 : IMockAmazonService = serviceLocator.getService( IMockAmazonService, "amazon1" );
+		Assert.isNotNull( amazonService0, "" );
+		Assert.isNotNull( amazonService1, "" );
+
+		var injector : IDependencyInjector = new Injector();
+		serviceLocator.configure( injector, new EventDispatcher(), null );
+
+		Assert.isInstanceOf( injector.getInstance( IMockAmazonService, "amazon0" ),  MockAmazonService, "" );
+		Assert.isInstanceOf( injector.getInstance( IMockAmazonService, "amazon1" ), AnotherMockAmazonService, "" );
+	}
+	
+	@test( "test parsing twice" )
+	public function testParsingTwice() : Void
+	{
+		var source0 : String = '
+		<root>
+
+			<bean id="rect0" type="hex.ioc.parser.xml.mock.MockRectangle">
+				<argument type="Int" value="10"/>
+				<argument type="Int" value="20"/>
+				<argument type="Int" value="30"/>
+				<argument type="Int" value="40"/>
+			</bean>
+
+		</root>';
+
+		var source1 : String = '
+		<root>
+
+			<bean id="rect1" type="hex.ioc.parser.xml.mock.MockRectangle">
+				<argument type="Int" value="50"/>
+				<argument type="Int" value="60"/>
+				<argument type="Int" value="70"/>
+				<argument ref="rect0.height"/>
+			</bean>
+
+		</root>';
+
+		this._build( Xml.parse( source0 ) );
+		this._build( Xml.parse( source1 ) );
+
+		var rect0 : MockRectangle = this._builderFactory.getCoreFactory().locate( "rect0" );
+		Assert.isInstanceOf( rect0, MockRectangle, "" );
+		Assert.equals( 10, rect0.x, "" );
+		Assert.equals( 20, rect0.y, "" );
+		Assert.equals( 30, rect0.width, "" );
+		Assert.equals( 40, rect0.height, "" );
+
+		var rect1 : MockRectangle = this._builderFactory.getCoreFactory().locate( "rect1" );
+		Assert.isInstanceOf( rect1, MockRectangle, "" );
+		Assert.equals( 50, rect1.x, "" );
+		Assert.equals( 60, rect1.y, "" );
+		Assert.equals( 70, rect1.width, "" );
+		Assert.equals( 40, rect1.height, "" );
 	}
 }
