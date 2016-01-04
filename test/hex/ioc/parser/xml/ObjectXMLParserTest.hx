@@ -15,11 +15,14 @@ import hex.ioc.assembler.MockApplicationContextFactory;
 import hex.ioc.parser.xml.mock.AnotherMockAmazonService;
 import hex.ioc.parser.xml.mock.IMockAmazonService;
 import hex.ioc.parser.xml.mock.IMockFacebookService;
+import hex.ioc.parser.xml.mock.IMockStubStatefulService;
 import hex.ioc.parser.xml.mock.MockAmazonService;
+import hex.ioc.parser.xml.mock.MockBooleanVO;
 import hex.ioc.parser.xml.mock.MockChatModule;
 import hex.ioc.parser.xml.mock.MockFacebookService;
 import hex.ioc.parser.xml.mock.MockFruitVO;
 import hex.ioc.parser.xml.mock.MockMessageParserModule;
+import hex.ioc.parser.xml.mock.MockModuleWithServiceCallback;
 import hex.ioc.parser.xml.mock.MockObjectWithRegtangleProperty;
 import hex.ioc.parser.xml.mock.MockReceiverModule;
 import hex.ioc.parser.xml.mock.MockRectangle;
@@ -40,6 +43,7 @@ import hex.ioc.parser.xml.mock.MockPointFactory;
 import hex.ioc.parser.xml.mock.MockXMLParser;
 import hex.ioc.parser.xml.mock.MockChatAdapterStrategy;
 import hex.ioc.parser.xml.mock.MockChatEventAdapterStrategyWithInjection;
+import hex.ioc.parser.xml.mock.MockStubStatefulService;
 
 /**
  * ...
@@ -759,5 +763,35 @@ class ObjectXMLParserTest
 		Assert.equals( 60, rect1.y, "" );
 		Assert.equals( 70, rect1.width, "" );
 		Assert.equals( 40, rect1.height, "" );
+	}
+	
+	@test( "test listening service" )
+	public function testListeningService() : Void
+	{
+		var source : String = '
+		<root>
+
+			<service id="myService" type="hex.ioc.parser.xml.mock.MockStubStatefulService"/>
+
+			<module id="myModule" type="hex.ioc.parser.xml.mock.MockModuleWithServiceCallback">
+				<listen ref="myService">
+					<event static-ref="hex.ioc.parser.xml.mock.MockStubStatefulService.BOOLEAN_VO_UPDATE" method="onBooleanServiceCallback"/>
+				</listen>
+			</module>
+
+		</root>';
+
+		var xml : Xml = Xml.parse( source );
+		this._build( xml );
+
+		var myService : IMockStubStatefulService = this._builderFactory.getCoreFactory().locate( "myService" );
+		Assert.isNotNull( myService, "" );
+
+		var myModule : MockModuleWithServiceCallback = this._builderFactory.getCoreFactory().locate( "myModule" );
+		Assert.isNotNull( myModule, "" );
+
+		var booleanVO : MockBooleanVO = new MockBooleanVO( true );
+		myService.setBooleanVO( booleanVO );
+		Assert.isTrue( myModule.getBooleanValue(), "" );
 	}
 }

@@ -85,7 +85,11 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO, LocatorE
 					}
 					else
 					{
-						service.addHandler( noteType, callback );
+						service.addHandler( noteType, 	function ( e : IEvent ) : Void 
+														{
+															Reflect.callMethod( listener, callback, [e] );
+														} );
+
 					}
 				}
 				else
