@@ -30,7 +30,7 @@ class XmlParserUtilTest
 		var args : Array<Dynamic> = XMLParserUtil.getArguments( argXML.firstElement(), "" );
 		
 		Assert.equals( 1, args.length, "Arguments length should be 1" );
-		Assert.equals( "Class", args[0].type, "Type should be 'Class'" );
+		Assert.equals( "String", args[0].type, "Type should be 'Class'" );
 		Assert.equals( "service.userinfo.note.UserInfoServiceNote", args[0].value, "Value should be 'service.userinfo.note.UserInfoServiceNote'" );
 	}
 	
