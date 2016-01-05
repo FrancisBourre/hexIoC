@@ -1,5 +1,7 @@
 package hex.ioc.assembler;
 
+import hex.control.macro.IMacroExecutor;
+import hex.control.macro.MacroExecutor;
 import hex.di.IBasicInjector;
 import hex.error.IllegalArgumentException;
 import hex.inject.Injector;
@@ -23,6 +25,7 @@ class ApplicationContext implements Dynamic<ApplicationContext>
 	{
 		this._injector = new Injector();
 		this._injector.mapToValue( IBasicInjector, this._injector );
+		this._injector.mapToType( IMacroExecutor, MacroExecutor );
 
 		this._name 					= name;
 		this._applicationAssembler 	= applicationAssembler;
