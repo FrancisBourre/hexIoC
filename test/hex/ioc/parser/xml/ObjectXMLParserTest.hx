@@ -1,13 +1,17 @@
 package hex.ioc.parser.xml;
 
+import haxe.Timer;
 import hex.collection.HashMap;
 import hex.config.stateful.ServiceLocator;
+import hex.control.macro.IMacroExecutor;
+import hex.control.macro.MacroExecutor;
 import hex.control.payload.ExecutionPayload;
 import hex.control.payload.PayloadEvent;
 import hex.di.IBasicInjector;
 import hex.di.IDependencyInjector;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.event.EventDispatcher;
+import hex.event.EventProxy;
 import hex.inject.Injector;
 import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.assembler.IApplicationAssembler;
@@ -17,6 +21,7 @@ import hex.ioc.parser.xml.mock.AnotherMockModuleWithServiceCallback;
 import hex.ioc.parser.xml.mock.IMockAmazonService;
 import hex.ioc.parser.xml.mock.IMockDividerHelper;
 import hex.ioc.parser.xml.mock.IMockFacebookService;
+import hex.ioc.parser.xml.mock.IMockMappedModule;
 import hex.ioc.parser.xml.mock.IMockStubStatefulService;
 import hex.ioc.parser.xml.mock.MockAmazonService;
 import hex.ioc.parser.xml.mock.MockBooleanVO;
@@ -24,6 +29,7 @@ import hex.ioc.parser.xml.mock.MockChatModule;
 import hex.ioc.parser.xml.mock.MockFacebookService;
 import hex.ioc.parser.xml.mock.MockFruitVO;
 import hex.ioc.parser.xml.mock.MockIntVO;
+import hex.ioc.parser.xml.mock.MockMappedModule;
 import hex.ioc.parser.xml.mock.MockMessageParserModule;
 import hex.ioc.parser.xml.mock.MockModuleWithServiceCallback;
 import hex.ioc.parser.xml.mock.MockObjectWithRegtangleProperty;
@@ -40,6 +46,7 @@ import hex.ioc.core.BuilderFactory;
 import hex.structures.Point;
 import hex.structures.Size;
 import hex.unittest.assertion.Assert;
+import hex.unittest.runner.MethodRunner;
 
 import hex.ioc.parser.xml.mock.MockRectangleFactory;
 import hex.ioc.parser.xml.mock.MockPointFactory;
@@ -48,6 +55,7 @@ import hex.ioc.parser.xml.mock.MockChatAdapterStrategy;
 import hex.ioc.parser.xml.mock.MockChatEventAdapterStrategyWithInjection;
 import hex.ioc.parser.xml.mock.MockStubStatefulService;
 import hex.ioc.parser.xml.mock.MockIntDividerEventAdapterStrategy;
+import hex.ioc.parser.xml.mock.MockChatEventAdapterStrategyMacro;
 
 /**
  * ...
@@ -882,5 +890,112 @@ class ObjectXMLParserTest
 
 		myService.setIntVO( new MockIntVO( 9 ) );
 		Assert.equals( 4.5, ( myModuleB.getFloatValue() ), "" );
+	}
+	
+	/*@test( "test static-ref" )
+	public function testStaticRef() : Void
+	{
+		var source : String = '
+		<root>
+
+			<constant id="note" static-ref="com.mvc.controller.base.mock.MockStubStatefulServiceNote.INT_VO_UPDATE"/>
+
+			<object id="object" type="Object">
+				<property name="property" static-ref="com.mvc.controller.base.mock.MockStubStatefulServiceNote.INT_VO_UPDATE"/>
+			</object>
+
+			<instance id="instance" type="com.ioc.parser.xml.ClassWithConstantConstantArgument">
+				<argument static-ref="com.mvc.controller.base.mock.MockStubStatefulServiceNote.INT_VO_UPDATE"/>
+			</instance>
+
+		</root>';
+
+		var xml : Xml = Xml.parse( source );
+		this._build( xml );
+
+		var note : String = this._builderFactory.getCoreFactory().locate( "note" );
+		Assert.isNotNull( note, "" );
+		Assert.equals( note, MockStubStatefulServiceNote.INT_VO_UPDATE );
+
+		var object : Object = this._builderFactory.getCoreFactory().locate( "object" ) as Object;
+		Assert.isNotNull( object );
+		Assert.equals( object.property, MockStubStatefulServiceNote.INT_VO_UPDATE );
+
+		var instance : ClassWithConstantConstantArgument = this._builderFactory.getCoreFactory().locate( "instance" ) as ClassWithConstantConstantArgument;
+		Assert.isNotNull( instance );
+		Assert.equals( instance.constant, MockStubStatefulServiceNote.INT_VO_UPDATE );
+	}*/
+	
+	@async( "test EventProxy" )
+	public function testEventProxy() : Void
+	{
+		//MetaDataProvider.getInstance().addProperties( new <String>[ "URL" ] );
+		//MetaDataProvider.getInstance().registerMetaData( "URL", _getURL );
+
+		var source : String = '
+		<root>
+
+			<chat id="chat" type="hex.ioc.parser.xml.mock.MockChatModule"/>
+
+			<receiver id="receiver" type="hex.ioc.parser.xml.mock.MockReceiverModule"/>
+
+			<parser id="parser" type="hex.ioc.parser.xml.mock.MockMessageParserModule" map-type="hex.ioc.parser.xml.mock.IMockMessageParserModule"/>
+
+			<proxy id="eventProxy" type="hex.event.EventProxy">
+				<argument ref="receiver"/>
+				<argument ref="receiver.onMessage"/>
+				<listen ref="chat">
+					<event static-ref="hex.ioc.parser.xml.mock.MockChatModule.TEXT_INPUT" strategy="hex.ioc.parser.xml.mock.MockChatEventAdapterStrategyMacro"/>
+				</listen>
+			</proxy>
+
+		</root>';
+
+		var xml : Xml = Xml.parse( source );
+		this._build( xml );
+		
+		var eventProxy : EventProxy = this._builderFactory.getCoreFactory().locate( "eventProxy" );
+		Assert.isNotNull( eventProxy, "" );
+		
+		var chat : MockChatModule = this._builderFactory.getCoreFactory().locate( "chat" );
+		Assert.isNotNull( chat, "" );
+
+		var receiver : MockReceiverModule = this._builderFactory.getCoreFactory().locate( "receiver" );
+		Assert.isNotNull( receiver, "" );
+
+		var eventProxy : EventProxy = this._builderFactory.getCoreFactory().locate( "eventProxy" );
+		Assert.isNotNull( eventProxy, "" );
+
+		var parser : MockMessageParserModule = this._builderFactory.getCoreFactory().locate( "parser" );
+		Assert.isNotNull( parser, "" );
+
+		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandler ), 500 );
+		chat.dispatchDomainEvent( new PayloadEvent( MockChatModule.TEXT_INPUT, chat, [new ExecutionPayload( "bonjour", String )] ) );
+	}
+	
+	private function _onCompleteHandler() : Void
+	{
+		var receiver : MockReceiverModule = this._builderFactory.getCoreFactory().locate( "receiver" );
+		Assert.equals( "BONJOUR:HTTP://GOOGLE.COM", receiver.message, "" );
+	}
+	
+	@test( "test map-type attribute" )
+	public function testMapTypeAttribute() : Void
+	{
+		var source : String = '
+		<root>
+		
+			<module id="myModule" type="hex.ioc.parser.xml.mock.MockMappedModule" map-type="hex.ioc.parser.xml.mock.IMockMappedModule"/>
+
+		</root>';
+
+		var xml : Xml = Xml.parse( source );
+		this._build( xml );
+		
+		var myModule : MockMappedModule = this._builderFactory.getCoreFactory().locate( "myModule" );
+		Assert.isNotNull( myModule, "" );
+		Assert.isInstanceOf( myModule, MockMappedModule, "" );
+		
+		Assert.equals( myModule, this._applicationContext.getInjector().getInstance( IMockMappedModule, "myModule" ), "" );
 	}
 }
