@@ -11,16 +11,28 @@ import hex.module.Module;
  */
 class MockModuleWithServiceCallback extends Module
 {
+	private var _floatValue 	: Float;
 	private var _booleanValue 	: Bool;
 	
 	public function new() 
 	{
 		super();
+		this._getDependencyInjector().mapToType( IMockDividerHelper, MockDividerHelper, "mockDividerHelper" );
+	}
+	
+	public function onFloatServiceCallback( value : Float ) : Void
+	{
+		this._floatValue = value;
 	}
 	
 	public function onBooleanServiceCallback( e : PayloadEvent ) : Void
 	{
-		this._booleanValue = e.getExecutionPayloads()[0].getData() .value;
+		this._booleanValue = e.getExecutionPayloads()[0].getData().value;
+	}
+	
+	public function getFloatValue() : Float
+	{
+		return this._floatValue;
 	}
 
 	public function getBooleanValue() : Bool

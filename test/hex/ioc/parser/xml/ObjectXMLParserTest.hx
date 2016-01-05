@@ -21,6 +21,7 @@ import hex.ioc.parser.xml.mock.MockBooleanVO;
 import hex.ioc.parser.xml.mock.MockChatModule;
 import hex.ioc.parser.xml.mock.MockFacebookService;
 import hex.ioc.parser.xml.mock.MockFruitVO;
+import hex.ioc.parser.xml.mock.MockIntVO;
 import hex.ioc.parser.xml.mock.MockMessageParserModule;
 import hex.ioc.parser.xml.mock.MockModuleWithServiceCallback;
 import hex.ioc.parser.xml.mock.MockObjectWithRegtangleProperty;
@@ -44,6 +45,7 @@ import hex.ioc.parser.xml.mock.MockXMLParser;
 import hex.ioc.parser.xml.mock.MockChatAdapterStrategy;
 import hex.ioc.parser.xml.mock.MockChatEventAdapterStrategyWithInjection;
 import hex.ioc.parser.xml.mock.MockStubStatefulService;
+import hex.ioc.parser.xml.mock.MockIntDividerEventAdapterStrategy;
 
 /**
  * ...
@@ -793,5 +795,38 @@ class ObjectXMLParserTest
 		var booleanVO : MockBooleanVO = new MockBooleanVO( true );
 		myService.setBooleanVO( booleanVO );
 		Assert.isTrue( myModule.getBooleanValue(), "" );
+	}
+	
+	@test( "test listening service with strategy and module injection" )
+	public function testListeningServiceWithStrategyAndModuleInjection() : Void
+	{
+		var source : String = '
+		<root>
+
+			<service id="myService" type="hex.ioc.parser.xml.mock.MockStubStatefulService"/>
+
+			<module id="myModule" type="hex.ioc.parser.xml.mock.MockModuleWithServiceCallback">
+				<listen ref="myService">
+					<event static-ref="hex.ioc.parser.xml.mock.MockStubStatefulService.INT_VO_UPDATE"
+						   method="onFloatServiceCallback"
+						   strategy="hex.ioc.parser.xml.mock.MockIntDividerEventAdapterStrategy"
+						   injectedInModule="true"/>
+				</listen>
+			</module>
+
+		</root>';
+
+		var xml : Xml = Xml.parse( source );
+		this._build( xml );
+
+		var myService : IMockStubStatefulService = this._builderFactory.getCoreFactory().locate( "myService" );
+		Assert.isNotNull( myService, "" );
+
+		var myModule : MockModuleWithServiceCallback = this._builderFactory.getCoreFactory().locate( "myModule" );
+		Assert.isNotNull( myModule, "" );
+
+		var intVO : MockIntVO = new MockIntVO( 7 );
+		myService.setIntVO( intVO );
+		Assert.equals( 3.5, ( myModule.getFloatValue() ), "" );
 	}
 }

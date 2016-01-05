@@ -119,7 +119,7 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO, LocatorE
 		
 		if ( injectedInModule && Std.is( listener, IModule ) )
 		{
-			var basicInjector : IBasicInjector = listener.getDependencyInjector();
+			var basicInjector : IBasicInjector = listener.getBasicInjector();
 			adapter.setFactoryMethod( basicInjector, basicInjector.instantiateUnmapped );
 		}
 		else 
