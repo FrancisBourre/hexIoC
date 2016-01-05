@@ -13,7 +13,9 @@ import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.assembler.MockApplicationContextFactory;
 import hex.ioc.parser.xml.mock.AnotherMockAmazonService;
+import hex.ioc.parser.xml.mock.AnotherMockModuleWithServiceCallback;
 import hex.ioc.parser.xml.mock.IMockAmazonService;
+import hex.ioc.parser.xml.mock.IMockDividerHelper;
 import hex.ioc.parser.xml.mock.IMockFacebookService;
 import hex.ioc.parser.xml.mock.IMockStubStatefulService;
 import hex.ioc.parser.xml.mock.MockAmazonService;
@@ -828,5 +830,57 @@ class ObjectXMLParserTest
 		var intVO : MockIntVO = new MockIntVO( 7 );
 		myService.setIntVO( intVO );
 		Assert.equals( 3.5, ( myModule.getFloatValue() ), "" );
+	}
+	
+	@test( "test listening service with strategy and context injection" )
+	public function testListeningServiceWithStrategyAndContextInjection() : Void
+	{
+		var source : String = '
+		<root>
+
+			<helper id="mockDividerHelper" type="hex.ioc.parser.xml.mock.MockDividerHelper" map-type="hex.ioc.parser.xml.mock.IMockDividerHelper"/>
+
+			<service id="myService" type="hex.ioc.parser.xml.mock.MockStubStatefulService"/>
+
+			<module id="myModuleA" type="hex.ioc.parser.xml.mock.MockModuleWithServiceCallback">
+				<listen ref="myService">
+					<event static-ref="hex.ioc.parser.xml.mock.MockStubStatefulService.INT_VO_UPDATE"
+						   method="onFloatServiceCallback"
+						   strategy="hex.ioc.parser.xml.mock.MockIntDividerEventAdapterStrategy"
+						   injectedInModule="true"/>
+				</listen>
+			</module>
+
+			<module id="myModuleB" type="hex.ioc.parser.xml.mock.AnotherMockModuleWithServiceCallback">
+				<listen ref="myService">
+					<event static-ref="hex.ioc.parser.xml.mock.MockStubStatefulService.INT_VO_UPDATE"
+						   method="onFloatServiceCallback"
+						   strategy="hex.ioc.parser.xml.mock.MockIntDividerEventAdapterStrategy"
+						   injectedInModule="false"/>
+				</listen>
+			</module>
+
+		</root>';
+
+		var xml : Xml = Xml.parse( source );
+		this._build( xml );
+
+		var mockDividerHelper : IMockDividerHelper = this._builderFactory.getCoreFactory().locate( "mockDividerHelper" );
+		Assert.isNotNull( mockDividerHelper, "" );
+
+		var myService : IMockStubStatefulService = this._builderFactory.getCoreFactory().locate( "myService" );
+		Assert.isNotNull( myService, "" );
+
+		var myModuleA : MockModuleWithServiceCallback = this._builderFactory.getCoreFactory().locate( "myModuleA" );
+		Assert.isNotNull( myModuleA, "" );
+
+		var myModuleB : AnotherMockModuleWithServiceCallback = this._builderFactory.getCoreFactory().locate( "myModuleB" );
+		Assert.isNotNull( myModuleB, "" );
+
+		myService.setIntVO( new MockIntVO( 7 ) );
+		Assert.equals( 3.5, ( myModuleA.getFloatValue() ), "" );
+
+		myService.setIntVO( new MockIntVO( 9 ) );
+		Assert.equals( 4.5, ( myModuleB.getFloatValue() ), "" );
 	}
 }
