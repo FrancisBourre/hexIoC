@@ -126,4 +126,42 @@ class XMLParserUtil
 
 		return obj;
 	}
+	
+	public static function concatXmlList(configList:Array<String>) 
+	{
+		var result:String = '<?xml version="1.0" encoding="utf-8" ?><root>';
+		
+		var l:UInt = configList.length;
+		
+		var matcher = ~/<\?xml[^>]+>\s*<\s*(\w+)\s*>([\s\S]*)<\s*\/\s*\1\s*>/;
+		
+		for ( i in 0...l )
+		{
+			matcher.match(configList[i]);
+			result += matcher.matched(2);
+		}
+		
+		result += "</root>";
+		
+		return result;
+	}
+	
+	public static function getConfigList(list:Array<String>):Array<String>
+	{
+		var result:Array<String> = new Array<String>();
+		
+		var l:UInt = list.length;
+		
+		for ( i in 0...l )
+		{
+			result.push( haxe.Resource.getString(list[i]) );
+		}
+		
+		return result;
+	}
+	
+	public static function getConcatenatedConfig(configKeyList:Array<String>):String
+	{
+		return XMLParserUtil.concatXmlList(XMLParserUtil.getConfigList(configKeyList));
+	}
 }
