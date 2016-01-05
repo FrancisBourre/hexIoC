@@ -94,7 +94,14 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO, LocatorE
 				}
 				else
 				{
-					throw new IllegalArgumentException( this + ".assignDomainListener failed. Method '" + method + "' not found on:" + listener );
+					if ( method == null )
+					{
+						throw new IllegalArgumentException( this + ".assignDomainListener failed. Method should be defined to call: " + Stringifier.stringify(listener) );
+					}
+					else
+					{
+						throw new IllegalArgumentException( this + ".assignDomainListener failed. '" + method + "' is not a function on: " + Stringifier.stringify(listener) );
+					}
 				}
 			}
 
