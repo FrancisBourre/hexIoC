@@ -1,6 +1,7 @@
 package hex.ioc.parser.xml.mock;
 
-import hex.control.async.AsyncCommandEvent;
+import hex.control.async.AsyncCommand;
+import hex.control.async.AsyncHandler;
 import hex.control.payload.ExecutionPayload;
 import hex.event.MacroAdapterStrategy;
 
@@ -27,12 +28,12 @@ class MockChatEventAdapterStrategyMacro extends MacroAdapterStrategy
 
 	override private function _prepare() : Void
 	{
-		this.add( MockChatEventAdapterStrategyCommand ).withPayloads( [new ExecutionPayload(this._message + ":" + url, String)] ).withCompleteHandlers( [this._end] );
+		this.add( MockChatEventAdapterStrategyCommand ).withPayloads( [new ExecutionPayload(this._message + ":" + url, String)] ).withCompleteHandlers( new AsyncHandler( this, this._end ) );
 	}
 
-	private function _end( e : AsyncCommandEvent ) : Void
+	private function _end( async : AsyncCommand ) : Void
 	{
-		var cmd : MockChatEventAdapterStrategyCommand = cast e.getAsyncCommand();
+		var cmd : MockChatEventAdapterStrategyCommand = cast async;
 		this._payload = cmd.getPayload();
 		this._handleComplete();
 	}

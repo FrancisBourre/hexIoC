@@ -1,7 +1,7 @@
 package hex.ioc.parser.xml;
+
 import hex.error.IllegalArgumentException;
 import hex.error.NullPointerException;
-import hex.error.PrivateConstructorException;
 import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.parser.AbstractParserCommand;
 

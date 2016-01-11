@@ -1,33 +1,23 @@
 package hex.ioc.parser.xml.mock;
 
+import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
 import hex.domain.DomainExpert;
-import hex.domain.ApplicationDomainDispatcher;
-import hex.event.Dispatcher;
 import hex.event.IDispatcher;
-import hex.event.IEvent;
-import hex.event.IEventDispatcher;
 import hex.event.MessageType;
 import hex.module.IModule;
-import hex.module.IModuleListener;
-import hex.module.ModuleEvent;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class MockModule implements IModule implements IModuleListener
+class MockModule implements IModule
 {
 	private var _domainDispatcher 	: IDispatcher<{}>;
 	
 	public function new() 
 	{
 		this._domainDispatcher = ApplicationDomainDispatcher.getInstance().getDomainDispatcher( this.getDomain() );
-	
-		/*if ( this._domainDispatcher != null )
-		{
-			this._domainDispatcher.addListener( this );
-		}*/
 	}
 	
 	public function dispatchDomainEvent( messageType : MessageType, data : Array<Dynamic> ) : Void
@@ -78,20 +68,4 @@ class MockModule implements IModule implements IModuleListener
 	{
 		
 	}
-	
-	public function onModuleInitialisation( e : ModuleEvent ) : Void 
-	{
-		
-	}
-	
-	public function onModuleRelease( e : ModuleEvent ) : Void 
-	{
-		
-	}
-	
-	public function handleEvent( e : IEvent ) : Void 
-	{
-		
-	}
-	
 }

@@ -1,6 +1,5 @@
 package hex.ioc.parser.xml.mock;
 
-import hex.control.payload.PayloadEvent;
 import hex.event.AdapterStrategy;
 
 /**

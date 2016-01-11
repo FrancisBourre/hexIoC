@@ -3,9 +3,8 @@ package hex.ioc.parser;
 import hex.control.async.AsyncCommand;
 import hex.control.Request;
 import hex.error.NullPointerException;
-import hex.event.IEvent;
-import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.assembler.ApplicationContext;
+import hex.ioc.assembler.IApplicationAssembler;
 
 /**
  * ...

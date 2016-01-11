@@ -4,13 +4,11 @@ import hex.collection.Locator;
 import hex.collection.LocatorMessage;
 import hex.di.IBasicInjector;
 import hex.domain.Domain;
-import hex.domain.DomainExpert;
 import hex.domain.DomainUtil;
 import hex.error.IllegalArgumentException;
 import hex.event.ClassAdapter;
 import hex.event.EventProxy;
 import hex.event.IAdapterStrategy;
-import hex.event.CallbackAdapter;
 import hex.event.IEvent;
 import hex.event.MessageType;
 import hex.ioc.core.BuilderFactory;
@@ -79,28 +77,10 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO>
 					{
 						var domain : Domain = DomainUtil.getDomain( domainListener.listenedDomainName, Domain );
 						this._builderFactory.getApplicationHub().addHandler( messageType, listener, callback, domain );
-						trace( "this._builderFactory.getApplicationHub().addHandler:", messageType, Stringifier.stringify(listener), callback, domain );
-						/*
-						this._builderFactory.getApplicationHub().addHandler( 		messageType, 
-																					function ( e : IEvent ) : Void
-																					{
-																						Reflect.callMethod( listener, callback, [e] );
-																					}, 
-																					domain );
-						*/
 					}
 					else
 					{
-						trace("service.addHandler(:", messageType, Stringifier.stringify(listener), callback );
 						service.addHandler( messageType, listener, callback );
-														
-						/*
-						service.addHandler( messageType, 	function ( e : IEvent ) : Void 
-														{
-															Reflect.callMethod( listener, callback, [e] );
-														} );
-						 */ 
-
 					}
 				}
 				else
@@ -122,13 +102,8 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO>
 		{
 			
 			var domain : Domain = DomainUtil.getDomain( domainListener.listenedDomainName, Domain );
-			trace("this._builderFactory.getApplicationHub().addListener(:", Stringifier.stringify(listener), domain );
 			return this._builderFactory.getApplicationHub().addListener( listener, domain );
 		}
-		/*else
-		{
-			return false;
-		}*/
 	}
 
 	private function getStrategyCallback( listener : Dynamic, method : String, strategyClassName : String, injectedInModule : Bool = false ) : Dynamic

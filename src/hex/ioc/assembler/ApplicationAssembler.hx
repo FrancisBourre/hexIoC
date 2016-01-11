@@ -1,15 +1,15 @@
 package hex.ioc.assembler;
 
-import hex.core.HashCodeFactory;
-import hex.ioc.assembler.IApplicationAssembler;
-import hex.ioc.vo.DomainListenerVO;
 import hex.collection.HashMap;
+import hex.core.HashCodeFactory;
 import hex.ioc.assembler.ApplicationContext;
+import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.core.BuilderFactory;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.core.ModuleLocator;
 import hex.ioc.locator.MethodCallVOLocator;
 import hex.ioc.vo.ConstructorVO;
+import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.DomainListenerVOArguments;
 import hex.ioc.vo.MapVO;
 import hex.ioc.vo.MethodCallVO;
@@ -127,7 +127,6 @@ class ApplicationAssembler implements IApplicationAssembler
 
 		var constructorVO : ConstructorVO = new ConstructorVO( ownerID, type, args, factory, singleton, null, mapType, staticRef );
 		this.getBuilderFactory( applicationContext ).getConstructorVOLocator().register( ownerID, constructorVO );
-		trace( constructorVO );
 		return constructorVO;
 	}
 

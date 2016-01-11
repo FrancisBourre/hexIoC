@@ -1,6 +1,5 @@
 package hex.ioc.parser.xml;
 
-import hex.domain.TopLevelDomain;
 import hex.error.Exception;
 import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.core.ContextNameList;

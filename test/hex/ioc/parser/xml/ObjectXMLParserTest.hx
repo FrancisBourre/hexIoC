@@ -3,20 +3,15 @@ package hex.ioc.parser.xml;
 import haxe.Timer;
 import hex.collection.HashMap;
 import hex.config.stateful.ServiceLocator;
-import hex.control.macro.IMacroExecutor;
-import hex.control.macro.MacroExecutor;
-import hex.control.payload.ExecutionPayload;
-import hex.control.payload.PayloadEvent;
-import hex.di.IBasicInjector;
 import hex.di.IDependencyInjector;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.event.Dispatcher;
-import hex.event.EventDispatcher;
 import hex.event.EventProxy;
 import hex.inject.Injector;
 import hex.ioc.assembler.ApplicationAssembler;
+import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.assembler.IApplicationAssembler;
-import hex.ioc.assembler.MockApplicationContextFactory;
+import hex.ioc.core.BuilderFactory;
 import hex.ioc.parser.xml.mock.AnotherMockAmazonService;
 import hex.ioc.parser.xml.mock.AnotherMockModuleWithServiceCallback;
 import hex.ioc.parser.xml.mock.IMockAmazonService;
@@ -39,11 +34,6 @@ import hex.ioc.parser.xml.mock.MockRectangle;
 import hex.ioc.parser.xml.mock.MockSenderModule;
 import hex.ioc.parser.xml.mock.MockServiceProvider;
 import hex.ioc.parser.xml.mock.MockTranslationModule;
-import hex.ioc.vo.DomainListenerVOArguments;
-import hex.ioc.vo.ConstructorVO;
-import hex.ioc.vo.PropertyVO;
-import hex.ioc.assembler.ApplicationContext;
-import hex.ioc.core.BuilderFactory;
 import hex.structures.Point;
 import hex.structures.Size;
 import hex.unittest.assertion.Assert;
@@ -92,7 +82,23 @@ class ObjectXMLParserTest
 		this._applicationAssembler.buildEverything();
 	}
 	
-	@test( "test bulding anonymous object" )
+	@test( "test building String" )
+	public function testBuildingString() : Void
+	{
+		var source : String = '
+		<root>
+			<test id="s" value="hello"/>
+		</root>';
+		
+		
+		var xml : Xml = Xml.parse( source );
+		this._build( xml );
+		
+		var s : String = this._builderFactory.getCoreFactory().locate( "s" );
+		Assert.equals( "hello", s, "" );
+	}
+	
+	@test( "test building anonymous object" )
 	public function testBuildingAnonymousObject() : Void
 	{
 		var source : String = '

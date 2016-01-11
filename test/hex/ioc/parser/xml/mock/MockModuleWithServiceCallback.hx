@@ -1,6 +1,5 @@
 package hex.ioc.parser.xml.mock;
 
-import hex.control.payload.PayloadEvent;
 import hex.module.dependency.IRuntimeDependencies;
 import hex.module.dependency.RuntimeDependencies;
 import hex.module.Module;

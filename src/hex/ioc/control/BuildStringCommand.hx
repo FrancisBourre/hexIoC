@@ -19,7 +19,7 @@ class BuildStringCommand extends AbstractBuildCommand
 	override public function execute( ?request : Request ) : Void
 	{
 		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
-trace( constructorVO.arguments );
+
 		var value : String 	= null;
 		var args 			= constructorVO.arguments;
 
@@ -41,6 +41,5 @@ trace( constructorVO.arguments );
 		}
 
 		constructorVO.result = value;
-		trace( "constructorVO.result", value );
 	}
 }
