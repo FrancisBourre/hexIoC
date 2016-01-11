@@ -1,6 +1,6 @@
 package hex.ioc.control;
 
-import hex.event.IEvent;
+import hex.control.Request;
 import hex.ioc.vo.ConstructorVO;
 import hex.util.ObjectUtil;
 
@@ -10,7 +10,7 @@ import hex.util.ObjectUtil;
  */
 class BuildRefCommand extends AbstractBuildCommand
 {
-	override public function execute( ?e : IEvent ) : Void
+	override public function execute( ?request : Request ) : Void
 	{
 		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
 

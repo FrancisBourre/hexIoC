@@ -2,7 +2,7 @@ package hex.ioc.parser.xml.mock;
 
 import haxe.Timer;
 import hex.control.async.AsyncCommand;
-import hex.event.IEvent;
+import hex.control.Request;
 
 /**
  * ...
@@ -22,7 +22,7 @@ class MockChatEventAdapterStrategyCommand extends AsyncCommand
 	@inject
 	public var message : String;
 
-	override public function execute( ?e : IEvent ) : Void
+	override public function execute( ?request : Request ) : Void
 	{
 		Timer.delay( this.testAsyncCallback, 300 );
 	}

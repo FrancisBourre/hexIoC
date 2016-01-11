@@ -25,9 +25,9 @@ class MockModuleWithServiceCallback extends Module
 		this._floatValue = value;
 	}
 	
-	public function onBooleanServiceCallback( e : PayloadEvent ) : Void
+	public function onBooleanServiceCallback( mockBooleanVO : MockBooleanVO ) : Void
 	{
-		this._booleanValue = e.getExecutionPayloads()[0].getData().value;
+		this._booleanValue = mockBooleanVO.value;
 	}
 	
 	public function getFloatValue() : Float

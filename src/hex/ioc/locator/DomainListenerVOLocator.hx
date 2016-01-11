@@ -1,7 +1,7 @@
 package hex.ioc.locator;
 
 import hex.collection.Locator;
-import hex.collection.LocatorEvent;
+import hex.collection.LocatorMessage;
 import hex.di.IBasicInjector;
 import hex.domain.Domain;
 import hex.domain.DomainExpert;
@@ -12,6 +12,7 @@ import hex.event.EventProxy;
 import hex.event.IAdapterStrategy;
 import hex.event.CallbackAdapter;
 import hex.event.IEvent;
+import hex.event.MessageType;
 import hex.ioc.core.BuilderFactory;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.DomainListenerVOArguments;
@@ -24,7 +25,7 @@ import hex.service.Service;
  * ...
  * @author Francis Bourre
  */
-class DomainListenerVOLocator extends Locator<String, DomainListenerVO, LocatorEvent<String, DomainListenerVO>>
+class DomainListenerVOLocator extends Locator<String, DomainListenerVO>
 {
 	private var _builderFactory : BuilderFactory;
 
@@ -67,7 +68,8 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO, LocatorE
 			for ( domainListenerArgument in args )
 			{
 				var method : String = Std.is( listener, EventProxy ) ? "handleCallback" : domainListenerArgument.method;
-				var noteType : String = domainListenerArgument.name != null ? domainListenerArgument.name : this._builderFactory.getCoreFactory().getStaticReference( domainListenerArgument.staticRef );
+				//var messageType : MessageType = domainListenerArgument.name != null ? domainListenerArgument.name : this._builderFactory.getCoreFactory().getStaticReference( domainListenerArgument.staticRef );
+				var messageType : MessageType = domainListenerArgument.name != null ? new MessageType( domainListenerArgument.name ) : this._builderFactory.getCoreFactory().getStaticReference( domainListenerArgument.staticRef );
 
 				if ( method != null && Reflect.isFunction( Reflect.field( listener, method ) ) )
 				{
@@ -76,19 +78,28 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO, LocatorE
 					if ( service == null )
 					{
 						var domain : Domain = DomainUtil.getDomain( domainListener.listenedDomainName, Domain );
-						this._builderFactory.getApplicationHub().addEventListener( 	noteType, 
+						this._builderFactory.getApplicationHub().addHandler( messageType, listener, callback, domain );
+						trace( "this._builderFactory.getApplicationHub().addHandler:", messageType, Stringifier.stringify(listener), callback, domain );
+						/*
+						this._builderFactory.getApplicationHub().addHandler( 		messageType, 
 																					function ( e : IEvent ) : Void
 																					{
 																						Reflect.callMethod( listener, callback, [e] );
 																					}, 
 																					domain );
+						*/
 					}
 					else
 					{
-						service.addHandler( noteType, 	function ( e : IEvent ) : Void 
+						trace("service.addHandler(:", messageType, Stringifier.stringify(listener), callback );
+						service.addHandler( messageType, listener, callback );
+														
+						/*
+						service.addHandler( messageType, 	function ( e : IEvent ) : Void 
 														{
 															Reflect.callMethod( listener, callback, [e] );
 														} );
+						 */ 
 
 					}
 				}
@@ -107,11 +118,17 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO, LocatorE
 
 			return true;
 
-		} else
+		} else /*if ( Std.is( listener, IModule ) )*/
 		{
+			
 			var domain : Domain = DomainUtil.getDomain( domainListener.listenedDomainName, Domain );
+			trace("this._builderFactory.getApplicationHub().addListener(:", Stringifier.stringify(listener), domain );
 			return this._builderFactory.getApplicationHub().addListener( listener, domain );
 		}
+		/*else
+		{
+			return false;
+		}*/
 	}
 
 	private function getStrategyCallback( listener : Dynamic, method : String, strategyClassName : String, injectedInModule : Bool = false ) : Dynamic
@@ -142,12 +159,12 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO, LocatorE
 	
 	override function _dispatchRegisterEvent( key : String, element : DomainListenerVO ) : Void 
 	{
-		this._dispatcher.dispatchEvent( new LocatorEvent( LocatorEvent.REGISTER, this, key, element ) );
+		this._dispatcher.dispatch( LocatorMessage.REGISTER, [key, element] );
 	}
 	
 	override function _dispatchUnregisterEvent( key : String ) : Void 
 	{
-		this._dispatcher.dispatchEvent( new LocatorEvent( LocatorEvent.UNREGISTER, this, key ) );
+		this._dispatcher.dispatch( LocatorMessage.UNREGISTER, [key] );
 	}
 }
 	/**

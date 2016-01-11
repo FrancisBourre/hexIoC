@@ -3,11 +3,13 @@ package hex.ioc.core;
 import hex.collection.HashMap;
 import hex.collection.ILocator;
 import hex.collection.ILocatorListener;
-import hex.collection.LocatorEvent;
+import hex.collection.LocatorMessage;
 import hex.core.IMetaDataParsable;
 import hex.error.IllegalArgumentException;
 import hex.error.NoSuchElementException;
+import hex.event.Dispatcher;
 import hex.event.EventDispatcher;
+import hex.event.IDispatcher;
 import hex.event.IEventDispatcher;
 import hex.metadata.MetadataProvider;
 import hex.service.IService;
@@ -17,23 +19,23 @@ import hex.util.ObjectUtil;
  * ...
  * @author Francis Bourre
  */
-class CoreFactory implements ILocator<String, Dynamic, LocatorEvent<String, Dynamic>>
+class CoreFactory implements ILocator<String, Dynamic>
 {
-	private var _dispatcher : IEventDispatcher<ILocatorListener<LocatorEvent<String, Dynamic>>, LocatorEvent<String, Dynamic>>;
+	private var _dispatcher : IDispatcher<ILocatorListener<String, Dynamic>>;
 	private var _map : HashMap<String, Dynamic>;
 
 	public function new() 
 	{
-		this._dispatcher = new EventDispatcher<ILocatorListener<LocatorEvent<String, Dynamic>>, LocatorEvent<String, Dynamic>>();
+		this._dispatcher = new Dispatcher<ILocatorListener<String, Dynamic>>();
 		this._map = new HashMap();
 	}
 	
-	public function addListener( listener : ILocatorListener<LocatorEvent<String, Dynamic>> ) : Bool
+	public function addListener( listener : ILocatorListener<String, Dynamic> ) : Bool
 	{
 		return this._dispatcher.addListener( listener );
 	}
 
-	public function removeListener( listener : ILocatorListener<LocatorEvent<String, Dynamic>> ) : Bool
+	public function removeListener( listener : ILocatorListener<String, Dynamic> ) : Bool
 	{
 		return this._dispatcher.removeListener( listener );
 	}
@@ -83,7 +85,7 @@ class CoreFactory implements ILocator<String, Dynamic, LocatorEvent<String, Dyna
 		if ( !this._map.containsKey( key ) )
 		{
 			this._map.put( key, element ) ;
-			this._dispatcher.dispatchEvent( new LocatorEvent( LocatorEvent.REGISTER, this, key, element ) ) ;
+			this._dispatcher.dispatch( LocatorMessage.REGISTER, [ key, element ] ) ;
 			return true ;
 		}
 		else
@@ -98,7 +100,7 @@ class CoreFactory implements ILocator<String, Dynamic, LocatorEvent<String, Dyna
 		{
 			var instance : Dynamic = this._map.get( key );
 			this._map.remove( key ) ;
-			this._dispatcher.dispatchEvent( new LocatorEvent( LocatorEvent.UNREGISTER, this, key, instance ) );
+			this._dispatcher.dispatch( LocatorMessage.UNREGISTER, [ key ] ) ;
 			return true ;
 		}
 		else

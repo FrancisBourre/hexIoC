@@ -10,6 +10,7 @@ import hex.control.payload.PayloadEvent;
 import hex.di.IBasicInjector;
 import hex.di.IDependencyInjector;
 import hex.domain.ApplicationDomainDispatcher;
+import hex.event.Dispatcher;
 import hex.event.EventDispatcher;
 import hex.event.EventProxy;
 import hex.inject.Injector;
@@ -245,11 +246,13 @@ class ObjectXMLParserTest
 		var source : String = '
 		<root>
 			<gateway id="gateway" value="http://localhost/amfphp/gateway.php"/>
+			
 			<service id="service" type="hex.ioc.parser.xml.mock.MockServiceProvider" singleton-access="getInstance">
 				<method-call name="setGateway">
 					<argument ref="gateway" />
 				</method-call>
 			</service>
+
 		</root>';
 		
 		var xml : Xml = Xml.parse( source );
@@ -417,7 +420,7 @@ class ObjectXMLParserTest
 
 			<translation id="translation" type="hex.ioc.parser.xml.mock.MockTranslationModule">
 				<listen ref="chat">
-					<event name="onTextInput" method="onSomethingToTranslate"/>
+					<event static-ref="hex.ioc.parser.xml.mock.MockChatModule.TEXT_INPUT" method="onSomethingToTranslate"/>
 				</listen>
 			</translation>
 
@@ -433,7 +436,7 @@ class ObjectXMLParserTest
 		var translation : MockTranslationModule = this._builderFactory.getCoreFactory().locate( "translation" );
 		Assert.isNotNull( translation, "" );
 
-		chat.dispatchDomainEvent( new PayloadEvent( "onTextInput", chat, [ new ExecutionPayload( "Bonjour", String ) ] ) );
+		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "Bonjour" ] );
 		Assert.equals( "Hello", chat.translatedMessage, "" );
 	}
 	
@@ -465,7 +468,7 @@ class ObjectXMLParserTest
 		var translation : MockTranslationModule = this._builderFactory.getCoreFactory().locate( "translation" );
 		Assert.isNotNull( translation, "" );
 
-		chat.dispatchDomainEvent( new PayloadEvent( MockChatModule.TEXT_INPUT, chat, [ new ExecutionPayload( "Bonjour", String ) ] ) );
+		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "Bonjour" ] );
 		Assert.equals( "Hello", chat.translatedMessage, "" );
 		Assert.isInstanceOf( chat.date, Date, "" );
 	}
@@ -500,7 +503,7 @@ class ObjectXMLParserTest
 		var parser : MockMessageParserModule = this._builderFactory.getCoreFactory().locate( "parser" );
 		Assert.isNotNull( parser, "" );
 
-		chat.dispatchDomainEvent( new PayloadEvent( MockChatModule.TEXT_INPUT, chat, [ new ExecutionPayload( "Bonjour", String ) ] ) );
+		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "Bonjour" ] );
 		Assert.equals( "BONJOUR", receiver.message, "" );
 	}
 	
@@ -694,7 +697,7 @@ class ObjectXMLParserTest
 		Assert.isInstanceOf( facebookService, MockFacebookService, "" );
 
 		var injector : IDependencyInjector = new Injector();
-		serviceLocator.configure( injector, new EventDispatcher(), null );
+		serviceLocator.configure( injector, new Dispatcher(), null );
 
 		Assert.isInstanceOf( injector.getInstance( IMockAmazonService ), MockAmazonService, "" );
 		Assert.isInstanceOf( injector.getInstance( IMockFacebookService ), MockFacebookService, "" );
@@ -726,7 +729,7 @@ class ObjectXMLParserTest
 		Assert.isNotNull( amazonService1, "" );
 
 		var injector : IDependencyInjector = new Injector();
-		serviceLocator.configure( injector, new EventDispatcher(), null );
+		serviceLocator.configure( injector, new Dispatcher(), null );
 
 		Assert.isInstanceOf( injector.getInstance( IMockAmazonService, "amazon0" ),  MockAmazonService, "" );
 		Assert.isInstanceOf( injector.getInstance( IMockAmazonService, "amazon1" ), AnotherMockAmazonService, "" );
@@ -970,7 +973,7 @@ class ObjectXMLParserTest
 		Assert.isNotNull( parser, "" );
 
 		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandler ), 500 );
-		chat.dispatchDomainEvent( new PayloadEvent( MockChatModule.TEXT_INPUT, chat, [new ExecutionPayload( "bonjour", String )] ) );
+		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "bonjour" ] );
 	}
 	
 	private function _onCompleteHandler() : Void

@@ -74,7 +74,7 @@ class ObjectXMLParser extends AbstractXMLParser
 			this.getApplicationAssembler( ).buildObject( applicationContext, identifier, type, args, factory, singleton, mapType, staticRef );
 
 			// register each object to system channel.
-			this.getApplicationAssembler().buildDomainListener( applicationContext, identifier, TopLevelDomain.DOMAIN.getName().toString(), null );
+//			this.getApplicationAssembler().buildDomainListener( applicationContext, identifier, TopLevelDomain.DOMAIN.getName().toString(), null );
 
 			// Build property.
 			var propertyIterator = xml.elementsNamed( ContextNameList.PROPERTY );

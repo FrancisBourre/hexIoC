@@ -20,8 +20,8 @@ class MockReceiverModule extends MockModule
 		this.message = text;
 	}
 	
-	public function onMessageEvent( event : PayloadEvent ) : Void
+	public function onMessageEvent( message : String ) : Void
 	{
-		this.message = event.getExecutionPayloads()[0].getData();
+		this.message = message;
 	}
 }

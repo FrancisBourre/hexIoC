@@ -1,7 +1,6 @@
 package hex.ioc.parser.xml.mock;
 
-import hex.control.payload.ExecutionPayload;
-import hex.control.payload.PayloadEvent;
+import hex.event.MessageType;
 
 /**
  * ...
@@ -9,7 +8,7 @@ import hex.control.payload.PayloadEvent;
  */
 class MockChatModule extends MockModule
 {
-	static public inline var TEXT_INPUT : String = "onTextInput";
+	static public var TEXT_INPUT : MessageType = new MessageType( "onTextInput" );
 	
 	public function new() 
 	{
@@ -19,14 +18,9 @@ class MockChatModule extends MockModule
 	public var translatedMessage 	: String;
 	public var date 				: Date;
 
-	public function onTranslation( event : PayloadEvent ) : Void
+	public function onTranslation( translatedMessage : String, ?date : Date ) : Void
 	{
-		var payloads : Array<ExecutionPayload> 	= event.getExecutionPayloads();
-		this.translatedMessage 					= payloads[0].getData();
-		
-		if ( payloads.length > 1 )
-		{trace( payloads[1].getData() );
-			this.date = payloads[1].getData();
-		}
+		this.translatedMessage = translatedMessage;
+		this.date = date;
 	}
 }

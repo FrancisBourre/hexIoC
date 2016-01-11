@@ -1,7 +1,7 @@
 package hex.ioc.control;
 
+import hex.control.Request;
 import hex.data.IParser;
-import hex.event.IEvent;
 import hex.ioc.error.ParsingException;
 import hex.ioc.vo.ConstructorVO;
 
@@ -11,7 +11,7 @@ import hex.ioc.vo.ConstructorVO;
  */
 class BuildXMLCommand extends AbstractBuildCommand
 {
-	override public function execute( ?e : IEvent ) : Void
+	override public function execute( ?request : Request ) : Void
 	{
 		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
 

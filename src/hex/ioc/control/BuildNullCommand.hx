@@ -1,6 +1,6 @@
 package hex.ioc.control;
 
-import hex.event.IEvent;
+import hex.control.Request;
 import hex.ioc.vo.ConstructorVO;
 
 /**
@@ -14,7 +14,7 @@ class BuildNullCommand extends AbstractBuildCommand
 		super();
 	}
 	
-	override public function execute( ?e : IEvent ) : Void
+	override public function execute( ?request : Request ) : Void
 	{
 		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
 		constructorVO.result = null;

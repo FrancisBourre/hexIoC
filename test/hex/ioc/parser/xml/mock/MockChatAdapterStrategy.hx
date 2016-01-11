@@ -17,7 +17,6 @@ class MockChatAdapterStrategy extends AdapterStrategy
 	
 	public function onAdapt( args : Array<Dynamic> ) : Array<Dynamic>
 	{
-		var e : PayloadEvent = args[0];
-		return [ e.getExecutionPayloads()[0].getData(), Date.now() ];
+		return [ args[0], Date.now() ];
 	}
 }

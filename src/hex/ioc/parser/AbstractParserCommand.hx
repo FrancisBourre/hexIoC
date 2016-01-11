@@ -1,6 +1,7 @@
 package hex.ioc.parser;
 
 import hex.control.async.AsyncCommand;
+import hex.control.Request;
 import hex.error.NullPointerException;
 import hex.event.IEvent;
 import hex.ioc.assembler.IApplicationAssembler;
@@ -22,7 +23,7 @@ class AbstractParserCommand extends AsyncCommand implements IParserCommand
 	}
 	
 	@final
-	override public function execute( ?e : IEvent ) : Void 
+	override public function execute( ?request : Request ) : Void 
 	{
 		if ( this._contextData != null )
 		{

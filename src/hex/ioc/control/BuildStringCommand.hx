@@ -1,7 +1,7 @@
 package hex.ioc.control;
 
+import hex.control.Request;
 import hex.error.IllegalArgumentException;
-import hex.event.IEvent;
 import hex.ioc.vo.ConstructorVO;
 import hex.log.Logger;
 
@@ -16,10 +16,10 @@ class BuildStringCommand extends AbstractBuildCommand
 		super();
 	}
 	
-	override public function execute( ?e : IEvent ) : Void
+	override public function execute( ?request : Request ) : Void
 	{
 		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
-
+trace( constructorVO.arguments );
 		var value : String 	= null;
 		var args 			= constructorVO.arguments;
 
@@ -41,5 +41,6 @@ class BuildStringCommand extends AbstractBuildCommand
 		}
 
 		constructorVO.result = value;
+		trace( "constructorVO.result", value );
 	}
 }

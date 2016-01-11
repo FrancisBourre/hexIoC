@@ -3,7 +3,6 @@ package hex.ioc.core;
 import hex.collection.HashMap;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.IApplicationDomainDispatcher;
-import hex.event.IEventListener;
 import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.control.BuildArrayCommand;
 import hex.ioc.control.BuildBooleanCommand;
@@ -26,7 +25,6 @@ import hex.ioc.locator.MethodCallVOLocator;
 import hex.ioc.locator.PropertyVOLocator;
 import hex.ioc.vo.BuildHelperVO;
 import hex.ioc.vo.ConstructorVO;
-import hex.module.IModuleListener;
 
 /**
  * ...
@@ -38,7 +36,7 @@ class BuilderFactory
 	private var _applicationContext 		: ApplicationContext;
 	private var _commandMap 				: HashMap<String, Class<IBuildCommand>>;
 	private var _coreFactory 				: CoreFactory;
-	private var _applicationDomainHub 		: IApplicationDomainDispatcher<IModuleListener>;
+	private var _applicationDomainHub 		: IApplicationDomainDispatcher;
 	private var _IDExpert 					: IDExpert;
 	private var _constructorVOLocator 		: ConstructorVOLocator;
 	private var _propertyVOLocator 			: PropertyVOLocator;
@@ -62,7 +60,7 @@ class BuilderFactory
 		return this._coreFactory;
 	}
 
-	public function getApplicationHub() : IApplicationDomainDispatcher<IModuleListener>
+	public function getApplicationHub() : IApplicationDomainDispatcher
 	{
 		return this._applicationDomainHub;
 	}

@@ -1,10 +1,13 @@
 package hex.ioc.parser.xml.mock;
 
-import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
 import hex.domain.DomainExpert;
+import hex.domain.ApplicationDomainDispatcher;
+import hex.event.Dispatcher;
+import hex.event.IDispatcher;
 import hex.event.IEvent;
 import hex.event.IEventDispatcher;
+import hex.event.MessageType;
 import hex.module.IModule;
 import hex.module.IModuleListener;
 import hex.module.ModuleEvent;
@@ -15,21 +18,21 @@ import hex.module.ModuleEvent;
  */
 class MockModule implements IModule implements IModuleListener
 {
-	private var _domainDispatcher 	: IEventDispatcher<IModuleListener, IEvent>;
+	private var _domainDispatcher 	: IDispatcher<{}>;
 	
 	public function new() 
 	{
 		this._domainDispatcher = ApplicationDomainDispatcher.getInstance().getDomainDispatcher( this.getDomain() );
 	
-		if ( this._domainDispatcher != null )
+		/*if ( this._domainDispatcher != null )
 		{
 			this._domainDispatcher.addListener( this );
-		}
+		}*/
 	}
 	
-	public function dispatchDomainEvent( e : IEvent ) : Void
+	public function dispatchDomainEvent( messageType : MessageType, data : Array<Dynamic> ) : Void
 	{
-		this._domainDispatcher.dispatchEvent( e );
+		this._domainDispatcher.dispatch( messageType, data );
 	}
 	
 	public function getDomain() : Domain
@@ -61,23 +64,20 @@ class MockModule implements IModule implements IModuleListener
 		return isReleased;
 	}
 	
-	public function sendExternalEventFromDomain( e : ModuleEvent ) : Void 
+	public function sendMessageFromDomain( messageType : MessageType, data : Array<Dynamic> ) : Void
 	{
 		
 	}
 	
-	public function addHandler( type : String, callback : IEvent->Void ) : Void 
+	public function addHandler( messageType : MessageType, scope : Dynamic, callback : Dynamic ) : Void
 	{
 		
 	}
 	
-	public function removeHandler( type : String, callback:IEvent->Void ) : Void 
+	public function removeHandler( messageType : MessageType, scope : Dynamic, callback : Dynamic ) : Void
 	{
 		
 	}
-	
-	
-	/* INTERFACE hex.module.IModuleListener */
 	
 	public function onModuleInitialisation( e : ModuleEvent ) : Void 
 	{

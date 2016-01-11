@@ -1,10 +1,10 @@
 package hex.ioc.control;
 
+import hex.control.Request;
 import hex.domain.Domain;
 import hex.domain.DomainExpert;
 import hex.domain.DomainUtil;
 import hex.error.Exception;
-import hex.event.IEvent;
 import hex.ioc.vo.ConstructorVO;
 import hex.module.IModule;
 import hex.util.ClassUtil;
@@ -15,7 +15,7 @@ import hex.util.ClassUtil;
  */
 class BuildInstanceCommand extends AbstractBuildCommand
 {
-	override public function execute( ?e : IEvent ) : Void
+	override public function execute( ?request : Request ) : Void
 	{
 		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
 
@@ -23,7 +23,7 @@ class BuildInstanceCommand extends AbstractBuildCommand
 		{
 			var cmd : IBuildCommand = new BuildRefCommand();
 			cmd.setHelper( this._buildHelperVO );
-			cmd.execute( e );
+			cmd.execute( request );
 		}
 		else
 		{

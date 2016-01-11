@@ -2,7 +2,6 @@ package hex.ioc.parser.xml.mock;
 
 import hex.control.async.AsyncCommandEvent;
 import hex.control.payload.ExecutionPayload;
-import hex.control.payload.PayloadEvent;
 import hex.event.MacroAdapterStrategy;
 
 /**
@@ -21,9 +20,9 @@ class MockChatEventAdapterStrategyMacro extends MacroAdapterStrategy
 		super( this, this.onAdapt );
 	}
 
-	public function onAdapt( args : Array<PayloadEvent> ) : Void
+	public function onAdapt( message : String ) : Void
 	{
-		this._message = args[0].getExecutionPayloads()[0].getData();
+		this._message = message;
 	}
 
 	override private function _prepare() : Void

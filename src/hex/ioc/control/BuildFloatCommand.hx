@@ -1,7 +1,7 @@
 package hex.ioc.control;
 
+import hex.control.Request;
 import hex.error.IllegalArgumentException;
-import hex.event.IEvent;
 import hex.ioc.vo.ConstructorVO;
 
 /**
@@ -15,7 +15,7 @@ class BuildFloatCommand extends AbstractBuildCommand
 		super();
 	}
 	
-	override public function execute( ?e : IEvent ) : Void
+	override public function execute( ?request : Request ) : Void
 	{
 		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
 

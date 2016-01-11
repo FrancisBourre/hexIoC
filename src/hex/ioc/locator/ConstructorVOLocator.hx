@@ -1,7 +1,7 @@
 package hex.ioc.locator;
 
 import hex.collection.Locator;
-import hex.collection.LocatorEvent;
+import hex.collection.LocatorMessage;
 import hex.ioc.core.BuilderFactory;
 import hex.ioc.vo.ConstructorVO;
 
@@ -9,7 +9,7 @@ import hex.ioc.vo.ConstructorVO;
  * ...
  * @author Francis Bourre
  */
-class ConstructorVOLocator extends Locator<String, ConstructorVO, LocatorEvent<String, ConstructorVO>>
+class ConstructorVOLocator extends Locator<String, ConstructorVO>
 {
 	private var _builderFactory : BuilderFactory;
 
@@ -45,11 +45,11 @@ class ConstructorVOLocator extends Locator<String, ConstructorVO, LocatorEvent<S
 	
 	override function _dispatchRegisterEvent( key : String, element : ConstructorVO ) : Void 
 	{
-		this._dispatcher.dispatchEvent( new LocatorEvent( LocatorEvent.REGISTER, this, key, element ) );
+		this._dispatcher.dispatch( LocatorMessage.REGISTER, [ key, element ] );
 	}
 	
 	override function _dispatchUnregisterEvent( key : String ) : Void 
 	{
-		this._dispatcher.dispatchEvent( new LocatorEvent( LocatorEvent.UNREGISTER, this, key ) );
+		this._dispatcher.dispatch( LocatorMessage.UNREGISTER, [ key ] );
 	}
 }

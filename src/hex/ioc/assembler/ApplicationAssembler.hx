@@ -127,6 +127,7 @@ class ApplicationAssembler implements IApplicationAssembler
 
 		var constructorVO : ConstructorVO = new ConstructorVO( ownerID, type, args, factory, singleton, null, mapType, staticRef );
 		this.getBuilderFactory( applicationContext ).getConstructorVOLocator().register( ownerID, constructorVO );
+		trace( constructorVO );
 		return constructorVO;
 	}
 
@@ -168,6 +169,7 @@ class ApplicationAssembler implements IApplicationAssembler
 		var i 					: Int;
 
 		//for ( i in 0...len ) ApplicationAssembler._buildDisplayList( builderFactories[ i ] );
+		
 		for ( i in 0...len ) ApplicationAssembler._buildAllObjects( builderFactories[ i ] );
 		for ( i in 0...len ) ApplicationAssembler._assignAllDomainListeners( builderFactories[ i ] );
 		for ( i in 0...len ) ApplicationAssembler._callAllMethods( builderFactories[ i ] );

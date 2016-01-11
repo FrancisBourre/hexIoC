@@ -1,7 +1,7 @@
 package hex.ioc.control;
 
+import hex.control.Request;
 import hex.error.VirtualMethodException;
-import hex.event.IEvent;
 import hex.ioc.vo.BuildHelperVO;
 import hex.module.IModule;
 
@@ -19,7 +19,7 @@ class AbstractBuildCommand implements IBuildCommand
 		
 	}
 
-	public function execute( ?e : IEvent ) : Void
+	public function execute( ?request : Request ) : Void
 	{
 		throw new VirtualMethodException( this + ".execute should be overridden" );
 	}

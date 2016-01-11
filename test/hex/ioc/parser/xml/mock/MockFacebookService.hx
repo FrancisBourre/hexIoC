@@ -1,14 +1,12 @@
 package hex.ioc.parser.xml.mock;
 
-import hex.service.ServiceConfiguration;
-import hex.service.ServiceEvent;
 import hex.service.stateful.StatefulService;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class MockFacebookService extends StatefulService<ServiceEvent, ServiceConfiguration> implements IMockFacebookService
+class MockFacebookService extends StatefulService implements IMockFacebookService
 {
 	public function new() 
 	{

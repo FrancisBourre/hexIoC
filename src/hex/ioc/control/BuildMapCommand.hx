@@ -1,7 +1,7 @@
 package hex.ioc.control;
 
 import hex.collection.HashMap;
-import hex.event.IEvent;
+import hex.control.Request;
 import hex.ioc.control.AbstractBuildCommand;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.MapVO;
@@ -13,7 +13,7 @@ import hex.log.Logger;
  */
 class BuildMapCommand extends AbstractBuildCommand
 {
-	override public function execute( ?e : IEvent ) : Void
+	override public function execute( ?request : Request ) : Void
 	{
 		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
 

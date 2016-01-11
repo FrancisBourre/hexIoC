@@ -1,7 +1,6 @@
 package hex.ioc.core;
 
 import hex.collection.ILocatorListener;
-import hex.collection.LocatorEvent;
 import hex.error.IllegalArgumentException;
 import hex.event.IEvent;
 import hex.structures.Point;
@@ -42,8 +41,8 @@ class CoreFactoryTest
 		
 		Assert.isTrue( this._coreFactory.register( "key", value ),  "'register' should return true" );
 		Assert.equals( 1, listener.registerEventCount, "listener should have received a register event" );
-		Assert.equals( "key", listener.lastRegisterEventReceived.key, "event key should be the same" );
-		Assert.equals( value, listener.lastRegisterEventReceived.value, "event value should be the same" );
+		Assert.equals( "key", listener.lastRegisterKeyReceived, "event key should be the same" );
+		Assert.equals( value, listener.lastRegisterValueReceived, "event value should be the same" );
 		Assert.equals( 0, listener.unregisterEventCount, "listener should not have received an unregister event" );
 		
 		Assert.isTrue( this._coreFactory.isRegisteredWithKey( "key" ),  "'isRegisteredWithKey' should return true" );
@@ -64,8 +63,8 @@ class CoreFactoryTest
 		Assert.isTrue( this._coreFactory.unregisterWithKey( "key" ), "'unregisterWithKey' should return true" );
 		
 		Assert.equals( 1, listener.unregisterEventCount, "listener should have received an unregister event" );
-		Assert.equals( "key", listener.lastRegisterEventReceived.key, "event key should be the same" );
-		Assert.equals( value, listener.lastRegisterEventReceived.value, "event value should be the same" );
+		Assert.equals( "key", listener.lastRegisterKeyReceived, "event key should be the same" );
+		Assert.equals( value, listener.lastRegisterValueReceived, "event value should be the same" );
 		Assert.equals( 0, listener.registerEventCount, "listener should not have received a register event" );
 		
 		Assert.isFalse( this._coreFactory.isRegisteredWithKey( "key" ),  "'isRegisteredWithKey' should return false" );
@@ -86,8 +85,8 @@ class CoreFactoryTest
 		Assert.isTrue( this._coreFactory.unregister( value ), "'unregister' should return true" );
 		
 		Assert.equals( 1, listener.unregisterEventCount, "listener should have received an unregister event" );
-		Assert.equals( "key", listener.lastRegisterEventReceived.key, "event key should be the same" );
-		Assert.equals( value, listener.lastRegisterEventReceived.value, "event value should be the same" );
+		Assert.equals( "key", listener.lastRegisterKeyReceived, "event key should be the same" );
+		Assert.equals( value, listener.lastRegisterValueReceived, "event value should be the same" );
 		Assert.equals( 0, listener.registerEventCount, "listener should not have received a register event" );
 		
 		Assert.isFalse( this._coreFactory.isRegisteredWithKey( "key" ),  "'isRegisteredWithKey' should return false" );
@@ -161,11 +160,12 @@ private class MockValue
 	}
 }
 
-private class MockCoreFactoryListener implements ILocatorListener<LocatorEvent<String, Dynamic>>
+private class MockCoreFactoryListener implements ILocatorListener<String, Dynamic>
 {
-	public var lastRegisterEventReceived		: LocatorEvent<String, Dynamic>;
+	public var lastRegisterKeyReceived			: String;
+	public var lastRegisterValueReceived		: Dynamic;
 	public var registerEventCount				: Int = 0;
-	public var lastUnregisterEventReceived		: LocatorEvent<String, Dynamic>;
+	public var lastUnregisterKeyReceived		: String;
 	public var unregisterEventCount				: Int = 0;
 	
 	public function new ()
@@ -173,15 +173,16 @@ private class MockCoreFactoryListener implements ILocatorListener<LocatorEvent<S
 		
 	}
 	
-	public function onRegister( e : LocatorEvent<String, Dynamic> ) : Void 
+	public function onRegister( key : String, value : Dynamic ) : Void 
 	{
-		this.lastRegisterEventReceived = e;
+		this.lastRegisterKeyReceived 	= key;
+		this.lastRegisterValueReceived 	= value;
 		this.registerEventCount++;
 	}
 	
-	public function onUnregister( e : LocatorEvent<String, Dynamic> ) : Void 
+	public function onUnregister( key : String ) : Void 
 	{
-		this.lastUnregisterEventReceived = e;
+		this.lastUnregisterKeyReceived = key;
 		this.unregisterEventCount++;
 	}
 	
