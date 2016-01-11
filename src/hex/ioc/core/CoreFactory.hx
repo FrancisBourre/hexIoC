@@ -11,6 +11,7 @@ import hex.event.Dispatcher;
 import hex.event.EventDispatcher;
 import hex.event.IDispatcher;
 import hex.event.IEventDispatcher;
+import hex.log.Stringifier;
 import hex.metadata.MetadataProvider;
 import hex.service.IService;
 import hex.util.ObjectUtil;
@@ -67,7 +68,7 @@ class CoreFactory implements ILocator<String, Dynamic>
 			}
         }
 		
-		throw new NoSuchElementException( "Can't find item with '" + key + "' key in " + this );
+		throw new NoSuchElementException( "Can't find item with '" + key + "' key in " + Stringifier.stringify(this) );
 	}
 	
 	public function isRegisteredWithKey( key : Dynamic ) : Bool 
@@ -158,7 +159,7 @@ class CoreFactory implements ILocator<String, Dynamic>
 		
 		if ( classReference == null )
 		{
-			throw new IllegalArgumentException( this + ".getClassReference fails with class named '" + qualifiedClassName + "'" );
+			throw new IllegalArgumentException( Stringifier.stringify(this) + ".getClassReference fails with class named '" + qualifiedClassName + "'" );
 		}
 		
 		return classReference;
@@ -174,7 +175,7 @@ class CoreFactory implements ILocator<String, Dynamic>
 		
 		if ( staticRef == null )
 		{
-			throw new IllegalArgumentException( this + ".getStaticReference fails with '" + qualifiedClassName + "'" );
+			throw new IllegalArgumentException( Stringifier.stringify(this) + ".getStaticReference fails with '" + qualifiedClassName + "'" );
 		}
 		
 		return staticRef;
