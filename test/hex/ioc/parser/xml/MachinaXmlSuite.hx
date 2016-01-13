@@ -1,5 +1,7 @@
 package hex.ioc.parser.xml;
 
+import hex.ioc.parser.xml.state.StatefulStateMachineConfigTest;
+
 /**
  * ...
  * @author Francis Bourre
@@ -7,6 +9,6 @@ package hex.ioc.parser.xml;
 class MachinaXmlSuite
 {
 	@suite( "Xml" )
-    public var list : Array<Class<Dynamic>> = [ObjectXMLParserTest, XmlParserUtilTest];
+    public var list : Array<Class<Dynamic>> = [ObjectXMLParserTest, StatefulStateMachineConfigTest, XmlParserUtilTest];
 	
 }

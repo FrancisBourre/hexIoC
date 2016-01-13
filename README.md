@@ -8,3 +8,4 @@ Inversion of Control system with DSL and modularity based on global and micro co
 * [hexCore](https://github.com/DoclerLabs/hexCore)
 * [hexInject](https://github.com/DoclerLabs/hexInject)
 * [hexMVC](https://github.com/DoclerLabs/hexMVC)
+* [hexState](https://github.com/DoclerLabs/hexState)
