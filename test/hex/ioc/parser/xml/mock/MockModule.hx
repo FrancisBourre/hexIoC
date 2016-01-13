@@ -54,7 +54,7 @@ class MockModule implements IModule
 		return isReleased;
 	}
 	
-	public function sendMessageFromDomain( messageType : MessageType, data : Array<Dynamic> ) : Void
+	public function dispatchPublicMessage( messageType : MessageType, ?data : Array<Dynamic> ) : Void
 	{
 		
 	}
