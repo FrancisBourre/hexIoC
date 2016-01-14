@@ -12,6 +12,9 @@ import hex.state.config.stateful.StatefulStateMachineConfig;
 import hex.state.State;
 import hex.unittest.assertion.Assert;
 
+import hex.ioc.parser.xml.state.mock.MockStateMessage;
+import hex.ioc.parser.xml.state.mock.MockExitStateCommand;
+
 /**
  * ...
  * @author Francis Bourre
@@ -52,10 +55,10 @@ class StatefulStateMachineConfigTest
 		var source : String = '
 		<root>
 
-			<initialState id="initialState" static-ref="com.ioc.parser.xml.MockStateEnum.INITIAL_STATE">
+			<initialState id="initialState" static-ref="hex.ioc.parser.xml.state.mock.MockStateEnum.INITIAL_STATE">
 				<method-call name="addTransition">
 					<argument static-ref="hex.ioc.parser.xml.state.mock.MockStateMessage.TRIGGER_NEXT_STATE"/>
-					<argument static-ref="com.ioc.parser.xml.MockStateEnum.NEXT_STATE"/>
+					<argument static-ref="hex.ioc.parser.xml.state.mock.MockStateEnum.NEXT_STATE"/>
 				</method-call>
 
 				<method-call name="addExitCommand">
@@ -69,7 +72,7 @@ class StatefulStateMachineConfigTest
 				<argument ref="initialState"/>
 			</stateConfig>
 
-			<module id="myModule" type="com.ioc.parser.xml.MockModuleWorkingWithStates">
+			<module id="myModule" type="hex.ioc.parser.xml.state.mock.MockModuleWorkingWithStates">
 				<argument ref="stateConfig"/>
 			</module>
 
