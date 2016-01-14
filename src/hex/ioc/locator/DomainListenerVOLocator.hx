@@ -9,7 +9,6 @@ import hex.error.IllegalArgumentException;
 import hex.event.ClassAdapter;
 import hex.event.EventProxy;
 import hex.event.IAdapterStrategy;
-import hex.event.IEvent;
 import hex.event.MessageType;
 import hex.ioc.core.BuilderFactory;
 import hex.ioc.vo.DomainListenerVO;
@@ -66,8 +65,10 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO>
 			for ( domainListenerArgument in args )
 			{
 				var method : String = Std.is( listener, EventProxy ) ? "handleCallback" : domainListenerArgument.method;
-				//var messageType : MessageType = domainListenerArgument.name != null ? domainListenerArgument.name : this._builderFactory.getCoreFactory().getStaticReference( domainListenerArgument.staticRef );
-				var messageType : MessageType = domainListenerArgument.name != null ? new MessageType( domainListenerArgument.name ) : this._builderFactory.getCoreFactory().getStaticReference( domainListenerArgument.staticRef );
+				
+				var messageType : MessageType = domainListenerArgument.name != null ? 
+												new MessageType( domainListenerArgument.name ) : 
+												this._builderFactory.getCoreFactory().getStaticReference( domainListenerArgument.staticRef );
 
 				if ( method != null && Reflect.isFunction( Reflect.field( listener, method ) ) )
 				{
@@ -98,7 +99,7 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO>
 
 			return true;
 
-		} else /*if ( Std.is( listener, IModule ) )*/
+		} else
 		{
 			
 			var domain : Domain = DomainUtil.getDomain( domainListener.listenedDomainName, Domain );
@@ -144,13 +145,3 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO>
 		this._dispatcher.dispatch( LocatorMessage.UNREGISTER, [key] );
 	}
 }
-	/**
-	 protected function getStrategyCallback( listener : Object, method : String, strategyClassName : String, injectedInModule : Boolean = false ) : Function
-	{
-		var callback : Function 			= listener[ method ];
-		var strategyClassReference : Class 	= this._builderFactory.getCoreFactory().getClassReference( strategyClassName );
-		var adapter : IOAdapter 			= new IOAdapter ( 	callback, strategyClassReference,
-																( ( injectedInModule && listener is BaseModule ) ? ( listener as BaseModule ).instantiateUnmapped  :  this._builderFactory.getApplicationContext().getInjector().instantiateUnmapped )
-															);
-		return adapter.getCallbackAdapter();
-	}**/
