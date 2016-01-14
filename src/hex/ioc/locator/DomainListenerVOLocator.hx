@@ -126,10 +126,12 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO>
 			adapter.setFactoryMethod( this._builderFactory.getApplicationContext().getInjector(), this._builderFactory.getApplicationContext().getInjector().instantiateUnmapped );
 		}
 		
-		return function ( e : IEvent ) : Void
+		var f:Array<Dynamic>->Void = function( rest:Array<Dynamic> ):Void
 		{
-			( adapter.getCallbackAdapter() )( [ e ] );
+			( adapter.getCallbackAdapter() )( rest );
 		}
+		
+		return Reflect.makeVarArgs(f);
 	}
 	
 	override function _dispatchRegisterEvent( key : String, element : DomainListenerVO ) : Void 
