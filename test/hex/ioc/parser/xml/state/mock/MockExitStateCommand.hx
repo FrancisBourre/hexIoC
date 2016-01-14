@@ -7,10 +7,11 @@ import hex.control.Request;
  * ...
  * @author Francis Bourre
  */
+@:rtti
 class MockExitStateCommand extends BasicCommand
 {
 	override public function execute( ?request : Request ) : Void 
 	{
-		cast ( this.getOwner() ).commandWasCalled = true;
+		( cast this.getOwner() ).commandWasCalled = true;
 	}
 }
