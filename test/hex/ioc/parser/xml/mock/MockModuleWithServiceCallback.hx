@@ -41,8 +41,6 @@ class MockModuleWithServiceCallback extends Module
 	
 	override private function _getRuntimeDependencies() : IRuntimeDependencies
 	{
-		var rd : RuntimeDependencies = new RuntimeDependencies();
-		rd.addServiceDependencies( [IMockStubStatefulService] );
-		return rd;
+		return new RuntimeDependencies();
 	}
 }

@@ -54,7 +54,7 @@ import hex.ioc.parser.xml.mock.MockChatEventAdapterStrategyMacro;
  */
 class ObjectXMLParserTest
 {
-	private var _contextParser 				: XMLContextParser;
+	private var _contextParser 				: ApplicationXMLParser;
 	private var _applicationContext 		: ApplicationContext;
 	private var _builderFactory 			: BuilderFactory;
 	private var _applicationAssembler 		: IApplicationAssembler;
@@ -76,9 +76,10 @@ class ObjectXMLParserTest
 		
 	private function _build( xml : Xml, applicationContext : ApplicationContext = null ) : Void
 	{
-		this._contextParser = new XMLContextParser();
+		this._contextParser = new ApplicationXMLParser();
 		this._contextParser.setParserCollection( new XMLParserCollection() );
-		this._contextParser.parse( applicationContext != null ? applicationContext : this._applicationContext, this._applicationAssembler, xml );
+		//this._contextParser.parse( applicationContext != null ? applicationContext : this._applicationContext, this._applicationAssembler, xml );
+		this._contextParser.parse( this._applicationAssembler, xml );
 		this._applicationAssembler.buildEverything();
 	}
 	
@@ -86,7 +87,7 @@ class ObjectXMLParserTest
 	public function testBuildingString() : Void
 	{
 		var source : String = '
-		<root>
+		<root name="applicationContext">
 			<test id="s" value="hello"/>
 		</root>';
 		
@@ -102,7 +103,7 @@ class ObjectXMLParserTest
 	public function testBuildingAnonymousObject() : Void
 	{
 		var source : String = '
-		<root>
+		<root name="applicationContext">
 			<test id="obj" type="Object">
 				<property name="name" value="Francis"/>
 				<property name="age" type="Int" value="44"/>
@@ -130,7 +131,7 @@ class ObjectXMLParserTest
 	public function testBuildingSimpleInstanceWithArguments() : Void
 	{
 		var source : String = '
-		<root>
+		<root name="applicationContext">
 			<bean id="size" type="hex.structures.Size">
 				<argument type="Int" value="10"/>
 				<argument type="Int" value="20"/>
@@ -150,7 +151,7 @@ class ObjectXMLParserTest
 	public function testBuildingMultipleInstancesWithReferences() : Void
 	{
 		var source : String = '
-		<root>
+		<root name="applicationContext">
 			<rectangle id="rect" type="hex.ioc.parser.xml.mock.MockRectangle">
 				<argument ref="rectPosition.x"/>
 				<argument ref="rectPosition.y"/>
@@ -194,7 +195,7 @@ class ObjectXMLParserTest
 	public function testBuildingMultipleInstancesWithMethodCall() : Void
 	{
 		var source : String = '
-		<root>
+		<root name="applicationContext">
 			<rectangle id="rect" type="hex.ioc.parser.xml.mock.MockRectangle">
 				<property name="size" ref="rectSize" />
 				<method-call name="offsetPoint">
@@ -250,7 +251,7 @@ class ObjectXMLParserTest
 	public function testBuildingSingletonInstance() : Void
 	{
 		var source : String = '
-		<root>
+		<root name="applicationContext">
 			<gateway id="gateway" value="http://localhost/amfphp/gateway.php"/>
 			
 			<service id="service" type="hex.ioc.parser.xml.mock.MockServiceProvider" singleton-access="getInstance">
@@ -273,7 +274,7 @@ class ObjectXMLParserTest
 	public function testFactoryWithStaticMethod() : Void
 	{
 		var source : String = '
-		<root>
+		<root name="applicationContext">
 			<rectangle id="rect" type="hex.ioc.parser.xml.mock.MockRectangleFactory" factory="getRectangle">
 				<argument type="Int" value="10"/><argument type="Int" value="20"/>
 				<argument type="Int" value="30"/><argument type="Int" value="40"/>
@@ -296,7 +297,7 @@ class ObjectXMLParserTest
 	{
 		var source : String = '
 		
-		<root>
+		<root name="applicationContext">
 			<point id="point" type="hex.ioc.parser.xml.mock.MockPointFactory" singleton-access="getInstance" factory="getPoint">
 				<argument type="Int" value="10"/>
 				<argument type="Int" value="20"/>
@@ -316,7 +317,7 @@ class ObjectXMLParserTest
 	public function testBuildingXMLWithParserClass() : Void
 	{
 		var source : String = '
-		<root>
+		<root name="applicationContext">
 
 			<data id="fruits" type="XML" parser-class="hex.ioc.parser.xml.mock.MockXMLParser">
 				<root>
@@ -347,7 +348,7 @@ class ObjectXMLParserTest
 	public function testArrayRef() : Void
 	{
 		var source : String = '
-		<root>
+		<root name="applicationContext">
 
 			<collection id="fruits" type="Array">
 				<argument ref="fruit0" />
@@ -380,7 +381,7 @@ class ObjectXMLParserTest
 	public function testMapRef() : Void
 	{
 		var source : String = '
-		<root>
+		<root name="applicationContext">
 
 			<collection id="fruits" type="hex.core.HashMap">
 				<item> <key value="0"/> <value ref="fruit0"/></item>
@@ -418,7 +419,7 @@ class ObjectXMLParserTest
 	public function testDomainListening() : Void
 	{
 		var source : String = '
-		<root>
+		<root name="applicationContext">
 
 			<chat id="chat" type="hex.ioc.parser.xml.mock.MockChatModule">
 				<listen ref="translation"/>
@@ -450,7 +451,7 @@ class ObjectXMLParserTest
 	public function testDomainListeningWithEventAdapter() : Void
 	{
 		var source : String = '
-		<root>
+		<root name="applicationContext">
 
 			<chat id="chat" type="hex.ioc.parser.xml.mock.MockChatModule">
 				<listen ref="translation"/>
@@ -483,7 +484,7 @@ class ObjectXMLParserTest
 	public function testDomainListeningWithClassAdapterAndInjection() : Void
 	{
 		var source : String = '
-		<root>
+		<root name="applicationContext">
 
 			<chat id="chat" type="hex.ioc.parser.xml.mock.MockChatModule"/>
 
@@ -517,7 +518,7 @@ class ObjectXMLParserTest
 	public function testDomainDispatchAfterModuleInitialisation() : Void
 	{
 		var source : String = '
-		<root>
+		<root name="applicationContext">
 
 			<sender id="sender" type="hex.ioc.parser.xml.mock.MockSenderModule"/>
 
@@ -545,7 +546,7 @@ class ObjectXMLParserTest
 	public function testBuildingDifferentApplicationContext() : Void
 	{
 		var parentSource : String = '
-		<root>
+		<root name="applicationContextParent">
 
 			<bean id="rect0" type="hex.ioc.parser.xml.mock.MockRectangle">
 				<argument type="Int" value="10"/>
@@ -557,7 +558,7 @@ class ObjectXMLParserTest
 		</root>';
 
 		var childSource : String = '
-		<root>
+		<root name="applicationContextChild" parent="applicationContextParent">
 
 			<bean id="rect0" type="hex.ioc.parser.xml.mock.MockRectangle">
 				<argument type="Int" value="40"/>
@@ -569,7 +570,7 @@ class ObjectXMLParserTest
 		</root>';
 
 		var subChildSource : String = '
-		<root>
+		<root name="applicationContextSubChild" parent="applicationContextChild">
 
 			<bean id="rect0" type="hex.ioc.parser.xml.mock.MockRectangle">
 				<argument type="Int" value="80"/>
@@ -626,7 +627,7 @@ class ObjectXMLParserTest
 	public function testTargetingSubProperty() : Void
 	{
 		var source : String = '
-		<root>
+		<root name="applicationContext">
 
 			<test id="mockObject" type="hex.ioc.parser.xml.mock.MockObjectWithRegtangleProperty">
 				<property name="rectangle.x" type="Float" value="1.5"/>
@@ -646,7 +647,7 @@ class ObjectXMLParserTest
 	public function testBuildingClassReference() : Void
 	{
 		var source : String = '
-		<root>
+		<root name="applicationContext">
 
 			<RectangleClass id="RectangleClass" type="Class" value="hex.ioc.parser.xml.mock.MockRectangle"/>
 			
@@ -680,7 +681,7 @@ class ObjectXMLParserTest
 	public function testBuildingServiceLocator() : Void
 	{
 		var source : String = '
-		<root>
+		<root name="applicationContext">
 		
 			<serviceLocator id="serviceLocator" type="hex.config.stateful.ServiceLocator">
 				<item> <key type="Class" value="hex.ioc.parser.xml.mock.IMockAmazonService"/> <value type="Class" value="hex.ioc.parser.xml.mock.MockAmazonService"/></item>
@@ -714,7 +715,7 @@ class ObjectXMLParserTest
 	public function testBuildingServiceLocatorWithMapNames() : Void
 	{
 		var source : String = '
-		<root>
+		<root name="applicationContext">
 		
 			<serviceLocator id="serviceLocator" type="hex.config.stateful.ServiceLocator">
 				<item map-name="amazon0"> <key type="Class" value="hex.ioc.parser.xml.mock.IMockAmazonService"/> <value type="Class" value="hex.ioc.parser.xml.mock.MockAmazonService"/></item>
@@ -745,7 +746,7 @@ class ObjectXMLParserTest
 	public function testParsingTwice() : Void
 	{
 		var source0 : String = '
-		<root>
+		<root name="applicationContext">
 
 			<bean id="rect0" type="hex.ioc.parser.xml.mock.MockRectangle">
 				<argument type="Int" value="10"/>
@@ -757,7 +758,7 @@ class ObjectXMLParserTest
 		</root>';
 
 		var source1 : String = '
-		<root>
+		<root name="applicationContext">
 
 			<bean id="rect1" type="hex.ioc.parser.xml.mock.MockRectangle">
 				<argument type="Int" value="50"/>
@@ -790,7 +791,7 @@ class ObjectXMLParserTest
 	public function testListeningService() : Void
 	{
 		var source : String = '
-		<root>
+		<root name="applicationContext">
 
 			<service id="myService" type="hex.ioc.parser.xml.mock.MockStubStatefulService"/>
 
@@ -820,7 +821,7 @@ class ObjectXMLParserTest
 	public function testListeningServiceWithStrategyAndModuleInjection() : Void
 	{
 		var source : String = '
-		<root>
+		<root name="applicationContext">
 
 			<service id="myService" type="hex.ioc.parser.xml.mock.MockStubStatefulService"/>
 
@@ -853,7 +854,7 @@ class ObjectXMLParserTest
 	public function testListeningServiceWithStrategyAndContextInjection() : Void
 	{
 		var source : String = '
-		<root>
+		<root name="applicationContext">
 
 			<helper id="mockDividerHelper" type="hex.ioc.parser.xml.mock.MockDividerHelper" map-type="hex.ioc.parser.xml.mock.IMockDividerHelper"/>
 
@@ -905,7 +906,7 @@ class ObjectXMLParserTest
 	public function testStaticRef() : Void
 	{
 		var source : String = '
-		<root>
+		<root name="applicationContext">
 
 			<constant id="note" static-ref="com.mvc.controller.base.mock.MockStubStatefulServiceNote.INT_VO_UPDATE"/>
 
@@ -942,7 +943,7 @@ class ObjectXMLParserTest
 		//MetaDataProvider.getInstance().registerMetaData( "URL", _getURL );
 
 		var source : String = '
-		<root>
+		<root name="applicationContext">
 
 			<chat id="chat" type="hex.ioc.parser.xml.mock.MockChatModule"/>
 
@@ -992,7 +993,7 @@ class ObjectXMLParserTest
 	public function testMapTypeAttribute() : Void
 	{
 		var source : String = '
-		<root>
+		<root name="applicationContext">
 		
 			<module id="myModule" type="hex.ioc.parser.xml.mock.MockMappedModule" map-type="hex.ioc.parser.xml.mock.IMockMappedModule"/>
 

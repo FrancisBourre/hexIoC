@@ -10,9 +10,11 @@ interface IParserCommand
 {
 	function parse( ) : Void;
 
-	function setContextData( data : Dynamic, applicationContext : ApplicationContext ) : Void;
+	function setContextData( data : Dynamic ) : Void;
 	
 	function getContextData() : Dynamic;
+	
+	function getApplicationContext( applicationContextClass : Class<ApplicationContext> = null ) : ApplicationContext;
 
 	function getApplicationAssembler() : IApplicationAssembler;
 	

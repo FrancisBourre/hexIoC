@@ -1,6 +1,8 @@
 package hex.ioc.parser.xml.state.mock;
 
 import hex.config.stateful.IStatefulConfig;
+import hex.module.dependency.IRuntimeDependencies;
+import hex.module.dependency.RuntimeDependencies;
 import hex.module.Module;
 
 /**
@@ -21,5 +23,10 @@ class MockModuleWorkingWithStates extends Module
 	{
 		this._dispatchPrivateMessage( MockStateMessage.TRIGGER_NEXT_STATE );
 		super._onInitialisation();
+	}
+	
+	override private function _getRuntimeDependencies() : IRuntimeDependencies
+	{
+		return new RuntimeDependencies();
 	}
 }

@@ -1,10 +1,16 @@
 package hex.ioc.assembler;
 
+import hex.config.stateful.IStatefulConfig;
+import hex.config.stateless.IStatelessConfig;
 import hex.control.macro.IMacroExecutor;
 import hex.control.macro.MacroExecutor;
 import hex.di.IBasicInjector;
 import hex.di.IDependencyInjector;
+import hex.domain.ApplicationDomainDispatcher;
+import hex.domain.Domain;
+import hex.domain.DomainUtil;
 import hex.error.IllegalArgumentException;
+import hex.event.IDispatcher;
 import hex.inject.Injector;
 import hex.ioc.assembler.IApplicationAssembler;
 import hex.log.Logger;
@@ -17,21 +23,56 @@ class ApplicationContext implements Dynamic<ApplicationContext>
 {
 	private var _name 					: String;
 	private var _applicationAssembler 	: IApplicationAssembler;
-	//private var _rootTarget 			: DisplayObjectContainer;
-	
-	private var _injector 				: IBasicInjector;
+	private var _dispatcher 			: IDispatcher<{}>;
+	private var _injector 				: Injector;
 		
 	@:allow(hex.ioc.assembler)
-	private function new( applicationAssembler : IApplicationAssembler, name : String/*, rootTarget : DisplayObjectContainer = null*/ )
+	private function new( applicationAssembler : IApplicationAssembler, name : String )
 	{
+		var domain : Domain = DomainUtil.getDomain( name, Domain );
+		this._dispatcher = ApplicationDomainDispatcher.getInstance().getDomainDispatcher( domain );
+		
 		this._injector = new Injector();
 		this._injector.mapToValue( IBasicInjector, this._injector );
 		this._injector.mapToValue( IDependencyInjector, this._injector );
 		this._injector.mapToType( IMacroExecutor, MacroExecutor );
-
+		
 		this._name 					= name;
 		this._applicationAssembler 	= applicationAssembler;
-		//this._rootTarget 			= rootTarget ? rootTarget : new MovieClip();
+	}
+	
+	/**
+	 * Add collection of module configuration classes that 
+	 * need to be executed before initialisation's end
+	 * @param	configurations
+	 */
+	private function _addStatelessConfigClasses( configurations : Array<Class<IStatelessConfig>> ) : Void
+	{
+		var i : Int = configurations.length;
+		while ( --i > -1 )
+		{
+			var configurationClass : Class<IStatelessConfig> = configurations[ i ];
+			var configClassInstance : IStatelessConfig = this._injector.instantiateUnmapped( configurationClass );
+			configClassInstance.configure();
+		}
+	}
+	
+	/**
+	 * Add collection of runtime configurations that 
+	 * need to be executed before initialisation's end
+	 * @param	configurations
+	 */
+	private function _addStatefulConfigs( configurations : Array<IStatefulConfig> ) : Void
+	{
+		var i : Int = configurations.length;
+		while ( --i > -1 )
+		{
+			var configuration : IStatefulConfig = configurations[ i ];
+			if ( configuration != null )
+			{
+				configuration.configure( this._injector, this._dispatcher, null );
+			}
+		}
 	}
 
 	public function getName() : String
@@ -43,11 +84,6 @@ class ApplicationContext implements Dynamic<ApplicationContext>
 	{
 		return this._injector;
 	}
-
-	/*public function getRootTarget() : DisplayObjectContainer
-	{
-		return this._rootTarget;
-	}*/
 	
 	function resolve( field : String )
 	{
@@ -56,8 +92,6 @@ class ApplicationContext implements Dynamic<ApplicationContext>
 
 	public function addChild( applicationContext : ApplicationContext ) : Bool
 	{
-		//this._rootTarget.addChild( applicationContext.getRootTarget() );
-		
 		try
 		{
 			return this._applicationAssembler.getBuilderFactory( this ).getCoreFactory().register( applicationContext.getName(), applicationContext );
@@ -70,5 +104,4 @@ class ApplicationContext implements Dynamic<ApplicationContext>
 			return false;
 		}
 	}
-
 }

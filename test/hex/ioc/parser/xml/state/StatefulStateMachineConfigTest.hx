@@ -7,7 +7,7 @@ import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.core.BuilderFactory;
 import hex.ioc.parser.xml.state.mock.MockModuleWorkingWithStates;
 import hex.ioc.parser.xml.state.mock.MockStateEnum;
-import hex.ioc.parser.xml.XMLContextParser;
+import hex.ioc.parser.xml.ApplicationXMLParser;
 import hex.state.config.stateful.StatefulStateMachineConfig;
 import hex.state.State;
 import hex.unittest.assertion.Assert;
@@ -21,8 +21,7 @@ import hex.ioc.parser.xml.state.mock.MockExitStateCommand;
  */
 class StatefulStateMachineConfigTest
 {
-	private var _contextParser 				: XMLContextParser;
-	private var _applicationContext 		: ApplicationContext;
+	private var _contextParser 				: ApplicationXMLParser;
 	private var _builderFactory 			: BuilderFactory;
 	private var _applicationAssembler 		: IApplicationAssembler;
 		
@@ -30,8 +29,7 @@ class StatefulStateMachineConfigTest
 	public function setUp() : Void
 	{
 		this._applicationAssembler 	= new ApplicationAssembler();
-		this._applicationContext 	= this._applicationAssembler.getApplicationContext( "applicationContext" );
-		this._builderFactory 		= this._applicationAssembler.getBuilderFactory( this._applicationContext );
+		this._builderFactory 		= this._applicationAssembler.getBuilderFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
 	}
 
 	@tearDown
@@ -41,11 +39,11 @@ class StatefulStateMachineConfigTest
 		this._applicationAssembler.release();
 	}
 		
-	private function _build( xml : Xml, applicationContext : ApplicationContext = null ) : Void
+	private function _build( xml : Xml ) : Void
 	{
-		this._contextParser = new XMLContextParser();
+		this._contextParser = new ApplicationXMLParser();
 		this._contextParser.setParserCollection( new XMLParserCollection() );
-		this._contextParser.parse( applicationContext != null ? applicationContext : this._applicationContext, this._applicationAssembler, xml );
+		this._contextParser.parse( this._applicationAssembler, xml );
 		this._applicationAssembler.buildEverything();
 	}
 	
@@ -53,7 +51,7 @@ class StatefulStateMachineConfigTest
 	public function testStateMachineConfiguration() : Void
 	{
 		var source : String = '
-		<root>
+		<root name="applicationContext">
 
 			<initialState id="initialState" static-ref="hex.ioc.parser.xml.state.mock.MockStateEnum.INITIAL_STATE">
 				<method-call name="addTransition">

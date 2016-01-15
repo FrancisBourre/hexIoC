@@ -1,5 +1,7 @@
 package hex.ioc.parser.xml.mock;
 
+import hex.module.dependency.IRuntimeDependencies;
+import hex.module.dependency.RuntimeDependencies;
 import hex.module.Module;
 
 /**
@@ -16,5 +18,10 @@ class MockMappedModule extends Module implements IMockMappedModule
 	public function doSomething() : Void 
 	{
 		
+	}
+	
+	override private function _getRuntimeDependencies() : IRuntimeDependencies
+	{
+		return new RuntimeDependencies();
 	}
 }

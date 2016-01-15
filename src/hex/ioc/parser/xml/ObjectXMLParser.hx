@@ -17,7 +17,7 @@ class ObjectXMLParser extends AbstractXMLParser
 		super();
 	}
 	
-	override public function parse( ) : Void
+	override public function parse() : Void
 	{
 		var iterator = this.getXMLContext().firstElement().elements();
 		while ( iterator.hasNext() )
@@ -30,7 +30,7 @@ class ObjectXMLParser extends AbstractXMLParser
 	
 	private function _parseNode( xml : Xml ) : Void
 	{
-		var applicationContext : ApplicationContext = this._applicationContext;
+		var applicationContext : ApplicationContext = this.getApplicationContext();
 
 		var identifier : String = XMLAttributeUtil.getID( xml );
 		if ( identifier == null )

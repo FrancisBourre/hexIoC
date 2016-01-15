@@ -3,6 +3,7 @@ package hex.ioc.parser.xml;
 import hex.error.IllegalArgumentException;
 import hex.error.NullPointerException;
 import hex.ioc.assembler.ApplicationContext;
+import hex.ioc.error.ParsingException;
 import hex.ioc.parser.AbstractParserCommand;
 
 /**
@@ -17,14 +18,26 @@ class AbstractXMLParser extends AbstractParserCommand
 	}
 	
 	@final
-	override public function setContextData( data : Dynamic, applicationContext : ApplicationContext ) : Void
+	override public function getApplicationContext( applicationContextClass : Class<ApplicationContext> = null ) : ApplicationContext
+	{
+		var applicationContextName : String = this.getXMLContext().firstElement().get( "name" );
+		if ( applicationContextName == null )
+		{
+			throw new ParsingException( this + " failed to retrieve applicationContext name. You should add 'name' attribute to the root of your xml context" );
+		}
+		
+		return this._applicationAssembler.getApplicationContext( applicationContextName, applicationContextClass );
+	}
+	
+	@final
+	override public function setContextData( data : Dynamic ) : Void
 	{
 		if ( data != null )
 		{
 			if ( Std.is( data, Xml ) )
 			{
 				this._contextData 			= data;
-				this._applicationContext 	= applicationContext;
+
 			}
 			else
 			{

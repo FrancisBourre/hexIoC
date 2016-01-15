@@ -42,7 +42,6 @@ class BuilderFactory
 	private var _propertyVOLocator 			: PropertyVOLocator;
 	private var _methodCallVOLocator 		: MethodCallVOLocator;
 	private var _domainListenerVOLocator 	: DomainListenerVOLocator;
-	//private var _displayObjectBuilder 		: DisplayObjectBuilder;
 
 	public function new( applicationContext : ApplicationContext, moduleLocator : ModuleLocator )
 	{
@@ -90,24 +89,20 @@ class BuilderFactory
 		return this._domainListenerVOLocator;
 	}
 
-	/*public function getDisplayObjectBuilder() : DisplayObjectBuilder
-	{
-		return this._displayObjectBuilder;
-	}*/
-
 	public function init( applicationContext : ApplicationContext ) : Void
 	{
 		this._applicationContext 		= applicationContext;
-		this._commandMap 				= new HashMap<String, Class<IBuildCommand>>();
 		this._coreFactory 				= new CoreFactory();
+		this._coreFactory.register( applicationContext.getName(), applicationContext );
+		
+		this._commandMap 				= new HashMap<String, Class<IBuildCommand>>();
 		this._applicationDomainHub 		= ApplicationDomainDispatcher.getInstance();
 		this._IDExpert 					= new IDExpert();
 		this._constructorVOLocator 		= new ConstructorVOLocator( this );
 		this._propertyVOLocator 		= new PropertyVOLocator( this );
 		this._methodCallVOLocator 		= new MethodCallVOLocator( this );
 		this._domainListenerVOLocator 	= new DomainListenerVOLocator( this );
-		//this._displayObjectBuilder 		= new DisplayObjectBuilder( applicationContext.getRootTarget(), this._coreFactory );
-
+		
 		this._coreFactory.addListener( this._propertyVOLocator );
 
 		this.addType( ContextTypeList.ARRAY, BuildArrayCommand );

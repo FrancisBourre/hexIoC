@@ -49,20 +49,6 @@ class ApplicationAssembler implements IApplicationAssembler
 		this._moduleLocator.clear();
 	}
 
-	/*public function buildRoot( applicationContext : ApplicationContext, ID : String ) : Void
-	{
-		this.getBuilderFactory( applicationContext ).getDisplayObjectBuilder().buildDisplayObject( new DisplayObjectVO( ID, null, true, null, null ) );
-	}*/
-
-	/*public function buildDisplayObject(             applicationContext 	: ApplicationContext,
-													ID 					: String,
-													parentID 			: String,
-													isVisible 			: Boolean = true,
-													type 				: String = null ) : void
-	{
-		this.getBuilderFactory( applicationContext ).getDisplayObjectBuilder().buildDisplayObject( new DisplayObjectVO( ID, parentID, isVisible, null, type ) );
-	}*/
-
 	public function buildProperty(  applicationContext 	: ApplicationContext,
 									ownerID 			: String,
 									name 				: String = null,
@@ -166,8 +152,6 @@ class ApplicationAssembler implements IApplicationAssembler
 		var builderFactories 	: Array<BuilderFactory> = this._mBuilderFactories.getValues();
 		var len 				: Int 					= builderFactories.length;
 		var i 					: Int;
-
-		//for ( i in 0...len ) ApplicationAssembler._buildDisplayList( builderFactories[ i ] );
 		
 		for ( i in 0...len ) ApplicationAssembler._buildAllObjects( builderFactories[ i ] );
 		for ( i in 0...len ) ApplicationAssembler._assignAllDomainListeners( builderFactories[ i ] );
@@ -178,7 +162,7 @@ class ApplicationAssembler implements IApplicationAssembler
 		this._moduleLocator.clear();
 	}
 
-	public function getApplicationContext( applicationContextName : String/*, rootTarget : DisplayObjectContainer = null*/ ) : ApplicationContext
+	public function getApplicationContext( applicationContextName : String, applicationContextClass : Class<ApplicationContext> = null ) : ApplicationContext
 	{
 		var applicationContext : ApplicationContext;
 
@@ -188,18 +172,21 @@ class ApplicationAssembler implements IApplicationAssembler
 
 		} else
 		{
-			applicationContext = new ApplicationContext( this, applicationContextName/*, rootTarget*/ );
+			if ( applicationContextClass != null )
+			{
+				applicationContext = Type.createInstance( applicationContextClass, [ this, applicationContextName ] );
+			} 
+			else
+			{
+				applicationContext = new ApplicationContext( this, applicationContextName );
+			}
+			
 			this._mApplicationContext.put( applicationContextName, applicationContext );
 			this._mBuilderFactories.put( applicationContext, new BuilderFactory( applicationContext, this._moduleLocator ) );
 		}
 
 		return applicationContext;
 	}
-
-	/*static private function _buildDisplayList( builderFactory : BuilderFactory ) : Void
-	{
-		builderFactory.getDisplayObjectBuilder().buildDisplayList();
-	}*/
 
 	static private function _buildAllObjects( builderFactory : BuilderFactory ) : Void
 	{

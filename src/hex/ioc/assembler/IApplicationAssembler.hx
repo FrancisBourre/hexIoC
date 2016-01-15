@@ -18,5 +18,5 @@ interface IApplicationAssembler
 	function buildDomainListener( applicationContext : ApplicationContext, ownerID : String, listenedDomainName : String, args : Array<DomainListenerVOArguments> = null ) : Void;
 	function registerID( applicationContext : ApplicationContext, ID : String ) : Bool;
 	function buildEverything() : Void;
-	function getApplicationContext( applicationContextName : String ) : ApplicationContext;
+	function getApplicationContext( applicationContextName : String, applicationContextClass : Class<ApplicationContext> = null ) : ApplicationContext;
 }

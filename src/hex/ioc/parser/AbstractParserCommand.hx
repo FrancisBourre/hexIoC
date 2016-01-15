@@ -3,6 +3,7 @@ package hex.ioc.parser;
 import hex.control.async.AsyncCommand;
 import hex.control.Request;
 import hex.error.NullPointerException;
+import hex.error.VirtualMethodException;
 import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.assembler.IApplicationAssembler;
 
@@ -14,7 +15,6 @@ class AbstractParserCommand extends AsyncCommand implements IParserCommand
 {
 	private var _applicationAssembler 	: IApplicationAssembler;
 	private var _contextData 			: Dynamic;
-	private var _applicationContext 	: ApplicationContext;
 
 	private function new() 
 	{
@@ -54,11 +54,16 @@ class AbstractParserCommand extends AsyncCommand implements IParserCommand
 
 	public function parse() : Void
 	{
-		throw new NullPointerException( this + ".parse must be implemented in concrete class." );
+		throw new VirtualMethodException( this + ".parse must be implemented in concrete class." );
 	}
 
-	public function setContextData( data : Dynamic, applicationContext : ApplicationContext ) : Void
+	public function setContextData( data : Dynamic ) : Void
 	{
-		throw new NullPointerException( this + ".parse must be implemented in concrete class." );
+		throw new VirtualMethodException( this + ".setContextData must be implemented in concrete class." );
+	}
+	
+	public function getApplicationContext( applicationContextClass : Class<ApplicationContext> = null ) : ApplicationContext
+	{
+		throw new VirtualMethodException( this + ".getApplicationContext must be implemented in concrete class." );
 	}
 }

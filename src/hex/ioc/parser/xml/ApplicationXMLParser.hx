@@ -8,7 +8,7 @@ import hex.ioc.assembler.IApplicationAssembler;
  * ...
  * @author Francis Bourre
  */
-class XMLContextParser
+class ApplicationXMLParser
 {
 	private var _contextData 		: Dynamic;
 	private var _assembler 			: IApplicationAssembler;
@@ -39,7 +39,7 @@ class XMLContextParser
 		return this._contextData;
 	}
 
-	public function parse( applicationContext : ApplicationContext, applicationAssembler : IApplicationAssembler, context : Dynamic, ?autoBuild : Bool = false ) : Void
+	public function parse( applicationAssembler : IApplicationAssembler, context : Dynamic, ?autoBuild : Bool = false ) : Void
 	{
 		if ( applicationAssembler != null )
 		{
@@ -67,7 +67,7 @@ class XMLContextParser
 		while ( this._parserCollection.hasNext() )
 		{
 			var parser : IParserCommand = this._parserCollection.next();
-			parser.setContextData( this._contextData, applicationContext );
+			parser.setContextData( this._contextData );
 			parser.setApplicationAssembler( this._assembler );
 			parser.parse();
 
