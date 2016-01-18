@@ -14,9 +14,16 @@ class ApplicationXMLParser
 	private var _assembler 			: IApplicationAssembler;
 	private var _parserCollection 	: IParserCollection;
 	
-	public function new()
+	public function new( ?parserCollection : XMLParserCollection )
 	{
-		
+		if ( parserCollection != null )
+		{
+			this._parserCollection = parserCollection;
+		}
+		else
+		{
+			this._parserCollection = new XMLParserCollection();
+		}
 	}
 
 	public function setApplicationAssembler( applicationAssembler : IApplicationAssembler ) : Void
@@ -80,10 +87,5 @@ class ApplicationXMLParser
 		{
 			this._assembler.buildEverything();
 		}
-	}
-
-	public function setParserCollection( collection : IParserCollection  ) : Void
-	{
-		this._parserCollection = collection;
 	}
 }

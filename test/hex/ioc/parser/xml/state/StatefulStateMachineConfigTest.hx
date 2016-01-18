@@ -42,7 +42,6 @@ class StatefulStateMachineConfigTest
 	private function _build( xml : Xml ) : Void
 	{
 		this._contextParser = new ApplicationXMLParser();
-		this._contextParser.setParserCollection( new XMLParserCollection() );
 		this._contextParser.parse( this._applicationAssembler, xml );
 		this._applicationAssembler.buildEverything();
 	}

@@ -77,7 +77,6 @@ class ObjectXMLParserTest
 	private function _build( xml : Xml, applicationContext : ApplicationContext = null ) : Void
 	{
 		this._contextParser = new ApplicationXMLParser();
-		this._contextParser.setParserCollection( new XMLParserCollection() );
 		//this._contextParser.parse( applicationContext != null ? applicationContext : this._applicationContext, this._applicationAssembler, xml );
 		this._contextParser.parse( this._applicationAssembler, xml );
 		this._applicationAssembler.buildEverything();

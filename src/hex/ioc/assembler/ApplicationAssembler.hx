@@ -30,7 +30,15 @@ class ApplicationAssembler implements IApplicationAssembler
 	
 	private var _mApplicationContext 		: HashMap<String, ApplicationContext> = new HashMap<String, ApplicationContext>();
 	private var _mBuilderFactories 			: HashMap<ApplicationContext, BuilderFactory> = new HashMap<ApplicationContext, BuilderFactory>();
-	private var _moduleLocator 				: ModuleLocator = new ModuleLocator();
+	
+	public function startAssembling() : Void
+	{
+		var applicationContexts : Array<ApplicationContext> = this._mApplicationContext.getValues();
+		for ( applicationcontext in applicationContexts )
+		{
+			applicationcontext._dispatch( ApplicationAssemblerMessage.ASSEMBLING_START );
+		}
+	}
 
 	public function getBuilderFactory( applicationContext : ApplicationContext ) : BuilderFactory
 	{
@@ -46,7 +54,6 @@ class ApplicationAssembler implements IApplicationAssembler
 		}
 		this._mApplicationContext.clear();
 		this._mBuilderFactories.clear();
-		this._moduleLocator.clear();
 	}
 
 	public function buildProperty(  applicationContext 	: ApplicationContext,
@@ -156,10 +163,13 @@ class ApplicationAssembler implements IApplicationAssembler
 		for ( i in 0...len ) ApplicationAssembler._buildAllObjects( builderFactories[ i ] );
 		for ( i in 0...len ) ApplicationAssembler._assignAllDomainListeners( builderFactories[ i ] );
 		for ( i in 0...len ) ApplicationAssembler._callAllMethods( builderFactories[ i ] );
-
-		var modules : Array<IModule> = this._moduleLocator.values();
-		for ( module in modules ) ApplicationAssembler._callInitOnAllModules( module );
-		this._moduleLocator.clear();
+		for ( i in 0...len ) ApplicationAssembler._callInitOnModules( builderFactories[ i ] );
+		
+		var applicationContexts : Array<ApplicationContext> = this._mApplicationContext.getValues();
+		for ( applicationcontext in applicationContexts )
+		{
+			applicationcontext._dispatch( ApplicationAssemblerMessage.ASSEMBLING_END );
+		}
 	}
 
 	public function getApplicationContext( applicationContextName : String, applicationContextClass : Class<ApplicationContext> = null ) : ApplicationContext
@@ -182,7 +192,7 @@ class ApplicationAssembler implements IApplicationAssembler
 			}
 			
 			this._mApplicationContext.put( applicationContextName, applicationContext );
-			this._mBuilderFactories.put( applicationContext, new BuilderFactory( applicationContext, this._moduleLocator ) );
+			this._mBuilderFactories.put( applicationContext, new BuilderFactory( applicationContext ) );
 		}
 
 		return applicationContext;
@@ -191,23 +201,27 @@ class ApplicationAssembler implements IApplicationAssembler
 	static private function _buildAllObjects( builderFactory : BuilderFactory ) : Void
 	{
 		builderFactory.getConstructorVOLocator().buildAllObjects();
+		builderFactory.getApplicationContext()._dispatch( ApplicationAssemblerMessage.OBJECTS_BUILT );
 	}
 
 	static private function _assignAllDomainListeners( builderFactory:BuilderFactory ) : Void
 	{
 		builderFactory.getDomainListenerVOLocator().assignAllDomainListeners();
+		builderFactory.getApplicationContext()._dispatch( ApplicationAssemblerMessage.DOMAIN_LISTENERS_ASSIGNED );
 	}
 
 	static private function _callAllMethods( builderFactory:BuilderFactory ) : Void
 	{
 		builderFactory.getMethodCallVOLocator().callAllMethods();
+		builderFactory.getApplicationContext()._dispatch( ApplicationAssemblerMessage.METHODS_CALLED );
 	}
-
-	static private function _callInitOnAllModules( module : IModule  ) : Void
+	
+	static private function _callInitOnModules( builderFactory:BuilderFactory ) : Void
 	{
-		module.initialize();
+		builderFactory.getModuleLocator().callModuleInitialisation();
+		builderFactory.getApplicationContext()._dispatch( ApplicationAssemblerMessage.MODULES_INITIALIZED );
 	}
-
+	
 	static private function _getStringKeyFromInt( index : Int ) : String
 	{
 		var value : Int 	= 5 - Std.string( index ).length;

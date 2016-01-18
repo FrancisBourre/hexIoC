@@ -11,6 +11,7 @@ import hex.domain.Domain;
 import hex.domain.DomainUtil;
 import hex.error.IllegalArgumentException;
 import hex.event.IDispatcher;
+import hex.event.MessageType;
 import hex.inject.Injector;
 import hex.ioc.assembler.IApplicationAssembler;
 import hex.log.Logger;
@@ -26,7 +27,7 @@ class ApplicationContext implements Dynamic<ApplicationContext>
 	private var _dispatcher 			: IDispatcher<{}>;
 	private var _injector 				: Injector;
 		
-	@:allow(hex.ioc.assembler)
+	@:allow( hex.ioc.assembler )
 	private function new( applicationAssembler : IApplicationAssembler, name : String )
 	{
 		var domain : Domain = DomainUtil.getDomain( name, Domain );
@@ -39,6 +40,12 @@ class ApplicationContext implements Dynamic<ApplicationContext>
 		
 		this._name 					= name;
 		this._applicationAssembler 	= applicationAssembler;
+	}
+	
+	@:allow( hex.ioc.assembler )
+	private function _dispatch( messageType : MessageType, ?data : Array<Dynamic> ) : Void
+	{
+		this._dispatcher.dispatch( messageType, data );
 	}
 	
 	/**

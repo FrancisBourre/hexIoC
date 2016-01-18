@@ -10,6 +10,7 @@ import hex.ioc.vo.PropertyVO;
  */
 interface IApplicationAssembler 
 {
+	function startAssembling() : Void;
 	function getBuilderFactory( applicationContext : ApplicationContext ) : BuilderFactory;
 	function release() : Void;
 	function buildProperty( applicationContext : ApplicationContext, ownerID : String, name : String = null, value : String = null, type : String = null, ref : String = null, method : String = null, staticRef : String = null ) : PropertyVO;

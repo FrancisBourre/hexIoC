@@ -43,9 +43,8 @@ class BuilderFactory
 	private var _methodCallVOLocator 		: MethodCallVOLocator;
 	private var _domainListenerVOLocator 	: DomainListenerVOLocator;
 
-	public function new( applicationContext : ApplicationContext, moduleLocator : ModuleLocator )
+	public function new( applicationContext : ApplicationContext )
 	{
-		this._moduleLocator = moduleLocator;
 		this.init( applicationContext );
 	}
 
@@ -88,6 +87,11 @@ class BuilderFactory
 	{
 		return this._domainListenerVOLocator;
 	}
+	
+	public function getModuleLocator() : ModuleLocator
+	{
+		return this._moduleLocator;
+	}
 
 	public function init( applicationContext : ApplicationContext ) : Void
 	{
@@ -102,6 +106,7 @@ class BuilderFactory
 		this._propertyVOLocator 		= new PropertyVOLocator( this );
 		this._methodCallVOLocator 		= new MethodCallVOLocator( this );
 		this._domainListenerVOLocator 	= new DomainListenerVOLocator( this );
+		this._moduleLocator 			= new ModuleLocator( this );
 		
 		this._coreFactory.addListener( this._propertyVOLocator );
 
@@ -160,6 +165,7 @@ class BuilderFactory
 		this._propertyVOLocator.release();
 		this._methodCallVOLocator.release();
 		this._domainListenerVOLocator.release();
+		this._moduleLocator.release();
 		this._commandMap.clear();
 		this._IDExpert.clear();
 	}

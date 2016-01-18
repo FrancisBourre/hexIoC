@@ -2,6 +2,7 @@ package hex.ioc.core;
 
 import hex.collection.Locator;
 import hex.collection.LocatorMessage;
+import hex.ioc.core.BuilderFactory;
 import hex.module.IModule;
 
 /**
@@ -10,9 +11,23 @@ import hex.module.IModule;
  */
 class ModuleLocator extends Locator<String, IModule>
 {
-	public function new() 
+	private var _builderFactory : BuilderFactory;
+
+	public function new( builderFactory : BuilderFactory )
 	{
 		super();
+		this._builderFactory = builderFactory;
+	}
+	
+	public function callModuleInitialisation() 
+	{
+		var modules : Array<IModule> = this.values();
+		for ( module in modules )
+		{
+			module.initialize();
+		}
+		
+		this.clear();
 	}
 	
 	override function _dispatchRegisterEvent( key : String, element : IModule ) : Void 
