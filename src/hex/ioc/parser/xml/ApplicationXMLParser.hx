@@ -46,7 +46,7 @@ class ApplicationXMLParser
 		return this._contextData;
 	}
 
-	public function parse( applicationAssembler : IApplicationAssembler, context : Dynamic, ?autoBuild : Bool = false ) : Void
+	public function parse( applicationAssembler : IApplicationAssembler, context : Dynamic ) : Void
 	{
 		if ( applicationAssembler != null )
 		{
@@ -82,10 +82,5 @@ class ApplicationXMLParser
 		}
 
 		this._parserCollection.reset();
-
-		if ( autoBuild )
-		{
-			this._assembler.buildEverything();
-		}
 	}
 }
