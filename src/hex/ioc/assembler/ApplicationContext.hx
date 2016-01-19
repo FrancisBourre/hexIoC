@@ -15,6 +15,8 @@ import hex.event.MessageType;
 import hex.inject.Injector;
 import hex.ioc.assembler.IApplicationAssembler;
 import hex.log.Logger;
+import hex.metadata.IMetadataProvider;
+import hex.metadata.MetadataProvider;
 
 /**
  * ...
@@ -26,6 +28,7 @@ class ApplicationContext implements Dynamic<ApplicationContext>
 	private var _applicationAssembler 	: IApplicationAssembler;
 	private var _dispatcher 			: IDispatcher<{}>;
 	private var _injector 				: Injector;
+	private var _metadataProvider 		: IMetadataProvider;
 		
 	@:allow( hex.ioc.assembler )
 	private function new( applicationAssembler : IApplicationAssembler, name : String )
@@ -38,6 +41,7 @@ class ApplicationContext implements Dynamic<ApplicationContext>
 		this._injector.mapToValue( IDependencyInjector, this._injector );
 		this._injector.mapToType( IMacroExecutor, MacroExecutor );
 		
+		this._metadataProvider 		= MetadataProvider.getInstance( this._injector );
 		this._name 					= name;
 		this._applicationAssembler 	= applicationAssembler;
 	}

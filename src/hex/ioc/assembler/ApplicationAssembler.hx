@@ -6,7 +6,6 @@ import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.core.BuilderFactory;
 import hex.ioc.core.ContextTypeList;
-import hex.ioc.core.ModuleLocator;
 import hex.ioc.locator.MethodCallVOLocator;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
@@ -15,7 +14,6 @@ import hex.ioc.vo.MapVO;
 import hex.ioc.vo.MethodCallVO;
 import hex.ioc.vo.PropertyVO;
 import hex.ioc.vo.ServiceLocatorVO;
-import hex.module.IModule;
 
 /**
  * ...
@@ -28,17 +26,8 @@ class ApplicationAssembler implements IApplicationAssembler
 		
 	}
 	
-	private var _mApplicationContext 		: HashMap<String, ApplicationContext> = new HashMap<String, ApplicationContext>();
-	private var _mBuilderFactories 			: HashMap<ApplicationContext, BuilderFactory> = new HashMap<ApplicationContext, BuilderFactory>();
-	
-	public function startAssembling() : Void
-	{
-		var applicationContexts : Array<ApplicationContext> = this._mApplicationContext.getValues();
-		for ( applicationcontext in applicationContexts )
-		{
-			applicationcontext._dispatch( ApplicationAssemblerMessage.ASSEMBLING_START );
-		}
-	}
+	private var _mApplicationContext 		: HashMap<String, ApplicationContext> 			= new HashMap<String, ApplicationContext>();
+	private var _mBuilderFactories 			: HashMap<ApplicationContext, BuilderFactory> 	= new HashMap<ApplicationContext, BuilderFactory>();
 
 	public function getBuilderFactory( applicationContext : ApplicationContext ) : BuilderFactory
 	{
@@ -140,7 +129,7 @@ class ApplicationAssembler implements IApplicationAssembler
 
 		var method : MethodCallVO = new MethodCallVO( ownerID, methodCallName, args );
 		var index : Int = methodCallVOLocator.keys().length +1;
-		methodCallVOLocator.register( ApplicationAssembler._getStringKeyFromInt( index ), method );
+		methodCallVOLocator.register( "" + index, method );
 	}
 
 	public function buildDomainListener( applicationContext : ApplicationContext, ownerID : String, listenedDomainName : String, args : Array<DomainListenerVOArguments> = null ) : Void
@@ -156,6 +145,14 @@ class ApplicationAssembler implements IApplicationAssembler
 
 	public function buildEverything() : Void
 	{
+		var applicationContexts : Array<ApplicationContext> = null;
+		
+		applicationContexts = this._mApplicationContext.getValues();
+		for ( applicationcontext in applicationContexts )
+		{
+			applicationcontext._dispatch( ApplicationAssemblerMessage.ASSEMBLING_START );
+		}
+		
 		var builderFactories 	: Array<BuilderFactory> = this._mBuilderFactories.getValues();
 		var len 				: Int 					= builderFactories.length;
 		var i 					: Int;
@@ -165,7 +162,7 @@ class ApplicationAssembler implements IApplicationAssembler
 		for ( i in 0...len ) ApplicationAssembler._callAllMethods( builderFactories[ i ] );
 		for ( i in 0...len ) ApplicationAssembler._callInitOnModules( builderFactories[ i ] );
 		
-		var applicationContexts : Array<ApplicationContext> = this._mApplicationContext.getValues();
+		applicationContexts = this._mApplicationContext.getValues();
 		for ( applicationcontext in applicationContexts )
 		{
 			applicationcontext._dispatch( ApplicationAssemblerMessage.ASSEMBLING_END );
@@ -204,37 +201,21 @@ class ApplicationAssembler implements IApplicationAssembler
 		builderFactory.getApplicationContext()._dispatch( ApplicationAssemblerMessage.OBJECTS_BUILT );
 	}
 
-	static private function _assignAllDomainListeners( builderFactory:BuilderFactory ) : Void
+	static private function _assignAllDomainListeners( builderFactory : BuilderFactory ) : Void
 	{
 		builderFactory.getDomainListenerVOLocator().assignAllDomainListeners();
 		builderFactory.getApplicationContext()._dispatch( ApplicationAssemblerMessage.DOMAIN_LISTENERS_ASSIGNED );
 	}
 
-	static private function _callAllMethods( builderFactory:BuilderFactory ) : Void
+	static private function _callAllMethods( builderFactory : BuilderFactory ) : Void
 	{
 		builderFactory.getMethodCallVOLocator().callAllMethods();
 		builderFactory.getApplicationContext()._dispatch( ApplicationAssemblerMessage.METHODS_CALLED );
 	}
 	
-	static private function _callInitOnModules( builderFactory:BuilderFactory ) : Void
+	static private function _callInitOnModules( builderFactory : BuilderFactory ) : Void
 	{
 		builderFactory.getModuleLocator().callModuleInitialisation();
 		builderFactory.getApplicationContext()._dispatch( ApplicationAssemblerMessage.MODULES_INITIALIZED );
-	}
-	
-	static private function _getStringKeyFromInt( index : Int ) : String
-	{
-		var value : Int 	= 5 - Std.string( index ).length;
-		var src : String 	= "";
-
-		if ( value > 0 )
-		{
-			for( i in 0...value )
-			{
-				src += "0";
-			}
-		}
-
-		return src + index;
 	}
 }

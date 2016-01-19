@@ -47,6 +47,7 @@ import hex.ioc.parser.xml.mock.MockChatEventAdapterStrategyWithInjection;
 import hex.ioc.parser.xml.mock.MockStubStatefulService;
 import hex.ioc.parser.xml.mock.MockIntDividerEventAdapterStrategy;
 import hex.ioc.parser.xml.mock.MockChatEventAdapterStrategyMacro;
+import hex.ioc.parser.xml.mock.MockChatAdapterStrategyMacro;
 
 /**
  * ...
@@ -938,9 +939,6 @@ class ObjectXMLParserTest
 	@async( "test EventProxy" )
 	public function testEventProxy() : Void
 	{
-		//MetaDataProvider.getInstance().addProperties( new <String>[ "URL" ] );
-		//MetaDataProvider.getInstance().registerMetaData( "URL", _getURL );
-
 		var source : String = '
 		<root name="applicationContext">
 
@@ -986,6 +984,45 @@ class ObjectXMLParserTest
 	{
 		var receiver : MockReceiverModule = this._builderFactory.getCoreFactory().locate( "receiver" );
 		Assert.equals( "BONJOUR:HTTP://GOOGLE.COM", receiver.message, "" );
+	}
+	
+	@async( "test EventTrigger" )
+	public function testEventTrigger() : Void
+	{
+		var source : String = '
+		<root name="applicationContext">
+
+			<chat id="chat" type="hex.ioc.parser.xml.mock.MockChatModule"/>
+
+			<receiver id="receiver" type="hex.ioc.parser.xml.mock.MockReceiverModule" map-type="hex.ioc.parser.xml.mock.MockReceiverModule"/>
+			
+			<parser id="parser" type="hex.ioc.parser.xml.mock.MockMessageParserModule" map-type="hex.ioc.parser.xml.mock.IMockMessageParserModule"/>
+
+			<trigger id="eventTrigger" type="Object">
+				<listen ref="chat">
+					<event static-ref="hex.ioc.parser.xml.mock.MockChatModule.TEXT_INPUT" strategy="hex.ioc.parser.xml.mock.MockChatAdapterStrategyMacro"/>
+				</listen>
+			</trigger>
+
+		</root>';
+
+		var xml : Xml = Xml.parse( source );
+		this._build( xml );
+		
+		var eventTrigger : Dynamic = this._builderFactory.getCoreFactory().locate( "eventTrigger" );
+		Assert.isNotNull( eventTrigger, "" );
+		
+		var chat : MockChatModule = this._builderFactory.getCoreFactory().locate( "chat" );
+		Assert.isNotNull( chat, "" );
+
+		var receiver : MockReceiverModule = this._builderFactory.getCoreFactory().locate( "receiver" );
+		Assert.isNotNull( receiver, "" );
+
+		var parser : MockMessageParserModule = this._builderFactory.getCoreFactory().locate( "parser" );
+		Assert.isNotNull( parser, "" );
+
+		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandler ), 500 );
+		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "bonjour" ] );
 	}
 	
 	@test( "test map-type attribute" )

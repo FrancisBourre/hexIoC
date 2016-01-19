@@ -65,12 +65,11 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO>
 			for ( domainListenerArgument in args )
 			{
 				var method : String = Std.is( listener, EventProxy ) ? "handleCallback" : domainListenerArgument.method;
-				
 				var messageType : MessageType = domainListenerArgument.name != null ? 
 												new MessageType( domainListenerArgument.name ) : 
 												this._builderFactory.getCoreFactory().getStaticReference( domainListenerArgument.staticRef );
 
-				if ( method != null && Reflect.isFunction( Reflect.field( listener, method ) ) )
+				if ( ( method != null && Reflect.isFunction( Reflect.field( listener, method ) )) || domainListenerArgument.strategy != null )
 				{
 					var callback : Dynamic = domainListenerArgument.strategy != null ? this.getStrategyCallback( listener, method, domainListenerArgument.strategy, domainListenerArgument.injectedInModule ) : Reflect.field( listener, method );
 
@@ -88,11 +87,13 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO>
 				{
 					if ( method == null )
 					{
-						throw new IllegalArgumentException( this + ".assignDomainListener failed. Method should be defined to call: " + Stringifier.stringify(listener) );
+						throw new IllegalArgumentException( this + ".assignDomainListener failed. Callback should be defined (use 'method' attribute) in instance of '" 
+															+ Stringifier.stringify( listener ) + "' class with '" + domainListener.ownerID + "' id" );
 					}
 					else
 					{
-						throw new IllegalArgumentException( this + ".assignDomainListener failed. '" + method + "' is not a function on: " + Stringifier.stringify(listener) );
+						throw new IllegalArgumentException( this + ".assignDomainListener failed. Method named '" + method + "' can't be found in instance of '" 
+															+ Stringifier.stringify( listener ) + "' class with '" + domainListener.ownerID + "' id" );
 					}
 				}
 			}
@@ -101,7 +102,6 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO>
 
 		} else
 		{
-			
 			var domain : Domain = DomainUtil.getDomain( domainListener.listenedDomainName, Domain );
 			return this._builderFactory.getApplicationHub().addListener( listener, domain );
 		}
