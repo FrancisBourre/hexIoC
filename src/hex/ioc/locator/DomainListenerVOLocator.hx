@@ -65,6 +65,7 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO>
 			for ( domainListenerArgument in args )
 			{
 				var method : String = Std.is( listener, EventProxy ) ? "handleCallback" : domainListenerArgument.method;
+				
 				var messageType : MessageType = domainListenerArgument.name != null ? 
 												new MessageType( domainListenerArgument.name ) : 
 												this._builderFactory.getCoreFactory().getStaticReference( domainListenerArgument.staticRef );
