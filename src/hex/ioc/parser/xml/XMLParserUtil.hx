@@ -127,9 +127,9 @@ class XMLParserUtil
 		return obj;
 	}
 	
-	public static function concatXmlList(configList:Array<String>) 
+	public static function concatXmlList(configList:Array<String>, name:String):String
 	{
-		var result:String = '<?xml version="1.0" encoding="utf-8" ?><root>';
+		var result:String = '<?xml version="1.0" encoding="utf-8" ?><root name="' + name + '">';
 		
 		var l:UInt = configList.length;
 		
@@ -160,8 +160,8 @@ class XMLParserUtil
 		return result;
 	}
 	
-	public static function getConcatenatedConfig(configKeyList:Array<String>):String
+	public static function getConcatenatedConfig(configKeyList:Array<String>, name:String):String
 	{
-		return XMLParserUtil.concatXmlList(XMLParserUtil.getConfigList(configKeyList));
+		return XMLParserUtil.concatXmlList(XMLParserUtil.getConfigList(configKeyList), name);
 	}
 }
