@@ -16,7 +16,7 @@ import hex.ioc.vo.DomainListenerVOArguments;
 import hex.log.Stringifier;
 import hex.module.IModule;
 import hex.service.IService;
-import hex.service.Service;
+import hex.service.ServiceConfiguration;
 
 /**
  * ...
@@ -50,7 +50,7 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO>
 		var args : Array<DomainListenerVOArguments> 	= domainListener.arguments;
 
 		// Check if event provider is a service
-		var service : Service = null;
+		var service : IService<ServiceConfiguration> = null;
 		if ( this._builderFactory.getCoreFactory().isRegisteredWithKey( domainListener.listenedDomainName ) )
 		{
 			var located : Dynamic = this._builderFactory.getCoreFactory().locate( domainListener.listenedDomainName );
