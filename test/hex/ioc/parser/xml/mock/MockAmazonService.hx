@@ -1,5 +1,6 @@
 package hex.ioc.parser.xml.mock;
 
+import hex.service.ServiceConfiguration;
 import hex.service.stateless.StatelessService;
 
 /**
@@ -7,7 +8,7 @@ import hex.service.stateless.StatelessService;
  * @author Francis Bourre
  */
 @:rtti
-class MockAmazonService extends StatelessService implements IMockAmazonService
+class MockAmazonService extends StatelessService<ServiceConfiguration> implements IMockAmazonService
 {
 	public function new() 
 	{
