@@ -35,6 +35,5 @@ class MockChatEventAdapterStrategyMacro extends MacroAdapterStrategy
 	{
 		var cmd : MockChatEventAdapterStrategyCommand = cast async;
 		this._payload = cmd.getPayload();
-		this._handleComplete();
 	}
 }
