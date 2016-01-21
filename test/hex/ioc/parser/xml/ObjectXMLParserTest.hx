@@ -14,6 +14,7 @@ import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.core.BuilderFactory;
 import hex.ioc.parser.xml.mock.AnotherMockAmazonService;
 import hex.ioc.parser.xml.mock.AnotherMockModuleWithServiceCallback;
+import hex.ioc.parser.xml.mock.ClassWithConstantConstantArgument;
 import hex.ioc.parser.xml.mock.IMockAmazonService;
 import hex.ioc.parser.xml.mock.IMockDividerHelper;
 import hex.ioc.parser.xml.mock.IMockFacebookService;
@@ -902,20 +903,20 @@ class ObjectXMLParserTest
 		Assert.equals( 4.5, ( myModuleB.getFloatValue() ), "" );
 	}
 	
-	/*@test( "test static-ref" )
+	@test( "test static-ref" )
 	public function testStaticRef() : Void
 	{
 		var source : String = '
 		<root name="applicationContext">
 
-			<constant id="note" static-ref="com.mvc.controller.base.mock.MockStubStatefulServiceNote.INT_VO_UPDATE"/>
+			<constant id="constant" static-ref="hex.ioc.parser.xml.mock.MockStubStatefulService.INT_VO_UPDATE"/>
 
 			<object id="object" type="Object">
-				<property name="property" static-ref="com.mvc.controller.base.mock.MockStubStatefulServiceNote.INT_VO_UPDATE"/>
+				<property name="property" static-ref="hex.ioc.parser.xml.mock.MockStubStatefulService.INT_VO_UPDATE"/>
 			</object>
 
-			<instance id="instance" type="com.ioc.parser.xml.ClassWithConstantConstantArgument">
-				<argument static-ref="com.mvc.controller.base.mock.MockStubStatefulServiceNote.INT_VO_UPDATE"/>
+			<instance id="instance" type="hex.ioc.parser.xml.mock.ClassWithConstantConstantArgument">
+				<argument static-ref="hex.ioc.parser.xml.mock.MockStubStatefulService.INT_VO_UPDATE"/>
 			</instance>
 
 		</root>';
@@ -923,18 +924,18 @@ class ObjectXMLParserTest
 		var xml : Xml = Xml.parse( source );
 		this._build( xml );
 
-		var note : String = this._builderFactory.getCoreFactory().locate( "note" );
+		var note : String = this._builderFactory.getCoreFactory().locate( "constant" );
 		Assert.isNotNull( note, "" );
-		Assert.equals( note, MockStubStatefulServiceNote.INT_VO_UPDATE );
+		Assert.equals( note, MockStubStatefulService.INT_VO_UPDATE, "" );
 
-		var object : Object = this._builderFactory.getCoreFactory().locate( "object" ) as Object;
-		Assert.isNotNull( object );
-		Assert.equals( object.property, MockStubStatefulServiceNote.INT_VO_UPDATE );
+		var object : Dynamic = this._builderFactory.getCoreFactory().locate( "object" );
+		Assert.isNotNull( object, "" );
+		Assert.equals( object.property, MockStubStatefulService.INT_VO_UPDATE, "" );
 
-		var instance : ClassWithConstantConstantArgument = this._builderFactory.getCoreFactory().locate( "instance" ) as ClassWithConstantConstantArgument;
-		Assert.isNotNull( instance );
-		Assert.equals( instance.constant, MockStubStatefulServiceNote.INT_VO_UPDATE );
-	}*/
+		var instance : ClassWithConstantConstantArgument = this._builderFactory.getCoreFactory().locate( "instance" );
+		Assert.isNotNull( instance, "" );
+		Assert.equals( instance.constant, MockStubStatefulService.INT_VO_UPDATE, "" );
+	}
 	
 	@async( "test EventProxy" )
 	public function testEventProxy() : Void
