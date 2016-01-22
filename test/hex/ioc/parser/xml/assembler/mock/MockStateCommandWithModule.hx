@@ -12,7 +12,7 @@ import hex.module.IModule;
 @:rtti
 class MockStateCommandWithModule extends BasicCommand
 {
-	@inject
+	@Inject
 	public var module : IModule;
 	
 	override public function execute( ?request : Request ) : Void 
