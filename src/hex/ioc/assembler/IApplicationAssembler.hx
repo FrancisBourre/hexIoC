@@ -1,6 +1,7 @@
 package hex.ioc.assembler;
 
 import hex.ioc.core.BuilderFactory;
+import hex.ioc.vo.CommandMappingVO;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVOArguments;
 import hex.ioc.vo.PropertyVO;
@@ -19,4 +20,5 @@ interface IApplicationAssembler
 	function registerID( applicationContext : ApplicationContext, ID : String ) : Bool;
 	function buildEverything() : Void;
 	function getApplicationContext( applicationContextName : String, applicationContextClass : Class<ApplicationContext> = null ) : ApplicationContext;
+	function configureStateTransition( applicationContext : ApplicationContext, ID : String, stateClassReference : String, enterList : Array<CommandMappingVO>, exitList : Array<CommandMappingVO> ) : Void;
 }

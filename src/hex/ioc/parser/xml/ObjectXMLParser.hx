@@ -4,6 +4,7 @@ import hex.error.Exception;
 import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.core.ContextTypeList;
+import hex.ioc.error.ParsingException;
 import hex.ioc.vo.DomainListenerVOArguments;
 
 /**
@@ -35,7 +36,7 @@ class ObjectXMLParser extends AbstractXMLParser
 		var identifier : String = XMLAttributeUtil.getID( xml );
 		if ( identifier == null )
 		{
-			throw new Exception( this + " encounters parsing error with '" + xml.nodeName + "' node. You must set an id attribute." );
+			throw new ParsingException( this + " encounters parsing error with '" + xml.nodeName + "' node. You must set an id attribute." );
 		}
 
 		this.getApplicationAssembler().registerID( applicationContext, identifier );

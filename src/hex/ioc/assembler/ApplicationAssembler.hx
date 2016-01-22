@@ -7,6 +7,7 @@ import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.core.BuilderFactory;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.locator.MethodCallVOLocator;
+import hex.ioc.vo.CommandMappingVO;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.DomainListenerVOArguments;
@@ -14,6 +15,7 @@ import hex.ioc.vo.MapVO;
 import hex.ioc.vo.MethodCallVO;
 import hex.ioc.vo.PropertyVO;
 import hex.ioc.vo.ServiceLocatorVO;
+import hex.ioc.vo.StateTransitionVO;
 
 /**
  * ...
@@ -142,9 +144,21 @@ class ApplicationAssembler implements IApplicationAssembler
 	{
 		return this.getBuilderFactory( applicationContext ).getIDExpert().register( ID );
 	}
-
+	
+	public function configureStateTransition( applicationContext : ApplicationContext, ID : String, stateClassReference : String, enterList : Array<CommandMappingVO>, exitList : Array<CommandMappingVO> ) : Void
+	{
+		var stateTransition : StateTransitionVO = new StateTransitionVO( ID, stateClassReference, enterList, exitList );
+		this.getBuilderFactory( applicationContext ).getStateTransitionVOLocator().register( ID, stateTransition );
+	}
+	
 	public function buildEverything() : Void
 	{
+		var builderFactories 	: Array<BuilderFactory> = this._mBuilderFactories.getValues();
+		var len 				: Int 					= builderFactories.length;
+		var i 					: Int;
+		
+		for ( i in 0...len ) ApplicationAssembler._buildAllStateTransitions( builderFactories[ i ] );
+		
 		var applicationContexts : Array<ApplicationContext> = null;
 		
 		applicationContexts = this._mApplicationContext.getValues();
@@ -152,11 +166,7 @@ class ApplicationAssembler implements IApplicationAssembler
 		{
 			applicationcontext._dispatch( ApplicationAssemblerMessage.ASSEMBLING_START );
 		}
-		
-		var builderFactories 	: Array<BuilderFactory> = this._mBuilderFactories.getValues();
-		var len 				: Int 					= builderFactories.length;
-		var i 					: Int;
-		
+
 		for ( i in 0...len ) ApplicationAssembler._buildAllObjects( builderFactories[ i ] );
 		for ( i in 0...len ) ApplicationAssembler._assignAllDomainListeners( builderFactories[ i ] );
 		for ( i in 0...len ) ApplicationAssembler._callAllMethods( builderFactories[ i ] );
@@ -190,9 +200,16 @@ class ApplicationAssembler implements IApplicationAssembler
 			
 			this._mApplicationContext.put( applicationContextName, applicationContext );
 			this._mBuilderFactories.put( applicationContext, new BuilderFactory( applicationContext ) );
+			applicationContext._dispatch( ApplicationAssemblerMessage.CONTEXT_PARSED );
 		}
 
 		return applicationContext;
+	}
+	
+	static private function _buildAllStateTransitions( builderFactory : BuilderFactory ) : Void
+	{
+		builderFactory.getStateTransitionVOLocator().build();
+		builderFactory.getApplicationContext()._dispatch( ApplicationAssemblerMessage.STATE_TRANSITIONS_BUILT );
 	}
 
 	static private function _buildAllObjects( builderFactory : BuilderFactory ) : Void

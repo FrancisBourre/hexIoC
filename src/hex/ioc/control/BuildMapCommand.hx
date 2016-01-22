@@ -45,7 +45,7 @@ class BuildMapCommand extends AbstractBuildCommand
 
 		if ( constructorVO.mapType != null )
 		{
-			this._buildHelperVO.builderFactory.getApplicationContext().getInjector().mapToValue( HashMap, constructorVO.result, constructorVO.ID );
+			this._buildHelperVO.builderFactory.getApplicationContext().getBasicInjector().mapToValue( HashMap, constructorVO.result, constructorVO.ID );
 		}
 	}
 }

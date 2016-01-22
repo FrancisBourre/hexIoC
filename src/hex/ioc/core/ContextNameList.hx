@@ -17,6 +17,8 @@ class ContextNameList
 	static public inline var VALUE 								: String = "value";
 	static public inline var MAP_NAME 							: String = "map-name";
 	static public inline var EVENT 								: String = "event";
+	static public inline var ENTER 								: String = "enter";
+	static public inline var EXIT 								: String = "exit";
 	
 	static public var ROOT 										: String = "root";
 

@@ -23,6 +23,7 @@ import hex.ioc.locator.ConstructorVOLocator;
 import hex.ioc.locator.DomainListenerVOLocator;
 import hex.ioc.locator.MethodCallVOLocator;
 import hex.ioc.locator.PropertyVOLocator;
+import hex.ioc.locator.StateTransitionVOLocator;
 import hex.ioc.vo.BuildHelperVO;
 import hex.ioc.vo.ConstructorVO;
 
@@ -42,6 +43,7 @@ class BuilderFactory
 	private var _propertyVOLocator 			: PropertyVOLocator;
 	private var _methodCallVOLocator 		: MethodCallVOLocator;
 	private var _domainListenerVOLocator 	: DomainListenerVOLocator;
+	private var _stateTransitionVOLocator 	: StateTransitionVOLocator;
 
 	public function new( applicationContext : ApplicationContext )
 	{
@@ -88,6 +90,11 @@ class BuilderFactory
 		return this._domainListenerVOLocator;
 	}
 	
+	public function getStateTransitionVOLocator() : StateTransitionVOLocator
+	{
+		return this._stateTransitionVOLocator;
+	}
+	
 	public function getModuleLocator() : ModuleLocator
 	{
 		return this._moduleLocator;
@@ -106,6 +113,7 @@ class BuilderFactory
 		this._propertyVOLocator 		= new PropertyVOLocator( this );
 		this._methodCallVOLocator 		= new MethodCallVOLocator( this );
 		this._domainListenerVOLocator 	= new DomainListenerVOLocator( this );
+		this._stateTransitionVOLocator 	= new StateTransitionVOLocator( this );
 		this._moduleLocator 			= new ModuleLocator( this );
 		
 		this._coreFactory.addListener( this._propertyVOLocator );
@@ -165,6 +173,7 @@ class BuilderFactory
 		this._propertyVOLocator.release();
 		this._methodCallVOLocator.release();
 		this._domainListenerVOLocator.release();
+		this._stateTransitionVOLocator.release();
 		this._moduleLocator.release();
 		this._commandMap.clear();
 		this._IDExpert.clear();

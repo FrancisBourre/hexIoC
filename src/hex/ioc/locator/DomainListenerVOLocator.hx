@@ -125,7 +125,7 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO>
 		}
 		else 
 		{
-			adapter.setFactoryMethod( this._builderFactory.getApplicationContext().getInjector(), this._builderFactory.getApplicationContext().getInjector().instantiateUnmapped );
+			adapter.setFactoryMethod( this._builderFactory.getApplicationContext().getBasicInjector(), this._builderFactory.getApplicationContext().getBasicInjector().instantiateUnmapped );
 		}
 		
 		var f:Array<Dynamic>->Void = function( rest:Array<Dynamic> ):Void

@@ -7,8 +7,9 @@ import hex.event.MessageType;
  */
 class ApplicationAssemblerMessage
 {
-	static public var ASSEMBLING_START 			: MessageType = new MessageType( "onAssemblingStart" );
 	static public var CONTEXT_PARSED 			: MessageType = new MessageType( "onContextParsed" );
+	static public var ASSEMBLING_START 			: MessageType = new MessageType( "onAssemblingStart" );
+	static public var STATE_TRANSITIONS_BUILT 	: MessageType = new MessageType( "onStateTransitionsBuilt" );
 	static public var OBJECTS_BUILT 			: MessageType = new MessageType( "onObjectsBuilt" );
 	static public var METHODS_CALLED 			: MessageType = new MessageType( "onMethodsCalled" );
 	static public var DOMAIN_LISTENERS_ASSIGNED : MessageType = new MessageType( "onDomainListenersAssigned" );

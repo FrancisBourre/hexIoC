@@ -1043,6 +1043,6 @@ class ObjectXMLParserTest
 		Assert.isNotNull( myModule, "" );
 		Assert.isInstanceOf( myModule, MockMappedModule, "" );
 		
-		Assert.equals( myModule, this._applicationContext.getInjector().getInstance( IMockMappedModule, "myModule" ), "" );
+		Assert.equals( myModule, this._applicationContext.getBasicInjector().getInstance( IMockMappedModule, "myModule" ), "" );
 	}
 }

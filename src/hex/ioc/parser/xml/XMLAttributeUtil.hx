@@ -69,17 +69,6 @@ class XMLAttributeUtil
 		return xml.get( attName );
 	}
 
-	static public function getVisible( xml : Xml ) : String
-	{
-		return xml.get( ContextAttributeList.VISIBLE );
-	}
-
-	/*static public function getDisplayType( xml : Xml ) : String
-	{
-		var type : String = xml.get( ContextAttributeList.TYPE );
-		return type != null ? type : ContextTypeList.SPRITE;
-	}*/
-
 	static public function getMapType( xml : Xml ) : String
 	{
 		return xml.get( ContextAttributeList.MAP_TYPE );
@@ -93,5 +82,20 @@ class XMLAttributeUtil
 	static public function getStaticRef( xml : Xml ) : String
 	{
 		return xml.get( ContextAttributeList.STATIC_REF );
+	}
+	
+	static public function getCommandClass( xml : Xml ) : String
+	{
+		return xml.get( ContextAttributeList.COMMAND_CLASS );
+	}
+	
+	static public function getFireOnce( xml : Xml ) : Bool
+	{
+		return xml.get( ContextAttributeList.FIRE_ONCE ) == "true";
+	}
+	
+	static public function getContextOwner( xml : Xml ) : String
+	{
+		return xml.get( ContextAttributeList.CONTEXT_OWNER );
 	}
 }

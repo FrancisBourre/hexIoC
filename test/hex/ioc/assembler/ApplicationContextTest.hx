@@ -19,9 +19,9 @@ class ApplicationContextTest
 		var applicationContext 		: ApplicationContext	= applicationAssembler.getApplicationContext( "applicationContext" );
 		
 		Assert.equals( "applicationContext", applicationContext.getName(), "returned name should be the same passed during instantiation" );
-		Assert.isInstanceOf( applicationContext.getInjector(), Injector, "injector returned should be an instance of Injector class" );
+		Assert.isInstanceOf( applicationContext.getBasicInjector(), Injector, "injector returned should be an instance of Injector class" );
 		
-		var injector : IBasicInjector = applicationContext.getInjector();
+		var injector : IBasicInjector = applicationContext.getBasicInjector();
 		Assert.equals( injector.getInstance( IBasicInjector ), injector, "injectors should be the same" );
 	}
 	

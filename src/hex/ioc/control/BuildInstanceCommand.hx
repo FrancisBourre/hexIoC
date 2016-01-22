@@ -57,7 +57,7 @@ class BuildInstanceCommand extends AbstractBuildCommand
 			if ( constructorVO.mapType != null )
 			{
 				var classToMap : Class<Dynamic> = Type.resolveClass( constructorVO.mapType );
-				this._buildHelperVO.builderFactory.getApplicationContext().getInjector().mapToValue( classToMap, constructorVO.result, constructorVO.ID );
+				this._buildHelperVO.builderFactory.getApplicationContext().getBasicInjector().mapToValue( classToMap, constructorVO.result, constructorVO.ID );
 			}
 		}
 	}

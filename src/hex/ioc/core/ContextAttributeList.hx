@@ -18,12 +18,14 @@ class ContextAttributeList
 	static public inline var METHOD 				: String = "method";
 	static public inline var PARSER_CLASS 			: String = "parser-class";
 	static public inline var LOCATOR 				: String = "locator";
-	static public inline var VISIBLE 				: String = "visible";
 	public static inline var MAP_TYPE 				: String = "map-type";
 	public static inline var MAP_NAME 				: String = "map-name";
 	public static inline var STRATEGY 				: String = "strategy";
 	public static inline var INJECTED_IN_MODULE 	: String = "injectedInModule";
 	public static inline var STATIC_REF 			: String = "static-ref";
+	public static inline var COMMAND_CLASS 			: String = "command-class";
+	public static inline var FIRE_ONCE 				: String = "fire-once";
+	public static inline var CONTEXT_OWNER 			: String = "context-owner";
 	
 	private function new() 
 	{

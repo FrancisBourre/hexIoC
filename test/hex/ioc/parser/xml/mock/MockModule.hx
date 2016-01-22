@@ -1,5 +1,6 @@
 package hex.ioc.parser.xml.mock;
 
+import hex.di.IBasicInjector;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
 import hex.domain.DomainExpert;
@@ -67,5 +68,10 @@ class MockModule implements IModule
 	public function removeHandler( messageType : MessageType, scope : Dynamic, callback : Dynamic ) : Void
 	{
 		
+	}
+	
+	public function getBasicInjector() : IBasicInjector
+	{
+		return null;
 	}
 }
