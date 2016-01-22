@@ -4,7 +4,7 @@ import hex.collection.HashMap;
 import hex.collection.ILocator;
 import hex.collection.ILocatorListener;
 import hex.collection.LocatorMessage;
-import hex.core.IMetadataParsable;
+import hex.core.IAnnotationParsable;
 import hex.error.IllegalArgumentException;
 import hex.error.NoSuchElementException;
 import hex.event.Dispatcher;
@@ -257,7 +257,7 @@ class CoreFactory implements ILocator<String, Dynamic>
 				throw new IllegalArgumentException( "Instantiation of class '" + qualifiedClassName + "' failed with arguments: " + args );
 			}
 
-			if ( Std.is( obj, IMetadataParsable ) )
+			if ( Std.is( obj, IAnnotationParsable ) )
 			{
 				AnnotationProvider.getInstance().parse( obj );
 			}
