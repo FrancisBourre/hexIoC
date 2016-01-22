@@ -6,6 +6,6 @@ package hex.ioc.core;
  */
 class MachinaCoreSuite
 {
-	@suite( "Core" )
+	@Suite( "Core" )
     public var list : Array<Class<Dynamic>> = [CoreFactoryTest];
 }

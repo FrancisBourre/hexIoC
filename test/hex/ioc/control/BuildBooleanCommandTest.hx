@@ -11,7 +11,7 @@ import hex.unittest.assertion.Assert;
  */
 class BuildBooleanCommandTest
 {
-	@test( "Test execute with true argument" )
+	@Test( "Test execute with true argument" )
     public function testExecuteWithTrueArgument() : Void
     {
 		var cmd : BuildBooleanCommand 	= new BuildBooleanCommand();
@@ -22,7 +22,7 @@ class BuildBooleanCommandTest
 		Assert.isTrue( helper.constructorVO.result, "constructorVO.result should be true" );
 	}
 	
-	@test( "Test execute with false argument" )
+	@Test( "Test execute with false argument" )
     public function testExecuteWithFalseArgument() : Void
     {
 		var cmd : BuildBooleanCommand 	= new BuildBooleanCommand();
@@ -33,7 +33,7 @@ class BuildBooleanCommandTest
 		Assert.isFalse( helper.constructorVO.result, "constructorVO.result should be false" );
 	}
 	
-	@test( "Test execute with invalid argument" )
+	@Test( "Test execute with invalid argument" )
     public function testExecuteWithInvalidArgument() : Void
     {
 		var cmd : BuildBooleanCommand 	= new BuildBooleanCommand();
@@ -43,7 +43,7 @@ class BuildBooleanCommandTest
 		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
 	}
 	
-	@test( "Test execute with no argument array" )
+	@Test( "Test execute with no argument array" )
     public function testExecuteWithNoArgumentArray() : Void
     {
 		var cmd : BuildBooleanCommand 	= new BuildBooleanCommand();
@@ -53,7 +53,7 @@ class BuildBooleanCommandTest
 		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
 	}
 	
-	@test( "Test execute with empty argument array" )
+	@Test( "Test execute with empty argument array" )
     public function testExecuteWithEmptyArgumentArray() : Void
     {
 		var cmd : BuildBooleanCommand 	= new BuildBooleanCommand();
@@ -63,7 +63,7 @@ class BuildBooleanCommandTest
 		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
 	}
 	
-	@test( "Test execute with null argument" )
+	@Test( "Test execute with null argument" )
     public function testExecuteWithNullArgument() : Void
     {
 		var cmd : BuildBooleanCommand 	= new BuildBooleanCommand();

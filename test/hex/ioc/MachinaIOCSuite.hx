@@ -12,6 +12,6 @@ import hex.ioc.vo.MachinaVOSuite;
  */
 class MachinaIOCSuite
 {
-	@suite( "IOC" )
+	@Suite( "IOC" )
     public var list : Array<Class<Dynamic>> = [MachinaAssemblerSuite, MachinaControlSuite, MachinaCoreSuite, MachinaParserSuite, MachinaVOSuite];
 }

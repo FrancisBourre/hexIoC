@@ -8,6 +8,6 @@ import hex.ioc.MachinaIOCSuite;
  */
 class HexMachinaSuite
 {
-	@suite( "HexMachina suite" )
+	@Suite( "HexMachina suite" )
     public var list : Array<Class<Dynamic>> = [MachinaIOCSuite];
 }

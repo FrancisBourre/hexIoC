@@ -6,6 +6,6 @@ package hex.ioc.assembler;
  */
 class MachinaAssemblerSuite
 {
-	@suite( "Assembler" )
+	@Suite( "Assembler" )
     public var list : Array<Class<Dynamic>> = [ApplicationContextTest];
 }

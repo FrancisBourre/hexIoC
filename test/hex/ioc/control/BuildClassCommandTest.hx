@@ -12,7 +12,7 @@ import hex.unittest.assertion.Assert;
  */
 class BuildClassCommandTest
 {
-	@test( "Test execute" )
+	@Test( "Test execute" )
     public function testExecute() : Void
     {
 		var cmd : BuildClassCommand 	= new BuildClassCommand();
@@ -23,7 +23,7 @@ class BuildClassCommandTest
 		Assert.equals( helper.constructorVO.result, Point, "constructorVO.result should be an instance of Point class" );
 	}
 	
-	@test( "Test execute with invalid argument" )
+	@Test( "Test execute with invalid argument" )
     public function testExecuteWithInvalidArgument() : Void
     {
 		var cmd : BuildClassCommand 	= new BuildClassCommand();
@@ -33,7 +33,7 @@ class BuildClassCommandTest
 		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
 	}
 	
-	@test( "Test execute with no argument array" )
+	@Test( "Test execute with no argument array" )
     public function testExecuteWithNoArgumentArray() : Void
     {
 		var cmd : BuildClassCommand 	= new BuildClassCommand();
@@ -43,7 +43,7 @@ class BuildClassCommandTest
 		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
 	}
 	
-	@test( "Test execute with empty argument array" )
+	@Test( "Test execute with empty argument array" )
     public function testExecuteWithEmptyArgumentArray() : Void
     {
 		var cmd : BuildClassCommand 	= new BuildClassCommand();
@@ -53,7 +53,7 @@ class BuildClassCommandTest
 		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
 	}
 	
-	@test( "Test execute with null argument" )
+	@Test( "Test execute with null argument" )
     public function testExecuteWithNullArgument() : Void
     {
 		var cmd : BuildClassCommand 	= new BuildClassCommand();

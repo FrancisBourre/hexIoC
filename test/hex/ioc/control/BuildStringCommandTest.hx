@@ -11,7 +11,7 @@ import hex.unittest.assertion.Assert;
  */
 class BuildStringCommandTest
 {
-	@test( "Test execute" )
+	@Test( "Test execute" )
     public function testExecute() : Void
     {
 		var cmd : BuildStringCommand	= new BuildStringCommand();
@@ -22,7 +22,7 @@ class BuildStringCommandTest
 		Assert.equals( "hello world", helper.constructorVO.result, "constructorVO.result should equal 'hello world'" );
 	}
 	
-	@test( "Test execute with no argument array" )
+	@Test( "Test execute with no argument array" )
     public function testExecuteWithNoArgumentArray() : Void
     {
 		var cmd : BuildStringCommand 	= new BuildStringCommand();
@@ -32,7 +32,7 @@ class BuildStringCommandTest
 		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
 	}
 	
-	@test( "Test execute with empty argument array" )
+	@Test( "Test execute with empty argument array" )
     public function testExecuteWithEmptyArgumentArray() : Void
     {
 		var cmd : BuildStringCommand 	= new BuildStringCommand();
@@ -42,7 +42,7 @@ class BuildStringCommandTest
 		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
 	}
 	
-	@test( "Test execute with null argument" )
+	@Test( "Test execute with null argument" )
     public function testExecuteWithNullArgument() : Void
     {
 		var cmd : BuildStringCommand 	= new BuildStringCommand();
@@ -52,7 +52,7 @@ class BuildStringCommandTest
 		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
 	}
 	
-	@test( "Test execute with argument zero length" )
+	@Test( "Test execute with argument zero length" )
     public function testExecuteWithArgumentZeroLength() : Void
     {
 		var cmd : BuildStringCommand 	= new BuildStringCommand();

@@ -11,7 +11,7 @@ import hex.unittest.assertion.Assert;
  */
 class BuildNullCommandTest
 {
-	@test( "Test execute" )
+	@Test( "Test execute" )
     public function testExecute() : Void
     {
 		var cmd : BuildNullCommand 	= new BuildNullCommand();

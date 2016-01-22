@@ -11,7 +11,7 @@ import hex.unittest.assertion.Assert;
  */
 class BuildFloatCommandTest
 {
-	@test( "Test execute with positive value" )
+	@Test( "Test execute with positive value" )
     public function testExecuteWithPositiveValue() : Void
     {
 		var cmd : BuildFloatCommand = new BuildFloatCommand();
@@ -22,7 +22,7 @@ class BuildFloatCommandTest
 		Assert.equals( 4.7, helper.constructorVO.result, "constructorVO.result should equal '4.7'" );
 	}
 	
-	@test( "Test execute with negative value" )
+	@Test( "Test execute with negative value" )
     public function testExecuteWithNegativeValue() : Void
     {
 		var cmd : BuildFloatCommand = new BuildFloatCommand();
@@ -33,7 +33,7 @@ class BuildFloatCommandTest
 		Assert.equals( -3.8, helper.constructorVO.result, "constructorVO.result should equal '-3.8'" );
 	}
 	
-	@test( "Test execute with invalid argument" )
+	@Test( "Test execute with invalid argument" )
     public function testExecuteWithInvalidArgument() : Void
     {
 		var cmd : BuildFloatCommand 	= new BuildFloatCommand();
@@ -43,7 +43,7 @@ class BuildFloatCommandTest
 		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
 	}
 	
-	@test( "Test execute with no argument array" )
+	@Test( "Test execute with no argument array" )
     public function testExecuteWithNoArgumentArray() : Void
     {
 		var cmd : BuildFloatCommand 	= new BuildFloatCommand();
@@ -53,7 +53,7 @@ class BuildFloatCommandTest
 		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
 	}
 	
-	@test( "Test execute with empty argument array" )
+	@Test( "Test execute with empty argument array" )
     public function testExecuteWithEmptyArgumentArray() : Void
     {
 		var cmd : BuildFloatCommand 	= new BuildFloatCommand();
@@ -63,7 +63,7 @@ class BuildFloatCommandTest
 		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
 	}
 	
-	@test( "Test execute with null argument" )
+	@Test( "Test execute with null argument" )
     public function testExecuteWithNullArgument() : Void
     {
 		var cmd : BuildFloatCommand 	= new BuildFloatCommand();

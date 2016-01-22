@@ -6,6 +6,6 @@ package hex.ioc.control;
  */
 class MachinaControlSuite
 {
-	@suite( "Control" )
+	@Suite( "Control" )
     public var list : Array<Class<Dynamic>> = [BuildArrayCommandTest, BuildBooleanCommandTest, BuildClassCommandTest, BuildFloatCommandTest, BuildIntcommandTest, BuildNullCommandTest, BuildStringCommandTest, BuildUIntCommandTest];
 }

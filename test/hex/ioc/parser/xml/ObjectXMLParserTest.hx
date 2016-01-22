@@ -61,7 +61,7 @@ class ObjectXMLParserTest
 	private var _builderFactory 			: BuilderFactory;
 	private var _applicationAssembler 		: IApplicationAssembler;
 		
-	@setUp
+	@Before
 	public function setUp() : Void
 	{
 		this._applicationAssembler 	= new ApplicationAssembler();
@@ -69,7 +69,7 @@ class ObjectXMLParserTest
 		this._builderFactory 		= this._applicationAssembler.getBuilderFactory( this._applicationContext );
 	}
 
-	@tearDown
+	@After
 	public function tearDown() : Void
 	{
 		ApplicationDomainDispatcher.getInstance().clear();
@@ -84,7 +84,7 @@ class ObjectXMLParserTest
 		this._applicationAssembler.buildEverything();
 	}
 	
-	@test( "test building String" )
+	@Test( "test building String" )
 	public function testBuildingString() : Void
 	{
 		var source : String = '
@@ -100,7 +100,7 @@ class ObjectXMLParserTest
 		Assert.equals( "hello", s, "" );
 	}
 	
-	@test( "test building anonymous object" )
+	@Test( "test building anonymous object" )
 	public function testBuildingAnonymousObject() : Void
 	{
 		var source : String = '
@@ -128,7 +128,7 @@ class ObjectXMLParserTest
 		Assert.equals( 1.75, this._builderFactory.getCoreFactory().locate( "obj.height" ), "" );
 	}
 	
-	@test( "test building simple instance with arguments" )
+	@Test( "test building simple instance with arguments" )
 	public function testBuildingSimpleInstanceWithArguments() : Void
 	{
 		var source : String = '
@@ -148,7 +148,7 @@ class ObjectXMLParserTest
 		Assert.equals( 20, size.height, "" );
 	}
 	
-	@test( "test building multiple instances with references" )
+	@Test( "test building multiple instances with references" )
 	public function testBuildingMultipleInstancesWithReferences() : Void
 	{
 		var source : String = '
@@ -192,7 +192,7 @@ class ObjectXMLParserTest
 		Assert.equals( 40, rect.size.y, "" );
 	}
 	
-	@test( "test building multiple instances with method calls" )
+	@Test( "test building multiple instances with method calls" )
 	public function testBuildingMultipleInstancesWithMethodCall() : Void
 	{
 		var source : String = '
@@ -248,7 +248,7 @@ class ObjectXMLParserTest
 		Assert.equals( 0, anotherRect.height, "" );
 	}
 	
-	@test( "test building singleton instance" )
+	@Test( "test building singleton instance" )
 	public function testBuildingSingletonInstance() : Void
 	{
 		var source : String = '
@@ -271,7 +271,7 @@ class ObjectXMLParserTest
 		Assert.equals( "http://localhost/amfphp/gateway.php", MockServiceProvider.getInstance().getGateway(), "" );
 	}
 	
-	@test( "test factory with static method" )
+	@Test( "test factory with static method" )
 	public function testFactoryWithStaticMethod() : Void
 	{
 		var source : String = '
@@ -293,7 +293,7 @@ class ObjectXMLParserTest
 		Assert.equals( 40, rect.height, "" );
 	}
 	
-	@test( "test factory with singleton" )
+	@Test( "test factory with singleton" )
 	public function testFactoryWithSingleton() : Void
 	{
 		var source : String = '
@@ -314,7 +314,7 @@ class ObjectXMLParserTest
 		Assert.equals( 20, point.y, "" );
 	}
 	
-	@test( "test building XML with parser class" )
+	@Test( "test building XML with parser class" )
 	public function testBuildingXMLWithParserClass() : Void
 	{
 		var source : String = '
@@ -345,7 +345,7 @@ class ObjectXMLParserTest
 		Assert.equals( "banana", banana.toString(), "" );
 	}
 	
-	@test( "test Array ref" )
+	@Test( "test Array ref" )
 	public function testArrayRef() : Void
 	{
 		var source : String = '
@@ -378,7 +378,7 @@ class ObjectXMLParserTest
 		Assert.equals( "banana", banana.toString(), "" );
 	}
 	
-	@test( "test Map ref" )
+	@Test( "test Map ref" )
 	public function testMapRef() : Void
 	{
 		var source : String = '
@@ -416,7 +416,7 @@ class ObjectXMLParserTest
 		Assert.equals( "banana", banana.toString(), "" );
 	}
 	
-	@test( "test domain listening" )
+	@Test( "test domain listening" )
 	public function testDomainListening() : Void
 	{
 		var source : String = '
@@ -448,7 +448,7 @@ class ObjectXMLParserTest
 		Assert.equals( "Hello", chat.translatedMessage, "" );
 	}
 	
-	@test( "test domain listening with classAdapter" )
+	@Test( "test domain listening with classAdapter" )
 	public function testDomainListeningWithEventAdapter() : Void
 	{
 		var source : String = '
@@ -481,7 +481,7 @@ class ObjectXMLParserTest
 		Assert.isInstanceOf( chat.date, Date, "" );
 	}
 	
-	@test( "test domain listening with classAdapter and injection" )
+	@Test( "test domain listening with classAdapter and injection" )
 	public function testDomainListeningWithClassAdapterAndInjection() : Void
 	{
 		var source : String = '
@@ -515,7 +515,7 @@ class ObjectXMLParserTest
 		Assert.equals( "BONJOUR", receiver.message, "" );
 	}
 	
-	@test( "test domain dispatch after module initialisation" )
+	@Test( "test domain dispatch after module initialisation" )
 	public function testDomainDispatchAfterModuleInitialisation() : Void
 	{
 		var source : String = '
@@ -543,7 +543,7 @@ class ObjectXMLParserTest
 		Assert.equals( "hello receiver", receiver.message, "" );
 	}
 	
-	@ignore( "test building different applicationContext" )
+	@Ignore( "test building different applicationContext" )
 	public function testBuildingDifferentApplicationContext() : Void
 	{
 		var parentSource : String = '
@@ -624,7 +624,7 @@ class ObjectXMLParserTest
 		Assert.equals( subChildRectangle, applicationContextParent.applicationContextChild.applicationContextSubChild.rect0, "" );
 	}
 	
-	@test( "test targeting sub property" )
+	@Test( "test targeting sub property" )
 	public function testTargetingSubProperty() : Void
 	{
 		var source : String = '
@@ -644,7 +644,7 @@ class ObjectXMLParserTest
 		Assert.equals( 1.5, mockObject.rectangle.x, "" );
 	}
 	
-	@test( "test building class reference" )
+	@Test( "test building class reference" )
 	public function testBuildingClassReference() : Void
 	{
 		var source : String = '
@@ -678,7 +678,7 @@ class ObjectXMLParserTest
 		Assert.equals( anotherRectangleClass, anotherRectangleClassRef, "" );
 	}
 	
-	@test( "test building serviceLocator" )
+	@Test( "test building serviceLocator" )
 	public function testBuildingServiceLocator() : Void
 	{
 		var source : String = '
@@ -712,7 +712,7 @@ class ObjectXMLParserTest
 		Assert.equals( facebookService, injector.getInstance( IMockFacebookService ), "" );
 	}
 	
-	@test( "test building serviceLocator with map names" )
+	@Test( "test building serviceLocator with map names" )
 	public function testBuildingServiceLocatorWithMapNames() : Void
 	{
 		var source : String = '
@@ -743,7 +743,7 @@ class ObjectXMLParserTest
 		Assert.isInstanceOf( injector.getInstance( IMockAmazonService, "amazon1" ), AnotherMockAmazonService, "" );
 	}
 	
-	@test( "test parsing twice" )
+	@Test( "test parsing twice" )
 	public function testParsingTwice() : Void
 	{
 		var source0 : String = '
@@ -788,7 +788,7 @@ class ObjectXMLParserTest
 		Assert.equals( 40, rect1.height, "" );
 	}
 	
-	@test( "test listening service" )
+	@Test( "test listening service" )
 	public function testListeningService() : Void
 	{
 		var source : String = '
@@ -818,7 +818,7 @@ class ObjectXMLParserTest
 		Assert.isTrue( myModule.getBooleanValue(), "" );
 	}
 	
-	@test( "test listening service with strategy and module injection" )
+	@Test( "test listening service with strategy and module injection" )
 	public function testListeningServiceWithStrategyAndModuleInjection() : Void
 	{
 		var source : String = '
@@ -851,7 +851,7 @@ class ObjectXMLParserTest
 		Assert.equals( 3.5, ( myModule.getFloatValue() ), "" );
 	}
 	
-	@test( "test listening service with strategy and context injection" )
+	@Test( "test listening service with strategy and context injection" )
 	public function testListeningServiceWithStrategyAndContextInjection() : Void
 	{
 		var source : String = '
@@ -903,7 +903,7 @@ class ObjectXMLParserTest
 		Assert.equals( 4.5, ( myModuleB.getFloatValue() ), "" );
 	}
 	
-	@test( "test static-ref" )
+	@Test( "test static-ref" )
 	public function testStaticRef() : Void
 	{
 		var source : String = '
@@ -937,7 +937,7 @@ class ObjectXMLParserTest
 		Assert.equals( instance.constant, MockStubStatefulService.INT_VO_UPDATE, "" );
 	}
 	
-	@async( "test EventProxy" )
+	@Async( "test EventProxy" )
 	public function testEventProxy() : Void
 	{
 		var source : String = '
@@ -987,7 +987,7 @@ class ObjectXMLParserTest
 		Assert.equals( "BONJOUR:HTTP://GOOGLE.COM", receiver.message, "" );
 	}
 	
-	@async( "test EventTrigger" )
+	@Async( "test EventTrigger" )
 	public function testEventTrigger() : Void
 	{
 		var source : String = '
@@ -1026,7 +1026,7 @@ class ObjectXMLParserTest
 		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "bonjour" ] );
 	}
 	
-	@test( "test map-type attribute" )
+	@Test( "test map-type attribute" )
 	public function testMapTypeAttribute() : Void
 	{
 		var source : String = '

@@ -10,7 +10,7 @@ import hex.unittest.assertion.Assert;
  */
 class BuildArrayCommandTest
 {
-	@test( "Test executet" )
+	@Test( "Test executet" )
     public function testExecute() : Void
     {
 		var cmd : BuildArrayCommand 	= new BuildArrayCommand();
@@ -22,7 +22,7 @@ class BuildArrayCommandTest
 		Assert.deepEquals( [3, "hello world"], helper.constructorVO.result, "constructorVO.result should agregate the same elements" );
 	}
 	
-	@test( "Test execute with no argument array" )
+	@Test( "Test execute with no argument array" )
     public function testExecuteWithNoArgumentArray() : Void
     {
 		var cmd : BuildArrayCommand 	= new BuildArrayCommand();
@@ -33,7 +33,7 @@ class BuildArrayCommandTest
 		Assert.isInstanceOf( helper.constructorVO.result, Array, "constructorVO.result should be an instance of Array class" );
 	}
 	
-	@test( "Test execute with empty argument array" )
+	@Test( "Test execute with empty argument array" )
     public function testExecuteWithEmptyArgumentArray() : Void
     {
 		var cmd : BuildArrayCommand 	= new BuildArrayCommand();
@@ -44,7 +44,7 @@ class BuildArrayCommandTest
 		Assert.isInstanceOf( helper.constructorVO.result, Array, "constructorVO.result should be an instance of Array class" );
 	}
 	
-	@test( "Test execute with null argument" )
+	@Test( "Test execute with null argument" )
     public function testExecuteWithNullArgument() : Void
     {
 		var cmd : BuildArrayCommand 	= new BuildArrayCommand();

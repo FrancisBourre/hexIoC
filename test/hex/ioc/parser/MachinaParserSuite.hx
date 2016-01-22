@@ -7,6 +7,6 @@ import hex.ioc.parser.xml.MachinaXmlSuite;
  */
 class MachinaParserSuite
 {
-	@suite( "Parser" )
+	@Suite( "Parser" )
     public var list : Array<Class<Dynamic>> = [MachinaXmlSuite];
 }

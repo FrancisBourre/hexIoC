@@ -25,14 +25,14 @@ class StatefulStateMachineConfigTest
 	private var _builderFactory 			: BuilderFactory;
 	private var _applicationAssembler 		: IApplicationAssembler;
 		
-	@setUp
+	@Before
 	public function setUp() : Void
 	{
 		this._applicationAssembler 	= new ApplicationAssembler();
 		this._builderFactory 		= this._applicationAssembler.getBuilderFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
 	}
 
-	@tearDown
+	@After
 	public function tearDown() : Void
 	{
 		ApplicationDomainDispatcher.getInstance().clear();
@@ -46,7 +46,7 @@ class StatefulStateMachineConfigTest
 		this._applicationAssembler.buildEverything();
 	}
 	
-	@test( "test statemachine configuration" )
+	@Test( "test statemachine configuration" )
 	public function testStateMachineConfiguration() : Void
 	{
 		var source : String = '

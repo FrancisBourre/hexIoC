@@ -6,6 +6,6 @@ package hex.ioc.vo;
  */
 class MachinaVOSuite
 {
-	@suite( "VO" )
+	@Suite( "VO" )
     public var list : Array<Class<Dynamic>> = [PropertyVOTest];
 }

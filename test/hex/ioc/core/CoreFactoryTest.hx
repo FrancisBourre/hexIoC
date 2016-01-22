@@ -17,19 +17,19 @@ class CoreFactoryTest
 	
 	private var _coreFactory : CoreFactory;
 
-    @setUp
+    @Before
     public function setUp() : Void
     {
         this._coreFactory = new CoreFactory();
     }
 
-    @tearDown
+    @After
     public function tearDown() : Void
     {
         this._coreFactory = null;
     }
 	
-	@test( "Test register" )
+	@Test( "Test register" )
     public function testRegister() : Void
     {
 		var listener : MockCoreFactoryListener = new MockCoreFactoryListener();
@@ -50,7 +50,7 @@ class CoreFactoryTest
 		Assert.methodCallThrows( IllegalArgumentException, this._coreFactory, this._coreFactory.register, [ "key", new MockValue() ],  "'register' should throw IllegalArgumentException when used twice with the same key" );
 	}
 	
-	@test( "Test unregisterWithKey" )
+	@Test( "Test unregisterWithKey" )
     public function testUnregisterWithKey() : Void
     {
 		var listener : MockCoreFactoryListener = new MockCoreFactoryListener();
@@ -72,7 +72,7 @@ class CoreFactoryTest
 		Assert.isFalse( this._coreFactory.unregisterWithKey( "key" ), "'unregisterWithKey' should return false" );
 	}
 	
-	@test( "Test unregister" )
+	@Test( "Test unregister" )
     public function testUnregister() : Void
     {
 		var listener : MockCoreFactoryListener = new MockCoreFactoryListener();
@@ -94,7 +94,7 @@ class CoreFactoryTest
 		Assert.isFalse( this._coreFactory.unregister( value ), "'unregister' should return false" );
 	}
 	
-	@test( "Test getKeyOfInstance" )
+	@Test( "Test getKeyOfInstance" )
     public function testGetKeyOfInstance() : Void
     {
 		Assert.isNull( this._coreFactory.getKeyOfInstance( "key" ), "'getKeyOfInstance' should return null" );
@@ -103,21 +103,21 @@ class CoreFactoryTest
 		Assert.equals( "key", this._coreFactory.getKeyOfInstance( value ), "'getKeyOfInstance' should return value associated to the key" );
 	}
 	
-	@test( "Test getClassReference" )
+	@Test( "Test getClassReference" )
     public function testGetClassReference() : Void
     {
 		Assert.equals( CoreFactoryTest, this._coreFactory.getClassReference( "hex.ioc.core.CoreFactoryTest" ), "'getClassReference' should return the right class reference" );
 		Assert.methodCallThrows( IllegalArgumentException, this._coreFactory, this._coreFactory.getClassReference, ["dummy.unavailable.Class"], "'getClassReference' should throw IllegalArgumentException" );
 	}
 	
-	@test( "Test getStaticReference" )
+	@Test( "Test getStaticReference" )
     public function testGetStaticReference() : Void
     {
 		Assert.equals( "static_ref", this._coreFactory.getStaticReference( "hex.ioc.core.CoreFactoryTest.STATIC_REF" ), "'getStaticReference' should return the right static property" );
 		Assert.methodCallThrows( IllegalArgumentException, this._coreFactory, this._coreFactory.getStaticReference, ["hex.ioc.core.CoreFactoryTest.UnavailableStaticRef"], "'getStaticReference' should throw IllegalArgumentException" );
 	}
 	
-	@test( "Test buildInstance with arguments" )
+	@Test( "Test buildInstance with arguments" )
     public function testBuildInstanceWithArguments() : Void
     {
 		var p : Point = this._coreFactory.buildInstance( "hex.structures.Point", [2, 3] );
@@ -126,14 +126,14 @@ class CoreFactoryTest
 		Assert.equals( 3, p.y, "'p.x' should return 3" );
 	}
 	
-	@test( "Test buildInstance with singleton access" )
+	@Test( "Test buildInstance with singleton access" )
     public function testBuildInstanceWithSingletonAccess() : Void
     {
 		var instance : MockClassForCoreFactoryTest = this._coreFactory.buildInstance( "hex.ioc.core.MockClassForCoreFactoryTest", null, null, "getInstance" );
 		Assert.isInstanceOf( instance, MockClassForCoreFactoryTest, "should be instance of 'MockClassForCoreFactoryTest'" );
 	}
 	
-	@test( "Test buildInstance with factory access" )
+	@Test( "Test buildInstance with factory access" )
     public function testBuildInstanceWithFactoryAccess() : Void
     {
 		var size : Size = this._coreFactory.buildInstance( "hex.ioc.core.MockClassForCoreFactoryTest", [20, 30], "getSize", null );
@@ -142,7 +142,7 @@ class CoreFactoryTest
 		Assert.equals( 30, size.height, "'size.height' should return 30" );
 	}
 	
-	@test( "Test buildInstance with factory and singleton access" )
+	@Test( "Test buildInstance with factory and singleton access" )
     public function testBuildInstanceWithFactoryAndSingletonAccess() : Void
     {
 		var p : Point = this._coreFactory.buildInstance( "hex.ioc.core.MockClassForCoreFactoryTest", [2, 3], "getPoint", "getInstance" );

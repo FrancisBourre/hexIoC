@@ -17,13 +17,13 @@ class ApplicationContextBuildingTest
 	private var _contextParser 				: ApplicationXMLParser;
 	private var _applicationAssembler 		: IApplicationAssembler;
 		
-	@setUp
+	@Before
 	public function setUp() : Void
 	{
 		this._applicationAssembler 	= new ApplicationAssembler();
 	}
 
-	@tearDown
+	@After
 	public function tearDown() : Void
 	{
 		ApplicationDomainDispatcher.getInstance().clear();
@@ -37,7 +37,7 @@ class ApplicationContextBuildingTest
 		this._applicationAssembler.buildEverything();
 	}
 	
-	@test( "test applicationContext building" )
+	@Test( "test applicationContext building" )
 	public function testApplicationContextBuilding() : Void
 	{
 		var source : String = '

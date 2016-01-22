@@ -11,7 +11,7 @@ import hex.unittest.assertion.Assert;
  */
 class BuildUIntCommandTest
 {
-	@test( "Test execute" )
+	@Test( "Test execute" )
     public function testExecute() : Void
     {
 		var cmd : BuildUIntCommand 	= new BuildUIntCommand();
@@ -22,7 +22,7 @@ class BuildUIntCommandTest
 		Assert.equals( 4, helper.constructorVO.result, "constructorVO.result should equal 4" );
 	}
 	
-	@ignore( "Test execute with negative argument value" )
+	@Ignore( "Test execute with negative argument value" )
     public function testExecuteWithNegativeArgumentValue() : Void
     {
 		var cmd : BuildUIntCommand 	= new BuildUIntCommand();
@@ -32,7 +32,7 @@ class BuildUIntCommandTest
 		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
 	}
 	
-	@test( "Test execute with invalid argument" )
+	@Test( "Test execute with invalid argument" )
     public function testExecuteWithInvalidArgument() : Void
     {
 		var cmd : BuildUIntCommand 	= new BuildUIntCommand();
@@ -42,7 +42,7 @@ class BuildUIntCommandTest
 		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
 	}
 	
-	@test( "Test execute with no argument array" )
+	@Test( "Test execute with no argument array" )
     public function testExecuteWithNoArgumentArray() : Void
     {
 		var cmd : BuildUIntCommand 		= new BuildUIntCommand();
@@ -52,7 +52,7 @@ class BuildUIntCommandTest
 		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
 	}
 	
-	@test( "Test execute with empty argument array" )
+	@Test( "Test execute with empty argument array" )
     public function testExecuteWithEmptyArgumentArray() : Void
     {
 		var cmd : BuildUIntCommand 		= new BuildUIntCommand();
@@ -62,7 +62,7 @@ class BuildUIntCommandTest
 		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
 	}
 	
-	@test( "Test execute with null argument" )
+	@Test( "Test execute with null argument" )
     public function testExecuteWithNullArgument() : Void
     {
 		var cmd : BuildUIntCommand 		= new BuildUIntCommand();

@@ -12,7 +12,7 @@ import hex.unittest.assertion.Assert;
  */
 class ApplicationContextTest
 {
-	@test( "Test accessors" )
+	@Test( "Test accessors" )
     public function testAccessors() : Void
     {
 		var applicationAssembler 	: ApplicationAssembler	= new ApplicationAssembler();
@@ -25,7 +25,7 @@ class ApplicationContextTest
 		Assert.equals( injector.getInstance( IBasicInjector ), injector, "injectors should be the same" );
 	}
 	
-	@test( "Test children" )
+	@Test( "Test children" )
     public function testChildren() : Void
     {
 		var applicationAssembler 	: ApplicationAssembler	= new ApplicationAssembler();

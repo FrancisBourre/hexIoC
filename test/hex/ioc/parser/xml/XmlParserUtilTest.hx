@@ -8,7 +8,7 @@ import hex.unittest.assertion.Assert;
  */
 class XmlParserUtilTest
 {
-	@test( "test getArguments with list of arguments" )
+	@Test( "test getArguments with list of arguments" )
 	public function testGetArgumentsWithListOfArguments() : Void
 	{
 		var xml : String = '<size id="rectSize" type="flash.geom.Point"><argument type="Int" value="30"/><argument type="Bool" value="true"/></size>';
@@ -22,7 +22,7 @@ class XmlParserUtilTest
 		Assert.equals( "true", args[1].value, "Value should be 'true'" );
 	}
 	
-	@test( "test getArguments with single argument" )
+	@Test( "test getArguments with single argument" )
 	public function testGetArgumentsWithSingleArgument() : Void
 	{
 		var xml : String = '<class id="userInfoServiceNoteClass" type="Class" value="service.userinfo.note.UserInfoServiceNote"/>';
@@ -34,7 +34,7 @@ class XmlParserUtilTest
 		Assert.equals( "service.userinfo.note.UserInfoServiceNote", args[0].value, "Value should be 'service.userinfo.note.UserInfoServiceNote'" );
 	}
 	
-	@test( "test getEventArguments" )
+	@Test( "test getEventArguments" )
 	public function testGetEventArguments() : Void
 	{
 		var xml : String = '<listen ref="bottomIconListModule"><event static-ref="constant.iconlist.CIconNote.SET_SIZE_ICON" method="setSizeIconButton"/><event name="onAddLine" strategy="eventstrategy.chat.AddLineEventStrategy" method="addNewLine" injectedInModule="true"/></listen>';
