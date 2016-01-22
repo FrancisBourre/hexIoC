@@ -11,7 +11,7 @@ import hex.ioc.assembler.ApplicationContext;
 @:rtti
 class MockStateCommand extends BasicCommand
 {
-	@inject
+	@Inject
 	public var context : ApplicationContext;
 	
 	override public function execute( ?request : Request ) : Void 

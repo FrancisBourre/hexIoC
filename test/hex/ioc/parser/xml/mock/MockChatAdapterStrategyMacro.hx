@@ -16,7 +16,7 @@ class MockChatAdapterStrategyMacro extends MacroAdapterStrategy
 
 	public var url : String = "http://google.com";
 	
-	@inject( "name=receiver" )
+	@Inject( "name=receiver" )
 	public var module : MockReceiverModule;
 
 	public function new()

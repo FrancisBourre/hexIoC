@@ -9,7 +9,7 @@ import hex.event.AdapterStrategy;
 @:rtti
 class MockChatEventAdapterStrategyWithInjection extends AdapterStrategy
 {
-	@inject("name=parser")
+	@Inject("name=parser")
 	public var parser : IMockMessageParserModule;
 		
 	public function new() 

@@ -9,7 +9,7 @@ import hex.event.AdapterStrategy;
 @:rtti
 class MockIntDividerEventAdapterStrategy extends AdapterStrategy
 {
-	@inject("name=mockDividerHelper")
+	@Inject("name=mockDividerHelper")
 	public var helper : IMockDividerHelper;
 
 	public function new()

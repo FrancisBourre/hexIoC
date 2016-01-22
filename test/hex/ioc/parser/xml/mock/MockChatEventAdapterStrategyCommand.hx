@@ -16,10 +16,10 @@ class MockChatEventAdapterStrategyCommand extends AsyncCommand
 		super();
 	}
 	
-	@inject("name=parser")
+	@Inject("name=parser")
 	public var parser : IMockMessageParserModule;
 
-	@inject
+	@Inject
 	public var message : String;
 
 	override public function execute( ?request : Request ) : Void
