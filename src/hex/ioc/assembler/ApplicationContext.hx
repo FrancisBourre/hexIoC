@@ -1,7 +1,5 @@
 package hex.ioc.assembler;
 
-import hex.config.stateful.IStatefulConfig;
-import hex.config.stateless.IStatelessConfig;
 import hex.control.macro.IMacroExecutor;
 import hex.control.macro.MacroExecutor;
 import hex.di.IBasicInjector;
@@ -16,8 +14,8 @@ import hex.event.MessageType;
 import hex.inject.Injector;
 import hex.ioc.assembler.IApplicationAssembler;
 import hex.log.Logger;
-import hex.metadata.IMetadataProvider;
-import hex.metadata.MetadataProvider;
+import hex.metadata.AnnotationProvider;
+import hex.metadata.IAnnotationProvider;
 import hex.state.control.StateController;
 import hex.state.State;
 import hex.state.StateMachine;
@@ -32,7 +30,7 @@ class ApplicationContext implements IContextOwner implements Dynamic<Application
 	private var _applicationAssembler 	: IApplicationAssembler;
 	private var _dispatcher 			: IDispatcher<{}>;
 	private var _injector 				: Injector;
-	private var _metadataProvider 		: IMetadataProvider;
+	private var _annotationProvider 	: IAnnotationProvider;
 	
 	private var _stateMachine 			: StateMachine;
 	private var _stateController 		: StateController;
@@ -50,7 +48,7 @@ class ApplicationContext implements IContextOwner implements Dynamic<Application
 		
 		this._injector.mapToValue( ApplicationContext, this );
 		
-		this._metadataProvider 		= MetadataProvider.getInstance( this._injector );
+		this._annotationProvider 		= AnnotationProvider.getInstance( this._injector );
 		this._name 					= name;
 		this._applicationAssembler 	= applicationAssembler;
 		

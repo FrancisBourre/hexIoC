@@ -10,7 +10,7 @@ import hex.error.NoSuchElementException;
 import hex.event.Dispatcher;
 import hex.event.IDispatcher;
 import hex.log.Stringifier;
-import hex.metadata.MetadataProvider;
+import hex.metadata.AnnotationProvider;
 import hex.service.IService;
 import hex.util.ObjectUtil;
 
@@ -259,7 +259,7 @@ class CoreFactory implements ILocator<String, Dynamic>
 
 			if ( Std.is( obj, IMetadataParsable ) )
 			{
-				MetadataProvider.getInstance().parse( obj );
+				AnnotationProvider.getInstance().parse( obj );
 			}
 
 			if ( Std.is( obj, IService ) )
