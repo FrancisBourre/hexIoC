@@ -37,6 +37,5 @@ class MockChatAdapterStrategyMacro extends MacroAdapterStrategy
 	private function _end( async : AsyncCommand ) : Void
 	{
 		module.onMessage( async.getPayload()[0] );
-		this._handleComplete();
 	}
 }
