@@ -34,6 +34,8 @@ class ApplicationContext implements IContextOwner implements Dynamic<Application
 	
 	private var _stateMachine 			: StateMachine;
 	private var _stateController 		: StateController;
+	
+	public var state(default, null) 	: ApplicationContextStateList = new ApplicationContextStateList();
 		
 	@:allow( hex.ioc.assembler )
 	private function new( applicationAssembler : IApplicationAssembler, name : String )
@@ -52,7 +54,7 @@ class ApplicationContext implements IContextOwner implements Dynamic<Application
 		this._name 					= name;
 		this._applicationAssembler 	= applicationAssembler;
 		
-		this._stateMachine = new StateMachine( ApplicationAssemblerState.CONTEXT_INITIALIZED );
+		this._stateMachine = new StateMachine( this.state.CONTEXT_INITIALIZED );
 		this._stateController = new StateController( this._injector, this._stateMachine );
 		this._dispatcher.addListener( this._stateController );
 	}

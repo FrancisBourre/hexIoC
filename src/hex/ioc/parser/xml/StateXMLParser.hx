@@ -43,7 +43,8 @@ class StateXMLParser extends AbstractXMLParser
 
 		applicationAssembler.registerID( applicationContext, identifier );
 		
-		var stateClassReference : String = XMLAttributeUtil.getStaticRef( xml );
+		var staticReference 	: String = XMLAttributeUtil.getStaticRef( xml );
+		var instanceReference 	: String = XMLAttributeUtil.getRef( xml );
 		
 		// Build enter list
 		var enterListIterator = xml.elementsNamed( ContextNameList.ENTER );
@@ -63,6 +64,6 @@ class StateXMLParser extends AbstractXMLParser
 			exitList.push( new CommandMappingVO( XMLAttributeUtil.getCommandClass( exitListItem ), XMLAttributeUtil.getFireOnce( exitListItem ), XMLAttributeUtil.getContextOwner( exitListItem ) ) );
 		}
 		
-		applicationAssembler.configureStateTransition( applicationContext, identifier, stateClassReference, enterList, exitList );
+		applicationAssembler.configureStateTransition( applicationContext, identifier, staticReference, instanceReference, enterList, exitList );
 	}
 }

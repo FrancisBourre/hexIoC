@@ -48,7 +48,21 @@ class StateTransitionVOLocator extends Locator<String, StateTransitionVO>
 		{
 			var vo : StateTransitionVO = this.locate( key );
 			var coreFactory : CoreFactory = this._builderFactory.getCoreFactory();
-			var state : State = coreFactory.getStaticReference( vo.stateClassReference );
+			
+			
+			var state : State = null;
+			if ( vo.staticReference != null )
+			{
+				state = coreFactory.getStaticReference( vo.staticReference );
+			}
+			else if ( vo.instanceReference != null )
+			{
+				state = coreFactory.locate( vo.instanceReference );
+			}
+			else 
+			{
+				throw new BuildingException( this + ".buildStateTransition failed with id '" + key + "'" );
+			}
 			
 			var stateUnmapper : StateUnmapper = null;
 			if ( !this._stateUnmapper.containsKey( state ) )

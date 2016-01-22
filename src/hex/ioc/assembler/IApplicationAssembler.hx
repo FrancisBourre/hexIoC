@@ -20,5 +20,5 @@ interface IApplicationAssembler
 	function registerID( applicationContext : ApplicationContext, ID : String ) : Bool;
 	function buildEverything() : Void;
 	function getApplicationContext( applicationContextName : String, applicationContextClass : Class<ApplicationContext> = null ) : ApplicationContext;
-	function configureStateTransition( applicationContext : ApplicationContext, ID : String, stateClassReference : String, enterList : Array<CommandMappingVO>, exitList : Array<CommandMappingVO> ) : Void;
+	function configureStateTransition( applicationContext : ApplicationContext, ID : String, staticReference : String, instanceReference : String, enterList : Array<CommandMappingVO>, exitList : Array<CommandMappingVO> ) : Void;
 }

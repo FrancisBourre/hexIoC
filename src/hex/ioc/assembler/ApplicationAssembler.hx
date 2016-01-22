@@ -145,9 +145,9 @@ class ApplicationAssembler implements IApplicationAssembler
 		return this.getBuilderFactory( applicationContext ).getIDExpert().register( ID );
 	}
 	
-	public function configureStateTransition( applicationContext : ApplicationContext, ID : String, stateClassReference : String, enterList : Array<CommandMappingVO>, exitList : Array<CommandMappingVO> ) : Void
+	public function configureStateTransition( applicationContext : ApplicationContext, ID : String, staticReference : String, instanceReference : String, enterList : Array<CommandMappingVO>, exitList : Array<CommandMappingVO> ) : Void
 	{
-		var stateTransition : StateTransitionVO = new StateTransitionVO( ID, stateClassReference, enterList, exitList );
+		var stateTransition : StateTransitionVO = new StateTransitionVO( ID, staticReference, instanceReference, enterList, exitList );
 		this.getBuilderFactory( applicationContext ).getStateTransitionVOLocator().register( ID, stateTransition );
 	}
 	

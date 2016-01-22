@@ -45,6 +45,45 @@ class ApplicationAssemblerStateTest
 		var source : String = '
 		<root name="applicationContext">
 
+			<state id="assemblingStart" ref="applicationContext.state.ASSEMBLING_START">
+				<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand"/>
+			</state>
+			
+			<state id="objectsBuilt" ref="applicationContext.state.OBJECTS_BUILT">
+				<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommandWithModule" fire-once="true" context-owner="module"/>
+			</state>
+			
+			<state id="domainListenersAssigned" ref="applicationContext.state.DOMAIN_LISTENERS_ASSIGNED">
+				<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand"/>
+			</state>
+			
+			<state id="methodsCalled" ref="applicationContext.state.METHODS_CALLED">
+				<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand"/>
+			</state>
+			
+			<state id="modulesInitialized" ref="applicationContext.state.MODULES_INITIALIZED">
+				<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand"/>
+			</state>
+			
+			<state id="assemblingEnd" ref="applicationContext.state.ASSEMBLING_END">
+				<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommandWithModule" fire-once="true" context-owner="anotherModule"/>
+			</state>
+			
+			<module id="module" type="hex.ioc.parser.xml.assembler.mock.MockModule" map-type="hex.module.IModule"/>
+			<module id="anotherModule" type="hex.ioc.parser.xml.assembler.mock.MockModule" map-type="hex.module.IModule"/>
+
+		</root>';
+
+		var xml : Xml = Xml.parse( source );
+		this._build( xml );
+	}
+	
+	/*@Test( "test building state transitions with static-ref" )
+	public function testBuildingStateTransitionsWithStaticRef() : Void
+	{
+		var source : String = '
+		<root name="applicationContext">
+
 			<state id="assemblingStart" static-ref="hex.ioc.assembler.ApplicationAssemblerState.ASSEMBLING_START">
 				<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand"/>
 			</state>
@@ -76,6 +115,6 @@ class ApplicationAssemblerStateTest
 
 		var xml : Xml = Xml.parse( source );
 		this._build( xml );
-	}
+	}*/
 	
 }
