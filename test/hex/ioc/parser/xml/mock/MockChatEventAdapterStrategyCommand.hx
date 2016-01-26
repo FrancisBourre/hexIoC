@@ -27,7 +27,7 @@ class MockChatEventAdapterStrategyCommand extends AsyncCommand
 		Timer.delay( this.testAsyncCallback, 300 );
 	}
 	
-	override public function getPayload() : Array<Dynamic> 
+	override public function getResult() : Array<Dynamic> 
 	{
 		var message : String = this.parser.parse( this.message );
 		return [ message ];

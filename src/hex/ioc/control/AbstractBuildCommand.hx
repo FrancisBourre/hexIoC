@@ -1,6 +1,7 @@
 package hex.ioc.control;
 
 import hex.control.Request;
+import hex.control.payload.ExecutionPayload;
 import hex.error.VirtualMethodException;
 import hex.ioc.vo.BuildHelperVO;
 import hex.module.IModule;
@@ -29,9 +30,14 @@ class AbstractBuildCommand implements IBuildCommand
 		this._buildHelperVO = buildHelperVO;
 	}
 
-	public function getPayload() : Array<Dynamic>
+	public function getResult() : Array<Dynamic>
 	{
 		return [ this._buildHelperVO ];
+	}
+	
+	public function getReturnedExecutionPayload() : Array<ExecutionPayload>
+	{
+		return null;
 	}
 
 	public function getOwner() : IModule
