@@ -16,6 +16,6 @@ class MockStateCommand extends BasicCommand
 	
 	override public function execute( ?request : Request ) : Void 
 	{
-		trace( this.context.getCurrentState().toString() );
+		//trace( this.context.getCurrentState().toString() );
 	}
 }

@@ -19,7 +19,7 @@ class BuildIntCommand extends AbstractBuildCommand
 	{
 		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
 		var args 	: Array<Dynamic> 	= constructorVO.arguments;
-		var number 	: Int 				= 0;
+		var number 	: Int = 0;
 
 		if ( args != null && args.length > 0 ) 
 		{
@@ -27,20 +27,20 @@ class BuildIntCommand extends AbstractBuildCommand
 		}
 		else
 		{
-			throw new IllegalArgumentException( this + ".execute(" + number + ") failed." );
+			throw new IllegalArgumentException( this + ".execute(" + ( args != null && args.length > 0 ? args[0] : "" ) + ") failed." );
 		}
 
 		#if js
-		if ( number != null )
+		if ( number == null )
 		#else
-		if ( Math.isNaN( number ) )
+		if ( "" + number != args[0] )
 		#end
 		{
-			constructorVO.result = number;
+			throw new IllegalArgumentException( this + ".execute(" + number + ") failed." );
 		}
 		else
 		{
-			throw new IllegalArgumentException( this + ".execute(" + number + ") failed." );
+			constructorVO.result = number;
 		}
 	}
 }

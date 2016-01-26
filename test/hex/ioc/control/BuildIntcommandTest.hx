@@ -28,7 +28,7 @@ class BuildIntcommandTest
     {
 		var cmd = new BuildIntCommand();
 		var helper = new BuildHelperVO();
-		helper.constructorVO 		= new ConstructorVO( "test", "Int", ["-4"] );
+		helper.constructorVO = new ConstructorVO( "test", "Int", ["-4"] );
 		cmd.setHelper( helper );
 		cmd.execute();
 		Assert.equals( -4, helper.constructorVO.result, "constructorVO.result should equal -4" );

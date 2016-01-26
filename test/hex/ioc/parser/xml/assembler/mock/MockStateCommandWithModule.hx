@@ -17,6 +17,6 @@ class MockStateCommandWithModule extends BasicCommand
 	
 	override public function execute( ?request : Request ) : Void 
 	{
-		trace( Stringifier.stringify( this.module ) );
+		//trace( Stringifier.stringify( this.module ) );
 	}
 }
