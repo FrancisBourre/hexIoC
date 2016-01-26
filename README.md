@@ -237,6 +237,32 @@ Inversion of Control system with DSL and modularity based on global and micro co
 </root>
 ```
 
+## State machine configuration
+```xml
+<root name="applicationContext">
+	<initialState id="initialState" static-ref="hex.ioc.parser.xml.state.mock.MockStateEnum.INITIAL_STATE">
+		<method-call name="addTransition">
+			<argument static-ref="hex.ioc.parser.xml.state.mock.MockStateMessage.TRIGGER_NEXT_STATE"/>
+			<argument static-ref="hex.ioc.parser.xml.state.mock.MockStateEnum.NEXT_STATE"/>
+		</method-call>
+
+		<method-call name="addExitCommand">
+			<argument type="Class" value="hex.ioc.parser.xml.state.mock.MockExitStateCommand"/>
+			<argument ref="myModule"/>
+		</method-call>
+
+	</initialState>
+
+	<stateConfig id="stateConfig" type="hex.state.config.stateful.StatefulStateMachineConfig">
+		<argument ref="initialState"/>
+	</stateConfig>
+
+	<module id="myModule" type="hex.ioc.parser.xml.state.mock.MockModuleWorkingWithStates">
+		<argument ref="stateConfig"/>
+	</module>
+</root>
+```
+
 ## Module listening service with adapter strategy and module injections
 ```xml
 <root name="applicationContext">
@@ -250,5 +276,44 @@ Inversion of Control system with DSL and modularity based on global and micro co
 				   injectedInModule="true"/>
 		</listen>
 	</module>
+</root>
+```
+
+## Redefining application context class
+```xml
+<root name="applicationContext" type="hex.ioc.parser.xml.context.mock.MockApplicationContext">
+	<test id="test" value="Hola Mundo"/>
+</root>
+```
+
+## Listening application context states changes
+```xml
+<root name="applicationContext">
+	<state id="assemblingStart" ref="applicationContext.state.ASSEMBLING_START">
+		<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand"/>
+	</state>
+	
+	<state id="objectsBuilt" ref="applicationContext.state.OBJECTS_BUILT">
+		<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommandWithModule" fire-once="true" context-owner="module"/>
+	</state>
+	
+	<state id="domainListenersAssigned" ref="applicationContext.state.DOMAIN_LISTENERS_ASSIGNED">
+		<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand"/>
+	</state>
+	
+	<state id="methodsCalled" ref="applicationContext.state.METHODS_CALLED">
+		<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand"/>
+	</state>
+	
+	<state id="modulesInitialized" ref="applicationContext.state.MODULES_INITIALIZED">
+		<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand"/>
+	</state>
+	
+	<state id="assemblingEnd" ref="applicationContext.state.ASSEMBLING_END">
+		<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommandWithModule" fire-once="true" context-owner="anotherModule"/>
+	</state>
+	
+	<module id="module" type="hex.ioc.parser.xml.assembler.mock.MockModule" map-type="hex.module.IModule"/>
+	<module id="anotherModule" type="hex.ioc.parser.xml.assembler.mock.MockModule" map-type="hex.module.IModule"/>
 </root>
 ```
