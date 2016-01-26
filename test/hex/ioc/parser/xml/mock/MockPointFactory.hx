@@ -8,7 +8,7 @@ import hex.structures.Point;
  */
 class MockPointFactory
 {
-	private function new() 
+	function new() 
 	{
 		
 	}
@@ -18,7 +18,7 @@ class MockPointFactory
 		return new Point( x, y );
 	}
 
-	static private var _Instance : MockPointFactory = null;
+	static var _Instance : MockPointFactory = null;
 
 	static public function getInstance() : MockPointFactory
 	{

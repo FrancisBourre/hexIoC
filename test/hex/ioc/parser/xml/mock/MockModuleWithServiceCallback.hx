@@ -10,8 +10,8 @@ import hex.module.Module;
  */
 class MockModuleWithServiceCallback extends Module
 {
-	private var _floatValue 	: Float;
-	private var _booleanValue 	: Bool;
+	var _floatValue 	: Float;
+	var _booleanValue 	: Bool;
 	
 	public function new() 
 	{
@@ -39,7 +39,7 @@ class MockModuleWithServiceCallback extends Module
 		return this._booleanValue;
 	}
 	
-	override private function _getRuntimeDependencies() : IRuntimeDependencies
+	override function _getRuntimeDependencies() : IRuntimeDependencies
 	{
 		return new RuntimeDependencies();
 	}

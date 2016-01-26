@@ -16,7 +16,7 @@ class ApplicationAssemblerMessage
 	static public var MODULES_INITIALIZED 		: MessageType = new MessageType( "onModulesInitialized" );
 	static public var ASSEMBLING_END 			: MessageType = new MessageType( "onAssemblingEnd" );
 	
-	private function new() 
+	function new() 
 	{
 		
 	}

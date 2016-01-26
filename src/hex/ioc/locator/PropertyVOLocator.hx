@@ -18,7 +18,7 @@ class PropertyVOLocator extends Locator<String, Array<PropertyVO>> implements IL
 {
 	static public inline var BUILD_PROPERTY:String = "buildProperty";
 
-	private var _builderFactory : BuilderFactory;
+	var _builderFactory : BuilderFactory;
 
 	public function new( builderFactory : BuilderFactory )
 	{

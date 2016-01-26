@@ -12,7 +12,7 @@ import hex.ioc.parser.AbstractParserCommand;
  */
 class AbstractXMLParser extends AbstractParserCommand
 {
-	private function new()
+	function new()
 	{
 		super();
 	}
@@ -51,7 +51,7 @@ class AbstractXMLParser extends AbstractParserCommand
 	}
 	
 	@final
-	private function getXMLContext() : Xml
+	function getXMLContext() : Xml
 	{
 		return cast getContextData();
 	}

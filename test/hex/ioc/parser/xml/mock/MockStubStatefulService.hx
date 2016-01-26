@@ -13,8 +13,8 @@ class MockStubStatefulService extends StatefulService<ServiceConfiguration> impl
 	public static var INT_VO_UPDATE 			: MessageType = new MessageType( "onIntVOUpdate" );
 	public static var BOOLEAN_VO_UPDATE 		: MessageType = new MessageType( "onBooleanVOUpdate" );
 		
-	private var _intVO 		: MockIntVO;
-	private var _booleanVO 	: MockBooleanVO;
+	var _intVO 		: MockIntVO;
+	var _booleanVO 	: MockBooleanVO;
 		
 	public function new() 
 	{

@@ -8,17 +8,17 @@ import hex.error.VirtualMethodException;
  */
 class AbstractParserCollection implements IParserCollection
 {
-	private var _index 						: Int;
-	private var _parserCommandCollection 	: Array<AbstractParserCommand>;
+	var _index 						: Int;
+	var _parserCommandCollection 	: Array<AbstractParserCommand>;
 
-	private function new()
+	function new()
 	{
 		this._index = -1;
 		this._parserCommandCollection = [];
 		this._buildParserList();
 	}
 
-	private function _buildParserList() : Void
+	function _buildParserList() : Void
 	{
 		throw new VirtualMethodException( this + ".setParserList() must be implemented in concrete class." );
 	}

@@ -28,8 +28,8 @@ class ApplicationAssembler implements IApplicationAssembler
 		
 	}
 	
-	private var _mApplicationContext 		: HashMap<String, ApplicationContext> 			= new HashMap<String, ApplicationContext>();
-	private var _mBuilderFactories 			: HashMap<ApplicationContext, BuilderFactory> 	= new HashMap<ApplicationContext, BuilderFactory>();
+	var _mApplicationContext 		: HashMap<String, ApplicationContext> 			= new HashMap<String, ApplicationContext>();
+	var _mBuilderFactories 			: HashMap<ApplicationContext, BuilderFactory> 	= new HashMap<ApplicationContext, BuilderFactory>();
 
 	public function getBuilderFactory( applicationContext : ApplicationContext ) : BuilderFactory
 	{
@@ -206,31 +206,31 @@ class ApplicationAssembler implements IApplicationAssembler
 		return applicationContext;
 	}
 	
-	static private function _buildAllStateTransitions( builderFactory : BuilderFactory ) : Void
+	static function _buildAllStateTransitions( builderFactory : BuilderFactory ) : Void
 	{
 		builderFactory.getStateTransitionVOLocator().build();
 		builderFactory.getApplicationContext()._dispatch( ApplicationAssemblerMessage.STATE_TRANSITIONS_BUILT );
 	}
 
-	static private function _buildAllObjects( builderFactory : BuilderFactory ) : Void
+	static function _buildAllObjects( builderFactory : BuilderFactory ) : Void
 	{
 		builderFactory.getConstructorVOLocator().buildAllObjects();
 		builderFactory.getApplicationContext()._dispatch( ApplicationAssemblerMessage.OBJECTS_BUILT );
 	}
 
-	static private function _assignAllDomainListeners( builderFactory : BuilderFactory ) : Void
+	static function _assignAllDomainListeners( builderFactory : BuilderFactory ) : Void
 	{
 		builderFactory.getDomainListenerVOLocator().assignAllDomainListeners();
 		builderFactory.getApplicationContext()._dispatch( ApplicationAssemblerMessage.DOMAIN_LISTENERS_ASSIGNED );
 	}
 
-	static private function _callAllMethods( builderFactory : BuilderFactory ) : Void
+	static function _callAllMethods( builderFactory : BuilderFactory ) : Void
 	{
 		builderFactory.getMethodCallVOLocator().callAllMethods();
 		builderFactory.getApplicationContext()._dispatch( ApplicationAssemblerMessage.METHODS_CALLED );
 	}
 	
-	static private function _callInitOnModules( builderFactory : BuilderFactory ) : Void
+	static function _callInitOnModules( builderFactory : BuilderFactory ) : Void
 	{
 		builderFactory.getModuleLocator().callModuleInitialisation();
 		builderFactory.getApplicationContext()._dispatch( ApplicationAssemblerMessage.MODULES_INITIALIZED );

@@ -14,9 +14,9 @@ import hex.ioc.parser.xml.assembler.mock.MockModule;
  */
 class ApplicationAssemblerStateTest
 {
-	private var _contextParser 				: ApplicationXMLParser;
-	private var _builderFactory 			: BuilderFactory;
-	private var _applicationAssembler 		: IApplicationAssembler;
+	var _contextParser 				: ApplicationXMLParser;
+	var _builderFactory 			: BuilderFactory;
+	var _applicationAssembler 		: IApplicationAssembler;
 		
 	@Before
 	public function setUp() : Void
@@ -32,7 +32,7 @@ class ApplicationAssemblerStateTest
 		this._applicationAssembler.release();
 	}
 		
-	private function _build( xml : Xml ) : Void
+	function _build( xml : Xml ) : Void
 	{
 		this._contextParser = new ApplicationXMLParser();
 		this._contextParser.parse( this._applicationAssembler, xml );

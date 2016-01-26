@@ -9,7 +9,7 @@ import hex.event.MessageType;
  */
 class MockTranslationModule extends MockModule
 {
-	private var _map : HashMap<String, String> = new HashMap<String, String>();
+	var _map : HashMap<String, String> = new HashMap<String, String>();
 	
 	public static var TRANSLATION : MessageType = new MessageType( "onTranslation" );
 	

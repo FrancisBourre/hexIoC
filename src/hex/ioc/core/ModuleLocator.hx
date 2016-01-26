@@ -11,7 +11,7 @@ import hex.module.IModule;
  */
 class ModuleLocator extends Locator<String, IModule>
 {
-	private var _builderFactory : BuilderFactory;
+	var _builderFactory : BuilderFactory;
 
 	public function new( builderFactory : BuilderFactory )
 	{

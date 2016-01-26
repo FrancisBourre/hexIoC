@@ -10,9 +10,9 @@ import hex.ioc.assembler.IApplicationAssembler;
  */
 class ApplicationXMLParser
 {
-	private var _contextData 		: Dynamic;
-	private var _assembler 			: IApplicationAssembler;
-	private var _parserCollection 	: IParserCollection;
+	var _contextData 		: Dynamic;
+	var _assembler 			: IApplicationAssembler;
+	var _parserCollection 	: IParserCollection;
 	
 	public function new( ?parserCollection : XMLParserCollection )
 	{

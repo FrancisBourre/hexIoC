@@ -8,7 +8,7 @@ import hex.error.IllegalArgumentException;
  */
 class IDExpert
 {
-	private var _map : Map<String, Bool>;
+	var _map : Map<String, Bool>;
 
 	public function new()
 	{

@@ -6,14 +6,14 @@ package hex.ioc.parser.xml.mock;
  */
 class MockServiceProvider
 {
-	private function new() 
+	function new() 
 	{
 		
 	}
 	
-	static private var _Instance : MockServiceProvider = null;
+	static var _Instance : MockServiceProvider = null;
 
-	private var _gateway : String;
+	var _gateway : String;
 
 	static public function getInstance() : MockServiceProvider
 	{

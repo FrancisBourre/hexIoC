@@ -24,7 +24,7 @@ import hex.service.ServiceConfiguration;
  */
 class DomainListenerVOLocator extends Locator<String, DomainListenerVO>
 {
-	private var _builderFactory : BuilderFactory;
+	var _builderFactory : BuilderFactory;
 
 	public function new( builderFactory : BuilderFactory )
 	{
@@ -108,7 +108,7 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO>
 		}
 	}
 
-	private function getStrategyCallback( listener : Dynamic, method : String, strategyClassName : String, injectedInModule : Bool = false ) : Dynamic
+	function getStrategyCallback( listener : Dynamic, method : String, strategyClassName : String, injectedInModule : Bool = false ) : Dynamic
 	{
 		var callback : Dynamic 							= Reflect.field( listener, method );
 		var strategyClass : Class<IAdapterStrategy> 	= cast this._builderFactory.getCoreFactory().getClassReference( strategyClassName );

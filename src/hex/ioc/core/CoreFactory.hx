@@ -20,8 +20,8 @@ import hex.util.ObjectUtil;
  */
 class CoreFactory implements ILocator<String, Dynamic>
 {
-	private var _dispatcher : IDispatcher<ILocatorListener<String, Dynamic>>;
-	private var _map : HashMap<String, Dynamic>;
+	var _dispatcher : IDispatcher<ILocatorListener<String, Dynamic>>;
+	var _map : HashMap<String, Dynamic>;
 
 	public function new() 
 	{

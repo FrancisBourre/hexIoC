@@ -11,7 +11,7 @@ import hex.ioc.vo.ConstructorVO;
  */
 class ConstructorVOLocator extends Locator<String, ConstructorVO>
 {
-	private var _builderFactory : BuilderFactory;
+	var _builderFactory : BuilderFactory;
 
 	public function new( builderFactory : BuilderFactory )
 	{

@@ -12,10 +12,10 @@ import hex.module.IModule;
  */
 class AbstractBuildCommand implements IBuildCommand
 {
-	private var _buildHelperVO 	: BuildHelperVO;
-	private var _owner 			: IModule;
+	var _buildHelperVO 	: BuildHelperVO;
+	var _owner 			: IModule;
 	
-	private function new() 
+	function new() 
 	{
 		
 	}

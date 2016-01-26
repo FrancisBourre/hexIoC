@@ -6,7 +6,7 @@ package hex.ioc.parser.xml.mock;
  */
 class MockRectangleFactory
 {
-	private function new() 
+	function new() 
 	{
 		
 	}

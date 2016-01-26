@@ -15,7 +15,7 @@ class CoreFactoryTest
 {
 	public static inline var STATIC_REF : String = "static_ref";
 	
-	private var _coreFactory : CoreFactory;
+	var _coreFactory : CoreFactory;
 
     @Before
     public function setUp() : Void

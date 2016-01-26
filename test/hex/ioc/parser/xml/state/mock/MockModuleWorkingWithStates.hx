@@ -19,13 +19,13 @@ class MockModuleWorkingWithStates extends Module
 		this._addStatefulConfigs( [ stateConfig ] );
 	}
 	
-	override private function _onInitialisation() : Void 
+	override function _onInitialisation() : Void 
 	{
 		this._dispatchPrivateMessage( MockStateMessage.TRIGGER_NEXT_STATE );
 		super._onInitialisation();
 	}
 	
-	override private function _getRuntimeDependencies() : IRuntimeDependencies
+	override function _getRuntimeDependencies() : IRuntimeDependencies
 	{
 		return new RuntimeDependencies();
 	}

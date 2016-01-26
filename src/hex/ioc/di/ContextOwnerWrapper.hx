@@ -10,8 +10,8 @@ import hex.ioc.core.CoreFactory;
  */
 class ContextOwnerWrapper implements IContextOwner
 {
-	private var _coreFactory 	: CoreFactory;
-	private var _id 			: String;
+	var _coreFactory 	: CoreFactory;
+	var _id 			: String;
 	
 	public function new( coreFactory : CoreFactory, id : String ) 
 	{

@@ -33,17 +33,17 @@ import hex.ioc.vo.ConstructorVO;
  */
 class BuilderFactory
 {
-	private var _moduleLocator				: ModuleLocator;
-	private var _applicationContext 		: ApplicationContext;
-	private var _commandMap 				: HashMap<String, Class<IBuildCommand>>;
-	private var _coreFactory 				: CoreFactory;
-	private var _applicationDomainHub 		: IApplicationDomainDispatcher;
-	private var _IDExpert 					: IDExpert;
-	private var _constructorVOLocator 		: ConstructorVOLocator;
-	private var _propertyVOLocator 			: PropertyVOLocator;
-	private var _methodCallVOLocator 		: MethodCallVOLocator;
-	private var _domainListenerVOLocator 	: DomainListenerVOLocator;
-	private var _stateTransitionVOLocator 	: StateTransitionVOLocator;
+	var _moduleLocator				: ModuleLocator;
+	var _applicationContext 		: ApplicationContext;
+	var _commandMap 				: HashMap<String, Class<IBuildCommand>>;
+	var _coreFactory 				: CoreFactory;
+	var _applicationDomainHub 		: IApplicationDomainDispatcher;
+	var _IDExpert 					: IDExpert;
+	var _constructorVOLocator 		: ConstructorVOLocator;
+	var _propertyVOLocator 			: PropertyVOLocator;
+	var _methodCallVOLocator 		: MethodCallVOLocator;
+	var _domainListenerVOLocator 	: DomainListenerVOLocator;
+	var _stateTransitionVOLocator 	: StateTransitionVOLocator;
 
 	public function new( applicationContext : ApplicationContext )
 	{

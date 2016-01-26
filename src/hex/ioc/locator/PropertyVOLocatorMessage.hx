@@ -10,7 +10,7 @@ class PropertyVOLocatorMessage
 {
 	static public var BUILD_PROPERTY : MessageType = new MessageType( "buildProperty" );
 
-	private function new() 
+	function new() 
 	{
 		
 	}

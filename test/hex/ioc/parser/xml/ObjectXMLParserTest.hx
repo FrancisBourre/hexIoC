@@ -56,10 +56,10 @@ import hex.ioc.parser.xml.mock.MockChatAdapterStrategyMacro;
  */
 class ObjectXMLParserTest
 {
-	private var _contextParser 				: ApplicationXMLParser;
-	private var _applicationContext 		: ApplicationContext;
-	private var _builderFactory 			: BuilderFactory;
-	private var _applicationAssembler 		: IApplicationAssembler;
+	var _contextParser 				: ApplicationXMLParser;
+	var _applicationContext 		: ApplicationContext;
+	var _builderFactory 			: BuilderFactory;
+	var _applicationAssembler 		: IApplicationAssembler;
 		
 	@Before
 	public function setUp() : Void
@@ -76,7 +76,7 @@ class ObjectXMLParserTest
 		this._applicationAssembler.release();
 	}
 		
-	private function _build( xml : Xml, applicationContext : ApplicationContext = null ) : Void
+	function _build( xml : Xml, applicationContext : ApplicationContext = null ) : Void
 	{
 		this._contextParser = new ApplicationXMLParser();
 		//this._contextParser.parse( applicationContext != null ? applicationContext : this._applicationContext, this._applicationAssembler, xml );
@@ -981,7 +981,7 @@ class ObjectXMLParserTest
 		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "bonjour" ] );
 	}
 	
-	private function _onCompleteHandler() : Void
+	function _onCompleteHandler() : Void
 	{
 		var receiver : MockReceiverModule = this._builderFactory.getCoreFactory().locate( "receiver" );
 		Assert.equals( "BONJOUR:HTTP://GOOGLE.COM", receiver.message, "" );

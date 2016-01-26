@@ -11,7 +11,7 @@ import hex.ioc.vo.DomainListenerVOArguments;
  */
 class XMLParserUtil
 {
-	private function new() 
+	function new() 
 	{
 		
 	}
@@ -113,7 +113,7 @@ class XMLParserUtil
 		return args;
 	}
 
-	private static function _getAttributes( xml : Xml ) : Dynamic
+	static function _getAttributes( xml : Xml ) : Dynamic
 	{
 		var obj : Dynamic = {};
 		var iterator = xml.attributes();

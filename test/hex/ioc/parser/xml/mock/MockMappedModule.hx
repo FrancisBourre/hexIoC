@@ -20,7 +20,7 @@ class MockMappedModule extends Module implements IMockMappedModule
 		
 	}
 	
-	override private function _getRuntimeDependencies() : IRuntimeDependencies
+	override function _getRuntimeDependencies() : IRuntimeDependencies
 	{
 		return new RuntimeDependencies();
 	}

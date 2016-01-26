@@ -13,10 +13,10 @@ import hex.ioc.assembler.IApplicationAssembler;
  */
 class AbstractParserCommand extends AsyncCommand implements IParserCommand
 {
-	private var _applicationAssembler 	: IApplicationAssembler;
-	private var _contextData 			: Dynamic;
+	var _applicationAssembler 	: IApplicationAssembler;
+	var _contextData 			: Dynamic;
 
-	private function new() 
+	function new() 
 	{
 		super();
 	}

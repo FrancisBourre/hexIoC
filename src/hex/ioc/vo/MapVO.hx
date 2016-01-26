@@ -6,8 +6,8 @@ package hex.ioc.vo;
  */
 class MapVO
 {
-	private var _key 	: PropertyVO;
-	private var _value 	: PropertyVO;
+	var _key 	: PropertyVO;
+	var _value 	: PropertyVO;
 
 	public var key 		: Dynamic;
 	public var value 	: Dynamic;

@@ -9,9 +9,9 @@ import hex.structures.Size;
  */
 class MockClassForCoreFactoryTest
 {
-	static private var _Instance : MockClassForCoreFactoryTest = null;
+	static var _Instance : MockClassForCoreFactoryTest = null;
 	
-	private function new() 
+	function new() 
 	{
 		
 	}

@@ -13,7 +13,7 @@ class XMLParserCollection extends AbstractParserCollection
 		super();
 	}
 	
-	override private function _buildParserList() : Void
+	override function _buildParserList() : Void
 	{
 		this._parserCommandCollection.push( new ApplicationContextXMLParser() );
 		this._parserCommandCollection.push( new StateXMLParser() );

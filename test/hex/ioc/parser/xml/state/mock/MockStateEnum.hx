@@ -11,7 +11,7 @@ class MockStateEnum
 	static public var INITIAL_STATE : State = new State( "initial" );
 	static public var NEXT_STATE 	: State = new State( "nextState" );
 		
-	private function new() 
+	function new() 
 	{
 		
 	}

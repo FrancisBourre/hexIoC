@@ -9,7 +9,7 @@ import hex.ioc.core.ContextAttributeList;
  */
 class XMLAttributeUtil
 {
-	private function new() 
+	function new() 
 	{
 		throw new PrivateConstructorException( "'XMLAttributeUtil' class can't be instantiated." );
 	}

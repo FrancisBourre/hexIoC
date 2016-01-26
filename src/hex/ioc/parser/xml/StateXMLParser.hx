@@ -30,7 +30,7 @@ class StateXMLParser extends AbstractXMLParser
 		this._handleComplete();
 	}
 	
-	private function _parseNode( xml : Xml ) : Void
+	function _parseNode( xml : Xml ) : Void
 	{
 		var applicationContext : ApplicationContext 		= this.getApplicationContext();
 		var applicationAssembler : IApplicationAssembler 	= this.getApplicationAssembler();

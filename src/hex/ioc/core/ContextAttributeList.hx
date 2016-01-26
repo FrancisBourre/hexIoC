@@ -27,7 +27,7 @@ class ContextAttributeList
 	public static inline var FIRE_ONCE 				: String = "fire-once";
 	public static inline var CONTEXT_OWNER 			: String = "context-owner";
 	
-	private function new() 
+	function new() 
 	{
 		throw new PrivateConstructorException( "'ContextAttributeList' class can't be instantiated." );
 	}

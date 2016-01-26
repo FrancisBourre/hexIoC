@@ -22,8 +22,8 @@ import hex.state.State;
  */
 class StateTransitionVOLocator extends Locator<String, StateTransitionVO>
 {
-	private var _builderFactory : BuilderFactory;
-	private var _stateUnmapper : HashMap<State, StateUnmapper>;
+	var _builderFactory : BuilderFactory;
+	var _stateUnmapper : HashMap<State, StateUnmapper>;
 
 	public function new( builderFactory : BuilderFactory )
 	{
@@ -138,9 +138,9 @@ class StateTransitionVOLocator extends Locator<String, StateTransitionVO>
 
 private class StateUnmapper
 {
-	private var _state 			: State;
-	private var _enterMappings 	: Array<ICommandMapping> = [];
-	private var _exitMappings 	: Array<ICommandMapping> = [];
+	var _state 			: State;
+	var _enterMappings 	: Array<ICommandMapping> = [];
+	var _exitMappings 	: Array<ICommandMapping> = [];
 	
 	public function new( state : State )
 	{

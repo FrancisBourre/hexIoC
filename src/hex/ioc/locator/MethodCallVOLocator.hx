@@ -13,7 +13,7 @@ import hex.ioc.vo.MethodCallVO;
  */
 class MethodCallVOLocator extends Locator<String, MethodCallVO>
 {
-	private var _builderFactory : BuilderFactory;
+	var _builderFactory : BuilderFactory;
 
 	public function new( builderFactory : BuilderFactory )
 	{

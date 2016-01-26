@@ -10,7 +10,7 @@ class MockStateMessage
 {
 	public static var TRIGGER_NEXT_STATE : MessageType = new MessageType( "triggerNextState" );
 	
-	private function new() 
+	function new() 
 	{
 		
 	}

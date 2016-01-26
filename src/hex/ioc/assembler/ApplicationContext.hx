@@ -26,19 +26,19 @@ import hex.state.StateMachine;
  */
 class ApplicationContext implements IContextOwner implements Dynamic<ApplicationContext>
 {
-	private var _name 					: String;
-	private var _applicationAssembler 	: IApplicationAssembler;
-	private var _dispatcher 			: IDispatcher<{}>;
-	private var _injector 				: Injector;
-	private var _annotationProvider 	: IAnnotationProvider;
+	var _name 					: String;
+	var _applicationAssembler 	: IApplicationAssembler;
+	var _dispatcher 			: IDispatcher<{}>;
+	var _injector 				: Injector;
+	var _annotationProvider 	: IAnnotationProvider;
 	
-	private var _stateMachine 			: StateMachine;
-	private var _stateController 		: StateController;
+	var _stateMachine 			: StateMachine;
+	var _stateController 		: StateController;
 	
 	public var state(default, null) 	: ApplicationContextStateList = new ApplicationContextStateList();
 		
 	@:allow( hex.ioc.assembler )
-	private function new( applicationAssembler : IApplicationAssembler, name : String )
+	function new( applicationAssembler : IApplicationAssembler, name : String )
 	{
 		var domain : Domain = DomainUtil.getDomain( name, Domain );
 		this._dispatcher = ApplicationDomainDispatcher.getInstance().getDomainDispatcher( domain );
@@ -60,7 +60,7 @@ class ApplicationContext implements IContextOwner implements Dynamic<Application
 	}
 	
 	@:allow( hex.ioc.assembler )
-	private function _dispatch( messageType : MessageType, ?data : Array<Dynamic> ) : Void
+	function _dispatch( messageType : MessageType, ?data : Array<Dynamic> ) : Void
 	{
 		this._dispatcher.dispatch( messageType, data );
 	}

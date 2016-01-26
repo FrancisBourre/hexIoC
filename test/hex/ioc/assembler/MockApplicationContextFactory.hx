@@ -7,7 +7,7 @@ package hex.ioc.assembler;
 class MockApplicationContextFactory
 {
 
-	private function new() 
+	function new() 
 	{
 		
 	}

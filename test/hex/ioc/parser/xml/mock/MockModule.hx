@@ -14,7 +14,7 @@ import hex.module.IModule;
  */
 class MockModule implements IModule
 {
-	private var _domainDispatcher 	: IDispatcher<{}>;
+	var _domainDispatcher 	: IDispatcher<{}>;
 	
 	public function new() 
 	{

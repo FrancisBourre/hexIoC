@@ -33,7 +33,7 @@ class MockChatEventAdapterStrategyCommand extends AsyncCommand
 		return [ message ];
 	}
 
-	private function testAsyncCallback() : Void
+	function testAsyncCallback() : Void
 	{
 		this._handleComplete();
 	}

@@ -22,7 +22,7 @@ class ContextNameList
 	
 	static public var ROOT 										: String = "root";
 
-	private function new() 
+	function new() 
 	{
 		throw new PrivateConstructorException( "'ContextNameList' class can't be instantiated." );
 	}
