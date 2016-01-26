@@ -14,8 +14,8 @@ class BuildNullCommandTest
 	@Test( "Test execute" )
     public function testExecute() : Void
     {
-		var cmd : BuildNullCommand 	= new BuildNullCommand();
-		var helper : BuildHelperVO 	= new BuildHelperVO();
+		var cmd = new BuildNullCommand();
+		var helper = new BuildHelperVO();
 		helper.constructorVO 		= new ConstructorVO( "test" );
 		cmd.setHelper( helper );
 		cmd.execute();

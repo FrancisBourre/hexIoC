@@ -13,8 +13,8 @@ class BuildArrayCommandTest
 	@Test( "Test executet" )
     public function testExecute() : Void
     {
-		var cmd : BuildArrayCommand 	= new BuildArrayCommand();
-		var helper : BuildHelperVO 		= new BuildHelperVO();
+		var cmd = new BuildArrayCommand();
+		var helper = new BuildHelperVO();
 		helper.constructorVO 			= new ConstructorVO( "test", "Array", [3, "hello world"] );
 		cmd.setHelper( helper );
 		cmd.execute();
@@ -25,8 +25,8 @@ class BuildArrayCommandTest
 	@Test( "Test execute with no argument array" )
     public function testExecuteWithNoArgumentArray() : Void
     {
-		var cmd : BuildArrayCommand 	= new BuildArrayCommand();
-		var helper : BuildHelperVO 		= new BuildHelperVO();
+		var cmd = new BuildArrayCommand();
+		var helper = new BuildHelperVO();
 		helper.constructorVO 			= new ConstructorVO( "test", "Array", null );
 		cmd.setHelper( helper );
 		cmd.execute();
@@ -36,8 +36,8 @@ class BuildArrayCommandTest
 	@Test( "Test execute with empty argument array" )
     public function testExecuteWithEmptyArgumentArray() : Void
     {
-		var cmd : BuildArrayCommand 	= new BuildArrayCommand();
-		var helper : BuildHelperVO 		= new BuildHelperVO();
+		var cmd = new BuildArrayCommand();
+		var helper = new BuildHelperVO();
 		helper.constructorVO 			= new ConstructorVO( "test", "Array", [] );
 		cmd.setHelper( helper );
 		cmd.execute();
@@ -47,8 +47,8 @@ class BuildArrayCommandTest
 	@Test( "Test execute with null argument" )
     public function testExecuteWithNullArgument() : Void
     {
-		var cmd : BuildArrayCommand 	= new BuildArrayCommand();
-		var helper : BuildHelperVO 		= new BuildHelperVO();
+		var cmd = new BuildArrayCommand();
+		var helper = new BuildHelperVO();
 		helper.constructorVO 			= new ConstructorVO( "test", "Array", [null] );
 		cmd.setHelper( helper );
 		cmd.execute();

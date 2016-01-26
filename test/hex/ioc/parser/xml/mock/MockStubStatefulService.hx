@@ -10,8 +10,8 @@ import hex.service.stateful.StatefulService;
  */
 class MockStubStatefulService extends StatefulService<ServiceConfiguration> implements IMockStubStatefulService
 {
-	public static var INT_VO_UPDATE 			: MessageType = new MessageType( "onIntVOUpdate" );
-	public static var BOOLEAN_VO_UPDATE 		: MessageType = new MessageType( "onBooleanVOUpdate" );
+	public static var INT_VO_UPDATE 			= new MessageType( "onIntVOUpdate" );
+	public static var BOOLEAN_VO_UPDATE 		= new MessageType( "onBooleanVOUpdate" );
 		
 	var _intVO 		: MockIntVO;
 	var _booleanVO 	: MockBooleanVO;

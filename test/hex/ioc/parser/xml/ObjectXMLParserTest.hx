@@ -704,7 +704,7 @@ class ObjectXMLParserTest
 		Assert.isInstanceOf( amazonService, MockAmazonService, "" );
 		Assert.isInstanceOf( facebookService, MockFacebookService, "" );
 
-		var injector : IDependencyInjector = new Injector();
+		var injector = new Injector();
 		serviceLocator.configure( injector, new Dispatcher(), null );
 
 		Assert.isInstanceOf( injector.getInstance( IMockAmazonService ), MockAmazonService, "" );
@@ -736,7 +736,7 @@ class ObjectXMLParserTest
 		Assert.isNotNull( amazonService0, "" );
 		Assert.isNotNull( amazonService1, "" );
 
-		var injector : IDependencyInjector = new Injector();
+		var injector = new Injector();
 		serviceLocator.configure( injector, new Dispatcher(), null );
 
 		Assert.isInstanceOf( injector.getInstance( IMockAmazonService, "amazon0" ),  MockAmazonService, "" );
@@ -813,7 +813,7 @@ class ObjectXMLParserTest
 		var myModule : MockModuleWithServiceCallback = this._builderFactory.getCoreFactory().locate( "myModule" );
 		Assert.isNotNull( myModule, "" );
 
-		var booleanVO : MockBooleanVO = new MockBooleanVO( true );
+		var booleanVO = new MockBooleanVO( true );
 		myService.setBooleanVO( booleanVO );
 		Assert.isTrue( myModule.getBooleanValue(), "" );
 	}
@@ -846,7 +846,7 @@ class ObjectXMLParserTest
 		var myModule : MockModuleWithServiceCallback = this._builderFactory.getCoreFactory().locate( "myModule" );
 		Assert.isNotNull( myModule, "" );
 
-		var intVO : MockIntVO = new MockIntVO( 7 );
+		var intVO = new MockIntVO( 7 );
 		myService.setIntVO( intVO );
 		Assert.equals( 3.5, ( myModule.getFloatValue() ), "" );
 	}

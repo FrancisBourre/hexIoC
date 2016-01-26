@@ -15,7 +15,7 @@ class BuildServiceLocatorCommand extends AbstractBuildCommand
 	{
 		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
 
-		var serviceLocator : ServiceLocator = new ServiceLocator();
+		var serviceLocator = new ServiceLocator();
 		var args : Array<ServiceLocatorVO> = cast constructorVO.arguments;
 
 		if ( args.length <= 0 )

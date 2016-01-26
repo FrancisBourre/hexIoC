@@ -77,7 +77,7 @@ class XMLParserUtil
 		{
 			var item = iterator.next();
 			
-			var domainListenerVOArguments : DomainListenerVOArguments 	= new DomainListenerVOArguments();
+			var domainListenerVOArguments = new DomainListenerVOArguments();
 			domainListenerVOArguments.name 								= item.get( ContextAttributeList.NAME );
 			domainListenerVOArguments.staticRef 						= item.get( ContextAttributeList.STATIC_REF );
 			domainListenerVOArguments.method 							= item.get( ContextAttributeList.METHOD );
@@ -148,7 +148,7 @@ class XMLParserUtil
 	
 	public static function getConfigList(list:Array<String>):Array<String>
 	{
-		var result:Array<String> = new Array<String>();
+		var result= new Array<String>();
 		
 		var l:UInt = list.length;
 		

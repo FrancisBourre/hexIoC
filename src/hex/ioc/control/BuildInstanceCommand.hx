@@ -21,7 +21,7 @@ class BuildInstanceCommand extends AbstractBuildCommand
 
 		if ( constructorVO.ref != null )
 		{
-			var cmd : IBuildCommand = new BuildRefCommand();
+			var cmd = new BuildRefCommand();
 			cmd.setHelper( this._buildHelperVO );
 			cmd.execute( request );
 		}

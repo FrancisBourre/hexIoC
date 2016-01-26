@@ -28,8 +28,8 @@ class ApplicationAssembler implements IApplicationAssembler
 		
 	}
 	
-	var _mApplicationContext 		: HashMap<String, ApplicationContext> 			= new HashMap<String, ApplicationContext>();
-	var _mBuilderFactories 			: HashMap<ApplicationContext, BuilderFactory> 	= new HashMap<ApplicationContext, BuilderFactory>();
+	var _mApplicationContext 		= new HashMap<String, ApplicationContext>();
+	var _mBuilderFactories 			= new HashMap<ApplicationContext, BuilderFactory>();
 
 	public function getBuilderFactory( applicationContext : ApplicationContext ) : BuilderFactory
 	{
@@ -109,7 +109,7 @@ class ApplicationAssembler implements IApplicationAssembler
 			}
 		}
 
-		var constructorVO : ConstructorVO = new ConstructorVO( ownerID, type, args, factory, singleton, null, mapType, staticRef );
+		var constructorVO = new ConstructorVO( ownerID, type, args, factory, singleton, null, mapType, staticRef );
 		this.getBuilderFactory( applicationContext ).getConstructorVOLocator().register( ownerID, constructorVO );
 		return constructorVO;
 	}
@@ -124,19 +124,19 @@ class ApplicationAssembler implements IApplicationAssembler
 			for ( i in 0...length )
 			{
 				var obj : Dynamic = args[ i ];
-				var prop : PropertyVO = new PropertyVO( obj.id, obj.name, obj.value, obj.type, obj.ref, obj.method, obj.staticRef );
+				var prop = new PropertyVO( obj.id, obj.name, obj.value, obj.type, obj.ref, obj.method, obj.staticRef );
 				args[ i ] = prop;
 			}
 		}
 
-		var method : MethodCallVO = new MethodCallVO( ownerID, methodCallName, args );
+		var method = new MethodCallVO( ownerID, methodCallName, args );
 		var index : Int = methodCallVOLocator.keys().length +1;
 		methodCallVOLocator.register( "" + index, method );
 	}
 
 	public function buildDomainListener( applicationContext : ApplicationContext, ownerID : String, listenedDomainName : String, args : Array<DomainListenerVOArguments> = null ) : Void
 	{
-		var domainListenerVO : DomainListenerVO = new DomainListenerVO( ownerID, listenedDomainName, args );
+		var domainListenerVO = new DomainListenerVO( ownerID, listenedDomainName, args );
 		this.getBuilderFactory( applicationContext ).getDomainListenerVOLocator().register( "" + HashCodeFactory.getKey( domainListenerVO ), domainListenerVO );
 	}
 
@@ -147,7 +147,7 @@ class ApplicationAssembler implements IApplicationAssembler
 	
 	public function configureStateTransition( applicationContext : ApplicationContext, ID : String, staticReference : String, instanceReference : String, enterList : Array<CommandMappingVO>, exitList : Array<CommandMappingVO> ) : Void
 	{
-		var stateTransition : StateTransitionVO = new StateTransitionVO( ID, staticReference, instanceReference, enterList, exitList );
+		var stateTransition = new StateTransitionVO( ID, staticReference, instanceReference, enterList, exitList );
 		this.getBuilderFactory( applicationContext ).getStateTransitionVOLocator().register( ID, stateTransition );
 	}
 	

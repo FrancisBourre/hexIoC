@@ -100,7 +100,7 @@ class PropertyVOLocator extends Locator<String, Array<PropertyVO>> implements IL
 									method  	: String = null,
 									staticRef  	: String = null  ) : PropertyVO
 	{
-		var propertyVO : PropertyVO = new PropertyVO( ownerID, name, value, type, ref, method, staticRef );
+		var propertyVO = new PropertyVO( ownerID, name, value, type, ref, method, staticRef );
 		this._dispatcher.dispatch( PropertyVOLocatorMessage.BUILD_PROPERTY, [this, propertyVO] );
 		return propertyVO;
 	}

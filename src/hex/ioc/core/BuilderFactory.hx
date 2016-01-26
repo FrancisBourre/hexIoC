@@ -147,7 +147,7 @@ class BuilderFactory
 		var commandClass : Class<IBuildCommand> = ( this._commandMap.containsKey( type ) ) ? this._commandMap.get( type ) : this._commandMap.get( ContextTypeList.INSTANCE );
 		var buildCommand : IBuildCommand = Type.createInstance( commandClass, [] );
 
-		var builderHelperVO : BuildHelperVO 	= new BuildHelperVO();
+		var builderHelperVO = new BuildHelperVO();
 		builderHelperVO.type 					= type;
 		builderHelperVO.builderFactory 			= this;
 		builderHelperVO.coreFactory 			= this._coreFactory;

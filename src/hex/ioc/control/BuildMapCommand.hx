@@ -17,7 +17,7 @@ class BuildMapCommand extends AbstractBuildCommand
 	{
 		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
 
-		var map : HashMap<Dynamic, Dynamic> = new HashMap();
+		var map = new HashMap();
 		var args : Array<MapVO> = cast constructorVO.arguments;
 
 		if ( args.length == 0 )

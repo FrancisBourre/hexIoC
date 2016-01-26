@@ -84,7 +84,7 @@ class StateTransitionVOLocator extends Locator<String, StateTransitionVO>
 			for ( enterVO in enterList )
 			{
 				var enterCommandClass : Class<ICommand> = cast coreFactory.getClassReference( enterVO.commandClassName );
-				var enterMapping : ICommandMapping = new CommandMapping( enterCommandClass );
+				var enterMapping = new CommandMapping( enterCommandClass );
 				
 				var enterContextOwner : IContextOwner = null;
 				if ( enterVO.contextOwner != null )
@@ -101,7 +101,7 @@ class StateTransitionVOLocator extends Locator<String, StateTransitionVO>
 			for ( exitVO in exitList )
 			{
 				var exitCommandClass : Class<ICommand> = cast coreFactory.getClassReference( exitVO.commandClassName );
-				var exitMapping : ICommandMapping = new CommandMapping( exitCommandClass );
+				var exitMapping = new CommandMapping( exitCommandClass );
 				
 				var exitContextOwner : IContextOwner = null;
 				if ( exitVO.contextOwner != null )

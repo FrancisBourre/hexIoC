@@ -8,5 +8,5 @@ import hex.ioc.parser.xml.mock.MockRectangle;
  */
 class MockObjectWithRegtangleProperty
 {
-	public var rectangle : MockRectangle = new MockRectangle();
+	public var rectangle = new MockRectangle();
 }

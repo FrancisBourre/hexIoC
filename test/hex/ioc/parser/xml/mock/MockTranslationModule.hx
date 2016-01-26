@@ -9,9 +9,9 @@ import hex.event.MessageType;
  */
 class MockTranslationModule extends MockModule
 {
-	var _map : HashMap<String, String> = new HashMap<String, String>();
+	var _map = new HashMap<String, String>();
 	
-	public static var TRANSLATION : MessageType = new MessageType( "onTranslation" );
+	public static var TRANSLATION = new MessageType( "onTranslation" );
 	
 	public function new() 
 	{

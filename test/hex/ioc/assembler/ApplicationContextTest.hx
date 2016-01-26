@@ -15,7 +15,7 @@ class ApplicationContextTest
 	@Test( "Test accessors" )
     public function testAccessors() : Void
     {
-		var applicationAssembler 	: ApplicationAssembler	= new ApplicationAssembler();
+		var applicationAssembler 	= new ApplicationAssembler();
 		var applicationContext 		: ApplicationContext	= applicationAssembler.getApplicationContext( "applicationContext" );
 		
 		Assert.equals( "applicationContext", applicationContext.getName(), "returned name should be the same passed during instantiation" );
@@ -28,7 +28,7 @@ class ApplicationContextTest
 	@Test( "Test children" )
     public function testChildren() : Void
     {
-		var applicationAssembler 	: ApplicationAssembler	= new ApplicationAssembler();
+		var applicationAssembler 	= new ApplicationAssembler();
 		var applicationContext 		: ApplicationContext	= applicationAssembler.getApplicationContext( "applicationContext" );
 		var anotherContext 			: ApplicationContext	= applicationAssembler.getApplicationContext( "anotherContext" );
 		

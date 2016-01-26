@@ -8,7 +8,7 @@ import hex.event.MessageType;
  */
 class MockChatModule extends MockModule
 {
-	static public var TEXT_INPUT : MessageType = new MessageType( "onTextInput" );
+	static public var TEXT_INPUT = new MessageType( "onTextInput" );
 	
 	public function new() 
 	{

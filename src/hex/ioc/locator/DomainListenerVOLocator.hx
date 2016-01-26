@@ -114,7 +114,7 @@ class DomainListenerVOLocator extends Locator<String, DomainListenerVO>
 		var strategyClass : Class<IAdapterStrategy> 	= cast this._builderFactory.getCoreFactory().getClassReference( strategyClassName );
 		
 		
-		var adapter : ClassAdapter = new ClassAdapter();
+		var adapter = new ClassAdapter();
 		adapter.setCallBackMethod( listener, callback );
 		adapter.setAdapterClass( strategyClass );
 		

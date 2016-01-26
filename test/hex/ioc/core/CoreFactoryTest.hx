@@ -32,10 +32,10 @@ class CoreFactoryTest
 	@Test( "Test register" )
     public function testRegister() : Void
     {
-		var listener : MockCoreFactoryListener = new MockCoreFactoryListener();
+		var listener = new MockCoreFactoryListener();
 		this._coreFactory.addListener( listener );
 		
-		var value : MockValue = new MockValue();
+		var value = new MockValue();
 		Assert.isFalse( this._coreFactory.isRegisteredWithKey( "key" ),  "'isRegisteredWithKey' should return false" );
 		Assert.isFalse( this._coreFactory.isInstanceRegistered( value ),  "'isInstanceRegistered' should return false" );
 		
@@ -53,10 +53,10 @@ class CoreFactoryTest
 	@Test( "Test unregisterWithKey" )
     public function testUnregisterWithKey() : Void
     {
-		var listener : MockCoreFactoryListener = new MockCoreFactoryListener();
+		var listener = new MockCoreFactoryListener();
 		this._coreFactory.addListener( listener );
 		
-		var value : MockValue = new MockValue();
+		var value = new MockValue();
 		this._coreFactory.register( "key", value );
 		listener.registerEventCount = 0;
 		
@@ -75,10 +75,10 @@ class CoreFactoryTest
 	@Test( "Test unregister" )
     public function testUnregister() : Void
     {
-		var listener : MockCoreFactoryListener = new MockCoreFactoryListener();
+		var listener = new MockCoreFactoryListener();
 		this._coreFactory.addListener( listener );
 		
-		var value : MockValue = new MockValue();
+		var value = new MockValue();
 		this._coreFactory.register( "key", value );
 		listener.registerEventCount = 0;
 		
@@ -98,7 +98,7 @@ class CoreFactoryTest
     public function testGetKeyOfInstance() : Void
     {
 		Assert.isNull( this._coreFactory.getKeyOfInstance( "key" ), "'getKeyOfInstance' should return null" );
-		var value : MockValue = new MockValue();
+		var value = new MockValue();
 		this._coreFactory.register( "key", value );
 		Assert.equals( "key", this._coreFactory.getKeyOfInstance( value ), "'getKeyOfInstance' should return value associated to the key" );
 	}

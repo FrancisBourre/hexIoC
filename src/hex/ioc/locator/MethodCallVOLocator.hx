@@ -24,7 +24,7 @@ class MethodCallVOLocator extends Locator<String, MethodCallVO>
 	public function callMethod( id : String ) : Void
 	{
 		var method : MethodCallVO 	= this.locate( id );
-		var cons : ConstructorVO 	= new ConstructorVO( null, ContextTypeList.FUNCTION, [ method.ownerID + "." + method.name ] );
+		var cons = new ConstructorVO( null, ContextTypeList.FUNCTION, [ method.ownerID + "." + method.name ] );
 		var func : Dynamic 			= this._builderFactory.build( cons );
 		var args : Array<Dynamic> = this._builderFactory.getPropertyVOLocator().deserializeArguments( method.arguments );
 		Reflect.callMethod( this._builderFactory.getCoreFactory().locate( method.ownerID ), func, args );

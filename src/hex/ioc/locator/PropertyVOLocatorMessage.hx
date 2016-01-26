@@ -8,7 +8,7 @@ import hex.event.MessageType;
  */
 class PropertyVOLocatorMessage
 {
-	static public var BUILD_PROPERTY : MessageType = new MessageType( "buildProperty" );
+	static public var BUILD_PROPERTY = new MessageType( "buildProperty" );
 
 	function new() 
 	{

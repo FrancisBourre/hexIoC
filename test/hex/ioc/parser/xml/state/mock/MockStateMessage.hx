@@ -8,7 +8,7 @@ import hex.event.MessageType;
  */
 class MockStateMessage
 {
-	public static var TRIGGER_NEXT_STATE : MessageType = new MessageType( "triggerNextState" );
+	public static var TRIGGER_NEXT_STATE = new MessageType( "triggerNextState" );
 	
 	function new() 
 	{

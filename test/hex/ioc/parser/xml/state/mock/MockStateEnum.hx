@@ -8,8 +8,8 @@ import hex.state.State;
  */
 class MockStateEnum
 {
-	static public var INITIAL_STATE : State = new State( "initial" );
-	static public var NEXT_STATE 	: State = new State( "nextState" );
+	static public var INITIAL_STATE = new State( "initial" );
+	static public var NEXT_STATE 	= new State( "nextState" );
 		
 	function new() 
 	{
