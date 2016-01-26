@@ -148,7 +148,7 @@ class XMLParserUtil
 	
 	public static function getConfigList(list:Array<String>):Array<String>
 	{
-		var result= new Array<String>();
+		var result = new Array<String>();
 		
 		var l:UInt = list.length;
 		
