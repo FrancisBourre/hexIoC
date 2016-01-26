@@ -155,7 +155,7 @@ class BuilderFactory
 		builderHelperVO.moduleLocator 			= this._moduleLocator;
 
 		buildCommand.setHelper( builderHelperVO );
-		buildCommand.execute();
+		Reflect.callMethod( buildCommand, buildCommand.getExecuteMethod(), [] );
 
 		if ( id != null )
 		{
