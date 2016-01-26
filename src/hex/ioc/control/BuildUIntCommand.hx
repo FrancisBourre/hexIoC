@@ -33,7 +33,7 @@ class BuildUIntCommand extends AbstractBuildCommand
 		}
 		
 		#if js
-		if ( number != null && number >= 0 )
+		if ( number == null || number < 0 )
 		#else
 		if ( "" + number != args[0] && number >=0 )
 		#end
