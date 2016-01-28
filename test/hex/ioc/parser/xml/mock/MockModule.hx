@@ -6,6 +6,7 @@ import hex.domain.Domain;
 import hex.domain.DomainExpert;
 import hex.event.IDispatcher;
 import hex.event.MessageType;
+import hex.log.ILogger;
 import hex.module.IModule;
 
 /**
@@ -71,6 +72,11 @@ class MockModule implements IModule
 	}
 	
 	public function getBasicInjector() : IBasicInjector
+	{
+		return null;
+	}
+	
+	public function getLogger() : ILogger
 	{
 		return null;
 	}
