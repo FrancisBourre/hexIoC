@@ -147,7 +147,7 @@ Inversion of Control system with DSL and modularity based on global and micro co
 </root>
 ```
 
-## Building am HashMap
+## Building an HashMap
 ```xml
 <root name="applicationContext">
 	<collection id="fruits" type="hex.core.HashMap">
