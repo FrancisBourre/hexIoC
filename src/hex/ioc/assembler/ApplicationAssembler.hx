@@ -62,6 +62,56 @@ class ApplicationAssembler implements IApplicationAssembler
 			}
 		}
 	}
+	
+	public function allowsIfList( ifList : Array<String> = null ) : Bool
+	{
+		if ( ifList != null )
+		{
+			for ( ifItem in ifList )
+			{
+				if ( this._conditionalProperties.exists( ifItem ) )
+				{
+					if ( this._conditionalProperties.get( ifItem ) )
+					{
+						return true;
+					}
+				}
+				else if ( this._strictMode )
+				{
+					throw new BuildingException( "'" + ifItem + "' was not found in application assembler" );
+				}
+			}
+		}
+		else
+		{
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public function allowsIfNotList( ifNotList : Array<String> = null ) : Bool
+	{
+		if ( ifNotList != null )
+		{
+			for ( ifNotItem in ifNotList )
+			{
+				if ( this._conditionalProperties.exists( ifNotItem ) )
+				{
+					if ( this._conditionalProperties.get( ifNotItem ) )
+					{
+						return false;
+					}
+				}
+				else if ( this._strictMode )
+				{
+					throw new BuildingException( "'" + ifNotItem + "' was not found in application assembler" );
+				}
+			}
+		}
+		
+		return true;
+	}
 
 	public function getBuilderFactory( applicationContext : ApplicationContext ) : BuilderFactory
 	{
@@ -90,7 +140,14 @@ class ApplicationAssembler implements IApplicationAssembler
 									ifList 				: Array<String> = null, 
 									ifNotList 			: Array<String> = null ) : PropertyVO
 	{
-		return this.getBuilderFactory( applicationContext ).getPropertyVOLocator().addProperty( ownerID, name, value, type, ref, method, staticRef );
+		if ( this.allowsIfList( ifList ) && this.allowsIfNotList( ifNotList ) )
+		{
+			return this.getBuilderFactory( applicationContext ).getPropertyVOLocator().addProperty( ownerID, name, value, type, ref, method, staticRef );
+		}
+		else
+		{
+			return null;
+		}
 	}
 
 	public function buildObject(    applicationContext 	: ApplicationContext,
@@ -106,7 +163,7 @@ class ApplicationAssembler implements IApplicationAssembler
 	{
 		if ( this.allowsIfList( ifList ) && this.allowsIfNotList( ifNotList ) )
 		{
-			this.registerID( applicationContext, ownerID );
+			this._registerID( applicationContext, ownerID );
 			
 			if ( args != null )
 			{
@@ -159,92 +216,64 @@ class ApplicationAssembler implements IApplicationAssembler
 		}
 		
 	}
-	
-	public function allowsIfList( ifList : Array<String> = null ) : Bool
+
+	public function buildMethodCall( 	applicationContext 	: ApplicationContext, 
+										ownerID 			: String, 
+										methodCallName 		: String, 
+										args 				: Array<Dynamic> = null,
+										ifList 				: Array<String> = null, 
+										ifNotList 			: Array<String> = null ) : Void
 	{
-		if ( ifList != null )
+		if ( this.allowsIfList( ifList ) && this.allowsIfNotList( ifNotList ) )
 		{
-			for ( ifItem in ifList )
+			var methodCallVOLocator : MethodCallVOLocator = this.getBuilderFactory( applicationContext ).getMethodCallVOLocator();
+
+			if ( args != null )
 			{
-				if ( this._conditionalProperties.exists( ifItem ) )
+				var length : Int = args.length;
+				for ( i in 0...length )
 				{
-					if ( this._conditionalProperties.get( ifItem ) )
-					{
-						return true;
-					}
-				}
-				else if ( this._strictMode )
-				{
-					throw new BuildingException( "'" + ifItem + "' was not found in application assembler" );
+					var obj : Dynamic = args[ i ];
+					var prop = new PropertyVO( obj.id, obj.name, obj.value, obj.type, obj.ref, obj.method, obj.staticRef );
+					args[ i ] = prop;
 				}
 			}
+
+			var method = new MethodCallVO( ownerID, methodCallName, args );
+			var index : Int = methodCallVOLocator.keys().length +1;
+			methodCallVOLocator.register( "" + index, method );
 		}
-		else
+	}
+
+	public function buildDomainListener( 	applicationContext 	: ApplicationContext, 
+											ownerID 			: String, 
+											listenedDomainName 	: String, 
+											args 				: Array<DomainListenerVOArguments> = null,
+											ifList 				: Array<String> = null, 
+											ifNotList 			: Array<String> = null ) : Void
+	{
+		if ( this.allowsIfList( ifList ) && this.allowsIfNotList( ifNotList ) )
 		{
-			return true;
+			var domainListenerVO = new DomainListenerVO( ownerID, listenedDomainName, args );
+			this.getBuilderFactory( applicationContext ).getDomainListenerVOLocator().register( "" + HashCodeFactory.getKey( domainListenerVO ), domainListenerVO );
 		}
-		
-		return false;
 	}
 	
-	public function allowsIfNotList( ifNotList : Array<String> = null ) : Bool
+	public function configureStateTransition( 	applicationContext 	: ApplicationContext, 
+												ownerID 			: String, 
+												staticReference 	: String, 
+												instanceReference 	: String, 
+												enterList 			: Array<CommandMappingVO>, 
+												exitList 			: Array<CommandMappingVO>,
+												ifList 				: Array<String> = null, 
+												ifNotList 			: Array<String> = null ) : Void
 	{
-		if ( ifNotList != null )
+		if ( this.allowsIfList( ifList ) && this.allowsIfNotList( ifNotList ) )
 		{
-			for ( ifNotItem in ifNotList )
-			{
-				if ( this._conditionalProperties.exists( ifNotItem ) )
-				{
-					if ( this._conditionalProperties.get( ifNotItem ) )
-					{
-						return false;
-					}
-				}
-				else if ( this._strictMode )
-				{
-					throw new BuildingException( "'" + ifNotItem + "' was not found in application assembler" );
-				}
-			}
+			this._registerID( applicationContext, ownerID );
+			var stateTransition = new StateTransitionVO( ownerID, staticReference, instanceReference, enterList, exitList );
+			this.getBuilderFactory( applicationContext ).getStateTransitionVOLocator().register( ownerID, stateTransition );
 		}
-		
-		return true;
-	}
-
-	public function buildMethodCall( applicationContext : ApplicationContext, ownerID : String, methodCallName : String, args : Array<Dynamic> = null ) : Void
-	{
-		var methodCallVOLocator : MethodCallVOLocator = this.getBuilderFactory( applicationContext ).getMethodCallVOLocator();
-
-		if ( args != null )
-		{
-			var length : Int = args.length;
-			for ( i in 0...length )
-			{
-				var obj : Dynamic = args[ i ];
-				var prop = new PropertyVO( obj.id, obj.name, obj.value, obj.type, obj.ref, obj.method, obj.staticRef );
-				args[ i ] = prop;
-			}
-		}
-
-		var method = new MethodCallVO( ownerID, methodCallName, args );
-		var index : Int = methodCallVOLocator.keys().length +1;
-		methodCallVOLocator.register( "" + index, method );
-	}
-
-	public function buildDomainListener( applicationContext : ApplicationContext, ownerID : String, listenedDomainName : String, args : Array<DomainListenerVOArguments> = null ) : Void
-	{
-		var domainListenerVO = new DomainListenerVO( ownerID, listenedDomainName, args );
-		this.getBuilderFactory( applicationContext ).getDomainListenerVOLocator().register( "" + HashCodeFactory.getKey( domainListenerVO ), domainListenerVO );
-	}
-
-	public function registerID( applicationContext : ApplicationContext, ID : String ) : Bool
-	{
-		return this.getBuilderFactory( applicationContext ).getIDExpert().register( ID );
-	}
-	
-	public function configureStateTransition( applicationContext : ApplicationContext, ID : String, staticReference : String, instanceReference : String, enterList : Array<CommandMappingVO>, exitList : Array<CommandMappingVO> ) : Void
-	{
-		var stateTransition = new StateTransitionVO( ID, staticReference, instanceReference, enterList, exitList );
-		this.getBuilderFactory( applicationContext ).getStateTransitionVOLocator().register( ID, stateTransition );
 	}
 	
 	public function buildEverything() : Void
@@ -300,6 +329,11 @@ class ApplicationAssembler implements IApplicationAssembler
 		}
 
 		return applicationContext;
+	}
+	
+	function _registerID( applicationContext : ApplicationContext, ID : String ) : Bool
+	{
+		return this.getBuilderFactory( applicationContext ).getIDExpert().register( ID );
 	}
 	
 	static function _buildAllStateTransitions( builderFactory : BuilderFactory ) : Void

@@ -89,7 +89,9 @@ class ObjectXMLParser extends AbstractXMLParser
 						XMLAttributeUtil.getType( property ),
 						XMLAttributeUtil.getRef( property ),
 						XMLAttributeUtil.getMethod( property ),
-						XMLAttributeUtil.getStaticRef( property )
+						XMLAttributeUtil.getStaticRef( property ),
+						XMLParserUtil.getIfList( xml ),
+						XMLParserUtil.getIfNotList( xml )
 				);
 			}
 

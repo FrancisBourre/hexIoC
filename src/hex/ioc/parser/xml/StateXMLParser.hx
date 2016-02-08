@@ -40,8 +40,6 @@ class StateXMLParser extends AbstractXMLParser
 		{
 			throw new ParsingException( this + " encounters parsing error with '" + xml.nodeName + "' node. You must set an id attribute." );
 		}
-
-		applicationAssembler.registerID( applicationContext, identifier );
 		
 		var staticReference 	: String = XMLAttributeUtil.getStaticRef( xml );
 		var instanceReference 	: String = XMLAttributeUtil.getRef( xml );
