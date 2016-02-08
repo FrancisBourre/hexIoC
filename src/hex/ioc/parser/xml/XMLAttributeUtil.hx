@@ -98,4 +98,14 @@ class XMLAttributeUtil
 	{
 		return xml.get( ContextAttributeList.CONTEXT_OWNER );
 	}
+	
+	static public function getIf( xml : Xml ) : String
+	{
+		return xml.get( ContextAttributeList.IF );
+	}
+	
+	static public function getIfNot( xml : Xml ) : String
+	{
+		return xml.get( ContextAttributeList.IF_NOT );
+	}
 }

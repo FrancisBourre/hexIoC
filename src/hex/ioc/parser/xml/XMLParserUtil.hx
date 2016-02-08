@@ -160,8 +160,20 @@ class XMLParserUtil
 		return result;
 	}
 	
-	public static function getConcatenatedConfig(configKeyList:Array<String>, name:String):String
+	public static function getConcatenatedConfig( configKeyList : Array<String>, name : String ) : String
 	{
-		return XMLParserUtil.concatXmlList(XMLParserUtil.getConfigList(configKeyList), name);
+		return XMLParserUtil.concatXmlList( XMLParserUtil.getConfigList( configKeyList ), name );
+	}
+	
+	static public function getIfList( xml : Xml ) : Array<String>
+	{
+		var s : String = XMLAttributeUtil.getIf( xml );
+		return s != null ? s.split( "," ) : null;
+	}
+	
+	static public function getIfNotList( xml : Xml ) : Array<String>
+	{
+		var s : String = XMLAttributeUtil.getIfNot( xml );
+		return s != null ? s.split( "," ) : null;
 	}
 }

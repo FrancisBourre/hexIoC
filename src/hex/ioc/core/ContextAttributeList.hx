@@ -26,6 +26,8 @@ class ContextAttributeList
 	public static inline var COMMAND_CLASS 			: String = "command-class";
 	public static inline var FIRE_ONCE 				: String = "fire-once";
 	public static inline var CONTEXT_OWNER 			: String = "context-owner";
+	public static inline var IF 					: String = "if";
+	public static inline var IF_NOT 				: String = "if-not";
 	
 	function new() 
 	{

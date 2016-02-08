@@ -2,10 +2,12 @@ package hex.ioc.assembler;
 
 import hex.collection.HashMap;
 import hex.core.HashCodeFactory;
+import hex.error.IllegalArgumentException;
 import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.core.BuilderFactory;
 import hex.ioc.core.ContextTypeList;
+import hex.ioc.error.BuildingException;
 import hex.ioc.locator.MethodCallVOLocator;
 import hex.ioc.vo.CommandMappingVO;
 import hex.ioc.vo.ConstructorVO;
@@ -30,6 +32,36 @@ class ApplicationAssembler implements IApplicationAssembler
 	
 	var _mApplicationContext 		= new HashMap<String, ApplicationContext>();
 	var _mBuilderFactories 			= new HashMap<ApplicationContext, BuilderFactory>();
+	var _conditionalProperties 		= new Map<String, Bool>();
+	var _strictMode					: Bool = true;
+	
+	public function setStrictMode( b : Bool ) : Void
+	{
+		this._strictMode = b;
+	}
+	
+	public function isInStrictMode() : Bool
+	{
+		return this._strictMode;
+	}
+	
+	public function addConditionalProperty( conditionalProperties : Map<String, Bool> ) : Void
+	{
+		var i = conditionalProperties.keys();
+		var key : String;
+		while ( i.hasNext() )
+		{
+			key = i.next();
+			if ( !this._conditionalProperties.exists( key ) )
+			{
+				this._conditionalProperties.set( key, conditionalProperties.get( key ) );
+			}
+			else
+			{
+				throw new IllegalArgumentException( "addConditionalcontext fails with key'" + key + "', this keywas already assigned" );
+			}
+		}
+	}
 
 	public function getBuilderFactory( applicationContext : ApplicationContext ) : BuilderFactory
 	{
@@ -54,7 +86,9 @@ class ApplicationAssembler implements IApplicationAssembler
 									type 				: String = null,
 									ref 				: String = null,
 									method 				: String = null,
-									staticRef 			: String = null  ) : PropertyVO
+									staticRef 			: String = null,
+									ifList 				: Array<String> = null, 
+									ifNotList 			: Array<String> = null ) : PropertyVO
 	{
 		return this.getBuilderFactory( applicationContext ).getPropertyVOLocator().addProperty( ownerID, name, value, type, ref, method, staticRef );
 	}
@@ -66,52 +100,114 @@ class ApplicationAssembler implements IApplicationAssembler
 									factory 			: String = null,
 									singleton 			: String = null,
 									mapType 			: String = null,
-									staticRef 			: String = null ) : ConstructorVO
+									staticRef 			: String = null,
+									ifList 				: Array<String> = null, 
+									ifNotList 			: Array<String> = null ) : ConstructorVO
 	{
-		if ( args != null )
+		if ( this.allowsIfList( ifList ) && this.allowsIfNotList( ifNotList ) )
 		{
-			var length : Int = args.length;
-			var index : Int;
-			var obj : Dynamic;
+			this.registerID( applicationContext, ownerID );
+			
+			if ( args != null )
+			{
+				var length : Int = args.length;
+				var index : Int;
+				var obj : Dynamic;
 
-			if ( type == ContextTypeList.HASHMAP )
-			{
-				for ( index in 0...length )
+				if ( type == ContextTypeList.HASHMAP )
 				{
-					obj = args[ index ];
-					var keyDic 		: Dynamic 		= obj.key;
-					var valueDic 	: Dynamic 		= obj.value;
-					var pKeyDic 	: PropertyVO 	= this.getBuilderFactory( applicationContext ).getPropertyVOLocator().buildProperty( ownerID, keyDic.name, keyDic.value, keyDic.type, keyDic.ref, keyDic.method, keyDic.staticRef );
-					var pValueDic 	: PropertyVO 	= this.getBuilderFactory( applicationContext ).getPropertyVOLocator().buildProperty( ownerID, valueDic.name, valueDic.value, valueDic.type, valueDic.ref, valueDic.method, valueDic.staticRef );
-					args[ index ] 					= new MapVO( pKeyDic, pValueDic );
+					for ( index in 0...length )
+					{
+						obj = args[ index ];
+						var keyDic 		: Dynamic 		= obj.key;
+						var valueDic 	: Dynamic 		= obj.value;
+						var pKeyDic 	: PropertyVO 	= this.getBuilderFactory( applicationContext ).getPropertyVOLocator().buildProperty( ownerID, keyDic.name, keyDic.value, keyDic.type, keyDic.ref, keyDic.method, keyDic.staticRef );
+						var pValueDic 	: PropertyVO 	= this.getBuilderFactory( applicationContext ).getPropertyVOLocator().buildProperty( ownerID, valueDic.name, valueDic.value, valueDic.type, valueDic.ref, valueDic.method, valueDic.staticRef );
+						args[ index ] 					= new MapVO( pKeyDic, pValueDic );
+					}
+				}
+				else if ( type == ContextTypeList.SERVICE_LOCATOR )
+				{
+					for ( index in 0...length )
+					{
+						obj = args[ index ];
+						var keySC 		: Dynamic 		= obj.key;
+						var valueSC 	: Dynamic 		= obj.value;
+						var pKeySC 		: PropertyVO 	= this.getBuilderFactory( applicationContext ).getPropertyVOLocator().buildProperty( ownerID, keySC.name, keySC.value, keySC.type, keySC.ref, keySC.method, keySC.staticRef );
+						var pValueSC 	: PropertyVO 	= this.getBuilderFactory( applicationContext ).getPropertyVOLocator().buildProperty( ownerID, valueSC.name, valueSC.value, valueSC.type, valueSC.ref, valueSC.method, valueSC.staticRef );
+						args[ index ] 					= new ServiceLocatorVO( pKeySC, pValueSC, obj.mapName );
+					}
+				}
+				else
+				{
+					for ( index in 0...length )
+					{
+						obj = args[ index ];
+						var propertyVO : PropertyVO = this.getBuilderFactory( applicationContext ).getPropertyVOLocator().buildProperty( ownerID, obj.name, obj.value, obj.type, obj.ref, obj.method, obj.staticRef );
+						args[ index ] = propertyVO;
+					}
 				}
 			}
-			else if ( type == ContextTypeList.SERVICE_LOCATOR )
+
+			var constructorVO = new ConstructorVO( ownerID, type, args, factory, singleton, null, mapType, staticRef );
+			this.getBuilderFactory( applicationContext ).getConstructorVOLocator().register( ownerID, constructorVO );
+			return constructorVO;
+		}
+		else
+		{
+			return null;
+		}
+		
+	}
+	
+	public function allowsIfList( ifList : Array<String> = null ) : Bool
+	{
+		if ( ifList != null )
+		{
+			for ( ifItem in ifList )
 			{
-				for ( index in 0...length )
+				if ( this._conditionalProperties.exists( ifItem ) )
 				{
-					obj = args[ index ];
-					var keySC 		: Dynamic 		= obj.key;
-					var valueSC 	: Dynamic 		= obj.value;
-					var pKeySC 		: PropertyVO 	= this.getBuilderFactory( applicationContext ).getPropertyVOLocator().buildProperty( ownerID, keySC.name, keySC.value, keySC.type, keySC.ref, keySC.method, keySC.staticRef );
-					var pValueSC 	: PropertyVO 	= this.getBuilderFactory( applicationContext ).getPropertyVOLocator().buildProperty( ownerID, valueSC.name, valueSC.value, valueSC.type, valueSC.ref, valueSC.method, valueSC.staticRef );
-					args[ index ] 					= new ServiceLocatorVO( pKeySC, pValueSC, obj.mapName );
+					if ( this._conditionalProperties.get( ifItem ) )
+					{
+						return true;
+					}
 				}
-			}
-			else
-			{
-				for ( index in 0...length )
+				else if ( this._strictMode )
 				{
-					obj = args[ index ];
-					var propertyVO : PropertyVO = this.getBuilderFactory( applicationContext ).getPropertyVOLocator().buildProperty( ownerID, obj.name, obj.value, obj.type, obj.ref, obj.method, obj.staticRef );
-					args[ index ] = propertyVO;
+					throw new BuildingException( "'" + ifItem + "' was not found in application assembler" );
 				}
 			}
 		}
-
-		var constructorVO = new ConstructorVO( ownerID, type, args, factory, singleton, null, mapType, staticRef );
-		this.getBuilderFactory( applicationContext ).getConstructorVOLocator().register( ownerID, constructorVO );
-		return constructorVO;
+		else
+		{
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public function allowsIfNotList( ifNotList : Array<String> = null ) : Bool
+	{
+		if ( ifNotList != null )
+		{
+			for ( ifNotItem in ifNotList )
+			{
+				if ( this._conditionalProperties.exists( ifNotItem ) )
+				{
+					if ( this._conditionalProperties.get( ifNotItem ) )
+					{
+						return false;
+					}
+				}
+				else if ( this._strictMode )
+				{
+					throw new BuildingException( "'" + ifNotItem + "' was not found in application assembler" );
+				}
+			}
+		}
+		
+		return true;
 	}
 
 	public function buildMethodCall( applicationContext : ApplicationContext, ownerID : String, methodCallName : String, args : Array<Dynamic> = null ) : Void

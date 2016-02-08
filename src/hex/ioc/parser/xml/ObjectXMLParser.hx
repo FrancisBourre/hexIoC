@@ -39,14 +39,14 @@ class ObjectXMLParser extends AbstractXMLParser
 			throw new ParsingException( this + " encounters parsing error with '" + xml.nodeName + "' node. You must set an id attribute." );
 		}
 
-		this.getApplicationAssembler().registerID( applicationContext, identifier );
-
 		var type 		: String;
 		var args 		: Array<Dynamic>;
 		var factory 	: String;
 		var singleton 	: String;
 		var mapType		: String;
 		var staticRef	: String;
+		var ifList		: Array<String>;
+		var ifNotList	: Array<String>;
 
 		// Build object.
 		type = XMLAttributeUtil.getType( xml );
@@ -65,16 +65,15 @@ class ObjectXMLParser extends AbstractXMLParser
 			singleton 	= XMLAttributeUtil.getSingletonAccess( xml );
 			mapType 	= XMLAttributeUtil.getMapType( xml );
 			staticRef 	= XMLAttributeUtil.getStaticRef( xml );
+			ifList 		= XMLParserUtil.getIfList( xml );
+			ifNotList 	= XMLParserUtil.getIfNotList( xml );
 
 			if ( type == null )
 			{
 				type = staticRef != null ? ContextTypeList.UNKNOWN : ContextTypeList.STRING;
 			}
 
-			this.getApplicationAssembler( ).buildObject( applicationContext, identifier, type, args, factory, singleton, mapType, staticRef );
-
-			// register each object to system channel.
-//			this.getApplicationAssembler().buildDomainListener( applicationContext, identifier, TopLevelDomain.DOMAIN.getName().toString(), null );
+			this.getApplicationAssembler( ).buildObject( applicationContext, identifier, type, args, factory, singleton, mapType, staticRef, ifList, ifNotList );
 
 			// Build property.
 			var propertyIterator = xml.elementsNamed( ContextNameList.PROPERTY );

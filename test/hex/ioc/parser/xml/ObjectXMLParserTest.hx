@@ -1045,4 +1045,33 @@ class ObjectXMLParserTest
 		
 		Assert.equals( myModule, this._applicationContext.getBasicInjector().getInstance( IMockMappedModule, "myModule" ), "" );
 	}
+	
+	@Test( "test if attribute" )
+	public function testIfAttribute() : Void
+	{
+		var source : String = '
+		<root name="applicationContext">
+		
+			<msg id="message" value="hello debug" if="debug,release"/>
+			<msg id="message" value="hello production" if="production"/>
+
+		</root>';
+		
+		this._applicationAssembler.addConditionalProperty ( ["production" => true, "debug" => false, "release" => false] );
+		var xml : Xml = Xml.parse( source );
+		this._build( xml );
+		
+		Assert.equals( "hello production", this._builderFactory.getCoreFactory().locate( "message" ), "message value should equal 'hello production'" );
+	}
+	
+	/*@Test( "test file preprocessor" )
+	public function testFilePreprocessor() : Void
+	{
+		var source : String = '
+		<root name="applicationContext">
+		
+			<msg id="message" value=${hello}/>
+
+		</root>';
+	}*/
 }
