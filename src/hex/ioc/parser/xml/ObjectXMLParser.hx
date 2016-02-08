@@ -100,7 +100,7 @@ class ObjectXMLParser extends AbstractXMLParser
 			while( methodCallIterator.hasNext() )
 			{
 				var methodCallItem = methodCallIterator.next();
-				this.getApplicationAssembler( ).buildMethodCall( applicationContext, identifier, XMLAttributeUtil.getName( methodCallItem ), XMLParserUtil.getMethodCallArguments( methodCallItem ) );
+				this.getApplicationAssembler( ).buildMethodCall( applicationContext, identifier, XMLAttributeUtil.getName( methodCallItem ), XMLParserUtil.getMethodCallArguments( methodCallItem ), XMLParserUtil.getIfList( methodCallItem ), XMLParserUtil.getIfNotList( methodCallItem ) );
 			}
 
 			// Build channel listener.
@@ -113,7 +113,7 @@ class ObjectXMLParser extends AbstractXMLParser
 				if ( channelName != null )
 				{
 					var listenerArgs : Array<DomainListenerVOArguments> = XMLParserUtil.getEventArguments( listener );
-					this.getApplicationAssembler().buildDomainListener( applicationContext, identifier, channelName, listenerArgs );
+					this.getApplicationAssembler().buildDomainListener( applicationContext, identifier, channelName, listenerArgs, XMLParserUtil.getIfList( listener ), XMLParserUtil.getIfNotList( listener ) );
 				}
 				else
 				{
