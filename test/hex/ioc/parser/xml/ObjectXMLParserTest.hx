@@ -1,5 +1,6 @@
 package hex.ioc.parser.xml;
 
+import hex.ioc.parser.preprocess.Preprocessor;
 import haxe.Timer;
 import hex.collection.HashMap;
 import hex.config.stateful.ServiceLocator;
@@ -1064,14 +1065,25 @@ class ObjectXMLParserTest
 		Assert.equals( "hello production", this._builderFactory.getCoreFactory().locate( "message" ), "message value should equal 'hello production'" );
 	}
 	
-	/*@Test( "test file preprocessor" )
+	@Test( "test file preprocessor" )
 	public function testFilePreprocessor() : Void
 	{
 		var source : String = '
-		<root name="applicationContext">
+		<root $${context}>
 		
-			<msg id="message" value=${hello}/>
+			$${node}
 
 		</root>';
-	}*/
+
+		var preprocessor = new Preprocessor();
+		preprocessor.addProperty( "hello", "bonjour" );
+		preprocessor.addProperty( "contextName", 'applicationContext' );
+		preprocessor.addProperty( "context", 'name="$${contextName}"' );
+		preprocessor.addProperty( "node", '<msg id="message" value="$${hello}"/>' );
+
+		var xml : Xml = Xml.parse( preprocessor.parse( source ) );
+		this._build( xml );
+
+		Assert.equals( "bonjour", this._builderFactory.getCoreFactory().locate( "message" ), "message value should equal 'bonjour'" );
+	}
 }
