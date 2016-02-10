@@ -317,3 +317,28 @@ Inversion of Control system with DSL and modularity based on global and micro co
 	<module id="anotherModule" type="hex.ioc.parser.xml.assembler.mock.MockModule" map-type="hex.module.IModule"/>
 </root>
 ```
+
+## Conditional parsing
+```haxe
+<root name="applicationContext">
+	<msg id="message" value="hello debug" if="debug,release"/>
+	<msg id="message" value="hello production" if="production"/>
+</root>
+```
+```haxe
+applicationAssembler.addConditionalProperty ( ["production" => true, "debug" => false, "release" => false] );
+```
+
+## Preprocessing
+```xml
+<root ${context}>
+	${node}
+</root>
+```
+```haxe
+var preprocessor = new Preprocessor();
+preprocessor.addProperty( "hello", "bonjour" );
+preprocessor.addProperty( "contextName", 'applicationContext' );
+preprocessor.addProperty( "context", 'name="$${contextName}"' );
+preprocessor.addProperty( "node", '<msg id="message" value="$${hello}"/>' );
+```

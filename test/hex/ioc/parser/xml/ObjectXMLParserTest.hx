@@ -1068,6 +1068,7 @@ class ObjectXMLParserTest
 	@Test( "test file preprocessor" )
 	public function testFilePreprocessor() : Void
 	{
+		//$$ is used to escape haxe String interpolation.
 		var source : String = '
 		<root $${context}>
 		
