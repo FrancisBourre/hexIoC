@@ -1,4 +1,4 @@
-# hexMachina
+# hexIoC
 
 [![TravisCI Build Status](https://travis-ci.org/DoclerLabs/hexMachina.svg?branch=master)](https://travis-ci.org/DoclerLabs/hexMachina)
 Inversion of Control system with DSL and modularity based on global and micro contexts.

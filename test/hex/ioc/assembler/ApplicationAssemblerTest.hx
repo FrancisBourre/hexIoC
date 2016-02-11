@@ -31,7 +31,7 @@ class ApplicationAssemblerTest
 		var assembler : ApplicationAssembler = new ApplicationAssembler();
 		assembler.setStrictMode( true );
 		assembler.addConditionalProperty( ["production" => true] );
-		Assert.methodCallThrows( BuildingException, assembler, assembler.allowsIfList, ["debug"], "" );
-		Assert.methodCallThrows( BuildingException, assembler, assembler.allowsIfNotList, ["debug"], "" );
+		Assert.methodCallThrows( BuildingException, assembler, assembler.allowsIfList, [["debug"]], "" );
+		Assert.methodCallThrows( BuildingException, assembler, assembler.allowsIfNotList, [["debug"]], "" );
 	}
 }
