@@ -7,6 +7,8 @@
 -cp /home/travis/hexinject/test
 -cp /home/travis/hexmvc/src
 -cp /home/travis/hexmvc/test
+-cp /home/travis/hexservice/src
+-cp /home/travis/hexservice/test
 -cp /home/travis/hexstate/src
 -cp /home/travis/hexstate/test
 -cp /home/travis/hexunit/src
