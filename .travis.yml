@@ -53,8 +53,8 @@ install:
   - haxelib list
 
 script:
-  - haxe build-js.hxml           && node bin/MainMachinaTest.js
-  - haxe build-flash.hxml -D fdb && haxe flash/run.hxml bin/MainMachinaTest.swf
+  - haxe build-js.hxml           && node bin/MainIoCTest.js
+  - haxe build-flash.hxml -D fdb && haxe flash/run.hxml bin/MainIoCTest.swf
   
 notifications:
   email:
