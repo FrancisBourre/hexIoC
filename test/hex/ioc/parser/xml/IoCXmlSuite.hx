@@ -8,7 +8,7 @@ import hex.ioc.parser.xml.state.StatefulStateMachineConfigTest;
  * ...
  * @author Francis Bourre
  */
-class MachinaXmlSuite
+class IoCXmlSuite
 {
 	@Suite( "Xml" )
     public var list : Array<Class<Dynamic>> = [ApplicationAssemblerStateTest, ApplicationContextBuildingTest, ObjectXMLParserTest, StatefulStateMachineConfigTest, XmlParserUtilTest];

@@ -1,6 +1,6 @@
 package;
 
-import hex.HexMachinaSuite;
+import hex.HexIoCSuite;
 import hex.unittest.runner.ExMachinaUnitCore;
 import hex.unittest.runner.TestRunner;
 
@@ -27,7 +27,7 @@ class MainIoCTest
 		emu.addListener( new ConsoleNotifier( false ) );
 		#end
 		
-        emu.addTest( HexMachinaSuite );
+        emu.addTest( HexIoCSuite );
         emu.run();
 	}
 }
