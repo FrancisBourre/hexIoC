@@ -6,9 +6,14 @@ Inversion of Control system with DSL and modularity based on global and micro co
 ## Dependencies
 
 * [hexCore](https://github.com/DoclerLabs/hexCore)
-* [hexInject](https://github.com/DoclerLabs/hexInject)
 * [hexMVC](https://github.com/DoclerLabs/hexMVC)
 * [hexState](https://github.com/DoclerLabs/hexState)
+* [hexInject](https://github.com/DoclerLabs/hexInject)
+	
+## Optional dependencies
+* [hexService](https://github.com/DoclerLabs/hexService)
+* [hexUnit](https://github.com/DoclerLabs/hexUnit)
+	
 	
 ## Simple example
 ```xml
