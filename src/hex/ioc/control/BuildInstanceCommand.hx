@@ -46,7 +46,7 @@ class BuildInstanceCommand extends AbstractBuildCommand
 					// do nothing as expected
 				}
 
-				constructorVO.result = this._buildHelperVO.coreFactory.buildInstance( constructorVO.type, constructorVO.arguments, constructorVO.factory, constructorVO.singleton );
+				constructorVO.result = this._buildHelperVO.coreFactory.buildInstance( constructorVO.type, constructorVO.arguments, constructorVO.factory, constructorVO.singleton, constructorVO.injectInto );
 			}
 
 			if ( Std.is( constructorVO.result, IModule ) )

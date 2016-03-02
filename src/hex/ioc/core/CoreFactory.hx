@@ -5,6 +5,7 @@ import hex.collection.ILocator;
 import hex.collection.ILocatorListener;
 import hex.collection.LocatorMessage;
 import hex.core.IAnnotationParsable;
+import hex.di.IBasicInjector;
 import hex.error.IllegalArgumentException;
 import hex.error.NoSuchElementException;
 import hex.event.Dispatcher;
@@ -21,12 +22,14 @@ import hex.util.ObjectUtil;
 class CoreFactory implements ILocator<String, Dynamic>
 {
 	var _dispatcher : IDispatcher<ILocatorListener<String, Dynamic>>;
-	var _map : HashMap<String, Dynamic>;
-
-	public function new() 
+	var _map 		: HashMap<String, Dynamic>;
+	var _injector 	: IBasicInjector;
+	
+	public function new( injector : IBasicInjector ) 
 	{
-		this._dispatcher = new Dispatcher<ILocatorListener<String, Dynamic>>();
-		this._map = new HashMap();
+		this._injector 		= injector;
+		this._dispatcher 	= new Dispatcher<ILocatorListener<String, Dynamic>>();
+		this._map 			= new HashMap();
 	}
 	
 	public function addListener( listener : ILocatorListener<String, Dynamic> ) : Bool
@@ -179,7 +182,7 @@ class CoreFactory implements ILocator<String, Dynamic>
 		return staticRef;
 	}
 	
-	public function buildInstance( qualifiedClassName : String, ?args : Array<Dynamic>, ?factoryMethod : String, ?singletonAccess : String ) : Dynamic
+	public function buildInstance( qualifiedClassName : String, ?args : Array<Dynamic>, ?factoryMethod : String, ?singletonAccess : String, ?instantiateUnmapped : Bool = false ) : Dynamic
 	{
 		var classReference 	: Class<Dynamic>;
 
@@ -193,8 +196,12 @@ class CoreFactory implements ILocator<String, Dynamic>
 		}
 
 		var obj : Dynamic = null;
-
-		if ( factoryMethod != null )
+		
+		if ( instantiateUnmapped /*&& this._injector != null*/ )
+		{
+			obj = this._injector.instantiateUnmapped( classReference );
+		}
+		else if ( factoryMethod != null )
 		{
 			if ( singletonAccess != null )
 			{

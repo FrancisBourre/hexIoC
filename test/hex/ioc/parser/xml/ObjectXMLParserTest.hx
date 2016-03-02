@@ -24,6 +24,7 @@ import hex.ioc.parser.xml.mock.IMockStubStatefulService;
 import hex.ioc.parser.xml.mock.MockAmazonService;
 import hex.ioc.parser.xml.mock.MockBooleanVO;
 import hex.ioc.parser.xml.mock.MockChatModule;
+import hex.ioc.parser.xml.mock.MockClassWithInjectedProperty;
 import hex.ioc.parser.xml.mock.MockFacebookService;
 import hex.ioc.parser.xml.mock.MockFruitVO;
 import hex.ioc.parser.xml.mock.MockIntVO;
@@ -313,6 +314,26 @@ class ObjectXMLParserTest
 		Assert.isInstanceOf( point, Point, "" );
 		Assert.equals( 10, point.x, "" );
 		Assert.equals( 20, point.y, "" );
+	}
+	
+	@Test( "test 'inject-into' attribute" )
+	public function testInjectInto() : Void
+	{
+		var injector = this._applicationContext.getBasicInjector();
+		injector.mapToValue( String, 'hola mundo' );
+		
+		var source : String = '
+		
+		<root name="applicationContext">
+			<instance id="instance" type="hex.ioc.parser.xml.mock.MockClassWithInjectedProperty" inject-into="true"/>
+		</root>';
+		
+		var xml : Xml = Xml.parse( source );
+		this._build( xml );
+
+		var instance : MockClassWithInjectedProperty = this._builderFactory.getCoreFactory().locate( "instance" );
+		Assert.isInstanceOf( instance, MockClassWithInjectedProperty, "" );
+		Assert.equals( "hola mundo", instance.property, "" );
 	}
 	
 	@Test( "test building XML with parser class" )

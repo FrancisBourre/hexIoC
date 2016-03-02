@@ -43,6 +43,7 @@ class ObjectXMLParser extends AbstractXMLParser
 		var args 		: Array<Dynamic>;
 		var factory 	: String;
 		var singleton 	: String;
+		var injectInto	: Bool;
 		var mapType		: String;
 		var staticRef	: String;
 		var ifList		: Array<String>;
@@ -63,6 +64,7 @@ class ObjectXMLParser extends AbstractXMLParser
 			args 		= ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR ) ? XMLParserUtil.getItems( xml ) : XMLParserUtil.getArguments( xml, type );
 			factory 	= XMLAttributeUtil.getFactoryMethod( xml );
 			singleton 	= XMLAttributeUtil.getSingletonAccess( xml );
+			injectInto	= XMLAttributeUtil.getInjectInto( xml );
 			mapType 	= XMLAttributeUtil.getMapType( xml );
 			staticRef 	= XMLAttributeUtil.getStaticRef( xml );
 			ifList 		= XMLParserUtil.getIfList( xml );
@@ -73,7 +75,7 @@ class ObjectXMLParser extends AbstractXMLParser
 				type = staticRef != null ? ContextTypeList.UNKNOWN : ContextTypeList.STRING;
 			}
 
-			this.getApplicationAssembler( ).buildObject( applicationContext, identifier, type, args, factory, singleton, mapType, staticRef, ifList, ifNotList );
+			this.getApplicationAssembler( ).buildObject( applicationContext, identifier, type, args, factory, singleton, injectInto, mapType, staticRef, ifList, ifNotList );
 
 			// Build property.
 			var propertyIterator = xml.elementsNamed( ContextNameList.PROPERTY );

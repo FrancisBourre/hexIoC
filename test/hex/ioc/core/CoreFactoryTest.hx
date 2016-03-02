@@ -1,5 +1,6 @@
 package hex.ioc.core;
 
+import hex.MockDependencyInjector;
 import hex.collection.ILocatorListener;
 import hex.error.IllegalArgumentException;
 import hex.event.IEvent;
@@ -20,7 +21,7 @@ class CoreFactoryTest
     @Before
     public function setUp() : Void
     {
-        this._coreFactory = new CoreFactory();
+        this._coreFactory = new CoreFactory( new MockDependencyInjector() );
     }
 
     @After
@@ -149,6 +150,13 @@ class CoreFactoryTest
 		Assert.isNotNull( p, "'p' should not be null" );
 		Assert.equals( 2, p.x, "'p.x' should return 2" );
 		Assert.equals( 3, p.y, "'p.x' should return 3" );
+	}
+	
+	@Test( "Test buildInstance with injector" )
+    public function testBuildInstanceWithInjector() : Void
+    {
+		var instance : MockClassForCoreFactoryTest = this._coreFactory.buildInstance( "hex.ioc.core.MockClassForCoreFactoryTest", null, null, null, true );
+		Assert.isInstanceOf( instance, MockClassForCoreFactoryTest, "should be instance of 'MockClassForCoreFactoryTest'" );
 	}
 }
 

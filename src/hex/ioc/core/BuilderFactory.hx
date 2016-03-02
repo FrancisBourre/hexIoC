@@ -103,7 +103,7 @@ class BuilderFactory
 	public function init( applicationContext : ApplicationContext ) : Void
 	{
 		this._applicationContext 		= applicationContext;
-		this._coreFactory 				= new CoreFactory();
+		this._coreFactory 				= new CoreFactory( this._applicationContext.getBasicInjector() );
 		this._coreFactory.register( applicationContext.getName(), applicationContext );
 		
 		this._commandMap 				= new HashMap<String, Class<IBuildCommand>>();

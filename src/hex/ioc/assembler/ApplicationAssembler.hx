@@ -156,6 +156,7 @@ class ApplicationAssembler implements IApplicationAssembler
 									args 				: Array<Dynamic> = null,
 									factory 			: String = null,
 									singleton 			: String = null,
+									injectInto 			: Bool = false,
 									mapType 			: String = null,
 									staticRef 			: String = null,
 									ifList 				: Array<String> = null, 
@@ -206,7 +207,7 @@ class ApplicationAssembler implements IApplicationAssembler
 				}
 			}
 
-			var constructorVO = new ConstructorVO( ownerID, type, args, factory, singleton, null, mapType, staticRef );
+			var constructorVO = new ConstructorVO( ownerID, type, args, factory, singleton, injectInto, null, mapType, staticRef );
 			this.getBuilderFactory( applicationContext ).getConstructorVOLocator().register( ownerID, constructorVO );
 			return constructorVO;
 		}
