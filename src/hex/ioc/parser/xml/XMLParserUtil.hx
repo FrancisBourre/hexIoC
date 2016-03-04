@@ -137,8 +137,10 @@ class XMLParserUtil
 		
 		for ( i in 0...l )
 		{
-			matcher.match(configList[i]);
-			result += matcher.matched(2);
+			if ( matcher.match(configList[i]) )
+			{
+				result += matcher.matched(2);
+			}
 		}
 		
 		result += "</root>";
