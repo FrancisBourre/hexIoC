@@ -35,7 +35,7 @@ class ApplicationContext implements IContextOwner implements Dynamic<Application
 	var _stateMachine 			: StateMachine;
 	var _stateController 		: StateController;
 	
-	public var state(default, null) 	: ApplicationContextStateList = new ApplicationContextStateList();
+	public var state(default, null) : ApplicationContextStateList;
 		
 	@:allow( hex.ioc.assembler )
 	function new( applicationAssembler : IApplicationAssembler, name : String )
@@ -50,10 +50,21 @@ class ApplicationContext implements IContextOwner implements Dynamic<Application
 		
 		this._injector.mapToValue( ApplicationContext, this );
 		
-		this._annotationProvider 		= AnnotationProvider.getInstance( this._injector );
+		this._annotationProvider 	= AnnotationProvider.getInstance( this._injector );
 		this._name 					= name;
 		this._applicationAssembler 	= applicationAssembler;
 		
+		this._initStateMachine();
+	}
+	
+	function _initStateList() : Void
+	{
+		this.state = new ApplicationContextStateList();
+	}
+	
+	function _initStateMachine() : Void
+	{
+		this._initStateList();
 		this._stateMachine = new StateMachine( this.state.CONTEXT_INITIALIZED );
 		this._stateController = new StateController( this._injector, this._stateMachine );
 		this._dispatcher.addListener( this._stateController );

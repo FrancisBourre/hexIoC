@@ -93,6 +93,10 @@ class StateTransitionVOLocator extends Locator<String, StateTransitionVO>
 				}
 				
 				enterMapping.setContextOwner( enterContextOwner != null ? enterContextOwner : this._builderFactory.getApplicationContext() );
+				if ( enterVO.fireOnce )
+				{
+					enterMapping.once();
+				}
 				state.addEnterCommandMapping( enterMapping );
 				stateUnmapper.addEnterMapping( enterMapping  );
 			}
@@ -110,6 +114,10 @@ class StateTransitionVOLocator extends Locator<String, StateTransitionVO>
 				}
 				
 				exitMapping.setContextOwner( exitContextOwner != null ? exitContextOwner : this._builderFactory.getApplicationContext() );
+				if ( exitVO.fireOnce )
+				{
+					exitMapping.once();
+				}
 				state.addExitCommandMapping( exitMapping );
 				stateUnmapper.addExitMapping( exitMapping  );
 			}
