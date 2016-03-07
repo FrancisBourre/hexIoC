@@ -11,7 +11,7 @@ class MockClassForCoreFactoryTest
 {
 	static var _Instance : MockClassForCoreFactoryTest = null;
 	
-	function new() 
+	public function new() 
 	{
 		
 	}

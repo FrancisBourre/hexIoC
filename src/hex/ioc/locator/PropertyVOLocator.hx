@@ -51,7 +51,7 @@ class PropertyVOLocator extends Locator<String, Array<PropertyVO>> implements IL
 
 		} else if ( property.ref != null )
 		{
-			return this._builderFactory.build( new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, property.ref ) );
+			return this._builderFactory.build( new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, property.ref ) );
 
 		} else if ( property.staticRef != null )
 		{

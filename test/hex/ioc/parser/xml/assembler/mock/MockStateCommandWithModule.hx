@@ -12,11 +12,16 @@ import hex.module.IModule;
 @:rtti
 class MockStateCommandWithModule extends BasicCommand
 {
+	static public var callCount : Int = 0;
+	static public var lastInjectedModule : IModule;
+	
 	@Inject
 	public var module : IModule;
 	
 	override public function execute( ?request : Request ) : Void 
 	{
+		MockStateCommandWithModule.callCount++;
+		MockStateCommandWithModule.lastInjectedModule = this.module;
 		//trace( Stringifier.stringify( this.module ) );
 	}
 }

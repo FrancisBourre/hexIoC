@@ -48,6 +48,11 @@ class XMLAttributeUtil
 	{
 		return xml.get( ContextAttributeList.SINGLETON_ACCESS );
 	}
+	
+	static public function getInjectInto( xml : Xml ) : Bool
+	{
+		return xml.get( ContextAttributeList.INJECT_INTO ) == "true";
+	}
 
 	static public function getMethod( xml : Xml ) : String
 	{

@@ -347,3 +347,12 @@ preprocessor.addProperty( "contextName", 'applicationContext' );
 preprocessor.addProperty( "context", 'name="$${contextName}"' );
 preprocessor.addProperty( "node", '<msg id="message" value="$${hello}"/>' );
 ```
+
+## Include
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<root name="applicationContext">
+	<include file="../bin/otherContext.xml"/>
+	<include file="lib/anotherContext.xml"/>
+</root>
+```

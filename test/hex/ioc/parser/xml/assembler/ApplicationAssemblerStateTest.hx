@@ -2,11 +2,14 @@ package hex.ioc.parser.xml.assembler;
 
 import hex.domain.ApplicationDomainDispatcher;
 import hex.ioc.assembler.ApplicationAssembler;
+import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.core.BuilderFactory;
+import hex.ioc.parser.xml.assembler.mock.MockApplicationContext;
 import hex.ioc.parser.xml.assembler.mock.MockStateCommand;
 import hex.ioc.parser.xml.assembler.mock.MockStateCommandWithModule;
 import hex.ioc.parser.xml.assembler.mock.MockModule;
+import hex.unittest.assertion.Assert;
 
 /**
  * ...
@@ -22,7 +25,6 @@ class ApplicationAssemblerStateTest
 	public function setUp() : Void
 	{
 		this._applicationAssembler 	= new ApplicationAssembler();
-		this._builderFactory 		= this._applicationAssembler.getBuilderFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
 	}
 
 	@After
@@ -30,6 +32,11 @@ class ApplicationAssemblerStateTest
 	{
 		ApplicationDomainDispatcher.getInstance().clear();
 		this._applicationAssembler.release();
+		
+		MockStateCommand.callCount 						= 0;
+		MockStateCommand.lastInjecteContext 			= null;
+		MockStateCommandWithModule.callCount 			= 0;
+		MockStateCommandWithModule.lastInjectedModule 	= null;
 	}
 		
 	function _build( xml : Xml ) : Void
@@ -76,36 +83,22 @@ class ApplicationAssemblerStateTest
 
 		var xml : Xml = Xml.parse( source );
 		this._build( xml );
+		
+		this._builderFactory = this._applicationAssembler.getBuilderFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
 	}
 	
-	/*@Test( "test building state transitions with static-ref" )
-	public function testBuildingStateTransitionsWithStaticRef() : Void
+	@Test( "test extending state transitions" )
+	public function testExtendingStateTransitions() : Void
 	{
 		var source : String = '
-		<root name="applicationContext">
+		<root name="applicationContext" type="hex.ioc.parser.xml.assembler.mock.MockApplicationContext">
 
-			<state id="assemblingStart" static-ref="hex.ioc.assembler.ApplicationAssemblerState.ASSEMBLING_START">
-				<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand"/>
+			<state id="customState" ref="applicationContext.state.CUSTOM_STATE">
+				<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommandWithModule" context-owner="anotherModule"/>
 			</state>
 			
-			<state id="objectsBuilt" static-ref="hex.ioc.assembler.ApplicationAssemblerState.OBJECTS_BUILT">
-				<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommandWithModule" fire-once="true" context-owner="module"/>
-			</state>
-			
-			<state id="domainListenersAssigned" static-ref="hex.ioc.assembler.ApplicationAssemblerState.DOMAIN_LISTENERS_ASSIGNED">
-				<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand"/>
-			</state>
-			
-			<state id="methodsCalled" static-ref="hex.ioc.assembler.ApplicationAssemblerState.METHODS_CALLED">
-				<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand"/>
-			</state>
-			
-			<state id="modulesInitialized" static-ref="hex.ioc.assembler.ApplicationAssemblerState.MODULES_INITIALIZED">
-				<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand"/>
-			</state>
-			
-			<state id="assemblingEnd" static-ref="hex.ioc.assembler.ApplicationAssemblerState.ASSEMBLING_END">
-				<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommandWithModule" fire-once="true" context-owner="anotherModule"/>
+			<state id="anotherState" ref="applicationContext.state.ANOTHER_STATE">
+				<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand" fire-once="true"/>
 			</state>
 			
 			<module id="module" type="hex.ioc.parser.xml.assembler.mock.MockModule" map-type="hex.module.IModule"/>
@@ -115,6 +108,37 @@ class ApplicationAssemblerStateTest
 
 		var xml : Xml = Xml.parse( source );
 		this._build( xml );
-	}*/
-	
+		
+		var builderFactory : BuilderFactory = this._applicationAssembler.getBuilderFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
+		var coreFactory = builderFactory.getCoreFactory();
+		var module : MockModule = coreFactory.locate( "module" );
+		var anotherModule : MockModule = coreFactory.locate( "anotherModule" );
+		
+		Assert.isNotNull( module, "'module' shouldn't be null" );
+		Assert.isNotNull( anotherModule, "'anotherModule' shouldn't be null" );
+		
+		var applicationContext : MockApplicationContext = builderFactory.getCoreFactory().locate( "applicationContext" );
+		Assert.isNotNull( applicationContext, "applicationContext shouldn't be null" );
+		Assert.isInstanceOf( applicationContext, MockApplicationContext, "applicationContext shouldn't be an instance of 'MockApplicationContext'" );
+
+		Assert.isNotNull( ( cast applicationContext.state).CUSTOM_STATE, "CUSTOM_STATE shouldn't be null" );
+		
+		applicationContext.fireApplicationInit();
+		Assert.equals( 1, MockStateCommandWithModule.callCount, "'MockStateCommandWithModule' should have been called once" );
+		Assert.equals( anotherModule, MockStateCommandWithModule.lastInjectedModule, "module should be the same" );
+		
+		applicationContext.fireSwitchState();
+		Assert.equals( 1, MockStateCommand.callCount, "'MockStateCommand' should have been called once" );
+		Assert.equals( applicationContext, MockStateCommand.lastInjecteContext, "applicationContext should be the same" );
+		
+		MockStateCommandWithModule.lastInjectedModule = null;
+		applicationContext.fireSwitchBack();
+		Assert.equals( 2, MockStateCommandWithModule.callCount, "'MockStateCommandWithModule' should have been called twice" );
+		Assert.equals( anotherModule, MockStateCommandWithModule.lastInjectedModule, "module should be the same" );
+		
+		applicationContext.fireSwitchState();
+		MockStateCommand.lastInjecteContext = null;
+		Assert.equals( 1, MockStateCommand.callCount, "'MockStateCommand' should have been called once" );
+		Assert.isNull( MockStateCommand.lastInjecteContext, "applicationContext should be null" );
+	}
 }

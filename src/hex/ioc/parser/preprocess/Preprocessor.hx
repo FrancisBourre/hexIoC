@@ -25,9 +25,9 @@ class Preprocessor implements IParser
 		}
 	}
 
-	public function parse( serializedContetnt : Dynamic, target : Dynamic = null ) : Dynamic
+	public function parse( serializedContent : Dynamic, target : Dynamic = null ) : Dynamic
 	{
-		var context : String = cast serializedContetnt;
+		var context : String = cast serializedContent;
 
 		var i = this._property.keys();
 		while( i.hasNext() )
