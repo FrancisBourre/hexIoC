@@ -2,7 +2,7 @@ package hex.ioc.parser.xml;
 
 import hex.error.IllegalArgumentException;
 import hex.error.NullPointerException;
-import hex.ioc.assembler.ApplicationContext;
+import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.error.ParsingException;
 import hex.ioc.parser.AbstractParserCommand;
 
@@ -18,7 +18,7 @@ class AbstractXMLParser extends AbstractParserCommand
 	}
 	
 	@final
-	override public function getApplicationContext( applicationContextClass : Class<ApplicationContext> = null ) : ApplicationContext
+	override public function getApplicationContext( applicationContextClass : Class<AbstractApplicationContext> = null ) : AbstractApplicationContext
 	{
 		var applicationContextName : String = this.getXMLContext().firstElement().get( "name" );
 		if ( applicationContextName == null )

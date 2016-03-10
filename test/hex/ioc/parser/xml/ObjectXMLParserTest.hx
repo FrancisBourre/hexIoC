@@ -1,5 +1,7 @@
 package hex.ioc.parser.xml;
 
+import hex.ioc.assembler.AbstractApplicationContext;
+import hex.ioc.core.IBuilderFactory;
 import hex.ioc.parser.preprocess.Preprocessor;
 import haxe.Timer;
 import hex.collection.HashMap;
@@ -10,9 +12,7 @@ import hex.event.Dispatcher;
 import hex.event.EventProxy;
 import hex.inject.Injector;
 import hex.ioc.assembler.ApplicationAssembler;
-import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.assembler.IApplicationAssembler;
-import hex.ioc.core.BuilderFactory;
 import hex.ioc.parser.xml.mock.AnotherMockAmazonService;
 import hex.ioc.parser.xml.mock.AnotherMockModuleWithServiceCallback;
 import hex.ioc.parser.xml.mock.ClassWithConstantConstantArgument;
@@ -59,9 +59,9 @@ import hex.ioc.parser.xml.mock.MockChatAdapterStrategyMacro;
 class ObjectXMLParserTest
 {
 	var _contextParser 				: ApplicationXMLParser;
-	var _applicationContext 		: ApplicationContext;
-	var _builderFactory 			: BuilderFactory;
-	var _applicationAssembler 		: IApplicationAssembler;
+	var _applicationContext 		: AbstractApplicationContext;
+	var _builderFactory 			: IBuilderFactory;
+	var _applicationAssembler 		: ApplicationAssembler;
 		
 	@Before
 	public function setUp() : Void
@@ -78,7 +78,7 @@ class ObjectXMLParserTest
 		this._applicationAssembler.release();
 	}
 		
-	function _build( xml : Xml, applicationContext : ApplicationContext = null ) : Void
+	function _build( xml : Xml, applicationContext : AbstractApplicationContext = null ) : Void
 	{
 		this._contextParser = new ApplicationXMLParser();
 		//this._contextParser.parse( applicationContext != null ? applicationContext : this._applicationContext, this._applicationAssembler, xml );
@@ -604,7 +604,7 @@ class ObjectXMLParserTest
 
 		</root>';
 
-		var applicationContextParent : ApplicationContext	= this._applicationAssembler.getApplicationContext( "applicationContextParent" );
+		var applicationContextParent : AbstractApplicationContext	= this._applicationAssembler.getApplicationContext( "applicationContextParent" );
 		var applicationContextChild 	= this._applicationAssembler.getApplicationContext( "applicationContextChild" );
 		var applicationContextSubChild 	= this._applicationAssembler.getApplicationContext( "applicationContextSubChild" );
 
@@ -615,7 +615,7 @@ class ObjectXMLParserTest
 		this._build( Xml.parse( childSource ), applicationContextChild );
 		this._build( Xml.parse( parentSource ), applicationContextParent );
 
-		var builderFactory : BuilderFactory;
+		var builderFactory : IBuilderFactory;
 
 		builderFactory = this._applicationAssembler.getBuilderFactory( applicationContextParent );
 		var parentRectangle  : MockRectangle = builderFactory.getCoreFactory().locate( "rect0" );

@@ -1,7 +1,7 @@
 package hex.ioc.parser.xml;
 
 import hex.error.Exception;
-import hex.ioc.assembler.ApplicationContext;
+import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.error.ParsingException;
@@ -31,7 +31,7 @@ class ObjectXMLParser extends AbstractXMLParser
 	
 	function _parseNode( xml : Xml ) : Void
 	{
-		var applicationContext : ApplicationContext = this.getApplicationContext();
+		var applicationContext : AbstractApplicationContext = this.getApplicationContext();
 
 		var identifier : String = XMLAttributeUtil.getID( xml );
 		if ( identifier == null )

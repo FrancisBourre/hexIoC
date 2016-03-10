@@ -3,7 +3,7 @@ package hex.ioc.core;
 import hex.collection.HashMap;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.IApplicationDomainDispatcher;
-import hex.ioc.assembler.ApplicationContext;
+import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.control.BuildArrayCommand;
 import hex.ioc.control.BuildBooleanCommand;
 import hex.ioc.control.BuildClassCommand;
@@ -31,12 +31,12 @@ import hex.ioc.vo.ConstructorVO;
  * ...
  * @author Francis Bourre
  */
-class BuilderFactory
+class BuilderFactory implements IBuilderFactory
 {
 	var _moduleLocator				: ModuleLocator;
-	var _applicationContext 		: ApplicationContext;
+	var _applicationContext 		: AbstractApplicationContext;
 	var _commandMap 				: HashMap<String, Class<IBuildCommand>>;
-	var _coreFactory 				: CoreFactory;
+	var _coreFactory 				: ICoreFactory;
 	var _applicationDomainHub 		: IApplicationDomainDispatcher;
 	var _IDExpert 					: IDExpert;
 	var _constructorVOLocator 		: ConstructorVOLocator;
@@ -45,17 +45,17 @@ class BuilderFactory
 	var _domainListenerVOLocator 	: DomainListenerVOLocator;
 	var _stateTransitionVOLocator 	: StateTransitionVOLocator;
 
-	public function new( applicationContext : ApplicationContext )
+	public function new()
 	{
-		this.init( applicationContext );
+		
 	}
 
-	public function getApplicationContext() : ApplicationContext
+	public function getApplicationContext() : AbstractApplicationContext
 	{
 		return this._applicationContext;
 	}
 
-	public function getCoreFactory() : CoreFactory
+	public function getCoreFactory() : ICoreFactory
 	{
 		return this._coreFactory;
 	}
@@ -100,11 +100,10 @@ class BuilderFactory
 		return this._moduleLocator;
 	}
 
-	public function init( applicationContext : ApplicationContext ) : Void
+	public function init( applicationContext : AbstractApplicationContext, coreFactory : ICoreFactory ) : Void
 	{
 		this._applicationContext 		= applicationContext;
-		this._coreFactory 				= new CoreFactory( this._applicationContext.getBasicInjector() );
-		this._coreFactory.register( applicationContext.getName(), applicationContext );
+		this._coreFactory				= coreFactory;
 		
 		this._commandMap 				= new HashMap<String, Class<IBuildCommand>>();
 		this._applicationDomainHub 		= ApplicationDomainDispatcher.getInstance();

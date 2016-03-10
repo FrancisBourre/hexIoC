@@ -1,10 +1,11 @@
 package hex.ioc.parser.xml.context;
 
 import hex.domain.ApplicationDomainDispatcher;
+import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.assembler.IApplicationAssembler;
-import hex.ioc.core.BuilderFactory;
+import hex.ioc.core.IBuilderFactory;
 import hex.ioc.parser.xml.context.mock.MockApplicationContext;
 import hex.unittest.assertion.Assert;
 
@@ -15,7 +16,7 @@ import hex.unittest.assertion.Assert;
 class ApplicationContextBuildingTest
 {
 	var _contextParser 				: ApplicationXMLParser;
-	var _applicationAssembler 		: IApplicationAssembler;
+	var _applicationAssembler 		: ApplicationAssembler;
 		
 	@Before
 	public function setUp() : Void
@@ -50,7 +51,7 @@ class ApplicationContextBuildingTest
 		var xml : Xml = Xml.parse( source );
 		this._build( xml );
 		
-		var builderFactory :BuilderFactory = this._applicationAssembler.getBuilderFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
+		var builderFactory : IBuilderFactory = this._applicationAssembler.getBuilderFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
 		
 		var applicationContext : ApplicationContext = builderFactory.getCoreFactory().locate( "applicationContext" );
 		Assert.isNotNull( applicationContext, "applicationContext shouldn't be null" );

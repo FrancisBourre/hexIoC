@@ -1,12 +1,20 @@
 package hex.ioc.assembler;
 
 import hex.collection.HashMap;
+import hex.control.macro.IMacroExecutor;
+import hex.control.macro.MacroExecutor;
 import hex.core.HashCodeFactory;
+import hex.di.IBasicInjector;
+import hex.di.IDependencyInjector;
 import hex.error.IllegalArgumentException;
+import hex.inject.Injector;
 import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.core.BuilderFactory;
 import hex.ioc.core.ContextTypeList;
+import hex.ioc.core.CoreFactory;
+import hex.ioc.core.IBuilderFactory;
+import hex.ioc.core.ICoreFactory;
 import hex.ioc.error.BuildingException;
 import hex.ioc.locator.MethodCallVOLocator;
 import hex.ioc.vo.CommandMappingVO;
@@ -18,6 +26,7 @@ import hex.ioc.vo.MethodCallVO;
 import hex.ioc.vo.PropertyVO;
 import hex.ioc.vo.ServiceLocatorVO;
 import hex.ioc.vo.StateTransitionVO;
+import hex.metadata.AnnotationProvider;
 
 /**
  * ...
@@ -30,8 +39,8 @@ class ApplicationAssembler implements IApplicationAssembler
 		
 	}
 	
-	var _mApplicationContext 		= new HashMap<String, ApplicationContext>();
-	var _mBuilderFactories 			= new HashMap<ApplicationContext, BuilderFactory>();
+	var _mApplicationContext 		= new HashMap<String, AbstractApplicationContext>();
+	var _mBuilderFactories 			= new HashMap<AbstractApplicationContext, IBuilderFactory>();
 	var _conditionalProperties 		= new Map<String, Bool>();
 	var _strictMode					: Bool = true;
 	
@@ -113,14 +122,14 @@ class ApplicationAssembler implements IApplicationAssembler
 		return true;
 	}
 
-	public function getBuilderFactory( applicationContext : ApplicationContext ) : BuilderFactory
+	public function getBuilderFactory( applicationContext : AbstractApplicationContext ) : IBuilderFactory
 	{
 		return this._mBuilderFactories.get( applicationContext );
 	}
 
 	public function release() : Void
 	{
-		var builderFactories : Array<BuilderFactory> = this._mBuilderFactories.getValues();
+		var builderFactories : Array<IBuilderFactory> = this._mBuilderFactories.getValues();
 		for ( builderFactory in builderFactories )
 		{
 			builderFactory.release();
@@ -129,7 +138,7 @@ class ApplicationAssembler implements IApplicationAssembler
 		this._mBuilderFactories.clear();
 	}
 
-	public function buildProperty(  applicationContext 	: ApplicationContext,
+	public function buildProperty(  applicationContext 	: AbstractApplicationContext,
 									ownerID 			: String,
 									name 				: String = null,
 									value 				: String = null,
@@ -138,19 +147,15 @@ class ApplicationAssembler implements IApplicationAssembler
 									method 				: String = null,
 									staticRef 			: String = null,
 									ifList 				: Array<String> = null, 
-									ifNotList 			: Array<String> = null ) : PropertyVO
+									ifNotList 			: Array<String> = null ) : Void
 	{
 		if ( this.allowsIfList( ifList ) && this.allowsIfNotList( ifNotList ) )
 		{
-			return this.getBuilderFactory( applicationContext ).getPropertyVOLocator().addProperty( ownerID, name, value, type, ref, method, staticRef );
-		}
-		else
-		{
-			return null;
+			this.getBuilderFactory( applicationContext ).getPropertyVOLocator().addProperty( ownerID, name, value, type, ref, method, staticRef );
 		}
 	}
 
-	public function buildObject(    applicationContext 	: ApplicationContext,
+	public function buildObject(    applicationContext 	: AbstractApplicationContext,
 									ownerID 			: String,
 									type 				: String = null,
 									args 				: Array<Dynamic> = null,
@@ -160,7 +165,7 @@ class ApplicationAssembler implements IApplicationAssembler
 									mapType 			: String = null,
 									staticRef 			: String = null,
 									ifList 				: Array<String> = null, 
-									ifNotList 			: Array<String> = null ) : ConstructorVO
+									ifNotList 			: Array<String> = null ) : Void
 	{
 		if ( this.allowsIfList( ifList ) && this.allowsIfNotList( ifNotList ) )
 		{
@@ -209,16 +214,10 @@ class ApplicationAssembler implements IApplicationAssembler
 
 			var constructorVO = new ConstructorVO( ownerID, type, args, factory, singleton, injectInto, null, mapType, staticRef );
 			this.getBuilderFactory( applicationContext ).getConstructorVOLocator().register( ownerID, constructorVO );
-			return constructorVO;
 		}
-		else
-		{
-			return null;
-		}
-		
 	}
 
-	public function buildMethodCall( 	applicationContext 	: ApplicationContext, 
+	public function buildMethodCall( 	applicationContext 	: AbstractApplicationContext, 
 										ownerID 			: String, 
 										methodCallName 		: String, 
 										args 				: Array<Dynamic> = null,
@@ -246,7 +245,7 @@ class ApplicationAssembler implements IApplicationAssembler
 		}
 	}
 
-	public function buildDomainListener( 	applicationContext 	: ApplicationContext, 
+	public function buildDomainListener( 	applicationContext 	: AbstractApplicationContext, 
 											ownerID 			: String, 
 											listenedDomainName 	: String, 
 											args 				: Array<DomainListenerVOArguments> = null,
@@ -260,7 +259,7 @@ class ApplicationAssembler implements IApplicationAssembler
 		}
 	}
 	
-	public function configureStateTransition( 	applicationContext 	: ApplicationContext, 
+	public function configureStateTransition( 	applicationContext 	: AbstractApplicationContext, 
 												ownerID 			: String, 
 												staticReference 	: String, 
 												instanceReference 	: String, 
@@ -279,13 +278,13 @@ class ApplicationAssembler implements IApplicationAssembler
 	
 	public function buildEverything() : Void
 	{
-		var builderFactories 	: Array<BuilderFactory> = this._mBuilderFactories.getValues();
-		var len 				: Int 					= builderFactories.length;
+		var builderFactories 	: Array<IBuilderFactory> 	= this._mBuilderFactories.getValues();
+		var len 				: Int 						= builderFactories.length;
 		var i 					: Int;
 		
 		for ( i in 0...len ) ApplicationAssembler._buildAllStateTransitions( builderFactories[ i ] );
 		
-		var applicationContexts : Array<ApplicationContext> = null;
+		var applicationContexts : Array<AbstractApplicationContext> = null;
 		
 		applicationContexts = this._mApplicationContext.getValues();
 		for ( applicationcontext in applicationContexts )
@@ -305,9 +304,9 @@ class ApplicationAssembler implements IApplicationAssembler
 		}
 	}
 
-	public function getApplicationContext( applicationContextName : String, applicationContextClass : Class<ApplicationContext> = null ) : ApplicationContext
+	public function getApplicationContext( applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null ) : AbstractApplicationContext
 	{
-		var applicationContext : ApplicationContext;
+		var applicationContext : AbstractApplicationContext;
 
 		if ( this._mApplicationContext.containsKey( applicationContextName ) )
 		{
@@ -315,53 +314,73 @@ class ApplicationAssembler implements IApplicationAssembler
 
 		} else
 		{
+			//build injector
+			var injector = new Injector();
+			injector.mapToValue( IBasicInjector, injector );
+			injector.mapToValue( IDependencyInjector, injector );
+			injector.mapToType( IMacroExecutor, MacroExecutor );
+			
+			//assign AnnotationProvider
+			AnnotationProvider.getInstance( injector );
+		
+			//build coreFactory
+			var coreFactory : ICoreFactory = new CoreFactory( injector );
+			
 			if ( applicationContextClass != null )
 			{
-				applicationContext = Type.createInstance( applicationContextClass, [ this, applicationContextName ] );
+				applicationContext = Type.createInstance( applicationContextClass, [ coreFactory, applicationContextName ] );
 			} 
 			else
 			{
-				applicationContext = new ApplicationContext( this, applicationContextName );
+				//ApplicationContext instantiation
+				applicationContext = new ApplicationContext( coreFactory, applicationContextName );
 			}
 			
+			//register applicationContext
+			injector.mapToValue( ApplicationContext, applicationContext );
+			coreFactory.register( applicationContextName, applicationContext );
+			
+			var builderFactory : IBuilderFactory 	= new BuilderFactory();
+			builderFactory.init( applicationContext, coreFactory );
+			
 			this._mApplicationContext.put( applicationContextName, applicationContext );
-			this._mBuilderFactories.put( applicationContext, new BuilderFactory( applicationContext ) );
+			this._mBuilderFactories.put( applicationContext, builderFactory );
 			applicationContext._dispatch( ApplicationAssemblerMessage.CONTEXT_PARSED );
 		}
 
 		return applicationContext;
 	}
 	
-	function _registerID( applicationContext : ApplicationContext, ID : String ) : Bool
+	function _registerID( applicationContext : AbstractApplicationContext, ID : String ) : Bool
 	{
 		return this.getBuilderFactory( applicationContext ).getIDExpert().register( ID );
 	}
 	
-	static function _buildAllStateTransitions( builderFactory : BuilderFactory ) : Void
+	static function _buildAllStateTransitions( builderFactory : IBuilderFactory ) : Void
 	{
 		builderFactory.getStateTransitionVOLocator().build();
 		builderFactory.getApplicationContext()._dispatch( ApplicationAssemblerMessage.STATE_TRANSITIONS_BUILT );
 	}
 
-	static function _buildAllObjects( builderFactory : BuilderFactory ) : Void
+	static function _buildAllObjects( builderFactory : IBuilderFactory ) : Void
 	{
 		builderFactory.getConstructorVOLocator().buildAllObjects();
 		builderFactory.getApplicationContext()._dispatch( ApplicationAssemblerMessage.OBJECTS_BUILT );
 	}
 
-	static function _assignAllDomainListeners( builderFactory : BuilderFactory ) : Void
+	static function _assignAllDomainListeners( builderFactory : IBuilderFactory ) : Void
 	{
 		builderFactory.getDomainListenerVOLocator().assignAllDomainListeners();
 		builderFactory.getApplicationContext()._dispatch( ApplicationAssemblerMessage.DOMAIN_LISTENERS_ASSIGNED );
 	}
 
-	static function _callAllMethods( builderFactory : BuilderFactory ) : Void
+	static function _callAllMethods( builderFactory : IBuilderFactory ) : Void
 	{
 		builderFactory.getMethodCallVOLocator().callAllMethods();
 		builderFactory.getApplicationContext()._dispatch( ApplicationAssemblerMessage.METHODS_CALLED );
 	}
 	
-	static function _callInitOnModules( builderFactory : BuilderFactory ) : Void
+	static function _callInitOnModules( builderFactory : IBuilderFactory ) : Void
 	{
 		builderFactory.getModuleLocator().callModuleInitialisation();
 		builderFactory.getApplicationContext()._dispatch( ApplicationAssemblerMessage.MODULES_INITIALIZED );

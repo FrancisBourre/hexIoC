@@ -1,7 +1,7 @@
 package hex.ioc.vo;
 
-import hex.ioc.core.BuilderFactory;
-import hex.ioc.core.CoreFactory;
+import hex.ioc.core.IBuilderFactory;
+import hex.ioc.core.ICoreFactory;
 import hex.ioc.core.ModuleLocator;
 
 /**
@@ -11,8 +11,8 @@ import hex.ioc.core.ModuleLocator;
 class BuildHelperVO
 {
 	public var type 					: String;
-	public var builderFactory 			: BuilderFactory;
-	public var coreFactory				: CoreFactory;
+	public var builderFactory 			: IBuilderFactory;
+	public var coreFactory				: ICoreFactory;
 	public var constructorVO 			: ConstructorVO;
 	public var moduleLocator			: ModuleLocator;
 

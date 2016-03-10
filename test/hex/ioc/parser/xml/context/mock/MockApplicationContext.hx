@@ -1,7 +1,7 @@
 package hex.ioc.parser.xml.context.mock;
 
 import hex.ioc.assembler.ApplicationContext;
-import hex.ioc.assembler.IApplicationAssembler;
+import hex.ioc.core.ICoreFactory;
 
 /**
  * ...
@@ -9,9 +9,8 @@ import hex.ioc.assembler.IApplicationAssembler;
  */
 class MockApplicationContext extends ApplicationContext
 {
-
-	public function new( applicationAssembler : IApplicationAssembler, applicationContextName : String ) 
+	public function new( coreFactory : ICoreFactory, applicationContextName : String ) 
 	{
-		super( applicationAssembler, applicationContextName );
+		super( coreFactory, applicationContextName );
 	}
 }

@@ -6,11 +6,10 @@ import hex.collection.LocatorMessage;
 import hex.control.command.CommandMapping;
 import hex.control.command.ICommand;
 import hex.control.command.ICommandMapping;
-import hex.ioc.di.ContextOwnerWrapper;
-import hex.di.IBasicInjector;
 import hex.di.IContextOwner;
 import hex.ioc.core.BuilderFactory;
-import hex.ioc.core.CoreFactory;
+import hex.ioc.core.ICoreFactory;
+import hex.ioc.di.ContextOwnerWrapper;
 import hex.ioc.error.BuildingException;
 import hex.ioc.vo.CommandMappingVO;
 import hex.ioc.vo.StateTransitionVO;
@@ -47,7 +46,7 @@ class StateTransitionVOLocator extends Locator<String, StateTransitionVO>
 		if ( this.isRegisteredWithKey( key ) )
 		{
 			var vo : StateTransitionVO = this.locate( key );
-			var coreFactory : CoreFactory = this._builderFactory.getCoreFactory();
+			var coreFactory : ICoreFactory = this._builderFactory.getCoreFactory();
 			
 			
 			var state : State = null;

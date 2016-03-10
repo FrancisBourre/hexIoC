@@ -2,7 +2,7 @@ package hex.ioc.di;
 
 import hex.di.IBasicInjector;
 import hex.di.IContextOwner;
-import hex.ioc.core.CoreFactory;
+import hex.ioc.core.ICoreFactory;
 
 /**
  * ...
@@ -10,10 +10,10 @@ import hex.ioc.core.CoreFactory;
  */
 class ContextOwnerWrapper implements IContextOwner
 {
-	var _coreFactory 	: CoreFactory;
+	var _coreFactory 	: ICoreFactory;
 	var _id 			: String;
 	
-	public function new( coreFactory : CoreFactory, id : String ) 
+	public function new( coreFactory : ICoreFactory, id : String ) 
 	{
 		this._coreFactory 	= coreFactory;
 		this._id 			= id;

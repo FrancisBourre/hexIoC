@@ -4,7 +4,7 @@ import hex.domain.ApplicationDomainDispatcher;
 import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.assembler.IApplicationAssembler;
-import hex.ioc.core.BuilderFactory;
+import hex.ioc.core.IBuilderFactory;
 import hex.ioc.parser.xml.state.mock.MockModuleWorkingWithStates;
 import hex.ioc.parser.xml.state.mock.MockStateEnum;
 import hex.ioc.parser.xml.ApplicationXMLParser;
@@ -22,8 +22,8 @@ import hex.ioc.parser.xml.state.mock.MockExitStateCommand;
 class StatefulStateMachineConfigTest
 {
 	var _contextParser 				: ApplicationXMLParser;
-	var _builderFactory 			: BuilderFactory;
-	var _applicationAssembler 		: IApplicationAssembler;
+	var _builderFactory 			: IBuilderFactory;
+	var _applicationAssembler 		: ApplicationAssembler;
 		
 	@Before
 	public function setUp() : Void

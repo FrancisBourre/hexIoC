@@ -16,7 +16,7 @@ class ApplicationContextTest
     public function testAccessors() : Void
     {
 		var applicationAssembler 	= new ApplicationAssembler();
-		var applicationContext 		: ApplicationContext	= applicationAssembler.getApplicationContext( "applicationContext" );
+		var applicationContext 		: ApplicationContext	= cast applicationAssembler.getApplicationContext( "applicationContext" );
 		
 		Assert.equals( "applicationContext", applicationContext.getName(), "returned name should be the same passed during instantiation" );
 		Assert.isInstanceOf( applicationContext.getBasicInjector(), Injector, "injector returned should be an instance of Injector class" );
@@ -29,8 +29,8 @@ class ApplicationContextTest
     public function testChildren() : Void
     {
 		var applicationAssembler 	= new ApplicationAssembler();
-		var applicationContext 		: ApplicationContext	= applicationAssembler.getApplicationContext( "applicationContext" );
-		var anotherContext 			: ApplicationContext	= applicationAssembler.getApplicationContext( "anotherContext" );
+		var applicationContext 		: ApplicationContext	= cast applicationAssembler.getApplicationContext( "applicationContext" );
+		var anotherContext 			: ApplicationContext	= cast applicationAssembler.getApplicationContext( "anotherContext" );
 		
 		Assert.notEquals( applicationContext, anotherContext, "application contexts should be different" );
 		Assert.isTrue( applicationContext.addChild( anotherContext ), "'addChild' should return true when adding a context child for the first time" );

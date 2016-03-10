@@ -1,6 +1,6 @@
 package hex.ioc.parser;
 
-import hex.ioc.assembler.ApplicationContext;
+import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.IApplicationAssembler;
 
 /**
@@ -14,7 +14,7 @@ interface IParserCommand
 	
 	function getContextData() : Dynamic;
 	
-	function getApplicationContext( applicationContextClass : Class<ApplicationContext> = null ) : ApplicationContext;
+	function getApplicationContext( applicationContextClass : Class<AbstractApplicationContext> = null ) : AbstractApplicationContext;
 
 	function getApplicationAssembler() : IApplicationAssembler;
 	

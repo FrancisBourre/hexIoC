@@ -1,6 +1,6 @@
 package hex.ioc.parser.xml;
 
-import hex.ioc.assembler.ApplicationContext;
+import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.error.ParsingException;
@@ -32,7 +32,7 @@ class StateXMLParser extends AbstractXMLParser
 	
 	function _parseNode( xml : Xml ) : Void
 	{
-		var applicationContext : ApplicationContext 		= this.getApplicationContext();
+		var applicationContext : AbstractApplicationContext 		= this.getApplicationContext();
 		var applicationAssembler : IApplicationAssembler 	= this.getApplicationAssembler();
 
 		var identifier : String = XMLAttributeUtil.getID( xml );

@@ -1,7 +1,6 @@
 package hex.ioc.core;
 
 import hex.collection.HashMap;
-import hex.collection.ILocator;
 import hex.collection.ILocatorListener;
 import hex.collection.LocatorMessage;
 import hex.core.IAnnotationParsable;
@@ -19,11 +18,11 @@ import hex.util.ObjectUtil;
  * ...
  * @author Francis Bourre
  */
-class CoreFactory implements ILocator<String, Dynamic>
+class CoreFactory implements ICoreFactory
 {
-	var _dispatcher : IDispatcher<ILocatorListener<String, Dynamic>>;
-	var _map 		: HashMap<String, Dynamic>;
-	var _injector 	: IBasicInjector;
+	var _injector 		: IBasicInjector;
+	var _dispatcher 	: IDispatcher<ILocatorListener<String, Dynamic>>;
+	var _map 			: HashMap<String, Dynamic>;
 	
 	public function new( injector : IBasicInjector ) 
 	{
@@ -197,7 +196,7 @@ class CoreFactory implements ILocator<String, Dynamic>
 
 		var obj : Dynamic = null;
 		
-		if ( instantiateUnmapped /*&& this._injector != null*/ )
+		if ( instantiateUnmapped )
 		{
 			obj = this._injector.instantiateUnmapped( classReference );
 		}
@@ -281,5 +280,10 @@ class CoreFactory implements ILocator<String, Dynamic>
 	public function clear() : Void
 	{
 		this._map.clear();
+	}
+	
+	public function getBasicInjector() : IBasicInjector
+	{
+		return this._injector;
 	}
 }

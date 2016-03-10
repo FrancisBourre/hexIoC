@@ -4,7 +4,7 @@ import hex.control.async.AsyncCommand;
 import hex.control.Request;
 import hex.error.NullPointerException;
 import hex.error.VirtualMethodException;
-import hex.ioc.assembler.ApplicationContext;
+import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.IApplicationAssembler;
 
 /**
@@ -62,7 +62,7 @@ class AbstractParserCommand extends AsyncCommand implements IParserCommand
 		throw new VirtualMethodException( this + ".setContextData must be implemented in concrete class." );
 	}
 	
-	public function getApplicationContext( applicationContextClass : Class<ApplicationContext> = null ) : ApplicationContext
+	public function getApplicationContext( applicationContextClass : Class<AbstractApplicationContext> = null ) : AbstractApplicationContext
 	{
 		throw new VirtualMethodException( this + ".getApplicationContext must be implemented in concrete class." );
 	}

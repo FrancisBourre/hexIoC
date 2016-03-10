@@ -1,5 +1,6 @@
 package hex.ioc.parser.xml;
 
+import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.error.ParsingException;
 
@@ -23,7 +24,7 @@ class ApplicationContextXMLParser extends AbstractXMLParser
 		{
 			try
 			{
-				var applicationContextClass : Class<ApplicationContext> = cast Type.resolveClass( applicationContextClassName );
+				var applicationContextClass : Class<AbstractApplicationContext> = cast Type.resolveClass( applicationContextClassName );
 				this.getApplicationContext( applicationContextClass );
 			}
 			catch ( error : Dynamic )
