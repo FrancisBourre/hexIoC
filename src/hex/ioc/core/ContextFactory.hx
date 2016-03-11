@@ -1,6 +1,7 @@
 package hex.ioc.core;
 
 import hex.collection.HashMap;
+import hex.collection.ILocatorListener;
 import hex.control.macro.IMacroExecutor;
 import hex.control.macro.MacroExecutor;
 import hex.core.HashCodeFactory;
@@ -15,6 +16,7 @@ import hex.event.ClassAdapter;
 import hex.event.EventProxy;
 import hex.event.IAdapterStrategy;
 import hex.event.IDispatcher;
+import hex.event.IEvent;
 import hex.event.MessageType;
 import hex.inject.Injector;
 import hex.ioc.assembler.AbstractApplicationContext;
@@ -45,19 +47,22 @@ import hex.ioc.vo.BuildHelperVO;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.DomainListenerVOArguments;
+import hex.ioc.vo.MapVO;
 import hex.ioc.vo.MethodCallVO;
+import hex.ioc.vo.PropertyVO;
 import hex.ioc.vo.StateTransitionVO;
 import hex.log.Stringifier;
 import hex.metadata.AnnotationProvider;
 import hex.module.IModule;
 import hex.service.IService;
 import hex.service.ServiceConfiguration;
+import hex.util.ObjectUtil;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class ContextFactory implements IContextFactory
+class ContextFactory implements IContextFactory implements ILocatorListener<String, Dynamic>
 {
 	var _contextDispatcher			: IDispatcher<{}>;
 	var _moduleLocator				: ModuleLocator;
@@ -135,6 +140,101 @@ class ContextFactory implements IContextFactory
 		this._contextDispatcher.dispatch( ApplicationAssemblerMessage.STATE_TRANSITIONS_BUILT );
 	}
 	
+	//
+	public function registerPropertyVO( id : String, propertyVO : PropertyVO  ) : Void
+	{
+		if ( this._propertyVOLocator.isRegisteredWithKey( id ) )
+		{
+			( this._propertyVOLocator.locate( id ) ).push( propertyVO );
+		}
+		else
+		{
+			this._propertyVOLocator.register( id, [ propertyVO ] );
+		}
+	}
+	
+	function _getPropertyValue( property : PropertyVO ) : Dynamic
+	{
+		if ( property.method != null )
+		{
+			return this.build( new ConstructorVO( null, ContextTypeList.FUNCTION, [ property.method ] ) );
+
+		} else if ( property.ref != null )
+		{
+			return this.build( new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, property.ref ) );
+
+		} else if ( property.staticRef != null )
+		{
+			return this._coreFactory.getStaticReference( property.staticRef );
+
+		} else
+		{
+			var type : String = property.type != null ? property.type : ContextTypeList.STRING;
+			return this.build( new ConstructorVO( property.ownerID, type, [ property.value ] ) );
+		}
+	}
+
+	function _setPropertyValue( property : PropertyVO, target : Dynamic ) : Void
+	{
+		var propertyName : String = property.name;
+		if ( propertyName.indexOf(".") == -1 )
+		{
+			Reflect.setProperty( target, propertyName, this._getPropertyValue( property ) );
+		}
+		else
+		{
+			var props : Array<String> = propertyName.split( "." );
+			propertyName = props.pop();
+			var target : Dynamic = ObjectUtil.fastEvalFromTarget( target, props.join("."), this._coreFactory );
+			Reflect.setProperty( target, propertyName, this._getPropertyValue( property ) );
+		}
+	}
+
+	public function deserializeArguments( arguments : Array<Dynamic> ) : Array<Dynamic>
+	{
+		var result : Array<Dynamic> = null;
+		var length : Int = arguments.length;
+
+		if ( length > 0 ) 
+		{
+			result = [];
+		}
+
+		for ( obj in arguments )
+		{
+			if ( Std.is( obj, PropertyVO ) )
+			{
+				result.push( this._getPropertyValue( cast obj ) );
+			}
+			else if ( Std.is( obj, MapVO ) )
+			{
+				var mapVO : MapVO = cast obj;
+				mapVO.key = this._getPropertyValue( mapVO.getPropertyKey() );
+				mapVO.value = this._getPropertyValue( mapVO.getPropertyValue() );
+				result.push( mapVO );
+			}
+		}
+
+		return result;
+	}
+	
+	//listen to CoreFactory
+	public function onRegister( key : String, instance : Dynamic ) : Void
+	{
+		if ( this._propertyVOLocator.isRegisteredWithKey( key ) )
+		{
+			var properties : Array<PropertyVO> = this._propertyVOLocator.locate( key );
+			for ( p in properties )
+			{
+				this._setPropertyValue( p, instance );
+			}
+		}
+	}
+
+    public function onUnregister( key : String ) : Void  { }
+	public function handleEvent( e : IEvent ) : Void {}	
+	
+	//
 	public function registerConstructorVO( id : String, constructorVO : ConstructorVO ) : Void
 	{
 		this._constructorVOLocator.register( id, constructorVO );
@@ -147,7 +247,7 @@ class ContextFactory implements IContextFactory
 			var cons : ConstructorVO = this._constructorVOLocator.locate( id );
 			if ( cons.arguments != null )
 			{
-				cons.arguments = this._propertyVOLocator.deserializeArguments( cons.arguments );
+				cons.arguments = this.deserializeArguments( cons.arguments );
 			}
 
 			this.build( cons, id );
@@ -287,7 +387,7 @@ class ContextFactory implements IContextFactory
 		var method : MethodCallVO 	= this._methodCallVOLocator.locate( id );
 		var cons = new ConstructorVO( null, ContextTypeList.FUNCTION, [ method.ownerID + "." + method.name ] );
 		var func : Dynamic 			= this.build( cons );
-		var args : Array<Dynamic> 	= this._propertyVOLocator.deserializeArguments( method.arguments );
+		var args : Array<Dynamic> 	= this.deserializeArguments( method.arguments );
 		
 		Reflect.callMethod( this._coreFactory.locate( method.ownerID ), func, args );
 	}
@@ -320,11 +420,6 @@ class ContextFactory implements IContextFactory
 		return this._coreFactory;
 	}
 
-	public function getPropertyVOLocator() : PropertyVOLocator
-	{
-		return this._propertyVOLocator;
-	}
-
 	public function getDomainListenerVOLocator() : DomainListenerVOLocator
 	{
 		return this._domainListenerVOLocator;
@@ -341,13 +436,11 @@ class ContextFactory implements IContextFactory
 		this._applicationDomainHub 		= ApplicationDomainDispatcher.getInstance();
 		this._IDExpert 					= new IDExpert();
 		this._constructorVOLocator 		= new ConstructorVOLocator();
-		this._propertyVOLocator 		= new PropertyVOLocator( this );
+		this._propertyVOLocator 		= new PropertyVOLocator();
 		this._methodCallVOLocator 		= new MethodCallVOLocator();
 		this._domainListenerVOLocator 	= new DomainListenerVOLocator();
 		this._stateTransitionVOLocator 	= new StateTransitionVOLocator( this );
 		this._moduleLocator 			= new ModuleLocator( this );
-		
-		this._coreFactory.addListener( this._propertyVOLocator );
 
 		this.addType( ContextTypeList.ARRAY, BuildArrayCommand );
 		this.addType( ContextTypeList.BOOLEAN, BuildBooleanCommand );
@@ -365,6 +458,8 @@ class ContextFactory implements IContextFactory
 		this.addType( ContextTypeList.XML, BuildXMLCommand );
 		this.addType( ContextTypeList.FUNCTION, BuildFunctionCommand );
 		this.addType( ContextTypeList.UNKNOWN, BuildInstanceCommand );
+		
+		this._coreFactory.addListener( this );
 	}
 
 	public function addType( type : String, build : Class<IBuildCommand> ) : Void
@@ -398,7 +493,7 @@ class ContextFactory implements IContextFactory
 
 	public function release() : Void
 	{
-		this._coreFactory.removeListener( this._propertyVOLocator );
+		this._coreFactory.removeListener( this );
 		this._coreFactory.clear();
 		this._constructorVOLocator.release();
 		this._propertyVOLocator.release();

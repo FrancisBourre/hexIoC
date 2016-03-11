@@ -1,14 +1,11 @@
 package hex.ioc.core;
 
-import hex.domain.IApplicationDomainDispatcher;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.control.IBuildCommand;
-import hex.ioc.locator.DomainListenerVOLocator;
-import hex.ioc.locator.PropertyVOLocator;
-import hex.ioc.locator.StateTransitionVOLocator;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.MethodCallVO;
+import hex.ioc.vo.PropertyVO;
 import hex.ioc.vo.StateTransitionVO;
 
 /**
@@ -24,6 +21,10 @@ interface IContextFactory
 	function buildStateTransition( key : String ) : Void;
 	
 	function buildAllStateTransitions() : Void;
+	
+	function registerPropertyVO( id : String, propertyVO : PropertyVO  ) : Void;
+	
+	function deserializeArguments( arguments : Array<Dynamic> ) : Array<Dynamic>;
 	
 	function registerConstructorVO( id : String, constructorVO : ConstructorVO ) : Void;
 	
@@ -48,8 +49,6 @@ interface IContextFactory
 	function getApplicationContext() : AbstractApplicationContext;
 
 	function getCoreFactory() : ICoreFactory;
-
-	function getPropertyVOLocator() : PropertyVOLocator;
 
 	function addType( type : String, build : Class<IBuildCommand> ) : Void;
 

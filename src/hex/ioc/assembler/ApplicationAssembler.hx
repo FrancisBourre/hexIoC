@@ -140,7 +140,7 @@ class ApplicationAssembler implements IApplicationAssembler
 	{
 		if ( this.allowsIfList( ifList ) && this.allowsIfNotList( ifNotList ) )
 		{
-			this.getBuilderFactory( applicationContext ).getPropertyVOLocator().addProperty( ownerID, name, value, type, ref, method, staticRef );
+			this.getBuilderFactory( applicationContext ).registerPropertyVO( ownerID, new PropertyVO( ownerID, name, value, type, ref, method, staticRef ) );
 		}
 	}
 
@@ -173,8 +173,8 @@ class ApplicationAssembler implements IApplicationAssembler
 						obj = args[ index ];
 						var keyDic 		: Dynamic 		= obj.key;
 						var valueDic 	: Dynamic 		= obj.value;
-						var pKeyDic 	: PropertyVO 	= this.getBuilderFactory( applicationContext ).getPropertyVOLocator().buildProperty( ownerID, keyDic.name, keyDic.value, keyDic.type, keyDic.ref, keyDic.method, keyDic.staticRef );
-						var pValueDic 	: PropertyVO 	= this.getBuilderFactory( applicationContext ).getPropertyVOLocator().buildProperty( ownerID, valueDic.name, valueDic.value, valueDic.type, valueDic.ref, valueDic.method, valueDic.staticRef );
+						var pKeyDic 	: PropertyVO 	= new PropertyVO( ownerID, keyDic.name, keyDic.value, keyDic.type, keyDic.ref, keyDic.method, keyDic.staticRef );
+						var pValueDic 	: PropertyVO 	= new PropertyVO( ownerID, valueDic.name, valueDic.value, valueDic.type, valueDic.ref, valueDic.method, valueDic.staticRef );
 						args[ index ] 					= new MapVO( pKeyDic, pValueDic );
 					}
 				}
@@ -185,8 +185,8 @@ class ApplicationAssembler implements IApplicationAssembler
 						obj = args[ index ];
 						var keySC 		: Dynamic 		= obj.key;
 						var valueSC 	: Dynamic 		= obj.value;
-						var pKeySC 		: PropertyVO 	= this.getBuilderFactory( applicationContext ).getPropertyVOLocator().buildProperty( ownerID, keySC.name, keySC.value, keySC.type, keySC.ref, keySC.method, keySC.staticRef );
-						var pValueSC 	: PropertyVO 	= this.getBuilderFactory( applicationContext ).getPropertyVOLocator().buildProperty( ownerID, valueSC.name, valueSC.value, valueSC.type, valueSC.ref, valueSC.method, valueSC.staticRef );
+						var pKeySC 		: PropertyVO 	= new PropertyVO( ownerID, keySC.name, keySC.value, keySC.type, keySC.ref, keySC.method, keySC.staticRef );
+						var pValueSC 	: PropertyVO 	= new PropertyVO( ownerID, valueSC.name, valueSC.value, valueSC.type, valueSC.ref, valueSC.method, valueSC.staticRef );
 						args[ index ] 					= new ServiceLocatorVO( pKeySC, pValueSC, obj.mapName );
 					}
 				}
@@ -195,7 +195,7 @@ class ApplicationAssembler implements IApplicationAssembler
 					for ( index in 0...length )
 					{
 						obj = args[ index ];
-						var propertyVO : PropertyVO = this.getBuilderFactory( applicationContext ).getPropertyVOLocator().buildProperty( ownerID, obj.name, obj.value, obj.type, obj.ref, obj.method, obj.staticRef );
+						var propertyVO : PropertyVO = new PropertyVO( ownerID, obj.name, obj.value, obj.type, obj.ref, obj.method, obj.staticRef );
 						args[ index ] = propertyVO;
 					}
 				}
