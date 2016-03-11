@@ -22,14 +22,11 @@ class ApplicationContext extends AbstractApplicationContext
 	
 	public var state(default, null) : ApplicationContextStateList;
 		
-	@:allow( hex.ioc.assembler )
-	function new( coreFactory : ICoreFactory, name : String )
+	@:allow( hex.ioc.core )
+	function new( dispatcher : IDispatcher<{}>, coreFactory : ICoreFactory, name : String )
 	{
 		super( coreFactory, name );
-		
-		var domain : Domain = DomainUtil.getDomain( name, Domain );
-		this._dispatcher = ApplicationDomainDispatcher.getInstance().getDomainDispatcher( domain );
-
+		this._dispatcher = dispatcher;
 		this._initStateMachine();
 	}
 	

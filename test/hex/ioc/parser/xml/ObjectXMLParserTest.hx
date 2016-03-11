@@ -1,7 +1,7 @@
 package hex.ioc.parser.xml;
 
 import hex.ioc.assembler.AbstractApplicationContext;
-import hex.ioc.core.IBuilderFactory;
+import hex.ioc.core.IContextFactory;
 import hex.ioc.parser.preprocess.Preprocessor;
 import haxe.Timer;
 import hex.collection.HashMap;
@@ -60,7 +60,7 @@ class ObjectXMLParserTest
 {
 	var _contextParser 				: ApplicationXMLParser;
 	var _applicationContext 		: AbstractApplicationContext;
-	var _builderFactory 			: IBuilderFactory;
+	var _builderFactory 			: IContextFactory;
 	var _applicationAssembler 		: ApplicationAssembler;
 		
 	@Before
@@ -615,7 +615,7 @@ class ObjectXMLParserTest
 		this._build( Xml.parse( childSource ), applicationContextChild );
 		this._build( Xml.parse( parentSource ), applicationContextParent );
 
-		var builderFactory : IBuilderFactory;
+		var builderFactory : IContextFactory;
 
 		builderFactory = this._applicationAssembler.getBuilderFactory( applicationContextParent );
 		var parentRectangle  : MockRectangle = builderFactory.getCoreFactory().locate( "rect0" );

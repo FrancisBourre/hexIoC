@@ -1,8 +1,8 @@
-package hex.ioc.core;
+package hex.ioc.locator;
 
 import hex.collection.Locator;
 import hex.collection.LocatorMessage;
-import hex.ioc.core.BuilderFactory;
+import hex.ioc.core.ContextFactory;
 import hex.module.IModule;
 
 /**
@@ -11,9 +11,9 @@ import hex.module.IModule;
  */
 class ModuleLocator extends Locator<String, IModule>
 {
-	var _builderFactory : BuilderFactory;
+	var _builderFactory : ContextFactory;
 
-	public function new( builderFactory : BuilderFactory )
+	public function new( builderFactory : ContextFactory )
 	{
 		super();
 		this._builderFactory = builderFactory;

@@ -3,10 +3,10 @@ package hex.ioc.parser.xml;
 import haxe.macro.Compiler;
 import haxe.macro.Context;
 import haxe.macro.Expr;
-
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.CompileTimeApplicationAssembler;
 import hex.ioc.core.CompileTimeCoreFactory;
+
 
 import hex.ioc.core.ContextNameList;
 import hex.ioc.core.ContextTypeList;
@@ -22,7 +22,7 @@ class XMLFileReader
 	static var _includeMatcher 	: EReg = ~/<include.*?file=("|')([^"']+)\1.*?(?:(?:\/>)|(?:>[\W\w\t\r\n]*?<\/import *>))/g;
 	static var _headerMatcher 	: EReg = ~/(?:<\?xml[^>]+>\s*)<([a-zA-Z0-9-_:]+)[^>]*>([\s\S]*)<\/\1\s*>/;
 	
-	//static var _assembler 		: CompileTimeApplicationAssembler;
+	static var _assembler 		: CompileTimeApplicationAssembler;
 	static var _compiledClass	: Array<String>;
 	static var _primType		: Array<String> = [	ContextTypeList.STRING, 
 													ContextTypeList.INT, 
@@ -107,7 +107,7 @@ class XMLFileReader
 		
 	}
 	
-	/*static function _parseNode( applicationContext : AbstractApplicationContext, xml : Xml ) : Void
+	static function _parseNode( applicationContext : AbstractApplicationContext, xml : Xml ) : Void
 	{
 		var identifier : String = XMLAttributeUtil.getID( xml );
 		if ( identifier == null )
@@ -214,7 +214,7 @@ class XMLFileReader
 				}
 			}
 		}
-	}*/
+	}
 	#end
 	
 	macro public static function readXmlFile( fileName : String ) : ExprOf<String> 
@@ -226,15 +226,16 @@ class XMLFileReader
 		{
 			var xml : Xml = Xml.parse( data );
 			XMLFileReader._compiledClass = [];
-			//XMLFileReader._assembler = new CompileTimeApplicationAssembler();
-			/*//var applicationContext : AbstractApplicationContext = new AbstractApplicationContext( new CompileTimeCoreFactory(), "name" );
+			
+			XMLFileReader._assembler 	= new CompileTimeApplicationAssembler();
+			var compileTimeFactory 		= new CompileTimeCoreFactory();
+			var applicationContext 		= new AbstractApplicationContext( compileTimeFactory, "name" );
 			
 			var iterator = xml.firstElement().elements();
 			while ( iterator.hasNext() )
 			{
-				//XMLFileReader._parseNode( applicationContext, iterator.next() );
-				//trace( iterator.next() );
-			}*/
+				XMLFileReader._parseNode( applicationContext, iterator.next() );
+			}
 			
 			
 		}

@@ -7,7 +7,7 @@ import hex.control.command.CommandMapping;
 import hex.control.command.ICommand;
 import hex.control.command.ICommandMapping;
 import hex.di.IContextOwner;
-import hex.ioc.core.BuilderFactory;
+import hex.ioc.core.ContextFactory;
 import hex.ioc.core.ICoreFactory;
 import hex.ioc.di.ContextOwnerWrapper;
 import hex.ioc.error.BuildingException;
@@ -21,24 +21,15 @@ import hex.state.State;
  */
 class StateTransitionVOLocator extends Locator<String, StateTransitionVO>
 {
-	var _builderFactory : BuilderFactory;
+	var _builderFactory : ContextFactory;
 	var _stateUnmapper : HashMap<State, StateUnmapper>;
 
-	public function new( builderFactory : BuilderFactory )
+	public function new( builderFactory : ContextFactory )
 	{
 		super();
 		
 		this._builderFactory 	= builderFactory;
 		this._stateUnmapper 	= new HashMap();
-	}
-	
-	public function build() 
-	{
-		var keys : Array<String> = this.keys();
-		for ( key in keys )
-		{
-			this.buildStateTransition( key );
-		}
 	}
 	
 	public function buildStateTransition( key : String ) : Void

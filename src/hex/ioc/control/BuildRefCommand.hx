@@ -23,7 +23,7 @@ class BuildRefCommand extends AbstractBuildCommand
 
 		if ( !( this._buildHelperVO.coreFactory.isRegisteredWithKey( key ) ) )
 		{
-			this._buildHelperVO.builderFactory.getConstructorVOLocator().buildObject( key );
+			this._buildHelperVO.builderFactory.buildObject( key );
 		}
 		
 		constructorVO.result = this._buildHelperVO.coreFactory.locate( key );

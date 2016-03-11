@@ -2,7 +2,7 @@ package hex.ioc.parser.xml.assembler;
 
 import hex.domain.ApplicationDomainDispatcher;
 import hex.ioc.assembler.ApplicationAssembler;
-import hex.ioc.core.IBuilderFactory;
+import hex.ioc.core.IContextFactory;
 import hex.ioc.parser.xml.assembler.mock.MockApplicationContext;
 import hex.ioc.parser.xml.assembler.mock.MockModule;
 import hex.ioc.parser.xml.assembler.mock.MockStateCommand;
@@ -16,7 +16,7 @@ import hex.unittest.assertion.Assert;
 class ApplicationAssemblerStateTest
 {
 	var _contextParser 				: ApplicationXMLParser;
-	var _builderFactory 			: IBuilderFactory;
+	var _builderFactory 			: IContextFactory;
 	var _applicationAssembler 		: ApplicationAssembler;
 		
 	@Before
@@ -107,7 +107,7 @@ class ApplicationAssemblerStateTest
 		var xml : Xml = Xml.parse( source );
 		this._build( xml );
 		
-		var builderFactory : IBuilderFactory = this._applicationAssembler.getBuilderFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
+		var builderFactory : IContextFactory = this._applicationAssembler.getBuilderFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
 		var coreFactory = builderFactory.getCoreFactory();
 		var module : MockModule = coreFactory.locate( "module" );
 		var anotherModule : MockModule = coreFactory.locate( "anotherModule" );

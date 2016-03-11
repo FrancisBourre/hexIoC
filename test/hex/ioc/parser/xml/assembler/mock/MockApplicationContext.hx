@@ -1,5 +1,6 @@
 package hex.ioc.parser.xml.assembler.mock;
 
+import hex.event.IDispatcher;
 import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.core.ICoreFactory;
 
@@ -9,9 +10,9 @@ import hex.ioc.core.ICoreFactory;
  */
 class MockApplicationContext extends ApplicationContext
 {
-	public function new( coreFactory : ICoreFactory, applicationContextName : String ) 
+	public function new( dispatcher : IDispatcher<{}>, coreFactory : ICoreFactory, applicationContextName : String ) 
 	{
-		super( coreFactory, applicationContextName );
+		super( dispatcher, coreFactory, applicationContextName );
 	}
 	
 	override function _initStateList():Void 

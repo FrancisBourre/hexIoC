@@ -5,7 +5,7 @@ import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.assembler.IApplicationAssembler;
-import hex.ioc.core.IBuilderFactory;
+import hex.ioc.core.IContextFactory;
 import hex.ioc.parser.xml.context.mock.MockApplicationContext;
 import hex.unittest.assertion.Assert;
 
@@ -51,7 +51,7 @@ class ApplicationContextBuildingTest
 		var xml : Xml = Xml.parse( source );
 		this._build( xml );
 		
-		var builderFactory : IBuilderFactory = this._applicationAssembler.getBuilderFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
+		var builderFactory : IContextFactory = this._applicationAssembler.getBuilderFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
 		
 		var applicationContext : ApplicationContext = builderFactory.getCoreFactory().locate( "applicationContext" );
 		Assert.isNotNull( applicationContext, "applicationContext shouldn't be null" );

@@ -3,7 +3,7 @@ package hex.ioc.locator;
 import hex.collection.ILocatorListener;
 import hex.collection.Locator;
 import hex.event.IEvent;
-import hex.ioc.core.BuilderFactory;
+import hex.ioc.core.ContextFactory;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.MapVO;
@@ -18,9 +18,9 @@ class PropertyVOLocator extends Locator<String, Array<PropertyVO>> implements IL
 {
 	static public inline var BUILD_PROPERTY:String = "buildProperty";
 
-	var _builderFactory : BuilderFactory;
+	var _builderFactory : ContextFactory;
 
-	public function new( builderFactory : BuilderFactory )
+	public function new( builderFactory : ContextFactory )
 	{
 		super();
 		this._builderFactory = builderFactory;

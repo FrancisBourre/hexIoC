@@ -24,7 +24,7 @@ class BuildFunctionCommand extends AbstractBuildCommand
 
 		if ( !this._buildHelperVO.coreFactory.isRegisteredWithKey( targetID ) )
 		{
-			this._buildHelperVO.builderFactory.getConstructorVOLocator().buildObject( targetID );
+			this._buildHelperVO.builderFactory.buildObject( targetID );
 		}
 
 		var target : Dynamic = this._buildHelperVO.coreFactory.locate( targetID );

@@ -1,6 +1,5 @@
 package hex.ioc.assembler;
 
-import hex.ioc.core.IBuilderFactory;
 import hex.ioc.vo.CommandMappingVO;
 import hex.ioc.vo.DomainListenerVOArguments;
 
@@ -18,7 +17,7 @@ interface IApplicationAssembler
 	function configureStateTransition( applicationContext : AbstractApplicationContext, ID : String, staticReference : String, instanceReference : String, enterList : Array<CommandMappingVO>, exitList : Array<CommandMappingVO>, ifList : Array<String> = null, ifNotList : Array<String> = null ) : Void;
 	function getApplicationContext( applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null ) : AbstractApplicationContext;
 	function setStrictMode( b : Bool ) : Void;
-	public function isInStrictMode() : Bool;
+	function isInStrictMode() : Bool;
 	function addConditionalProperty( conditionalProperties : Map<String, Bool> ) : Void;
 	function allowsIfList( ifList : Array<String> = null ) : Bool;
 	function allowsIfNotList( ifNotList : Array<String> = null ) : Bool;

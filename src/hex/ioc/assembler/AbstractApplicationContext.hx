@@ -17,7 +17,7 @@ class AbstractApplicationContext implements Dynamic<AbstractApplicationContext> 
 	var _name 					: String;
 	var _coreFactory 			: ICoreFactory;
 	
-	function new( coreFactory : ICoreFactory, name : String ) 
+	public function new( coreFactory : ICoreFactory, name : String ) 
 	{
 		this._coreFactory	= coreFactory;
 		this._name			= name;
