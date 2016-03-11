@@ -42,7 +42,7 @@ class AbstractApplicationContext implements Dynamic<AbstractApplicationContext> 
 		catch ( ex : IllegalArgumentException )
 		{
 			#if debug
-			Logger.ERROR( "addChild failed with applicationContext named '" + applicationContext.getName() + "'" );
+			hex.log.Logger.ERROR( "addChild failed with applicationContext named '" + applicationContext.getName() + "'" );
 			#end
 			return false;
 		}
