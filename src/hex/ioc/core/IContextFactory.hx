@@ -1,7 +1,6 @@
 package hex.ioc.core;
 
 import hex.ioc.assembler.AbstractApplicationContext;
-import hex.ioc.control.IBuildCommand;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.MethodCallVO;
@@ -11,7 +10,6 @@ import hex.ioc.vo.StateTransitionVO;
 /**
  * @author Francis Bourre
  */
-
 interface IContextFactory 
 {
 	function registerID( id : String ) : Bool;
@@ -49,10 +47,6 @@ interface IContextFactory
 	function getApplicationContext() : AbstractApplicationContext;
 
 	function getCoreFactory() : ICoreFactory;
-
-	function addType( type : String, build : Class<IBuildCommand> ) : Void;
-
-	function build( constructorVO : ConstructorVO, ?id : String ) : Dynamic;
 
 	function release() : Void;
 }

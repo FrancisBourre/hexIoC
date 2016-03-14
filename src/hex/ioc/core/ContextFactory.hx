@@ -145,7 +145,7 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 	{
 		if ( this._propertyVOLocator.isRegisteredWithKey( id ) )
 		{
-			( this._propertyVOLocator.locate( id ) ).push( propertyVO );
+			this._propertyVOLocator.locate( id ).push( propertyVO );
 		}
 		else
 		{
@@ -157,11 +157,11 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 	{
 		if ( property.method != null )
 		{
-			return this.build( new ConstructorVO( null, ContextTypeList.FUNCTION, [ property.method ] ) );
+			return this._build( new ConstructorVO( null, ContextTypeList.FUNCTION, [ property.method ] ) );
 
 		} else if ( property.ref != null )
 		{
-			return this.build( new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, property.ref ) );
+			return this._build( new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, property.ref ) );
 
 		} else if ( property.staticRef != null )
 		{
@@ -170,7 +170,7 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		} else
 		{
 			var type : String = property.type != null ? property.type : ContextTypeList.STRING;
-			return this.build( new ConstructorVO( property.ownerID, type, [ property.value ] ) );
+			return this._build( new ConstructorVO( property.ownerID, type, [ property.value ] ) );
 		}
 	}
 
@@ -250,7 +250,7 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 				cons.arguments = this.deserializeArguments( cons.arguments );
 			}
 
-			this.build( cons, id );
+			this._build( cons, id );
 			this._constructorVOLocator.unregister( id );
 		}
 	}
@@ -386,7 +386,7 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 	{
 		var method : MethodCallVO 	= this._methodCallVOLocator.locate( id );
 		var cons = new ConstructorVO( null, ContextTypeList.FUNCTION, [ method.ownerID + "." + method.name ] );
-		var func : Dynamic 			= this.build( cons );
+		var func : Dynamic 			= this._build( cons );
 		var args : Array<Dynamic> 	= this.deserializeArguments( method.arguments );
 		
 		Reflect.callMethod( this._coreFactory.locate( method.ownerID ), func, args );
@@ -419,15 +419,24 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 	{
 		return this._coreFactory;
 	}
-
-	public function getDomainListenerVOLocator() : DomainListenerVOLocator
-	{
-		return this._domainListenerVOLocator;
-	}
 	
 	public function getStateTransitionVOLocator() : StateTransitionVOLocator
 	{
 		return this._stateTransitionVOLocator;
+	}
+
+	public function release() : Void
+	{
+		this._coreFactory.removeListener( this );
+		this._coreFactory.clear();
+		this._constructorVOLocator.release();
+		this._propertyVOLocator.release();
+		this._methodCallVOLocator.release();
+		this._domainListenerVOLocator.release();
+		this._stateTransitionVOLocator.release();
+		this._moduleLocator.release();
+		this._commandMap.clear();
+		this._IDExpert.clear();
 	}
 
 	function _init() : Void
@@ -442,32 +451,32 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		this._stateTransitionVOLocator 	= new StateTransitionVOLocator( this );
 		this._moduleLocator 			= new ModuleLocator( this );
 
-		this.addType( ContextTypeList.ARRAY, BuildArrayCommand );
-		this.addType( ContextTypeList.BOOLEAN, BuildBooleanCommand );
-		this.addType( ContextTypeList.INSTANCE, BuildInstanceCommand );
-		this.addType( ContextTypeList.INT, BuildIntCommand );
-		this.addType( ContextTypeList.NULL, BuildNullCommand );
-		this.addType( ContextTypeList.FLOAT, BuildFloatCommand );
-		this.addType( ContextTypeList.OBJECT, BuildObjectCommand );
-		this.addType( ContextTypeList.STRING, BuildStringCommand );
-		this.addType( ContextTypeList.UINT, BuildUIntCommand );
-		this.addType( ContextTypeList.DEFAULT, BuildStringCommand );
-		this.addType( ContextTypeList.HASHMAP, BuildMapCommand );
-		this.addType( ContextTypeList.SERVICE_LOCATOR, BuildServiceLocatorCommand );
-		this.addType( ContextTypeList.CLASS, BuildClassCommand );
-		this.addType( ContextTypeList.XML, BuildXMLCommand );
-		this.addType( ContextTypeList.FUNCTION, BuildFunctionCommand );
-		this.addType( ContextTypeList.UNKNOWN, BuildInstanceCommand );
+		this._addBuildCommand( ContextTypeList.ARRAY, BuildArrayCommand );
+		this._addBuildCommand( ContextTypeList.BOOLEAN, BuildBooleanCommand );
+		this._addBuildCommand( ContextTypeList.INSTANCE, BuildInstanceCommand );
+		this._addBuildCommand( ContextTypeList.INT, BuildIntCommand );
+		this._addBuildCommand( ContextTypeList.NULL, BuildNullCommand );
+		this._addBuildCommand( ContextTypeList.FLOAT, BuildFloatCommand );
+		this._addBuildCommand( ContextTypeList.OBJECT, BuildObjectCommand );
+		this._addBuildCommand( ContextTypeList.STRING, BuildStringCommand );
+		this._addBuildCommand( ContextTypeList.UINT, BuildUIntCommand );
+		this._addBuildCommand( ContextTypeList.DEFAULT, BuildStringCommand );
+		this._addBuildCommand( ContextTypeList.HASHMAP, BuildMapCommand );
+		this._addBuildCommand( ContextTypeList.SERVICE_LOCATOR, BuildServiceLocatorCommand );
+		this._addBuildCommand( ContextTypeList.CLASS, BuildClassCommand );
+		this._addBuildCommand( ContextTypeList.XML, BuildXMLCommand );
+		this._addBuildCommand( ContextTypeList.FUNCTION, BuildFunctionCommand );
+		this._addBuildCommand( ContextTypeList.UNKNOWN, BuildInstanceCommand );
 		
 		this._coreFactory.addListener( this );
 	}
 
-	public function addType( type : String, build : Class<IBuildCommand> ) : Void
+	function _addBuildCommand( type : String, build : Class<IBuildCommand> ) : Void
 	{
 		this._commandMap.put( type, build );
 	}
 
-	public function build( constructorVO : ConstructorVO, ?id : String ) : Dynamic
+	function _build( constructorVO : ConstructorVO, ?id : String ) : Dynamic
 	{
 		var type : String = constructorVO.type;
 		var commandClass : Class<IBuildCommand> = ( this._commandMap.containsKey( type ) ) ? this._commandMap.get( type ) : this._commandMap.get( ContextTypeList.INSTANCE );
@@ -489,19 +498,5 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		}
 
 		return constructorVO.result;
-	}
-
-	public function release() : Void
-	{
-		this._coreFactory.removeListener( this );
-		this._coreFactory.clear();
-		this._constructorVOLocator.release();
-		this._propertyVOLocator.release();
-		this._methodCallVOLocator.release();
-		this._domainListenerVOLocator.release();
-		this._stateTransitionVOLocator.release();
-		this._moduleLocator.release();
-		this._commandMap.clear();
-		this._IDExpert.clear();
 	}
 }
