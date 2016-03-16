@@ -83,4 +83,9 @@ class CompileTimeCoreFactory implements ICoreFactory
 	{
 		return null;
 	}
+	
+	public function fastEvalFromTarget( target : Dynamic, toEval : String ) : Dynamic
+	{
+		return null;
+	}
 }

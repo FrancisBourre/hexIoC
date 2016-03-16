@@ -3,7 +3,6 @@ package hex.ioc.control;
 import hex.control.Request;
 import hex.error.Exception;
 import hex.ioc.vo.ConstructorVO;
-import hex.util.ObjectUtil;
 
 /**
  * ...
@@ -31,7 +30,7 @@ class BuildFunctionCommand extends AbstractBuildCommand
 
 		try
 		{
-			method = ObjectUtil.fastEvalFromTarget( target, path, this._buildHelperVO.coreFactory );
+			method = this._buildHelperVO.coreFactory.fastEvalFromTarget( target, path );
 
 		} catch ( error : Dynamic )
 		{

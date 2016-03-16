@@ -8,14 +8,14 @@ import hex.ioc.core.ICoreFactory;
  * ...
  * @author Francis Bourre
  */
-class ObjectUtil
+class FastEval
 {
 	function new() 
 	{
 		
 	}
 	
-	static public function fastEvalFromTarget( target : Dynamic, toEval : String, coreFactory : ICoreFactory ) : Dynamic
+	static public function fromTarget( target : Dynamic, toEval : String, coreFactory : ICoreFactory ) : Dynamic
 	{
 		var members : Array<String> = toEval.split( "." );
 		var result 	: Dynamic;

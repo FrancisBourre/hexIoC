@@ -14,4 +14,5 @@ interface ICoreFactory extends ILocator<String, Dynamic>
 	function getClassReference( qualifiedClassName : String ) : Class<Dynamic>;
 	function getStaticReference( qualifiedClassName : String ) : Dynamic;
 	function buildInstance( qualifiedClassName : String, ?args : Array<Dynamic>, ?factoryMethod : String, ?singletonAccess : String, ?instantiateUnmapped : Bool = false ) : Dynamic;
+	function fastEvalFromTarget( target : Dynamic, toEval : String ) : Dynamic;
 }

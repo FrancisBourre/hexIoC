@@ -12,7 +12,7 @@ import hex.event.IDispatcher;
 import hex.log.Stringifier;
 import hex.metadata.AnnotationProvider;
 import hex.service.IService;
-import hex.util.ObjectUtil;
+import hex.util.FastEval;
 
 /**
  * ...
@@ -23,6 +23,8 @@ class CoreFactory implements ICoreFactory
 	var _injector 		: IBasicInjector;
 	var _dispatcher 	: IDispatcher<ILocatorListener<String, Dynamic>>;
 	var _map 			: HashMap<String, Dynamic>;
+	
+	static var _fastEvalMethod : Dynamic->String->ICoreFactory->Dynamic = FastEval.fromTarget;
 	
 	public function new( injector : IBasicInjector ) 
 	{
@@ -64,7 +66,7 @@ class CoreFactory implements ICoreFactory
 			if ( this._map.containsKey( baseKey ) )
 			{
 				var target : Dynamic = this._map.get( baseKey );
-				return ObjectUtil.fastEvalFromTarget( target, props.join("."), this );
+				return this.fastEvalFromTarget( target, props.join(".") );
 			}
         }
 		
@@ -285,5 +287,15 @@ class CoreFactory implements ICoreFactory
 	public function getBasicInjector() : IBasicInjector
 	{
 		return this._injector;
+	}
+	
+	public function fastEvalFromTarget( target : Dynamic, toEval : String ) : Dynamic
+	{
+		return CoreFactory._fastEvalMethod( target, toEval, this );
+	}
+	
+	static public function setFastEvalMethod( method : Dynamic->String->ICoreFactory->Dynamic ) : Void
+	{
+		CoreFactory._fastEvalMethod = method;
 	}
 }

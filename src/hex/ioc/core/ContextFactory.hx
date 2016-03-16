@@ -56,7 +56,6 @@ import hex.metadata.AnnotationProvider;
 import hex.module.IModule;
 import hex.service.IService;
 import hex.service.ServiceConfiguration;
-import hex.util.ObjectUtil;
 
 /**
  * ...
@@ -185,7 +184,7 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		{
 			var props : Array<String> = propertyName.split( "." );
 			propertyName = props.pop();
-			var target : Dynamic = ObjectUtil.fastEvalFromTarget( target, props.join("."), this._coreFactory );
+			var target : Dynamic = this._coreFactory.fastEvalFromTarget( target, props.join(".") );
 			Reflect.setProperty( target, propertyName, this._getPropertyValue( property ) );
 		}
 	}

@@ -2,7 +2,6 @@ package hex.ioc.control;
 
 import hex.control.Request;
 import hex.ioc.vo.ConstructorVO;
-import hex.util.ObjectUtil;
 
 /**
  * ...
@@ -33,7 +32,7 @@ class BuildRefCommand extends AbstractBuildCommand
 			var args : Array<String> = constructorVO.ref.split( "." );
 			args.shift();
 
-			var tmp : Dynamic = ObjectUtil.fastEvalFromTarget( constructorVO.result, args.join( "." ), this._buildHelperVO.coreFactory );
+			var tmp : Dynamic = this._buildHelperVO.coreFactory.fastEvalFromTarget( constructorVO.result, args.join( "." )  );
 			var result : Dynamic = tmp;
 
 			constructorVO.result = result;
