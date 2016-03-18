@@ -10,8 +10,9 @@
   "url": "https://github.com/DoclerLabs/hexIoC",
   "dependencies": 
   {
-	"hexcore": "git:https://github.com/DoclerLabs/hexCore.git",
-	"hexinject": "git:https://github.com/DoclerLabs/hexInject.git",
+    "hexcore": "git:https://github.com/DoclerLabs/hexCore.git",
+    "hexannotation": "git:https://github.com/DoclerLabs/hexAnnotation.git",
+    "hexspeedinject": "git:https://github.com/DoclerLabs/hexSpeedInject.git",
 	"hexmvc": "git:https://github.com/DoclerLabs/hexMVC.git",
 	"hexstate": "git:https://github.com/DoclerLabs/hexState.git",
 	"hexservice": "git:https://github.com/DoclerLabs/hexService.git"

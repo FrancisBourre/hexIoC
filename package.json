@@ -24,5 +24,15 @@
   "bugs": {
     "url": "https://github.com/DoclerLabs/hexIoC/issues"
   },
-  "homepage": "https://github.com/DoclerLabs/hexIoC#readme"
+  "homepage": "https://github.com/DoclerLabs/hexMVC#readme",
+
+  "devDependencies": {
+    "hexcore": "git+https://github.com/DoclerLabs/hexCore.git#master",
+    "hexannotation": "git+https://github.com/DoclerLabs/hexAnnotation.git#master",
+    "hexspeedinject": "git+https://github.com/DoclerLabs/hexSpeedInject.git#master",
+    "hexmvc": "git+https://github.com/DoclerLabs/hexMVC.git#master",
+    "hexstate": "git+https://github.com/DoclerLabs/hexState.git#master",
+    "hexservice": "git+https://github.com/DoclerLabs/hexService.git#master",
+    "hexunit": "git+https://github.com/DoclerLabs/hexUnit.git#master"
+  }
 }

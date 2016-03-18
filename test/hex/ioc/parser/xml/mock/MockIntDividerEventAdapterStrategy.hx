@@ -1,5 +1,6 @@
 package hex.ioc.parser.xml.mock;
 
+import hex.di.ISpeedInjectorContainer;
 import hex.event.AdapterStrategy;
 
 /**
@@ -7,9 +8,9 @@ import hex.event.AdapterStrategy;
  * @author Francis Bourre
  */
 @:rtti
-class MockIntDividerEventAdapterStrategy extends AdapterStrategy
+class MockIntDividerEventAdapterStrategy extends AdapterStrategy implements ISpeedInjectorContainer
 {
-	@Inject("name=mockDividerHelper")
+	@Inject( "mockDividerHelper" )
 	public var helper : IMockDividerHelper;
 
 	public function new()

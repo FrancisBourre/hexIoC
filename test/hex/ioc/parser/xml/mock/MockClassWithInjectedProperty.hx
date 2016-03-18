@@ -1,11 +1,12 @@
 package hex.ioc.parser.xml.mock;
 
+import hex.di.ISpeedInjectorContainer;
+
 /**
  * ...
  * @author Francis Bourre
  */
-@:rtti
-class MockClassWithInjectedProperty
+class MockClassWithInjectedProperty implements ISpeedInjectorContainer
 {
 	@Inject
 	public var property : String;

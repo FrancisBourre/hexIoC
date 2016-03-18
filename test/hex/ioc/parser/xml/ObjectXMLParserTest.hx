@@ -1,5 +1,6 @@
 package hex.ioc.parser.xml;
 
+import hex.di.SpeedInjector;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.core.IContextFactory;
 import hex.ioc.parser.preprocess.Preprocessor;
@@ -10,7 +11,6 @@ import hex.di.IDependencyInjector;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.event.Dispatcher;
 import hex.event.EventProxy;
-import hex.inject.Injector;
 import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.parser.xml.mock.AnotherMockAmazonService;
@@ -726,7 +726,7 @@ class ObjectXMLParserTest
 		Assert.isInstanceOf( amazonService, MockAmazonService, "" );
 		Assert.isInstanceOf( facebookService, MockFacebookService, "" );
 
-		var injector = new Injector();
+		var injector = new SpeedInjector();
 		serviceLocator.configure( injector, new Dispatcher(), null );
 
 		Assert.isInstanceOf( injector.getInstance( IMockAmazonService ), MockAmazonService, "" );
@@ -758,7 +758,7 @@ class ObjectXMLParserTest
 		Assert.isNotNull( amazonService0, "" );
 		Assert.isNotNull( amazonService1, "" );
 
-		var injector = new Injector();
+		var injector = new SpeedInjector();
 		serviceLocator.configure( injector, new Dispatcher(), null );
 
 		Assert.isInstanceOf( injector.getInstance( IMockAmazonService, "amazon0" ),  MockAmazonService, "" );
@@ -986,7 +986,7 @@ class ObjectXMLParserTest
 		
 		var eventProxy : EventProxy = this._builderFactory.getCoreFactory().locate( "eventProxy" );
 		Assert.isNotNull( eventProxy, "" );
-		
+
 		var chat : MockChatModule = this._builderFactory.getCoreFactory().locate( "chat" );
 		Assert.isNotNull( chat, "" );
 

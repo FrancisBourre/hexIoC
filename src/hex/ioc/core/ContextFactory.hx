@@ -1,5 +1,6 @@
 package hex.ioc.core;
 
+import hex.di.SpeedInjector;
 import hex.collection.HashMap;
 import hex.collection.ILocatorListener;
 import hex.control.macro.IMacroExecutor;
@@ -18,7 +19,6 @@ import hex.event.IAdapterStrategy;
 import hex.event.IDispatcher;
 import hex.event.IEvent;
 import hex.event.MessageType;
-import hex.inject.Injector;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.ApplicationAssemblerMessage;
 import hex.ioc.assembler.ApplicationContext;
@@ -83,7 +83,7 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		this._contextDispatcher = ApplicationDomainDispatcher.getInstance().getDomainDispatcher( domain );
 		
 		//build injector
-		var injector = new Injector();
+		var injector = new SpeedInjector();
 		injector.mapToValue( IBasicInjector, injector );
 		injector.mapToValue( IDependencyInjector, injector );
 		injector.mapToType( IMacroExecutor, MacroExecutor );

@@ -9,14 +9,13 @@ import hex.event.MacroAdapterStrategy;
  * ...
  * @author Francis Bourre
  */
-@:rtti
 class MockChatAdapterStrategyMacro extends MacroAdapterStrategy
 {
 	var _message : String;
 
 	public var url : String = "http://google.com";
 	
-	@Inject( "name=receiver" )
+	@Inject( "receiver" )
 	public var module : MockReceiverModule;
 
 	public function new()

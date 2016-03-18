@@ -9,7 +9,6 @@ import hex.event.MacroAdapterStrategy;
  * ...
  * @author Francis Bourre
  */
-@:rtti
 class MockChatEventAdapterStrategyMacro extends MacroAdapterStrategy
 {
 	var _message : String;
