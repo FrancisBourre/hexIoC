@@ -1,0 +1,10 @@
+<root name="applicationContext">
+
+    <bean id="rect1" type="hex.ioc.parser.xml.mock.MockRectangle">
+        <argument type="Int" value="50"/>
+        <argument type="Int" value="60"/>
+        <argument type="Int" value="70"/>
+        <argument ref="rect0.height"/>
+    </bean>
+
+</root>

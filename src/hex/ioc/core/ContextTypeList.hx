@@ -16,7 +16,7 @@ class ContextTypeList
 	public inline static var STRING 			: String = "String";
 	public inline static var UINT 				: String = "UInt";
 	public inline static var DEFAULT 			: String = "Default";
-	public inline static var HASHMAP 			: String = "hex.core.HashMap";
+	public inline static var HASHMAP 			: String = "hex.collection.HashMap";
 	public inline static var SERVICE_LOCATOR 	: String = "hex.config.stateful.ServiceLocator";
 	public inline static var CLASS 				: String = "Class";
 	public inline static var XML 				: String = "XML";

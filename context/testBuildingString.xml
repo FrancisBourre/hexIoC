@@ -1,0 +1,3 @@
+<root name="applicationContext">
+    <test id="s" value="hello"/>
+</root>

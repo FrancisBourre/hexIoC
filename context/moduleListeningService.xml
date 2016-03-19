@@ -1,0 +1,11 @@
+<root name="applicationContext">
+
+    <service id="myService" type="hex.ioc.parser.xml.mock.MockStubStatefulService"/>
+
+    <module id="myModule" type="hex.ioc.parser.xml.mock.MockModuleWithServiceCallback">
+        <listen ref="myService">
+            <event static-ref="hex.ioc.parser.xml.mock.MockStubStatefulService.BOOLEAN_VO_UPDATE" method="onBooleanServiceCallback"/>
+        </listen>
+    </module>
+
+</root>

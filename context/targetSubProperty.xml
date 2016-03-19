@@ -1,0 +1,7 @@
+<root name="applicationContext">
+
+    <test id="mockObject" type="hex.ioc.parser.xml.mock.MockObjectWithRegtangleProperty">
+        <property name="rectangle.x" type="Float" value="1.5"/>
+    </test>
+
+</root>

@@ -1,0 +1,10 @@
+<root name="applicationContext">
+
+    <serviceLocator id="serviceLocator" type="hex.config.stateful.ServiceLocator">
+        <item> <key type="Class" value="hex.ioc.parser.xml.mock.IMockAmazonService"/> <value type="Class" value="hex.ioc.parser.xml.mock.MockAmazonService"/></item>
+        <item> <key type="Class" value="hex.ioc.parser.xml.mock.IMockFacebookService"/> <value ref="facebookService"/></item>
+    </serviceLocator>
+
+    <facebookService id="facebookService" type="hex.ioc.parser.xml.mock.MockFacebookService"/>
+
+</root>

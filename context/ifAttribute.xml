@@ -1,0 +1,6 @@
+<root name="applicationContext">
+
+    <msg id="message" value="hello debug" if="debug,release"/>
+    <msg id="message" value="hello production" if="production"/>
+
+</root>

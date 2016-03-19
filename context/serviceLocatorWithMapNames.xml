@@ -1,0 +1,8 @@
+<root name="applicationContext">
+
+    <serviceLocator id="serviceLocator" type="hex.config.stateful.ServiceLocator">
+        <item map-name="amazon0"> <key type="Class" value="hex.ioc.parser.xml.mock.IMockAmazonService"/> <value type="Class" value="hex.ioc.parser.xml.mock.MockAmazonService"/></item>
+        <item map-name="amazon1"> <key type="Class" value="hex.ioc.parser.xml.mock.IMockAmazonService"/> <value type="Class" value="hex.ioc.parser.xml.mock.AnotherMockAmazonService"/></item>
+    </serviceLocator>
+
+</root>

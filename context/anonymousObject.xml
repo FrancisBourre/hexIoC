@@ -1,0 +1,9 @@
+<root name="applicationContext">
+    <test id="obj" type="Object">
+        <property name="name" value="Francis"/>
+        <property name="age" type="Int" value="44"/>
+        <property name="height" type="Float" value="1.75"/>
+        <property name="isWorking" type="Bool" value="true"/>
+        <property name="isSleeping" type="Bool" value="false"/>
+    </test>
+</root>

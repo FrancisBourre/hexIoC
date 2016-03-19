@@ -1,0 +1,14 @@
+<root name="applicationContext">
+
+    <service id="myService" type="hex.ioc.parser.xml.mock.MockStubStatefulService"/>
+
+    <module id="myModule" type="hex.ioc.parser.xml.mock.MockModuleWithServiceCallback">
+        <listen ref="myService">
+            <event static-ref="hex.ioc.parser.xml.mock.MockStubStatefulService.INT_VO_UPDATE"
+                   method="onFloatServiceCallback"
+                   strategy="hex.ioc.parser.xml.mock.MockIntDividerEventAdapterStrategy"
+                   injectedInModule="true"/>
+        </listen>
+    </module>
+
+</root>

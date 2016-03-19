@@ -1,13 +1,8 @@
 package hex.ioc.parser.xml;
 
-import haxe.macro.Compiler;
+import hex.ioc.parser.xml.XMLFileReader;
 import haxe.macro.Context;
 import haxe.macro.Expr;
-import hex.ioc.assembler.AbstractApplicationContext;
-import hex.ioc.assembler.CompileTimeApplicationAssembler;
-import hex.ioc.core.CompileTimeCoreFactory;
-
-
 import hex.ioc.core.ContextNameList;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.error.ParsingException;
@@ -21,41 +16,41 @@ class XMLFileReader
 {
 	static var _includeMatcher 	: EReg = ~/<include.*?file=("|')([^"']+)\1.*?(?:(?:\/>)|(?:>[\W\w\t\r\n]*?<\/import *>))/g;
 	static var _headerMatcher 	: EReg = ~/(?:<\?xml[^>]+>\s*)<([a-zA-Z0-9-_:]+)[^>]*>([\s\S]*)<\/\1\s*>/;
-	
-	static var _assembler 		: CompileTimeApplicationAssembler;
+
+	static var _rootFolder		: String = "";
 	static var _compiledClass	: Array<String>;
-	static var _primType		: Array<String> = [	ContextTypeList.STRING, 
-													ContextTypeList.INT, 
-													ContextTypeList.UINT, 
-													ContextTypeList.FLOAT, 
-													ContextTypeList.BOOLEAN, 
-													ContextTypeList.NULL, 
-													ContextTypeList.OBJECT, 
-													ContextTypeList.XML, 
-													ContextTypeList.CLASS, 
-													ContextTypeList.FUNCTION, 
-													ContextTypeList.ARRAY
-												];
-	
+	static var _primType		: Array<String> = [	ContextTypeList.STRING,
+	ContextTypeList.INT,
+	ContextTypeList.UINT,
+	ContextTypeList.FLOAT,
+	ContextTypeList.BOOLEAN,
+	ContextTypeList.NULL,
+	ContextTypeList.OBJECT,
+	ContextTypeList.XML,
+	ContextTypeList.CLASS,
+	ContextTypeList.FUNCTION,
+	ContextTypeList.ARRAY
+	];
+
 	#if macro
 	static function checkForInclude( data : String )
 	{
 		if ( XMLFileReader._includeMatcher.match( data ) )
 		{
-			var f = function( eReg: EReg ) : String 
+			var f = function( eReg: EReg ) : String
 			{
-				
+
 				var fileName : String = XMLFileReader._includeMatcher.matched( 2 );
 				var data : String = XMLFileReader.readFile( fileName );
 				return XMLFileReader.cleanHeader( data );
 			}
-			
+
 			data = XMLFileReader._includeMatcher.map( data, f );
 		}
-		
+
 		return data;
 	}
-	
+
 	static function cleanHeader( data : String )
 	{
 		if ( XMLFileReader._headerMatcher.match( data ) )
@@ -66,34 +61,38 @@ class XMLFileReader
 		{
 			return data;
 		}
-		
+
 	}
-		
+
 	static function readFile( fileName : String )
 	{
-		try 
+		try
 		{
-			var path = Context.resolvePath( fileName );
+			var path = Context.resolvePath( XMLFileReader._rootFolder + fileName );
 			Context.registerModuleDependency( Context.getLocalModule(), path );
 			return sys.io.File.getContent( path );
 		}
-		catch ( error : Dynamic ) 
+		catch ( error : Dynamic )
 		{
 			return Context.error( 'File loading failed @$fileName $error', Context.currentPos() );
 		}
 	}
-	
-	static function _forceCompilation( type : String ) : Void
+
+	static function _forceCompilation( type : String ) : Bool
 	{
-		trace( type );
-		
-		if ( XMLFileReader._primType.indexOf( type ) == -1 && XMLFileReader._compiledClass.indexOf( type ) == -1 )
+		if ( type != null && XMLFileReader._primType.indexOf( type ) == -1 && XMLFileReader._compiledClass.indexOf( type ) == -1 )
 		{
 			XMLFileReader._compiledClass.push( type );
 			Context.getType( type );
+			trace( type );
+			return true;
+		}
+		else
+		{
+			return false;
 		}
 	}
-	
+
 	static function _getClassFullyQualifiedNameFromStaticRef( staticRef : String ) : String
 	{
 		var a : Array<String> = staticRef.split( "." );
@@ -101,13 +100,34 @@ class XMLFileReader
 		a.splice( a.length - 1, 1 );
 		return a.join( "." );
 	}
-	
-	static function _buildObject() : Void
+
+	static function  _includeStaticRef( staticRef : String ) : Bool
 	{
-		
+		if ( staticRef != null )
+		{
+			XMLFileReader._forceCompilation( XMLFileReader._getClassFullyQualifiedNameFromStaticRef( staticRef ) );
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
-	
-	static function _parseNode( applicationContext : AbstractApplicationContext, xml : Xml ) : Void
+
+	static function _includeClass( arg : Dynamic ) : Bool
+	{
+		if ( arg.type == ContextTypeList.CLASS )
+		{
+			XMLFileReader._forceCompilation( arg.value );
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	static function _parseNode( xml : Xml ) : Void
 	{
 		var identifier : String = XMLAttributeUtil.getID( xml );
 		if ( identifier == null )
@@ -117,75 +137,50 @@ class XMLFileReader
 
 		var type 		: String;
 		var args 		: Array<Dynamic>;
-		var factory 	: String;
-		var singleton 	: String;
-		var injectInto	: Bool;
 		var mapType		: String;
 		var staticRef	: String;
-		var ifList		: Array<String>;
-		var ifNotList	: Array<String>;
 
 		// Build object.
 		type = XMLAttributeUtil.getType( xml );
 
 		if ( type == ContextTypeList.XML )
 		{
-			args = [];
-			args.push( { ownerID:identifier, value:xml.firstElement().toString() } );
-			factory = XMLAttributeUtil.getParserClass( xml );
-			XMLFileReader._assembler.buildObject( applicationContext, identifier, type, args, factory );
+			XMLFileReader._forceCompilation( XMLAttributeUtil.getParserClass( xml ) );
 		}
 		else
 		{
 			args 		= ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR ) ? XMLParserUtil.getItems( xml ) : XMLParserUtil.getArguments( xml, type );
-			factory 	= XMLAttributeUtil.getFactoryMethod( xml );
-			singleton 	= XMLAttributeUtil.getSingletonAccess( xml );
-			injectInto	= XMLAttributeUtil.getInjectInto( xml );
-			mapType 	= XMLAttributeUtil.getMapType( xml );
-			staticRef 	= XMLAttributeUtil.getStaticRef( xml );
-			ifList 		= XMLParserUtil.getIfList( xml );
-			ifNotList 	= XMLParserUtil.getIfNotList( xml );
 
-			if ( type == null )
+			if ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR )
 			{
-				type = staticRef != null ? ContextTypeList.INSTANCE : ContextTypeList.STRING;
+				args = XMLParserUtil.getItems( xml );
+				for ( arg in args )
+				{
+					XMLFileReader._includeClass( arg.key );
+					XMLFileReader._includeClass( arg.value );
+				}
 			}
 			else
 			{
-				XMLFileReader._forceCompilation( type );
+				args = XMLParserUtil.getArguments( xml, type );
+				for ( arg in args )
+				{
+					if ( !XMLFileReader._includeStaticRef( arg.staticRef ) )
+					{
+						XMLFileReader._includeClass( arg );
+					}
+				}
 			}
-			
-			if ( mapType != null )
-			{
-				XMLFileReader._forceCompilation( mapType );
-			}
-			
-			if ( staticRef != null )
-			{
-				XMLFileReader._forceCompilation( XMLFileReader._getClassFullyQualifiedNameFromStaticRef( staticRef ) );
-			}
-			
-			XMLFileReader._assembler.buildObject( applicationContext, identifier, type, args, factory, singleton, injectInto, mapType, staticRef, ifList, ifNotList );
-			
+
+			XMLFileReader._forceCompilation( type );
+			XMLFileReader._forceCompilation( XMLAttributeUtil.getMapType( xml ) );
+			XMLFileReader._includeStaticRef( XMLAttributeUtil.getStaticRef( xml ) );
 
 			// Build property.
 			var propertyIterator = xml.elementsNamed( ContextNameList.PROPERTY );
 			while ( propertyIterator.hasNext() )
 			{
-				var property = propertyIterator.next();
-				
-				XMLFileReader._assembler.buildProperty (
-						applicationContext,
-						identifier,
-						XMLAttributeUtil.getName( property ),
-						XMLAttributeUtil.getValue( property ),
-						XMLAttributeUtil.getType( property ),
-						XMLAttributeUtil.getRef( property ),
-						XMLAttributeUtil.getMethod( property ),
-						XMLAttributeUtil.getStaticRef( property ),
-						XMLParserUtil.getIfList( xml ),
-						XMLParserUtil.getIfNotList( xml )
-				);
+				XMLFileReader._includeStaticRef( XMLAttributeUtil.getStaticRef( propertyIterator.next() ) );
 			}
 
 			// Build method call.
@@ -193,7 +188,15 @@ class XMLFileReader
 			while( methodCallIterator.hasNext() )
 			{
 				var methodCallItem = methodCallIterator.next();
-				XMLFileReader._assembler.buildMethodCall( applicationContext, identifier, XMLAttributeUtil.getName( methodCallItem ), XMLParserUtil.getMethodCallArguments( methodCallItem ), XMLParserUtil.getIfList( methodCallItem ), XMLParserUtil.getIfNotList( methodCallItem ) );
+
+				args = XMLParserUtil.getMethodCallArguments( methodCallItem );
+				for ( arg in args )
+				{
+					if ( !XMLFileReader._includeStaticRef( arg.staticRef ) )
+					{
+						XMLFileReader._includeClass( arg );
+					}
+				}
 			}
 
 			// Build channel listener.
@@ -206,7 +209,11 @@ class XMLFileReader
 				if ( channelName != null )
 				{
 					var listenerArgs : Array<DomainListenerVOArguments> = XMLParserUtil.getEventArguments( listener );
-					XMLFileReader._assembler.buildDomainListener( applicationContext, identifier, channelName, listenerArgs, XMLParserUtil.getIfList( listener ), XMLParserUtil.getIfNotList( listener ) );
+					for ( listenerArg in listenerArgs )
+					{
+						XMLFileReader._includeStaticRef( listenerArg.staticRef );
+						XMLFileReader._forceCompilation( listenerArg.strategy );
+					}
 				}
 				else
 				{
@@ -216,34 +223,36 @@ class XMLFileReader
 		}
 	}
 	#end
-	
-	macro public static function readXmlFile( fileName : String ) : ExprOf<String> 
+
+	macro public static function setRootFolder( rootFolder : String = "" ) : ExprOf<String>
 	{
-        var data = XMLFileReader.readFile( fileName );
+		XMLFileReader._rootFolder = rootFolder;
+		return Context.makeExpr( rootFolder, Context.currentPos() );
+	}
+
+	macro public static function readXmlFile( fileName : String ) : ExprOf<String>
+	{
+		var data = XMLFileReader.readFile( fileName );
 		data = XMLFileReader.checkForInclude( data );
-		
-        try 
+
+		try
 		{
 			var xml : Xml = Xml.parse( data );
 			XMLFileReader._compiledClass = [];
-			
-			XMLFileReader._assembler 	= new CompileTimeApplicationAssembler();
-			var compileTimeFactory 		= new CompileTimeCoreFactory();
-			var applicationContext 		= new AbstractApplicationContext( compileTimeFactory, "name" );
-			
+
 			var iterator = xml.firstElement().elements();
 			while ( iterator.hasNext() )
 			{
-				XMLFileReader._parseNode( applicationContext, iterator.next() );
+				XMLFileReader._parseNode( iterator.next() );
 			}
-			
-			
+
+
 		}
-		catch ( error : Dynamic ) 
+		catch ( error : Dynamic )
 		{
-            Context.error( 'Xml parsing failed @$fileName $error', Context.currentPos() );
-        }
-		
-        return Context.makeExpr( data, Context.currentPos() );
-    }
+			Context.error( 'Xml parsing failed @$fileName $error', Context.currentPos() );
+		}
+
+		return Context.makeExpr( data, Context.currentPos() );
+	}
 }

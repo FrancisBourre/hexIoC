@@ -7,12 +7,10 @@ import hex.ioc.parser.preprocess.Preprocessor;
 import haxe.Timer;
 import hex.collection.HashMap;
 import hex.config.stateful.ServiceLocator;
-import hex.di.IDependencyInjector;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.event.Dispatcher;
 import hex.event.EventProxy;
 import hex.ioc.assembler.ApplicationAssembler;
-import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.parser.xml.mock.AnotherMockAmazonService;
 import hex.ioc.parser.xml.mock.AnotherMockModuleWithServiceCallback;
 import hex.ioc.parser.xml.mock.ClassWithConstantConstantArgument;
@@ -41,16 +39,8 @@ import hex.structures.Point;
 import hex.structures.Size;
 import hex.unittest.assertion.Assert;
 import hex.unittest.runner.MethodRunner;
-
-import hex.ioc.parser.xml.mock.MockRectangleFactory;
-import hex.ioc.parser.xml.mock.MockPointFactory;
-import hex.ioc.parser.xml.mock.MockXMLParser;
-import hex.ioc.parser.xml.mock.MockChatAdapterStrategy;
-import hex.ioc.parser.xml.mock.MockChatEventAdapterStrategyWithInjection;
 import hex.ioc.parser.xml.mock.MockStubStatefulService;
-import hex.ioc.parser.xml.mock.MockIntDividerEventAdapterStrategy;
-import hex.ioc.parser.xml.mock.MockChatEventAdapterStrategyMacro;
-import hex.ioc.parser.xml.mock.MockChatAdapterStrategyMacro;
+
 
 /**
  * ...
@@ -85,19 +75,18 @@ class ObjectXMLParserTest
 		this._contextParser.parse( this._applicationAssembler, xml );
 		this._applicationAssembler.buildEverything();
 	}
+
+	function build( xml : String ) : Void
+	{
+		this._contextParser = new ApplicationXMLParser();
+		this._contextParser.parse( this._applicationAssembler, Xml.parse( xml ) );
+		this._applicationAssembler.buildEverything();
+	}
 	
 	@Test( "test building String" )
 	public function testBuildingString() : Void
 	{
-		var source : String = '
-		<root name="applicationContext">
-			<test id="s" value="hello"/>
-		</root>';
-		
-		
-		var xml : Xml = Xml.parse( source );
-		this._build( xml );
-		
+		this.build( XMLFileReader.readXmlFile( "../context/testBuildingString.xml" ) );
 		var s : String = this._builderFactory.getCoreFactory().locate( "s" );
 		Assert.equals( "hello", s, "" );
 	}
@@ -105,21 +94,7 @@ class ObjectXMLParserTest
 	@Test( "test building anonymous object" )
 	public function testBuildingAnonymousObject() : Void
 	{
-		var source : String = '
-		<root name="applicationContext">
-			<test id="obj" type="Object">
-				<property name="name" value="Francis"/>
-				<property name="age" type="Int" value="44"/>
-				<property name="height" type="Float" value="1.75"/>
-				<property name="isWorking" type="Bool" value="true"/>
-				<property name="isSleeping" type="Bool" value="false"/>
-			</test>
-		</root>';
-		
-		
-		var xml : Xml = Xml.parse( source );
-		this._build( xml );
-
+		this.build(  XMLFileReader.readXmlFile( "../context/anonymousObject.xml" ) );
 		var obj : Dynamic = this._builderFactory.getCoreFactory().locate( "obj" );
 
 		Assert.equals( "Francis", obj.name, "" );
@@ -133,16 +108,7 @@ class ObjectXMLParserTest
 	@Test( "test building simple instance with arguments" )
 	public function testBuildingSimpleInstanceWithArguments() : Void
 	{
-		var source : String = '
-		<root name="applicationContext">
-			<bean id="size" type="hex.structures.Size">
-				<argument type="Int" value="10"/>
-				<argument type="Int" value="20"/>
-			</bean>
-		</root>';
-			
-		var xml : Xml = Xml.parse( source );
-		this._build( xml );
+		this.build(  XMLFileReader.readXmlFile( "../context/simpleInstanceWithArguments.xml" ) );
 
 		var size : Size = this._builderFactory.getCoreFactory().locate( "size" );
 		Assert.isInstanceOf( size, Size, "" );
@@ -153,27 +119,7 @@ class ObjectXMLParserTest
 	@Test( "test building multiple instances with references" )
 	public function testBuildingMultipleInstancesWithReferences() : Void
 	{
-		var source : String = '
-		<root name="applicationContext">
-			<rectangle id="rect" type="hex.ioc.parser.xml.mock.MockRectangle">
-				<argument ref="rectPosition.x"/>
-				<argument ref="rectPosition.y"/>
-				<property name="size" ref="rectSize" />
-			</rectangle>
-			
-			<size id="rectSize" type="hex.structures.Point">
-				<argument type="Int" value="30"/>
-				<argument type="Int" value="40"/>
-			</size>
-			
-			<position id="rectPosition" type="hex.structures.Point">
-				<property type="Int" name="x" value="10"/>
-				<property type="Int" name="y" value="20"/>
-			</position>
-		</root>';
-		
-		var xml : Xml = Xml.parse( source );
-		this._build( xml );
+		this.build(  XMLFileReader.readXmlFile( "../context/multipleInstancesWithReferences.xml" ) );
 
 		var rectSize : Point = this._builderFactory.getCoreFactory().locate( "rectSize" );
 		Assert.isInstanceOf( rectSize, Point, "" );
@@ -197,32 +143,7 @@ class ObjectXMLParserTest
 	@Test( "test building multiple instances with method calls" )
 	public function testBuildingMultipleInstancesWithMethodCall() : Void
 	{
-		var source : String = '
-		<root name="applicationContext">
-			<rectangle id="rect" type="hex.ioc.parser.xml.mock.MockRectangle">
-				<property name="size" ref="rectSize" />
-				<method-call name="offsetPoint">
-					<argument ref="rectPosition"/>
-				</method-call></rectangle>
-			
-			<size id="rectSize" type="hex.structures.Point">
-				<argument type="Int" value="30"/>
-				<argument type="Int" value="40"/>
-			</size>
-			
-			<position id="rectPosition" type="hex.structures.Point">
-				<property type="Int" name="x" value="10"/>
-				<property type="Int" name="y" value="20"/>
-			</position>
-			
-			<rectangle id="anotherRect" type="hex.ioc.parser.xml.mock.MockRectangle">
-				<property name="size" ref="rectSize" />
-				<method-call name="reset"/>
-			</rectangle>
-		</root>';
-		
-		var xml : Xml = Xml.parse( source );
-		this._build( xml );
+		this.build(  XMLFileReader.readXmlFile( "../context/multipleInstancesWithMethodCall.xml" ) );
 
 		var rectSize : Point = this._builderFactory.getCoreFactory().locate( "rectSize" );
 		Assert.isInstanceOf( rectSize, Point, "" );
@@ -250,42 +171,20 @@ class ObjectXMLParserTest
 		Assert.equals( 0, anotherRect.height, "" );
 	}
 	
-	@Test( "test building singleton instance" )
-	public function testBuildingSingletonInstance() : Void
+	@Test( "test building instance with singleton method" )
+	public function testBuildingInstanceWithSingletonMethod() : Void
 	{
-		var source : String = '
-		<root name="applicationContext">
-			<gateway id="gateway" value="http://localhost/amfphp/gateway.php"/>
-			
-			<service id="service" type="hex.ioc.parser.xml.mock.MockServiceProvider" singleton-access="getInstance">
-				<method-call name="setGateway">
-					<argument ref="gateway" />
-				</method-call>
-			</service>
-
-		</root>';
-		
-		var xml : Xml = Xml.parse( source );
-		this._build( xml );
+		this.build(  XMLFileReader.readXmlFile( "../context/instanceWithSingletonMethod.xml" ) );
 
 		var service : MockServiceProvider = this._builderFactory.getCoreFactory().locate( "service" );
 		Assert.isInstanceOf( service, MockServiceProvider, "" );
 		Assert.equals( "http://localhost/amfphp/gateway.php", MockServiceProvider.getInstance().getGateway(), "" );
 	}
 	
-	@Test( "test factory with static method" )
-	public function testFactoryWithStaticMethod() : Void
+	@Test( "test building instance with factory static method" )
+	public function testBuildingInstanceWithFactoryStaticMethod() : Void
 	{
-		var source : String = '
-		<root name="applicationContext">
-			<rectangle id="rect" type="hex.ioc.parser.xml.mock.MockRectangleFactory" factory="getRectangle">
-				<argument type="Int" value="10"/><argument type="Int" value="20"/>
-				<argument type="Int" value="30"/><argument type="Int" value="40"/>
-			</rectangle>
-		</root>';
-		
-		var xml : Xml = Xml.parse( source );
-		this._build( xml );
+		this.build(  XMLFileReader.readXmlFile( "../context/instanceWithFactoryStaticMethod.xml" ) );
 
 		var rect : MockRectangle = this._builderFactory.getCoreFactory().locate( "rect" );
 		Assert.isInstanceOf( rect, MockRectangle, "" );
@@ -295,41 +194,24 @@ class ObjectXMLParserTest
 		Assert.equals( 40, rect.height, "" );
 	}
 	
-	@Test( "test factory with singleton" )
-	public function testFactoryWithSingleton() : Void
+	@Test( "test building instance with factory singleton method" )
+	public function testFactoryWithFactorySingletonMethod() : Void
 	{
-		var source : String = '
-		
-		<root name="applicationContext">
-			<point id="point" type="hex.ioc.parser.xml.mock.MockPointFactory" singleton-access="getInstance" factory="getPoint">
-				<argument type="Int" value="10"/>
-				<argument type="Int" value="20"/>
-			</point>
-		</root>';
-		
-		var xml : Xml = Xml.parse( source );
-		this._build( xml );
+		this.build(  XMLFileReader.readXmlFile( "../context/instanceWithFactorySingletonMethod.xml" ) );
 
 		var point : Point = this._builderFactory.getCoreFactory().locate( "point" );
 		Assert.isInstanceOf( point, Point, "" );
 		Assert.equals( 10, point.x, "" );
 		Assert.equals( 20, point.y, "" );
 	}
-	
+
 	@Test( "test 'inject-into' attribute" )
-	public function testInjectInto() : Void
+	public function testInjectIntoAttribute() : Void
 	{
 		var injector = this._applicationContext.getBasicInjector();
 		injector.mapToValue( String, 'hola mundo' );
-		
-		var source : String = '
-		
-		<root name="applicationContext">
-			<instance id="instance" type="hex.ioc.parser.xml.mock.MockClassWithInjectedProperty" inject-into="true"/>
-		</root>';
-		
-		var xml : Xml = Xml.parse( source );
-		this._build( xml );
+
+		this.build(  XMLFileReader.readXmlFile( "../context/injectIntoAttribute.xml" ) );
 
 		var instance : MockClassWithInjectedProperty = this._builderFactory.getCoreFactory().locate( "instance" );
 		Assert.isInstanceOf( instance, MockClassWithInjectedProperty, "" );
@@ -339,21 +221,7 @@ class ObjectXMLParserTest
 	@Test( "test building XML with parser class" )
 	public function testBuildingXMLWithParserClass() : Void
 	{
-		var source : String = '
-		<root name="applicationContext">
-
-			<data id="fruits" type="XML" parser-class="hex.ioc.parser.xml.mock.MockXMLParser">
-				<root>
-					<node>orange</node>
-					<node>apple</node>
-					<node>banana</node>
-				</root>
-			</data>
-
-		</root>';
-
-		var xml : Xml = Xml.parse( source );
-		this._build( xml );
+		this.build(  XMLFileReader.readXmlFile( "../context/xmlWithParserClass.xml" ) );
 
 		var fruits : Array<MockFruitVO> = this._builderFactory.getCoreFactory().locate( "fruits" );
 		Assert.equals( 3, fruits.length, "" );
@@ -367,26 +235,10 @@ class ObjectXMLParserTest
 		Assert.equals( "banana", banana.toString(), "" );
 	}
 	
-	@Test( "test Array ref" )
-	public function testArrayRef() : Void
+	@Test( "test building Array filled with references" )
+	public function testBuildingArrayFilledWithReferences() : Void
 	{
-		var source : String = '
-		<root name="applicationContext">
-
-			<collection id="fruits" type="Array">
-				<argument ref="fruit0" />
-				<argument ref="fruit1" />
-				<argument ref="fruit2" />
-			</collection>
-
-			<fruit id="fruit0" type="hex.ioc.parser.xml.mock.MockFruitVO"><argument value="orange"/></fruit>
-			<fruit id="fruit1" type="hex.ioc.parser.xml.mock.MockFruitVO"><argument value="apple"/></fruit>
-			<fruit id="fruit2" type="hex.ioc.parser.xml.mock.MockFruitVO"><argument value="banana"/></fruit>
-
-		</root>';
-
-		var xml : Xml = Xml.parse( source );
-		this._build( xml );
+		this.build(  XMLFileReader.readXmlFile( "../context/arrayFilledWithReferences.xml" ) );
 
 		var fruits : Array<MockFruitVO> = this._builderFactory.getCoreFactory().locate( "fruits" );
 		Assert.equals( 3, fruits.length, "" );
@@ -399,29 +251,11 @@ class ObjectXMLParserTest
 		Assert.equals( "apple", apple.toString(), "" );
 		Assert.equals( "banana", banana.toString(), "" );
 	}
-	
-	@Test( "test Map ref" )
-	public function testMapRef() : Void
+
+	@Test( "test building Map filled with references" )
+	public function testBuildingMapFilledWithReferences() : Void
 	{
-		var source : String = '
-		<root name="applicationContext">
-
-			<collection id="fruits" type="hex.core.HashMap">
-				<item> <key value="0"/> <value ref="fruit0"/></item>
-				<item> <key type="Int" value="1"/> <value ref="fruit1"/></item>
-				<item> <key ref="stubKey"/> <value ref="fruit2"/></item>
-			</collection>
-
-			<fruit id="fruit0" type="hex.ioc.parser.xml.mock.MockFruitVO"><argument value="orange"/></fruit>
-			<fruit id="fruit1" type="hex.ioc.parser.xml.mock.MockFruitVO"><argument value="apple"/></fruit>
-			<fruit id="fruit2" type="hex.ioc.parser.xml.mock.MockFruitVO"><argument value="banana"/></fruit>
-
-			<point id="stubKey" type="hex.structures.Point"/>
-
-		</root>';
-
-		var xml : Xml = Xml.parse( source );
-		this._build( xml );
+		this.build(  XMLFileReader.readXmlFile( "../context/hashmapFilledWithReferences.xml" ) );
 
 		var fruits : HashMap<Dynamic, MockFruitVO> = this._builderFactory.getCoreFactory().locate( "fruits" );
 		Assert.isNotNull( fruits, "" );
@@ -438,26 +272,10 @@ class ObjectXMLParserTest
 		Assert.equals( "banana", banana.toString(), "" );
 	}
 	
-	@Test( "test domain listening" )
-	public function testDomainListening() : Void
+	@Test( "test building two modules listening each other" )
+	public function testBuildingTwoModulesListeningEachOther() : Void
 	{
-		var source : String = '
-		<root name="applicationContext">
-
-			<chat id="chat" type="hex.ioc.parser.xml.mock.MockChatModule">
-				<listen ref="translation"/>
-			</chat>
-
-			<translation id="translation" type="hex.ioc.parser.xml.mock.MockTranslationModule">
-				<listen ref="chat">
-					<event static-ref="hex.ioc.parser.xml.mock.MockChatModule.TEXT_INPUT" method="onSomethingToTranslate"/>
-				</listen>
-			</translation>
-
-		</root>';
-
-		var xml : Xml = Xml.parse( source );
-		this._build( xml );
+		this.build(  XMLFileReader.readXmlFile( "../context/twoModulesListeningEachOther.xml" ) );
 
 		var chat : MockChatModule = this._builderFactory.getCoreFactory().locate( "chat" );
 		Assert.isNotNull( chat, "" );
@@ -470,26 +288,10 @@ class ObjectXMLParserTest
 		Assert.equals( "Hello", chat.translatedMessage, "" );
 	}
 	
-	@Test( "test domain listening with classAdapter" )
-	public function testDomainListeningWithEventAdapter() : Void
+	@Test( "test building two modules listening each other with adapter" )
+	public function testBuildingTwoModulesListeningEachOtherWithAdapter() : Void
 	{
-		var source : String = '
-		<root name="applicationContext">
-
-			<chat id="chat" type="hex.ioc.parser.xml.mock.MockChatModule">
-				<listen ref="translation"/>
-			</chat>
-
-			<translation id="translation" type="hex.ioc.parser.xml.mock.MockTranslationModule">
-				<listen ref="chat">
-					<event static-ref="hex.ioc.parser.xml.mock.MockChatModule.TEXT_INPUT" method="onTranslateWithTime" strategy="hex.ioc.parser.xml.mock.MockChatAdapterStrategy"/>
-				</listen>
-			</translation>
-
-		</root>';
-
-		var xml : Xml = Xml.parse( source );
-		this._build( xml );
+		this.build(  XMLFileReader.readXmlFile( "../context/twoModulesListeningEachOtherWithAdapter.xml" ) );
 
 		var chat : MockChatModule = this._builderFactory.getCoreFactory().locate( "chat" );
 		Assert.isNotNull( chat, "" );
@@ -503,26 +305,10 @@ class ObjectXMLParserTest
 		Assert.isInstanceOf( chat.date, Date, "" );
 	}
 	
-	@Test( "test domain listening with classAdapter and injection" )
-	public function testDomainListeningWithClassAdapterAndInjection() : Void
+	@Test( "test building two modules listening each other with adapter and injection" )
+	public function testBuildingTwoModulesListeningEachOtherWithAdapterAndInjection() : Void
 	{
-		var source : String = '
-		<root name="applicationContext">
-
-			<chat id="chat" type="hex.ioc.parser.xml.mock.MockChatModule"/>
-
-			<receiver id="receiver" type="hex.ioc.parser.xml.mock.MockReceiverModule">
-				<listen ref="chat">
-					<event static-ref="hex.ioc.parser.xml.mock.MockChatModule.TEXT_INPUT" method="onMessage" strategy="hex.ioc.parser.xml.mock.MockChatEventAdapterStrategyWithInjection"/>
-				</listen>
-			</receiver>
-
-			<parser id="parser" type="hex.ioc.parser.xml.mock.MockMessageParserModule" map-type="hex.ioc.parser.xml.mock.IMockMessageParserModule"/>
-
-		</root>';
-
-		var xml : Xml = Xml.parse( source );
-		this._build( xml );
+		this.build(  XMLFileReader.readXmlFile( "../context/twoModulesListeningEachOtherWithAdapterAndInjection.xml" ) );
 
 		var chat : MockChatModule = this._builderFactory.getCoreFactory().locate( "chat" );
 		Assert.isNotNull( chat, "" );
@@ -540,21 +326,7 @@ class ObjectXMLParserTest
 	@Test( "test domain dispatch after module initialisation" )
 	public function testDomainDispatchAfterModuleInitialisation() : Void
 	{
-		var source : String = '
-		<root name="applicationContext">
-
-			<sender id="sender" type="hex.ioc.parser.xml.mock.MockSenderModule"/>
-
-			<receiver id="receiver" type="hex.ioc.parser.xml.mock.MockReceiverModule">
-				<listen ref="sender">
-					<event static-ref="hex.ioc.parser.xml.mock.MockChatModule.TEXT_INPUT" method="onMessageEvent"/>
-				</listen>
-			</receiver>
-
-		</root>';
-
-		var xml : Xml = Xml.parse( source );
-		this._build( xml );
+		this.build(  XMLFileReader.readXmlFile( "../context/domainDispatchAfterModuleInitialisation.xml" ) );
 
 		var sender : MockSenderModule = this._builderFactory.getCoreFactory().locate( "sender" );
 		Assert.isNotNull( sender, "" );
@@ -646,20 +418,10 @@ class ObjectXMLParserTest
 		Assert.equals( subChildRectangle, applicationContextParent.applicationContextChild.applicationContextSubChild.rect0, "" );
 	}
 	
-	@Test( "test targeting sub property" )
-	public function testTargetingSubProperty() : Void
+	@Test( "test target sub property" )
+	public function testTargetSubProperty() : Void
 	{
-		var source : String = '
-		<root name="applicationContext">
-
-			<test id="mockObject" type="hex.ioc.parser.xml.mock.MockObjectWithRegtangleProperty">
-				<property name="rectangle.x" type="Float" value="1.5"/>
-			</test>
-
-		</root>';
-
-		var xml : Xml = Xml.parse( source );
-		this._build( xml );
+		this.build(  XMLFileReader.readXmlFile( "../context/targetSubProperty.xml" ) );
 
 		var mockObject : MockObjectWithRegtangleProperty = this._builderFactory.getCoreFactory().locate( "mockObject" );
 		Assert.isInstanceOf( mockObject, MockObjectWithRegtangleProperty, "" );
@@ -669,19 +431,7 @@ class ObjectXMLParserTest
 	@Test( "test building class reference" )
 	public function testBuildingClassReference() : Void
 	{
-		var source : String = '
-		<root name="applicationContext">
-
-			<RectangleClass id="RectangleClass" type="Class" value="hex.ioc.parser.xml.mock.MockRectangle"/>
-			
-			<test id="classContainer" type="Object">
-				<property name="AnotherRectangleClass" ref="RectangleClass"/>
-			</test>
-			
-		</root>';
-
-		var xml : Xml = Xml.parse( source );
-		this._build( xml );
+		this.build(  XMLFileReader.readXmlFile( "../context/classReference.xml" ) );
 
 		var rectangleClass : Class<MockRectangle> = this._builderFactory.getCoreFactory().locate( "RectangleClass" );
 		Assert.isInstanceOf( rectangleClass, Class, "" );
@@ -703,20 +453,7 @@ class ObjectXMLParserTest
 	@Test( "test building serviceLocator" )
 	public function testBuildingServiceLocator() : Void
 	{
-		var source : String = '
-		<root name="applicationContext">
-		
-			<serviceLocator id="serviceLocator" type="hex.config.stateful.ServiceLocator">
-				<item> <key type="Class" value="hex.ioc.parser.xml.mock.IMockAmazonService"/> <value type="Class" value="hex.ioc.parser.xml.mock.MockAmazonService"/></item>
-				<item> <key type="Class" value="hex.ioc.parser.xml.mock.IMockFacebookService"/> <value ref="facebookService"/></item>
-			</serviceLocator>
-
-			<facebookService id="facebookService" type="hex.ioc.parser.xml.mock.MockFacebookService"/>
-
-		</root>';
-
-		var xml : Xml = Xml.parse( source );
-		this._build( xml );
+		this.build(  XMLFileReader.readXmlFile( "../context/serviceLocator.xml" ) );
 
 		var serviceLocator : ServiceLocator = this._builderFactory.getCoreFactory().locate( "serviceLocator" );
 		Assert.isInstanceOf( serviceLocator, ServiceLocator, "" );
@@ -737,18 +474,7 @@ class ObjectXMLParserTest
 	@Test( "test building serviceLocator with map names" )
 	public function testBuildingServiceLocatorWithMapNames() : Void
 	{
-		var source : String = '
-		<root name="applicationContext">
-		
-			<serviceLocator id="serviceLocator" type="hex.config.stateful.ServiceLocator">
-				<item map-name="amazon0"> <key type="Class" value="hex.ioc.parser.xml.mock.IMockAmazonService"/> <value type="Class" value="hex.ioc.parser.xml.mock.MockAmazonService"/></item>
-				<item map-name="amazon1"> <key type="Class" value="hex.ioc.parser.xml.mock.IMockAmazonService"/> <value type="Class" value="hex.ioc.parser.xml.mock.AnotherMockAmazonService"/></item>
-			</serviceLocator>
-				
-		</root>';
-
-		var xml : Xml = Xml.parse( source );
-		this._build( xml );
+		this.build(  XMLFileReader.readXmlFile( "../context/serviceLocatorWithMapNames.xml" ) );
 
 		var serviceLocator : ServiceLocator = this._builderFactory.getCoreFactory().locate( "serviceLocator" );
 		Assert.isInstanceOf( serviceLocator, ServiceLocator, "" );
@@ -768,32 +494,8 @@ class ObjectXMLParserTest
 	@Test( "test parsing twice" )
 	public function testParsingTwice() : Void
 	{
-		var source0 : String = '
-		<root name="applicationContext">
-
-			<bean id="rect0" type="hex.ioc.parser.xml.mock.MockRectangle">
-				<argument type="Int" value="10"/>
-				<argument type="Int" value="20"/>
-				<argument type="Int" value="30"/>
-				<argument type="Int" value="40"/>
-			</bean>
-
-		</root>';
-
-		var source1 : String = '
-		<root name="applicationContext">
-
-			<bean id="rect1" type="hex.ioc.parser.xml.mock.MockRectangle">
-				<argument type="Int" value="50"/>
-				<argument type="Int" value="60"/>
-				<argument type="Int" value="70"/>
-				<argument ref="rect0.height"/>
-			</bean>
-
-		</root>';
-
-		this._build( Xml.parse( source0 ) );
-		this._build( Xml.parse( source1 ) );
+		this.build(  XMLFileReader.readXmlFile( "../context/mockRectangle.xml" ) );
+		this.build(  XMLFileReader.readXmlFile( "../context/mockRectangleCopy.xml" ) );
 
 		var rect0 : MockRectangle = this._builderFactory.getCoreFactory().locate( "rect0" );
 		Assert.isInstanceOf( rect0, MockRectangle, "" );
@@ -810,24 +512,10 @@ class ObjectXMLParserTest
 		Assert.equals( 40, rect1.height, "" );
 	}
 	
-	@Test( "test listening service" )
-	public function testListeningService() : Void
+	@Test( "test module listening service" )
+	public function testModuleListeningService() : Void
 	{
-		var source : String = '
-		<root name="applicationContext">
-
-			<service id="myService" type="hex.ioc.parser.xml.mock.MockStubStatefulService"/>
-
-			<module id="myModule" type="hex.ioc.parser.xml.mock.MockModuleWithServiceCallback">
-				<listen ref="myService">
-					<event static-ref="hex.ioc.parser.xml.mock.MockStubStatefulService.BOOLEAN_VO_UPDATE" method="onBooleanServiceCallback"/>
-				</listen>
-			</module>
-
-		</root>';
-
-		var xml : Xml = Xml.parse( source );
-		this._build( xml );
+		this.build(  XMLFileReader.readXmlFile( "../context/moduleListeningService.xml" ) );
 
 		var myService : IMockStubStatefulService = this._builderFactory.getCoreFactory().locate( "myService" );
 		Assert.isNotNull( myService, "" );
@@ -840,27 +528,10 @@ class ObjectXMLParserTest
 		Assert.isTrue( myModule.getBooleanValue(), "" );
 	}
 	
-	@Test( "test listening service with strategy and module injection" )
-	public function testListeningServiceWithStrategyAndModuleInjection() : Void
+	@Test( "test module listening service with strategy and module injection" )
+	public function testModuleListeningServiceWithStrategyAndModuleInjection() : Void
 	{
-		var source : String = '
-		<root name="applicationContext">
-
-			<service id="myService" type="hex.ioc.parser.xml.mock.MockStubStatefulService"/>
-
-			<module id="myModule" type="hex.ioc.parser.xml.mock.MockModuleWithServiceCallback">
-				<listen ref="myService">
-					<event static-ref="hex.ioc.parser.xml.mock.MockStubStatefulService.INT_VO_UPDATE"
-						   method="onFloatServiceCallback"
-						   strategy="hex.ioc.parser.xml.mock.MockIntDividerEventAdapterStrategy"
-						   injectedInModule="true"/>
-				</listen>
-			</module>
-
-		</root>';
-
-		var xml : Xml = Xml.parse( source );
-		this._build( xml );
+		this.build(  XMLFileReader.readXmlFile( "../context/moduleListeningServiceWithStrategyAndModuleInjection.xml" ) );
 
 		var myService : IMockStubStatefulService = this._builderFactory.getCoreFactory().locate( "myService" );
 		Assert.isNotNull( myService, "" );
@@ -873,38 +544,10 @@ class ObjectXMLParserTest
 		Assert.equals( 3.5, ( myModule.getFloatValue() ), "" );
 	}
 	
-	@Test( "test listening service with strategy and context injection" )
-	public function testListeningServiceWithStrategyAndContextInjection() : Void
+	@Test( "test module listening service with strategy and context injection" )
+	public function testModuleListeningServiceWithStrategyAndContextInjection() : Void
 	{
-		var source : String = '
-		<root name="applicationContext">
-
-			<helper id="mockDividerHelper" type="hex.ioc.parser.xml.mock.MockDividerHelper" map-type="hex.ioc.parser.xml.mock.IMockDividerHelper"/>
-
-			<service id="myService" type="hex.ioc.parser.xml.mock.MockStubStatefulService"/>
-
-			<module id="myModuleA" type="hex.ioc.parser.xml.mock.MockModuleWithServiceCallback">
-				<listen ref="myService">
-					<event static-ref="hex.ioc.parser.xml.mock.MockStubStatefulService.INT_VO_UPDATE"
-						   method="onFloatServiceCallback"
-						   strategy="hex.ioc.parser.xml.mock.MockIntDividerEventAdapterStrategy"
-						   injectedInModule="true"/>
-				</listen>
-			</module>
-
-			<module id="myModuleB" type="hex.ioc.parser.xml.mock.AnotherMockModuleWithServiceCallback">
-				<listen ref="myService">
-					<event static-ref="hex.ioc.parser.xml.mock.MockStubStatefulService.INT_VO_UPDATE"
-						   method="onFloatServiceCallback"
-						   strategy="hex.ioc.parser.xml.mock.MockIntDividerEventAdapterStrategy"
-						   injectedInModule="false"/>
-				</listen>
-			</module>
-
-		</root>';
-
-		var xml : Xml = Xml.parse( source );
-		this._build( xml );
+		this.build(  XMLFileReader.readXmlFile( "../context/moduleListeningServiceWithStrategyAndContextInjection.xml" ) );
 
 		var mockDividerHelper : IMockDividerHelper = this._builderFactory.getCoreFactory().locate( "mockDividerHelper" );
 		Assert.isNotNull( mockDividerHelper, "" );
@@ -928,23 +571,7 @@ class ObjectXMLParserTest
 	@Test( "test static-ref" )
 	public function testStaticRef() : Void
 	{
-		var source : String = '
-		<root name="applicationContext">
-
-			<constant id="constant" static-ref="hex.ioc.parser.xml.mock.MockStubStatefulService.INT_VO_UPDATE"/>
-
-			<object id="object" type="Object">
-				<property name="property" static-ref="hex.ioc.parser.xml.mock.MockStubStatefulService.INT_VO_UPDATE"/>
-			</object>
-
-			<instance id="instance" type="hex.ioc.parser.xml.mock.ClassWithConstantConstantArgument">
-				<argument static-ref="hex.ioc.parser.xml.mock.MockStubStatefulService.INT_VO_UPDATE"/>
-			</instance>
-
-		</root>';
-
-		var xml : Xml = Xml.parse( source );
-		this._build( xml );
+		this.build(  XMLFileReader.readXmlFile( "../context/staticRef.xml" ) );
 
 		var note : String = this._builderFactory.getCoreFactory().locate( "constant" );
 		Assert.isNotNull( note, "" );
@@ -962,28 +589,8 @@ class ObjectXMLParserTest
 	@Async( "test EventProxy" )
 	public function testEventProxy() : Void
 	{
-		var source : String = '
-		<root name="applicationContext">
+		this.build(  XMLFileReader.readXmlFile( "../context/eventProxy.xml" ) );
 
-			<chat id="chat" type="hex.ioc.parser.xml.mock.MockChatModule"/>
-
-			<receiver id="receiver" type="hex.ioc.parser.xml.mock.MockReceiverModule"/>
-
-			<parser id="parser" type="hex.ioc.parser.xml.mock.MockMessageParserModule" map-type="hex.ioc.parser.xml.mock.IMockMessageParserModule"/>
-
-			<proxy id="eventProxy" type="hex.event.EventProxy">
-				<argument ref="receiver"/>
-				<argument ref="receiver.onMessage"/>
-				<listen ref="chat">
-					<event static-ref="hex.ioc.parser.xml.mock.MockChatModule.TEXT_INPUT" strategy="hex.ioc.parser.xml.mock.MockChatEventAdapterStrategyMacro"/>
-				</listen>
-			</proxy>
-
-		</root>';
-
-		var xml : Xml = Xml.parse( source );
-		this._build( xml );
-		
 		var eventProxy : EventProxy = this._builderFactory.getCoreFactory().locate( "eventProxy" );
 		Assert.isNotNull( eventProxy, "" );
 
@@ -1012,26 +619,8 @@ class ObjectXMLParserTest
 	@Async( "test EventTrigger" )
 	public function testEventTrigger() : Void
 	{
-		var source : String = '
-		<root name="applicationContext">
+		this.build(  XMLFileReader.readXmlFile( "../context/eventTrigger.xml" ) );
 
-			<chat id="chat" type="hex.ioc.parser.xml.mock.MockChatModule"/>
-
-			<receiver id="receiver" type="hex.ioc.parser.xml.mock.MockReceiverModule" map-type="hex.ioc.parser.xml.mock.MockReceiverModule"/>
-			
-			<parser id="parser" type="hex.ioc.parser.xml.mock.MockMessageParserModule" map-type="hex.ioc.parser.xml.mock.IMockMessageParserModule"/>
-
-			<trigger id="eventTrigger" type="Object">
-				<listen ref="chat">
-					<event static-ref="hex.ioc.parser.xml.mock.MockChatModule.TEXT_INPUT" strategy="hex.ioc.parser.xml.mock.MockChatAdapterStrategyMacro"/>
-				</listen>
-			</trigger>
-
-		</root>';
-
-		var xml : Xml = Xml.parse( source );
-		this._build( xml );
-		
 		var eventTrigger : Dynamic = this._builderFactory.getCoreFactory().locate( "eventTrigger" );
 		Assert.isNotNull( eventTrigger, "" );
 		
@@ -1051,16 +640,8 @@ class ObjectXMLParserTest
 	@Test( "test map-type attribute" )
 	public function testMapTypeAttribute() : Void
 	{
-		var source : String = '
-		<root name="applicationContext">
-		
-			<module id="myModule" type="hex.ioc.parser.xml.mock.MockMappedModule" map-type="hex.ioc.parser.xml.mock.IMockMappedModule"/>
+		this.build(  XMLFileReader.readXmlFile( "../context/mapTypeAttribute.xml" ) );
 
-		</root>';
-
-		var xml : Xml = Xml.parse( source );
-		this._build( xml );
-		
 		var myModule : MockMappedModule = this._builderFactory.getCoreFactory().locate( "myModule" );
 		Assert.isNotNull( myModule, "" );
 		Assert.isInstanceOf( myModule, MockMappedModule, "" );
@@ -1071,17 +652,8 @@ class ObjectXMLParserTest
 	@Test( "test if attribute" )
 	public function testIfAttribute() : Void
 	{
-		var source : String = '
-		<root name="applicationContext">
-		
-			<msg id="message" value="hello debug" if="debug,release"/>
-			<msg id="message" value="hello production" if="production"/>
-
-		</root>';
-		
 		this._applicationAssembler.addConditionalProperty ( ["production" => true, "debug" => false, "release" => false] );
-		var xml : Xml = Xml.parse( source );
-		this._build( xml );
+		this.build(  XMLFileReader.readXmlFile( "../context/ifAttribute.xml" ) );
 		
 		Assert.equals( "hello production", this._builderFactory.getCoreFactory().locate( "message" ), "message value should equal 'hello production'" );
 	}

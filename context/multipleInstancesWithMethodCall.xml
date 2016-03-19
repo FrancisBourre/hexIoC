@@ -1,0 +1,22 @@
+<root name="applicationContext">
+    <rectangle id="rect" type="hex.ioc.parser.xml.mock.MockRectangle">
+        <property name="size" ref="rectSize" />
+        <method-call name="offsetPoint">
+            <argument ref="rectPosition"/>
+        </method-call></rectangle>
+
+    <size id="rectSize" type="hex.structures.Point">
+        <argument type="Int" value="30"/>
+        <argument type="Int" value="40"/>
+    </size>
+
+    <position id="rectPosition" type="hex.structures.Point">
+        <property type="Int" name="x" value="10"/>
+        <property type="Int" name="y" value="20"/>
+    </position>
+
+    <rectangle id="anotherRect" type="hex.ioc.parser.xml.mock.MockRectangle">
+        <property name="size" ref="rectSize" />
+        <method-call name="reset"/>
+    </rectangle>
+</root>
