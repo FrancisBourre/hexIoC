@@ -1,5 +1,7 @@
 package hex.ioc.parser.xml;
 
+import hex.ioc.parser.preprocess.Preprocessor;
+import hex.ioc.parser.preprocess.MacroPreprocessor;
 import hex.ioc.parser.xml.XMLFileReader;
 import haxe.macro.Context;
 import haxe.macro.Expr;
@@ -224,16 +226,64 @@ class XMLFileReader
 	}
 	#end
 
-	macro public static function setRootFolder( rootFolder : String = "" ) : ExprOf<String>
-	{
-		XMLFileReader._rootFolder = rootFolder;
-		return Context.makeExpr( rootFolder, Context.currentPos() );
-	}
-
-	macro public static function readXmlFile( fileName : String ) : ExprOf<String>
+	macro public static function readXmlFile( fileName : String, ?m : Expr ) : ExprOf<String>
 	{
 		var data = XMLFileReader.readFile( fileName );
 		data = XMLFileReader.checkForInclude( data );
+
+		if ( m != null )
+		{
+			var preprocessor = new Preprocessor();
+			var props = new Map<String, String>();
+			var key : String = null;
+			var value : String = null;
+
+			switch ( m.expr )
+			{
+				case EArrayDecl( exprs ):
+					for ( e in exprs )
+					{
+						switch( e.expr )
+						{
+							case EBinop( op, e1, e2 ):
+								switch( e1.expr )
+								{
+									case EConst( c ):
+										switch ( c )
+										{
+											case CString( s ):
+												key = s;
+											default:
+										}
+									default:
+								}
+								switch( e2.expr )
+								{
+									case EConst( c ):
+										switch ( c )
+										{
+											case CString( s ):
+												value = s;
+											default:
+										}
+									default:
+								}
+							default:
+						}
+
+						if ( key != null && value != null )
+						{
+							props.set( key, value );
+							preprocessor.addProperty( key, value );
+						}
+					}
+
+				default:
+					trace( "Invalid expression" );
+			}
+
+			data = preprocessor.parse( data );
+		}
 
 		try
 		{
@@ -253,6 +303,6 @@ class XMLFileReader
 			Context.error( 'Xml parsing failed @$fileName $error', Context.currentPos() );
 		}
 
-		return Context.makeExpr( data, Context.currentPos() );
+		return macro $v{ data };
 	}
 }

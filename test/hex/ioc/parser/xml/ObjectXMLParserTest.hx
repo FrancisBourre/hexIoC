@@ -664,7 +664,7 @@ class ObjectXMLParserTest
 		//$$ is used to escape haxe String interpolation.
 		var source : String = '
 		<root $${context}>
-		
+
 			$${node}
 
 		</root>';
@@ -677,6 +677,17 @@ class ObjectXMLParserTest
 
 		var xml : Xml = Xml.parse( preprocessor.parse( source ) );
 		this._build( xml );
+
+		Assert.equals( "bonjour", this._builderFactory.getCoreFactory().locate( "message" ), "message value should equal 'bonjour'" );
+	}
+
+	@Test( "test file preprocessor" )
+	public function testAnotherFilePreprocessor() : Void
+	{
+		this.build(  XMLFileReader.readXmlFile( "../context/preprocessor.xml", [	"hello" 		=> "bonjour",
+																					"contextName" 	=> 'applicationContext',
+																					"context" 		=> 'name="${contextName}"',
+																					"node" 			=> '<msg id="message" value="${hello}"/>' ] ) );
 
 		Assert.equals( "bonjour", this._builderFactory.getCoreFactory().locate( "message" ), "message value should equal 'bonjour'" );
 	}
