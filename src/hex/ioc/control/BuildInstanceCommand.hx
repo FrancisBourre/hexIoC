@@ -1,6 +1,6 @@
 package hex.ioc.control;
 
-import hex.control.Request;
+import hex.ioc.vo.BuildHelperVO;
 import hex.domain.Domain;
 import hex.domain.DomainExpert;
 import hex.domain.DomainUtil;
@@ -13,23 +13,27 @@ import hex.util.ClassUtil;
  * ...
  * @author Francis Bourre
  */
-class BuildInstanceCommand extends AbstractBuildCommand
+class BuildInstanceCommand implements IBuildCommand
 {
-	override public function execute( ?request : Request ) : Void
+	public function new()
 	{
-		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
+
+	}
+
+	public function execute( buildHelperVO : BuildHelperVO ) : Void
+	{
+		var constructorVO : ConstructorVO = buildHelperVO.constructorVO;
 
 		if ( constructorVO.ref != null )
 		{
 			var cmd = new BuildRefCommand();
-			cmd.setHelper( this._buildHelperVO );
-			cmd.execute( request );
+			cmd.execute( buildHelperVO );
 		}
 		else
 		{
 			if ( constructorVO.staticRef != null )
 			{
-				constructorVO.result = this._buildHelperVO.coreFactory.getStaticReference( constructorVO.staticRef );
+				constructorVO.result = buildHelperVO.coreFactory.getStaticReference( constructorVO.staticRef );
 			}
 			else
 			{
@@ -46,18 +50,18 @@ class BuildInstanceCommand extends AbstractBuildCommand
 					// do nothing as expected
 				}
 
-				constructorVO.result = this._buildHelperVO.coreFactory.buildInstance( constructorVO.type, constructorVO.arguments, constructorVO.factory, constructorVO.singleton, constructorVO.injectInto );
+				constructorVO.result = buildHelperVO.coreFactory.buildInstance( constructorVO.type, constructorVO.arguments, constructorVO.factory, constructorVO.singleton, constructorVO.injectInto );
 			}
 
 			if ( Std.is( constructorVO.result, IModule ) )
 			{
-				this._buildHelperVO.moduleLocator.register( constructorVO.ID, constructorVO.result );
+				buildHelperVO.moduleLocator.register( constructorVO.ID, constructorVO.result );
 			}
 
 			if ( constructorVO.mapType != null )
 			{
 				var classToMap : Class<Dynamic> = Type.resolveClass( constructorVO.mapType );
-				this._buildHelperVO.builderFactory.getApplicationContext().getBasicInjector().mapToValue( classToMap, constructorVO.result, constructorVO.ID );
+				buildHelperVO.builderFactory.getApplicationContext().getBasicInjector().mapToValue( classToMap, constructorVO.result, constructorVO.ID );
 			}
 		}
 	}

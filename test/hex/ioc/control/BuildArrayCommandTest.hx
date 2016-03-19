@@ -16,8 +16,7 @@ class BuildArrayCommandTest
 		var cmd = new BuildArrayCommand();
 		var helper = new BuildHelperVO();
 		helper.constructorVO 			= new ConstructorVO( "test", "Array", [3, "hello world"] );
-		cmd.setHelper( helper );
-		cmd.execute();
+		cmd.execute( helper );
 		Assert.isInstanceOf( helper.constructorVO.result, Array, "constructorVO.result should be an instance of Array class" );
 		Assert.deepEquals( [3, "hello world"], helper.constructorVO.result, "constructorVO.result should agregate the same elements" );
 	}
@@ -28,8 +27,7 @@ class BuildArrayCommandTest
 		var cmd = new BuildArrayCommand();
 		var helper = new BuildHelperVO();
 		helper.constructorVO 			= new ConstructorVO( "test", "Array", null );
-		cmd.setHelper( helper );
-		cmd.execute();
+		cmd.execute( helper );
 		Assert.isInstanceOf( helper.constructorVO.result, Array, "constructorVO.result should be an instance of Array class" );
 	}
 	
@@ -39,8 +37,7 @@ class BuildArrayCommandTest
 		var cmd = new BuildArrayCommand();
 		var helper = new BuildHelperVO();
 		helper.constructorVO 			= new ConstructorVO( "test", "Array", [] );
-		cmd.setHelper( helper );
-		cmd.execute();
+		cmd.execute( helper );
 		Assert.isInstanceOf( helper.constructorVO.result, Array, "constructorVO.result should be an instance of Array class" );
 	}
 	
@@ -50,8 +47,7 @@ class BuildArrayCommandTest
 		var cmd = new BuildArrayCommand();
 		var helper = new BuildHelperVO();
 		helper.constructorVO 			= new ConstructorVO( "test", "Array", [null] );
-		cmd.setHelper( helper );
-		cmd.execute();
+		cmd.execute( helper );
 		Assert.isInstanceOf( helper.constructorVO.result, Array, "constructorVO.result should be an instance of Array class" );
 		Assert.deepEquals( [null], helper.constructorVO.result, "constructorVO.result should agregate the same elements" );
 	}

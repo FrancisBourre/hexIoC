@@ -17,8 +17,7 @@ class BuildNullCommandTest
 		var cmd = new BuildNullCommand();
 		var helper = new BuildHelperVO();
 		helper.constructorVO 		= new ConstructorVO( "test" );
-		cmd.setHelper( helper );
-		cmd.execute();
+		cmd.execute( helper );
 		Assert.isNull( helper.constructorVO.result, "constructorVO.result should be null" );
 	}
 }

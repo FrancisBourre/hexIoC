@@ -56,7 +56,7 @@ class ApplicationAssembler implements IApplicationAssembler
 			}
 			else
 			{
-				throw new IllegalArgumentException( "addConditionalcontext fails with key'" + key + "', this keywas already assigned" );
+				throw new IllegalArgumentException( "addConditionalcontext fails with key'" + key + "', this key was already assigned" );
 			}
 		}
 	}

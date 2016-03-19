@@ -1,23 +1,22 @@
 package hex.ioc.control;
 
-import hex.control.Request;
-import hex.ioc.control.AbstractBuildCommand;
+import hex.ioc.vo.BuildHelperVO;
 import hex.ioc.vo.ConstructorVO;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class BuildArrayCommand extends AbstractBuildCommand
+class BuildArrayCommand implements IBuildCommand
 {
 	public function new()
 	{
-		super();
+
 	}
 	
-	override public function execute( ?request : Request ) : Void
+	public function execute( buildHelperVO : BuildHelperVO ) : Void
 	{
-		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
+		var constructorVO : ConstructorVO = buildHelperVO.constructorVO;
 
 		var array : Array<Dynamic> = [];
 		var args : Array<Dynamic> = constructorVO.arguments;

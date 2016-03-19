@@ -488,8 +488,7 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		builderHelperVO.constructorVO 			= constructorVO;
 		builderHelperVO.moduleLocator 			= this._moduleLocator;
 
-		buildCommand.setHelper( builderHelperVO );
-		Reflect.callMethod( buildCommand, buildCommand.getExecuteMethod(), [] );
+		buildCommand.execute( builderHelperVO );
 
 		if ( id != null )
 		{

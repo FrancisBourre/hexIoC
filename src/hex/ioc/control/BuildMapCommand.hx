@@ -1,8 +1,7 @@
 package hex.ioc.control;
 
+import hex.ioc.vo.BuildHelperVO;
 import hex.collection.HashMap;
-import hex.control.Request;
-import hex.ioc.control.AbstractBuildCommand;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.MapVO;
 import hex.log.Logger;
@@ -11,11 +10,16 @@ import hex.log.Logger;
  * ...
  * @author Francis Bourre
  */
-class BuildMapCommand extends AbstractBuildCommand
+class BuildMapCommand implements IBuildCommand
 {
-	override public function execute( ?request : Request ) : Void
+	public function new()
 	{
-		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
+
+	}
+
+	public function execute( buildHelperVO : BuildHelperVO ) : Void
+	{
+		var constructorVO : ConstructorVO = buildHelperVO.constructorVO;
 
 		var map = new HashMap<Dynamic, Dynamic>();
 		var args : Array<MapVO> = cast constructorVO.arguments;
@@ -45,7 +49,7 @@ class BuildMapCommand extends AbstractBuildCommand
 
 		if ( constructorVO.mapType != null )
 		{
-			this._buildHelperVO.builderFactory.getApplicationContext().getBasicInjector().mapToValue( HashMap, constructorVO.result, constructorVO.ID );
+			buildHelperVO.builderFactory.getApplicationContext().getBasicInjector().mapToValue( HashMap, constructorVO.result, constructorVO.ID );
 		}
 	}
 }

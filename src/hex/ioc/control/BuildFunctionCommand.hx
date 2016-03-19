@@ -1,6 +1,6 @@
 package hex.ioc.control;
 
-import hex.control.Request;
+import hex.ioc.vo.BuildHelperVO;
 import hex.error.Exception;
 import hex.ioc.vo.ConstructorVO;
 
@@ -8,11 +8,16 @@ import hex.ioc.vo.ConstructorVO;
  * ...
  * @author Francis Bourre
  */
-class BuildFunctionCommand extends AbstractBuildCommand
+class BuildFunctionCommand implements IBuildCommand
 {
-	override public function execute( ?request : Request ) : Void
+	public function new()
 	{
-		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
+
+	}
+
+	public function execute( buildHelperVO : BuildHelperVO ) : Void
+	{
+		var constructorVO : ConstructorVO = buildHelperVO.constructorVO;
 
 		var method : Dynamic;
 		var msg : String;
@@ -21,16 +26,16 @@ class BuildFunctionCommand extends AbstractBuildCommand
 		var targetID : String = args[ 0 ];
 		var path : String = args.slice( 1 ).join( "." );
 
-		if ( !this._buildHelperVO.coreFactory.isRegisteredWithKey( targetID ) )
+		if ( !buildHelperVO.coreFactory.isRegisteredWithKey( targetID ) )
 		{
-			this._buildHelperVO.builderFactory.buildObject( targetID );
+			buildHelperVO.builderFactory.buildObject( targetID );
 		}
 
-		var target : Dynamic = this._buildHelperVO.coreFactory.locate( targetID );
+		var target : Dynamic = buildHelperVO.coreFactory.locate( targetID );
 
 		try
 		{
-			method = this._buildHelperVO.coreFactory.fastEvalFromTarget( target, path );
+			method = buildHelperVO.coreFactory.fastEvalFromTarget( target, path );
 
 		} catch ( error : Dynamic )
 		{

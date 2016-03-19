@@ -1,12 +1,11 @@
 package hex.ioc.control;
 
-import hex.control.command.ICommand;
 import hex.ioc.vo.BuildHelperVO;
 
 /**
  * @author Francis Bourre
  */
-interface IBuildCommand extends ICommand
+interface IBuildCommand
 {
-	function setHelper( buildHelperVO : BuildHelperVO ) : Void;
+	function execute( buildHelperVO : BuildHelperVO ) : Void;
 }

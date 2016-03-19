@@ -17,8 +17,7 @@ class BuildFloatCommandTest
 		var cmd = new BuildFloatCommand();
 		var helper = new BuildHelperVO();
 		helper.constructorVO 		= new ConstructorVO( "test", "Float", ["4.7"] );
-		cmd.setHelper( helper );
-		cmd.execute();
+		cmd.execute( helper );
 		Assert.equals( 4.7, helper.constructorVO.result, "constructorVO.result should equal '4.7'" );
 	}
 	
@@ -28,8 +27,7 @@ class BuildFloatCommandTest
 		var cmd = new BuildFloatCommand();
 		var helper = new BuildHelperVO();
 		helper.constructorVO 		= new ConstructorVO( "test", "Float", ["-3.8"] );
-		cmd.setHelper( helper );
-		cmd.execute();
+		cmd.execute( helper );
 		Assert.equals( -3.8, helper.constructorVO.result, "constructorVO.result should equal '-3.8'" );
 	}
 	
@@ -39,8 +37,7 @@ class BuildFloatCommandTest
 		var cmd = new BuildFloatCommand();
 		var helper = new BuildHelperVO();
 		helper.constructorVO 			= new ConstructorVO( "test", "Float", ["a"] );
-		cmd.setHelper( helper );
-		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
+		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [ helper ], "command execution should throw IllegalArgumentException" );
 	}
 	
 	@Test( "Test execute with no argument array" )
@@ -49,8 +46,7 @@ class BuildFloatCommandTest
 		var cmd = new BuildFloatCommand();
 		var helper = new BuildHelperVO();
 		helper.constructorVO 			= new ConstructorVO( "test", "Float", null );
-		cmd.setHelper( helper );
-		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
+		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [ helper ], "command execution should throw IllegalArgumentException" );
 	}
 	
 	@Test( "Test execute with empty argument array" )
@@ -59,8 +55,7 @@ class BuildFloatCommandTest
 		var cmd = new BuildFloatCommand();
 		var helper = new BuildHelperVO();
 		helper.constructorVO 			= new ConstructorVO( "test", "Float", [] );
-		cmd.setHelper( helper );
-		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
+		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [ helper ], "command execution should throw IllegalArgumentException" );
 	}
 	
 	@Test( "Test execute with null argument" )
@@ -69,7 +64,6 @@ class BuildFloatCommandTest
 		var cmd = new BuildFloatCommand();
 		var helper = new BuildHelperVO();
 		helper.constructorVO 			= new ConstructorVO( "test", "Float", [null] );
-		cmd.setHelper( helper );
-		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
+		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [ helper ], "command execution should throw IllegalArgumentException" );
 	}
 }

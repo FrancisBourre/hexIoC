@@ -1,17 +1,21 @@
 package hex.ioc.control;
 
-import hex.control.Request;
+import hex.ioc.vo.BuildHelperVO;
 import hex.ioc.vo.ConstructorVO;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class BuildObjectCommand extends AbstractBuildCommand
+class BuildObjectCommand implements IBuildCommand
 {
-	override public function execute( ?request : Request ) : Void
+	public function new()
 	{
-		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
-		constructorVO.result = {};
+
+	}
+
+	public function execute( buildHelperVO : BuildHelperVO ) : Void
+	{
+		buildHelperVO.constructorVO.result = {};
 	}
 }

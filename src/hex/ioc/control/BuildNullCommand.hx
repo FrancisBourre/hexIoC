@@ -1,22 +1,22 @@
 package hex.ioc.control;
 
-import hex.control.Request;
+import hex.ioc.vo.BuildHelperVO;
 import hex.ioc.vo.ConstructorVO;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class BuildNullCommand extends AbstractBuildCommand
+class BuildNullCommand implements IBuildCommand
 {
 	public function new()
 	{
-		super();
+
 	}
 	
-	override public function execute( ?request : Request ) : Void
+	public function execute( buildHelperVO : BuildHelperVO ) : Void
 	{
-		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
+		var constructorVO : ConstructorVO = buildHelperVO.constructorVO;
 		constructorVO.result = null;
 	}
 }

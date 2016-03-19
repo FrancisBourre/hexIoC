@@ -1,17 +1,22 @@
 package hex.ioc.control;
 
-import hex.control.Request;
+import hex.ioc.vo.BuildHelperVO;
 import hex.ioc.vo.ConstructorVO;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class BuildRefCommand extends AbstractBuildCommand
+class BuildRefCommand implements IBuildCommand
 {
-	override public function execute( ?request : Request ) : Void
+	public function new()
 	{
-		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
+
+	}
+
+	public function execute( buildHelperVO : BuildHelperVO ) : Void
+	{
+		var constructorVO : ConstructorVO = buildHelperVO.constructorVO;
 
 		var key : String = constructorVO.ref;
 
@@ -20,19 +25,19 @@ class BuildRefCommand extends AbstractBuildCommand
 			key = Std.string( ( key.split( "." ) ).shift() );
 		}
 
-		if ( !( this._buildHelperVO.coreFactory.isRegisteredWithKey( key ) ) )
+		if ( !( buildHelperVO.coreFactory.isRegisteredWithKey( key ) ) )
 		{
-			this._buildHelperVO.builderFactory.buildObject( key );
+			buildHelperVO.builderFactory.buildObject( key );
 		}
 		
-		constructorVO.result = this._buildHelperVO.coreFactory.locate( key );
+		constructorVO.result = buildHelperVO.coreFactory.locate( key );
 
 		if ( constructorVO.ref.indexOf(".") != -1 )
 		{
 			var args : Array<String> = constructorVO.ref.split( "." );
 			args.shift();
 
-			var tmp : Dynamic = this._buildHelperVO.coreFactory.fastEvalFromTarget( constructorVO.result, args.join( "." )  );
+			var tmp : Dynamic = buildHelperVO.coreFactory.fastEvalFromTarget( constructorVO.result, args.join( "." )  );
 			var result : Dynamic = tmp;
 
 			constructorVO.result = result;

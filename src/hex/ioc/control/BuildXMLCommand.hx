@@ -1,6 +1,6 @@
 package hex.ioc.control;
 
-import hex.control.Request;
+import hex.ioc.vo.BuildHelperVO;
 import hex.data.IParser;
 import hex.ioc.error.ParsingException;
 import hex.ioc.vo.ConstructorVO;
@@ -9,11 +9,16 @@ import hex.ioc.vo.ConstructorVO;
  * ...
  * @author Francis Bourre
  */
-class BuildXMLCommand extends AbstractBuildCommand
+class BuildXMLCommand implements IBuildCommand
 {
-	override public function execute( ?request : Request ) : Void
+	public function new()
 	{
-		var constructorVO : ConstructorVO = this._buildHelperVO.constructorVO;
+
+	}
+
+	public function execute( buildHelperVO : BuildHelperVO ) : Void
+	{
+		var constructorVO : ConstructorVO = buildHelperVO.constructorVO;
 
 		var args : Array<Dynamic> 	= constructorVO.arguments;
 		var factory : String 		= constructorVO.factory;
@@ -32,7 +37,7 @@ class BuildXMLCommand extends AbstractBuildCommand
 				{
 					try
 					{
-						var parser : IParser = this._buildHelperVO.coreFactory.buildInstance( factory );
+						var parser : IParser = buildHelperVO.coreFactory.buildInstance( factory );
 						constructorVO.result = parser.parse( Xml.parse( source ) );
 					}
 					catch ( error : Dynamic )

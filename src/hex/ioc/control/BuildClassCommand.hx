@@ -1,6 +1,6 @@
 package hex.ioc.control;
 
-import hex.control.Request;
+import hex.ioc.vo.BuildHelperVO;
 import hex.error.IllegalArgumentException;
 import hex.ioc.vo.ConstructorVO;
 
@@ -8,16 +8,16 @@ import hex.ioc.vo.ConstructorVO;
  * ...
  * @author Francis Bourre
  */
-class BuildClassCommand extends AbstractBuildCommand
+class BuildClassCommand implements IBuildCommand
 {
 	public function new()
 	{
-		super();
+
 	}
 	
-	override public function execute( ?request : Request ) : Void
+	public function execute( buildHelperVO : BuildHelperVO ) : Void
 	{
-		var constructorVO 		: ConstructorVO = this._buildHelperVO.constructorVO;
+		var constructorVO 		: ConstructorVO = buildHelperVO.constructorVO;
 		var clazz 				: Class<Dynamic>;
 		var qualifiedClassName 	: String = "";
 		

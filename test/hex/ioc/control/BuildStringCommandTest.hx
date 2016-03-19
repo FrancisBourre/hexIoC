@@ -17,8 +17,7 @@ class BuildStringCommandTest
 		var cmd = new BuildStringCommand();
 		var helper = new BuildHelperVO();
 		helper.constructorVO 			= new ConstructorVO( "test", "String", ["hello world"] );
-		cmd.setHelper( helper );
-		cmd.execute();
+		cmd.execute( helper );
 		Assert.equals( "hello world", helper.constructorVO.result, "constructorVO.result should equal 'hello world'" );
 	}
 	
@@ -28,8 +27,7 @@ class BuildStringCommandTest
 		var cmd = new BuildStringCommand();
 		var helper = new BuildHelperVO();
 		helper.constructorVO 			= new ConstructorVO( "test", "String", null );
-		cmd.setHelper( helper );
-		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
+		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [ helper ], "command execution should throw IllegalArgumentException" );
 	}
 	
 	@Test( "Test execute with empty argument array" )
@@ -38,8 +36,7 @@ class BuildStringCommandTest
 		var cmd = new BuildStringCommand();
 		var helper = new BuildHelperVO();
 		helper.constructorVO 			= new ConstructorVO( "test", "String", [] );
-		cmd.setHelper( helper );
-		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
+		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [ helper ], "command execution should throw IllegalArgumentException" );
 	}
 	
 	@Test( "Test execute with null argument" )
@@ -48,8 +45,7 @@ class BuildStringCommandTest
 		var cmd = new BuildStringCommand();
 		var helper = new BuildHelperVO();
 		helper.constructorVO 			= new ConstructorVO( "test", "String", [null] );
-		cmd.setHelper( helper );
-		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
+		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [ helper ], "command execution should throw IllegalArgumentException" );
 	}
 	
 	@Test( "Test execute with argument zero length" )
@@ -58,8 +54,7 @@ class BuildStringCommandTest
 		var cmd = new BuildStringCommand();
 		var helper = new BuildHelperVO();
 		helper.constructorVO 			= new ConstructorVO( "test", "String", [""] );
-		cmd.setHelper( helper );
-		cmd.execute();
+		cmd.execute( helper );
 		Assert.equals( "", helper.constructorVO.result, "constructorVO.result should equal ''" );
 	}
 }

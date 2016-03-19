@@ -1,24 +1,23 @@
 package hex.ioc.control;
 
-import hex.control.Request;
+import hex.ioc.vo.BuildHelperVO;
 import hex.error.IllegalArgumentException;
-import hex.ioc.control.AbstractBuildCommand;
 import hex.ioc.vo.ConstructorVO;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class BuildUIntCommand extends AbstractBuildCommand
+class BuildUIntCommand implements IBuildCommand
 {
 	public function new()
 	{
-		super();
+
 	}
 	
-	override public function execute( ?request : Request ) : Void
+	public function execute( buildHelperVO : BuildHelperVO ) : Void
 	{
-		var constructorVO : ConstructorVO 	= this._buildHelperVO.constructorVO;
+		var constructorVO : ConstructorVO 	= buildHelperVO.constructorVO;
 
 		var args 	: Array<Dynamic> 		= constructorVO.arguments;
 		var number 	: UInt 					= 0;

@@ -18,8 +18,7 @@ class BuildIntcommandTest
 		var cmd = new BuildIntCommand();
 		var helper = new BuildHelperVO();
 		helper.constructorVO 		= new ConstructorVO( "test", "Int", ["4"] );
-		cmd.setHelper( helper );
-		cmd.execute();
+		cmd.execute( helper );
 		Assert.equals( 4, helper.constructorVO.result, "constructorVO.result should equal 4" );
 	}
 	
@@ -29,8 +28,7 @@ class BuildIntcommandTest
 		var cmd = new BuildIntCommand();
 		var helper = new BuildHelperVO();
 		helper.constructorVO = new ConstructorVO( "test", "Int", ["-4"] );
-		cmd.setHelper( helper );
-		cmd.execute();
+		cmd.execute( helper );
 		Assert.equals( -4, helper.constructorVO.result, "constructorVO.result should equal -4" );
 	}
 	
@@ -40,8 +38,7 @@ class BuildIntcommandTest
 		var cmd = new BuildIntCommand();
 		var helper = new BuildHelperVO();
 		helper.constructorVO 		= new ConstructorVO( "test", "Int", ["a"] );
-		cmd.setHelper( helper );
-		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
+		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [ helper ], "command execution should throw IllegalArgumentException" );
 	}
 	
 	@Test( "Test execute with no argument array" )
@@ -50,8 +47,7 @@ class BuildIntcommandTest
 		var cmd = new BuildIntCommand();
 		var helper = new BuildHelperVO();
 		helper.constructorVO 			= new ConstructorVO( "test", "Int", null );
-		cmd.setHelper( helper );
-		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
+		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [ helper ], "command execution should throw IllegalArgumentException" );
 	}
 	
 	@Test( "Test execute with empty argument array" )
@@ -60,8 +56,7 @@ class BuildIntcommandTest
 		var cmd = new BuildIntCommand();
 		var helper = new BuildHelperVO();
 		helper.constructorVO 			= new ConstructorVO( "test", "Int", [] );
-		cmd.setHelper( helper );
-		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
+		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [ helper ], "command execution should throw IllegalArgumentException" );
 	}
 	
 	@Test( "Test execute with null argument" )
@@ -70,7 +65,6 @@ class BuildIntcommandTest
 		var cmd = new BuildIntCommand();
 		var helper = new BuildHelperVO();
 		helper.constructorVO 			= new ConstructorVO( "test", "Int", [null] );
-		cmd.setHelper( helper );
-		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [], "command execution should throw IllegalArgumentException" );
+		Assert.methodCallThrows( IllegalArgumentException, cmd, cmd.execute, [ helper ], "command execution should throw IllegalArgumentException" );
 	}
 }
