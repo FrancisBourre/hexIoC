@@ -1,7 +1,6 @@
 package hex.ioc.core;
 
 import hex.di.SpeedInjector;
-import hex.collection.HashMap;
 import hex.collection.ILocatorListener;
 import hex.control.macro.IMacroExecutor;
 import hex.control.macro.MacroExecutor;
@@ -66,7 +65,7 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 	var _contextDispatcher			: IDispatcher<{}>;
 	var _moduleLocator				: ModuleLocator;
 	var _applicationContext 		: AbstractApplicationContext;
-	var _commandMap 				: HashMap<String, Class<IBuildCommand>>;
+	var _commandMap 				: Map<String, IBuildCommand>;
 	var _coreFactory 				: ICoreFactory;
 	var _applicationDomainHub 		: IApplicationDomainDispatcher;
 	var _IDExpert 					: IDExpert;
@@ -434,13 +433,13 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		this._domainListenerVOLocator.release();
 		this._stateTransitionVOLocator.release();
 		this._moduleLocator.release();
-		this._commandMap.clear();
+		this._commandMap = new Map();
 		this._IDExpert.clear();
 	}
 
 	function _init() : Void
 	{
-		this._commandMap 				= new HashMap<String, Class<IBuildCommand>>();
+		this._commandMap 				= new Map();
 		this._applicationDomainHub 		= ApplicationDomainDispatcher.getInstance();
 		this._IDExpert 					= new IDExpert();
 		this._constructorVOLocator 		= new ConstructorVOLocator();
@@ -450,38 +449,37 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		this._stateTransitionVOLocator 	= new StateTransitionVOLocator( this );
 		this._moduleLocator 			= new ModuleLocator( this );
 
-		this._addBuildCommand( ContextTypeList.ARRAY, BuildArrayCommand );
-		this._addBuildCommand( ContextTypeList.BOOLEAN, BuildBooleanCommand );
-		this._addBuildCommand( ContextTypeList.INSTANCE, BuildInstanceCommand );
-		this._addBuildCommand( ContextTypeList.INT, BuildIntCommand );
-		this._addBuildCommand( ContextTypeList.NULL, BuildNullCommand );
-		this._addBuildCommand( ContextTypeList.FLOAT, BuildFloatCommand );
-		this._addBuildCommand( ContextTypeList.OBJECT, BuildObjectCommand );
-		this._addBuildCommand( ContextTypeList.STRING, BuildStringCommand );
-		this._addBuildCommand( ContextTypeList.UINT, BuildUIntCommand );
-		this._addBuildCommand( ContextTypeList.DEFAULT, BuildStringCommand );
-		this._addBuildCommand( ContextTypeList.HASHMAP, BuildMapCommand );
-		this._addBuildCommand( ContextTypeList.SERVICE_LOCATOR, BuildServiceLocatorCommand );
-		this._addBuildCommand( ContextTypeList.CLASS, BuildClassCommand );
-		this._addBuildCommand( ContextTypeList.XML, BuildXMLCommand );
-		this._addBuildCommand( ContextTypeList.FUNCTION, BuildFunctionCommand );
-		this._addBuildCommand( ContextTypeList.UNKNOWN, BuildInstanceCommand );
+		this._commandMap.set( ContextTypeList.ARRAY, new BuildArrayCommand() );
+		this._commandMap.set( ContextTypeList.BOOLEAN, new BuildBooleanCommand() );
+		this._commandMap.set( ContextTypeList.INT, new BuildIntCommand() );
+		this._commandMap.set( ContextTypeList.NULL, new BuildNullCommand() );
+		this._commandMap.set( ContextTypeList.FLOAT, new BuildFloatCommand() );
+		this._commandMap.set( ContextTypeList.OBJECT, new BuildObjectCommand() );
+		this._commandMap.set( ContextTypeList.STRING, new BuildStringCommand() );
+		this._commandMap.set( ContextTypeList.UINT, new BuildUIntCommand() );
+		this._commandMap.set( ContextTypeList.DEFAULT, new BuildStringCommand() );
+		this._commandMap.set( ContextTypeList.HASHMAP, new BuildMapCommand() );
+		this._commandMap.set( ContextTypeList.SERVICE_LOCATOR, new BuildServiceLocatorCommand() );
+		this._commandMap.set( ContextTypeList.CLASS, new BuildClassCommand() );
+		this._commandMap.set( ContextTypeList.XML, new BuildXMLCommand() );
+		this._commandMap.set( ContextTypeList.FUNCTION, new BuildFunctionCommand() );
+
+		//we don't map ContextTypeList.INSTANCE to BuildInstanceCommand, because it's a stateful process;
 		
 		this._coreFactory.addListener( this );
 	}
 
-	function _addBuildCommand( type : String, build : Class<IBuildCommand> ) : Void
+	function _addBuildCommand( type : String, build : IBuildCommand ) : Void
 	{
-		this._commandMap.put( type, build );
+		this._commandMap.set( type, build );
 	}
 
 	function _build( constructorVO : ConstructorVO, ?id : String ) : Dynamic
 	{
-		var type : String = constructorVO.type;
-		var commandClass : Class<IBuildCommand> = ( this._commandMap.containsKey( type ) ) ? this._commandMap.get( type ) : this._commandMap.get( ContextTypeList.INSTANCE );
-		var buildCommand : IBuildCommand = Type.createInstance( commandClass, [] );
+		var type 								= constructorVO.type;
+		var buildCommand 						= ( this._commandMap.exists( type ) ) ? this._commandMap.get( type ) : new BuildInstanceCommand();
 
-		var builderHelperVO = new BuildHelperVO();
+		var builderHelperVO 					= new BuildHelperVO();
 		builderHelperVO.type 					= type;
 		builderHelperVO.builderFactory 			= this;
 		builderHelperVO.coreFactory 			= this._coreFactory;

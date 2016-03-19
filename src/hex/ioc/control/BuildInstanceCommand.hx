@@ -26,8 +26,26 @@ class BuildInstanceCommand implements IBuildCommand
 
 		if ( constructorVO.ref != null )
 		{
-			var cmd = new BuildRefCommand();
-			cmd.execute( buildHelperVO );
+			var key : String = constructorVO.ref;
+
+			if ( key.indexOf(".") != -1 )
+			{
+				key = Std.string( ( key.split( "." ) ).shift() );
+			}
+
+			if ( !( buildHelperVO.coreFactory.isRegisteredWithKey( key ) ) )
+			{
+				buildHelperVO.builderFactory.buildObject( key );
+			}
+
+			constructorVO.result = buildHelperVO.coreFactory.locate( key );
+
+			if ( constructorVO.ref.indexOf( "." ) != -1 )
+			{
+				var args : Array<String> = constructorVO.ref.split( "." );
+				args.shift();
+				constructorVO.result = buildHelperVO.coreFactory.fastEvalFromTarget( constructorVO.result, args.join( "." )  );
+			}
 		}
 		else
 		{

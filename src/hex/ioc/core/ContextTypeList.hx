@@ -21,5 +21,4 @@ class ContextTypeList
 	public inline static var CLASS 				: String = "Class";
 	public inline static var XML 				: String = "XML";
 	public inline static var FUNCTION 			: String = "Function";
-	public inline static var UNKNOWN 			: String = "*";
 }

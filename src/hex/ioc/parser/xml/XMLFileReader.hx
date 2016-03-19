@@ -148,7 +148,7 @@ class XMLFileReader
 
 			if ( type == null )
 			{
-				type = staticRef != null ? ContextTypeList.UNKNOWN : ContextTypeList.STRING;
+				type = staticRef != null ? ContextTypeList.INSTANCE : ContextTypeList.STRING;
 			}
 			else
 			{
