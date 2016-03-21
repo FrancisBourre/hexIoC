@@ -6,7 +6,6 @@ import hex.event.AdapterStrategy;
  * ...
  * @author Francis Bourre
  */
-@:rtti
 class MockChatAdapterStrategy extends AdapterStrategy
 {
 	public function new() 

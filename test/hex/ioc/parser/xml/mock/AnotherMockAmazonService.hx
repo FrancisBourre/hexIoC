@@ -1,5 +1,6 @@
 package hex.ioc.parser.xml.mock;
 
+import hex.di.ISpeedInjectorContainer;
 import hex.service.ServiceConfiguration;
 import hex.service.stateless.StatelessService;
 
@@ -7,15 +8,14 @@ import hex.service.stateless.StatelessService;
  * ...
  * @author Francis Bourre
  */
-@:rtti
-class AnotherMockAmazonService extends StatelessService<ServiceConfiguration> implements IMockAmazonService
+class AnotherMockAmazonService extends StatelessService<ServiceConfiguration> implements IMockAmazonService implements ISpeedInjectorContainer
 {
 	public function new() 
 	{
 		super();
 	}
 	
-	@postConstruct
+	@PostConstruct
 	override public function createConfiguration() : Void
 	{
 		//do nothing

@@ -7,7 +7,6 @@ import hex.service.stateless.StatelessService;
  * ...
  * @author Francis Bourre
  */
-@:rtti
 class MockAmazonService extends StatelessService<ServiceConfiguration> implements IMockAmazonService
 {
 	public function new() 
@@ -15,7 +14,7 @@ class MockAmazonService extends StatelessService<ServiceConfiguration> implement
 		super();
 	}
 	
-	@postConstruct
+	@PostConstruct
 	override public function createConfiguration() : Void
 	{
 		//do nothing

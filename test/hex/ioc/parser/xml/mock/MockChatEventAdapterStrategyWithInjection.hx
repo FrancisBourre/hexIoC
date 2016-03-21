@@ -7,7 +7,6 @@ import hex.event.AdapterStrategy;
  * ...
  * @author Francis Bourre
  */
-@:rtti
 class MockChatEventAdapterStrategyWithInjection extends AdapterStrategy implements ISpeedInjectorContainer
 {
 	@Inject( "parser" )

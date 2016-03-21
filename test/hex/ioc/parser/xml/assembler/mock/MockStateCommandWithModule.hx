@@ -10,7 +10,6 @@ import hex.module.IModule;
  * ...
  * @author Francis Bourre
  */
-@:rtti
 class MockStateCommandWithModule extends BasicCommand implements ISpeedInjectorContainer
 {
 	static public var callCount : Int = 0;
