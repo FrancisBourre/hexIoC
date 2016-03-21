@@ -10,7 +10,7 @@ import hex.error.NoSuchElementException;
 import hex.event.Dispatcher;
 import hex.event.IDispatcher;
 import hex.log.Stringifier;
-import hex.metadata.AnnotationProvider;
+import hex.metadata.IAnnotationProvider;
 import hex.service.IService;
 import hex.util.FastEval;
 
@@ -20,17 +20,19 @@ import hex.util.FastEval;
  */
 class CoreFactory implements ICoreFactory
 {
-	var _injector 		: IBasicInjector;
-	var _dispatcher 	: IDispatcher<ILocatorListener<String, Dynamic>>;
-	var _map 			: HashMap<String, Dynamic>;
+	var _injector 				: IBasicInjector;
+	var _annotationProvider 	: IAnnotationProvider;
+	var _dispatcher 			: IDispatcher<ILocatorListener<String, Dynamic>>;
+	var _map 					: HashMap<String, Dynamic>;
 	
 	static var _fastEvalMethod : Dynamic->String->ICoreFactory->Dynamic = FastEval.fromTarget;
 	
-	public function new( injector : IBasicInjector ) 
+	public function new( injector : IBasicInjector, annotationProvider : IAnnotationProvider ) 
 	{
-		this._injector 		= injector;
-		this._dispatcher 	= new Dispatcher<ILocatorListener<String, Dynamic>>();
-		this._map 			= new HashMap();
+		this._injector 				= injector;
+		this._annotationProvider 	= annotationProvider;
+		this._dispatcher 			= new Dispatcher<ILocatorListener<String, Dynamic>>();
+		this._map 					= new HashMap();
 	}
 	
 	public function addListener( listener : ILocatorListener<String, Dynamic> ) : Bool
@@ -267,7 +269,7 @@ class CoreFactory implements ICoreFactory
 
 			if ( Std.is( obj, IAnnotationParsable ) )
 			{
-				AnnotationProvider.getInstance().parse( obj );
+				this._annotationProvider.parse( obj );
 			}
 
 			if ( Std.is( obj, IService ) )

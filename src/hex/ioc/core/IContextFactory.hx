@@ -6,6 +6,7 @@ import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.MethodCallVO;
 import hex.ioc.vo.PropertyVO;
 import hex.ioc.vo.StateTransitionVO;
+import hex.metadata.IAnnotationProvider;
 
 /**
  * @author Francis Bourre
@@ -45,6 +46,8 @@ interface IContextFactory
 	function callModuleInitialisation() : Void;
 	
 	function getApplicationContext() : AbstractApplicationContext;
+	
+	function getAnnotationProvider() : IAnnotationProvider;
 
 	function getCoreFactory() : ICoreFactory;
 

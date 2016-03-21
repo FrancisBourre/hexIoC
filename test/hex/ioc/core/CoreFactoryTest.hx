@@ -2,8 +2,12 @@ package hex.ioc.core;
 
 import hex.MockDependencyInjector;
 import hex.collection.ILocatorListener;
+import hex.di.IDependencyInjector;
+import hex.di.annotation.IAnnotationDataProvider;
+import hex.di.annotation.InjectorClassVO;
 import hex.error.IllegalArgumentException;
 import hex.event.IEvent;
+import hex.metadata.IAnnotationProvider;
 import hex.structures.Point;
 import hex.structures.Size;
 import hex.unittest.assertion.Assert;
@@ -21,7 +25,7 @@ class CoreFactoryTest
     @Before
     public function setUp() : Void
     {
-        this._coreFactory = new CoreFactory( new MockDependencyInjector() );
+        this._coreFactory = new CoreFactory( new MockDependencyInjector(), new MockAnnotationDataProvider() );
     }
 
     @After
@@ -198,4 +202,39 @@ private class MockCoreFactoryListener implements ILocatorListener<String, Dynami
 	{
 		
 	}
+}
+
+private class MockAnnotationDataProvider implements IAnnotationProvider
+{
+	public function new()
+	{
+		
+	}
+	
+	public function registerMetaData( metaDataName : String, scope : Dynamic, providerMethod : String->Dynamic ) : Void
+	{
+		
+	}
+	
+	public function clear() : Void 
+	{
+		
+	}
+	
+	public function parse( object : {} ) : Void 
+	{
+		
+	}
+	
+	public function registerInjector( injector : IDependencyInjector ) : Void 
+	{
+		
+	}
+	
+	public function unregisterInjector( injector : IDependencyInjector ) : Void 
+	{
+		
+	}
+	
+	
 }

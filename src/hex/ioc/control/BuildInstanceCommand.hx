@@ -1,11 +1,12 @@
 package hex.ioc.control;
 
-import hex.ioc.vo.BuildHelperVO;
 import hex.domain.Domain;
 import hex.domain.DomainExpert;
 import hex.domain.DomainUtil;
 import hex.error.Exception;
+import hex.ioc.vo.BuildHelperVO;
 import hex.ioc.vo.ConstructorVO;
+import hex.metadata.AnnotationProvider;
 import hex.module.IModule;
 import hex.util.ClassUtil;
 
@@ -61,6 +62,7 @@ class BuildInstanceCommand implements IBuildCommand
 					if ( isModule && constructorVO.ID != null && constructorVO.ID.length > 0 )
 					{
 						DomainExpert.getInstance().registerDomain( DomainUtil.getDomain( constructorVO.ID, Domain ) );
+						AnnotationProvider.registerToDomain( buildHelperVO.builderFactory.getAnnotationProvider(), DomainUtil.getDomain( constructorVO.ID, Domain ) );
 					}
 
 				} catch ( err : Exception )

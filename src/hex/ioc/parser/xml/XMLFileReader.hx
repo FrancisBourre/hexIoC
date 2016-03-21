@@ -86,7 +86,6 @@ class XMLFileReader
 		{
 			XMLFileReader._compiledClass.push( type );
 			Context.getType( type );
-			trace( type );
 			return true;
 		}
 		else
@@ -277,12 +276,13 @@ class XMLFileReader
 							preprocessor.addProperty( key, value );
 						}
 					}
+					
+					data = preprocessor.parse( data );
 
 				default:
-					trace( "Invalid expression" );
 			}
 
-			data = preprocessor.parse( data );
+			
 		}
 
 		try

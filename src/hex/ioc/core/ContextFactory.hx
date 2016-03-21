@@ -1,12 +1,12 @@
 package hex.ioc.core;
 
-import hex.di.SpeedInjector;
 import hex.collection.ILocatorListener;
 import hex.control.macro.IMacroExecutor;
 import hex.control.macro.MacroExecutor;
 import hex.core.HashCodeFactory;
 import hex.di.IBasicInjector;
 import hex.di.IDependencyInjector;
+import hex.di.SpeedInjector;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
 import hex.domain.DomainUtil;
@@ -52,6 +52,7 @@ import hex.ioc.vo.PropertyVO;
 import hex.ioc.vo.StateTransitionVO;
 import hex.log.Stringifier;
 import hex.metadata.AnnotationProvider;
+import hex.metadata.IAnnotationProvider;
 import hex.module.IModule;
 import hex.service.IService;
 import hex.service.ServiceConfiguration;
@@ -62,6 +63,7 @@ import hex.service.ServiceConfiguration;
  */
 class ContextFactory implements IContextFactory implements ILocatorListener<String, Dynamic>
 {
+	var _annotationProvider			: IAnnotationProvider;
 	var _contextDispatcher			: IDispatcher<{}>;
 	var _moduleLocator				: ModuleLocator;
 	var _applicationContext 		: AbstractApplicationContext;
@@ -86,12 +88,13 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		injector.mapToValue( IBasicInjector, injector );
 		injector.mapToValue( IDependencyInjector, injector );
 		injector.mapToType( IMacroExecutor, MacroExecutor );
-			
-		//assign AnnotationProvider
-		AnnotationProvider.getInstance( injector );
+		
+		//build annotation provider
+		this._annotationProvider = new AnnotationProvider();
+		this._annotationProvider.registerInjector( injector );
 		
 		//build coreFactory
-		this._coreFactory = new CoreFactory( injector );
+		this._coreFactory = new CoreFactory( injector, this._annotationProvider );
 		
 		if ( applicationContextClass != null )
 		{
@@ -355,6 +358,7 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		var adapter = new ClassAdapter();
 		adapter.setCallBackMethod( listener, callback );
 		adapter.setAdapterClass( strategyClass );
+		adapter.setAnnotationProvider( this._annotationProvider );
 		
 		if ( injectedInModule && Std.is( listener, IModule ) )
 		{
@@ -416,6 +420,11 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 	public function getCoreFactory() : ICoreFactory
 	{
 		return this._coreFactory;
+	}
+	
+	public function getAnnotationProvider() : IAnnotationProvider
+	{
+		return this._annotationProvider;
 	}
 	
 	public function getStateTransitionVOLocator() : StateTransitionVOLocator
