@@ -262,7 +262,7 @@ class CoreFactory implements ICoreFactory
 			}
 			catch ( e : Dynamic )
 			{
-				throw new IllegalArgumentException( "Instantiation of class '" + qualifiedClassName + "' failed with arguments: " + args );
+				throw new IllegalArgumentException( "Instantiation of class '" + qualifiedClassName + "' failed with arguments: " + args + " : " + e);
 			}
 
 			if ( Std.is( obj, IAnnotationParsable ) )
