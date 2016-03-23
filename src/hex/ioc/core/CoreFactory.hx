@@ -195,7 +195,7 @@ class CoreFactory implements ICoreFactory
 		}
 		catch ( e : IllegalArgumentException )
 		{
-			throw( "'" + qualifiedClassName + "' class is not available in current domain" );
+			throw new IllegalArgumentException( "'" + qualifiedClassName + "' class is not available in current domain" );
 		}
 
 		var obj : Dynamic = null;

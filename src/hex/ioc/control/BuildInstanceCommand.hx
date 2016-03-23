@@ -4,6 +4,7 @@ import hex.domain.Domain;
 import hex.domain.DomainExpert;
 import hex.domain.DomainUtil;
 import hex.error.Exception;
+import hex.error.NullPointerException;
 import hex.ioc.vo.BuildHelperVO;
 import hex.ioc.vo.ConstructorVO;
 import hex.metadata.AnnotationProvider;
@@ -56,20 +57,13 @@ class BuildInstanceCommand implements IBuildCommand
 			}
 			else
 			{
-				try
+				var classReference = buildHelperVO.coreFactory.getClassReference( constructorVO.type );
+				var isModule : Bool = ClassUtil.classExtendsOrImplements( classReference, IModule );
+				if ( isModule && constructorVO.ID != null && constructorVO.ID.length > 0 )
 				{
-					var isModule : Bool = ClassUtil.classExtendsOrImplements( Type.resolveClass( constructorVO.type ), IModule );
-					if ( isModule && constructorVO.ID != null && constructorVO.ID.length > 0 )
-					{
-						DomainExpert.getInstance().registerDomain( DomainUtil.getDomain( constructorVO.ID, Domain ) );
-						AnnotationProvider.registerToDomain( buildHelperVO.builderFactory.getAnnotationProvider(), DomainUtil.getDomain( constructorVO.ID, Domain ) );
-					}
-
-				} catch ( err : Exception )
-				{
-					// do nothing as expected
+					DomainExpert.getInstance().registerDomain( DomainUtil.getDomain( constructorVO.ID, Domain ) );
+					AnnotationProvider.registerToDomain( buildHelperVO.builderFactory.getAnnotationProvider(), DomainUtil.getDomain( constructorVO.ID, Domain ) );
 				}
-
 				constructorVO.result = buildHelperVO.coreFactory.buildInstance( constructorVO.type, constructorVO.arguments, constructorVO.factory, constructorVO.singleton, constructorVO.injectInto );
 			}
 
