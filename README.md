@@ -13,6 +13,15 @@ Inversion of Control system with DSL and modularity based on global and micro co
 * [hexService](https://github.com/DoclerLabs/hexService)
 
 
+## Full example for parsing/building application context
+```haxe
+var applicationAssembler = new ApplicationAssembler();
+var xml = Xml.parse( XMLFileReader.readXmlFile( "example.xml" ) );
+var parser = new ApplicationXMLParser();
+parser.parse( applicationAssembler, xml );
+applicationAssembler.buildEverything();
+```
+
 ## Simple example
 ```xml
 <root name="applicationContext">
@@ -357,11 +366,11 @@ preprocessor.addProperty( "node", '<msg id="message" value="$${hello}"/>' );
 
 ## Read xml at compile time with preprocessing
 ```haxe
-XMLFileReader.readXmlFile( "../context/preprocessor.xml", 
+var xml = Xml.parse( XMLFileReader.readXmlFile( "../context/preprocessor.xml", 
 [	
 	"hello" 		=> "bonjour",
 	"contextName" 	=> 'applicationContext',
 	"context" 		=> 'name="${contextName}"',
 	"node" 			=> '<msg id="message" value="${hello}"/>' 
-] )
+] ) );
 ```
