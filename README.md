@@ -354,3 +354,14 @@ preprocessor.addProperty( "node", '<msg id="message" value="$${hello}"/>' );
 	<include file="lib/anotherContext.xml"/>
 </root>
 ```
+
+## Read xml at compile time with preprocessing
+```haxe
+XMLFileReader.readXmlFile( "../context/preprocessor.xml", 
+[	
+	"hello" 		=> "bonjour",
+	"contextName" 	=> 'applicationContext',
+	"context" 		=> 'name="${contextName}"',
+	"node" 			=> '<msg id="message" value="${hello}"/>' 
+] )
+```
