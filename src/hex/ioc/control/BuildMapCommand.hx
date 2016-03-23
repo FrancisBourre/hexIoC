@@ -49,7 +49,7 @@ class BuildMapCommand implements IBuildCommand
 
 		if ( constructorVO.mapType != null )
 		{
-			buildHelperVO.builderFactory.getApplicationContext().getBasicInjector().mapToValue( HashMap, constructorVO.result, constructorVO.ID );
+			buildHelperVO.contextFactory.getApplicationContext().getBasicInjector().mapToValue( HashMap, constructorVO.result, constructorVO.ID );
 		}
 	}
 }

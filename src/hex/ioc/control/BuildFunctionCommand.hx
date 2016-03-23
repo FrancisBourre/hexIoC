@@ -28,7 +28,7 @@ class BuildFunctionCommand implements IBuildCommand
 
 		if ( !buildHelperVO.coreFactory.isRegisteredWithKey( targetID ) )
 		{
-			buildHelperVO.builderFactory.buildObject( targetID );
+			buildHelperVO.contextFactory.buildObject( targetID );
 		}
 
 		var target : Dynamic = buildHelperVO.coreFactory.locate( targetID );

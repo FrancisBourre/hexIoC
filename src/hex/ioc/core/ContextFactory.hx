@@ -490,7 +490,7 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 
 		var builderHelperVO 					= new BuildHelperVO();
 		builderHelperVO.type 					= type;
-		builderHelperVO.builderFactory 			= this;
+		builderHelperVO.contextFactory 			= this;
 		builderHelperVO.coreFactory 			= this._coreFactory;
 		builderHelperVO.constructorVO 			= constructorVO;
 		builderHelperVO.moduleLocator 			= this._moduleLocator;

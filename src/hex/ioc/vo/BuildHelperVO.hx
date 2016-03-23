@@ -11,7 +11,7 @@ import hex.ioc.locator.ModuleLocator;
 class BuildHelperVO
 {
 	public var type 					: String;
-	public var builderFactory 			: IContextFactory;
+	public var contextFactory 			: IContextFactory;
 	public var coreFactory				: ICoreFactory;
 	public var constructorVO 			: ConstructorVO;
 	public var moduleLocator			: ModuleLocator;

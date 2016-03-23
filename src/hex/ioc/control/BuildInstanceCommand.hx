@@ -37,7 +37,7 @@ class BuildInstanceCommand implements IBuildCommand
 
 			if ( !( buildHelperVO.coreFactory.isRegisteredWithKey( key ) ) )
 			{
-				buildHelperVO.builderFactory.buildObject( key );
+				buildHelperVO.contextFactory.buildObject( key );
 			}
 
 			constructorVO.result = buildHelperVO.coreFactory.locate( key );
@@ -62,7 +62,7 @@ class BuildInstanceCommand implements IBuildCommand
 				if ( isModule && constructorVO.ID != null && constructorVO.ID.length > 0 )
 				{
 					DomainExpert.getInstance().registerDomain( DomainUtil.getDomain( constructorVO.ID, Domain ) );
-					AnnotationProvider.registerToDomain( buildHelperVO.builderFactory.getAnnotationProvider(), DomainUtil.getDomain( constructorVO.ID, Domain ) );
+					AnnotationProvider.registerToDomain( buildHelperVO.contextFactory.getAnnotationProvider(), DomainUtil.getDomain( constructorVO.ID, Domain ) );
 				}
 				constructorVO.result = buildHelperVO.coreFactory.buildInstance( constructorVO.type, constructorVO.arguments, constructorVO.factory, constructorVO.singleton, constructorVO.injectInto );
 			}
@@ -75,7 +75,7 @@ class BuildInstanceCommand implements IBuildCommand
 			if ( constructorVO.mapType != null )
 			{
 				var classToMap : Class<Dynamic> = Type.resolveClass( constructorVO.mapType );
-				buildHelperVO.builderFactory.getApplicationContext().getBasicInjector().mapToValue( classToMap, constructorVO.result, constructorVO.ID );
+				buildHelperVO.contextFactory.getApplicationContext().getBasicInjector().mapToValue( classToMap, constructorVO.result, constructorVO.ID );
 			}
 		}
 	}
