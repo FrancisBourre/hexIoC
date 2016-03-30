@@ -16,7 +16,7 @@ import hex.ioc.vo.DomainListenerVOArguments;
  */
 class XMLFileReader
 {
-	static var _includeMatcher 	: EReg = ~/<include.*?file=("|')([^"']+)\1.*?(?:(?:\/>)|(?:>[\W\w\t\r\n]*?<\/import *>))/g;
+	static var _includeMatcher 	: EReg = ~/<include.*?file=("|')([^"']+)\1.*?(?:(?:\/>)|(?:>[\W\w\t\r\n]*?<\/include *>))/g;
 	static var _headerMatcher 	: EReg = ~/(?:<\?xml[^>]+>\s*)<([a-zA-Z0-9-_:]+)[^>]*>([\s\S]*)<\/\1\s*>/;
 
 	static var _rootFolder		: String = "";
@@ -241,7 +241,6 @@ class XMLFileReader
 			{
 				XMLFileReader._parseNode( iterator.next() );
 			}
-
 
 		}
 		catch ( error : Dynamic )
