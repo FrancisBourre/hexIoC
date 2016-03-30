@@ -1,6 +1,6 @@
 # hexIoC
 
-[![TravisCI Build Status](https://travis-ci.org/DoclerLabs/hexMachina.svg?branch=master)](https://travis-ci.org/DoclerLabs/hexMachina)
+[![TravisCI Build Status](https://travis-ci.org/DoclerLabs/hexIoC.svg?branch=master)](https://travis-ci.org/DoclerLabs/hexIoC)
 Inversion of Control system with DSL and modularity based on global and micro contexts.
 
 ## Dependencies
