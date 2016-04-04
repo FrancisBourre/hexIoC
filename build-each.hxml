@@ -5,8 +5,8 @@
 -cp hexcore/test
 -cp hexannotation/src
 -cp hexannotation/test
--cp hexspeedinject/src
--cp hexspeedinject/test
+-cp hexinject/src
+-cp hexinject/test
 -cp hexmvc/src
 -cp hexmvc/test
 -cp hexservice/src
