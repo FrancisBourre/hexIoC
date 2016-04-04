@@ -29,7 +29,7 @@
   "devDependencies": {
     "hexcore": "git+https://github.com/DoclerLabs/hexCore.git#master",
     "hexannotation": "git+https://github.com/DoclerLabs/hexAnnotation.git#master",
-    "hexspeedinject": "git+https://github.com/DoclerLabs/hexSpeedInject.git#master",
+    "hexinject": "git+https://github.com/DoclerLabs/hexInject.git#master",
     "hexmvc": "git+https://github.com/DoclerLabs/hexMVC.git#master",
     "hexstate": "git+https://github.com/DoclerLabs/hexState.git#master",
     "hexservice": "git+https://github.com/DoclerLabs/hexService.git#master",
