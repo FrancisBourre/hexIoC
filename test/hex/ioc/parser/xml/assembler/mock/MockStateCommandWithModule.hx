@@ -1,16 +1,15 @@
 package hex.ioc.parser.xml.assembler.mock;
 
-import hex.di.ISpeedInjectorContainer;
-import hex.control.command.BasicCommand;
 import hex.control.Request;
-import hex.log.Stringifier;
+import hex.control.command.BasicCommand;
+import hex.di.IInjectorContainer;
 import hex.module.IModule;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class MockStateCommandWithModule extends BasicCommand implements ISpeedInjectorContainer
+class MockStateCommandWithModule extends BasicCommand implements IInjectorContainer
 {
 	static public var callCount : Int = 0;
 	static public var lastInjectedModule : IModule;

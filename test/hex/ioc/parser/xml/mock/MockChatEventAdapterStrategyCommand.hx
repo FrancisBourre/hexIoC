@@ -1,15 +1,15 @@
 package hex.ioc.parser.xml.mock;
 
-import hex.di.ISpeedInjectorContainer;
 import haxe.Timer;
-import hex.control.async.AsyncCommand;
 import hex.control.Request;
+import hex.control.async.AsyncCommand;
+import hex.di.IInjectorContainer;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class MockChatEventAdapterStrategyCommand extends AsyncCommand implements ISpeedInjectorContainer
+class MockChatEventAdapterStrategyCommand extends AsyncCommand implements IInjectorContainer
 {
 	public function new() 
 	{

@@ -1,15 +1,15 @@
 package hex.ioc.parser.xml.assembler.mock;
 
-import hex.di.ISpeedInjectorContainer;
 import hex.control.Request;
 import hex.control.command.BasicCommand;
+import hex.di.IInjectorContainer;
 import hex.ioc.assembler.ApplicationContext;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class MockStateCommand extends BasicCommand implements ISpeedInjectorContainer
+class MockStateCommand extends BasicCommand implements IInjectorContainer
 {
 	static public var callCount : Int = 0;
 	static public var lastInjecteContext : ApplicationContext;

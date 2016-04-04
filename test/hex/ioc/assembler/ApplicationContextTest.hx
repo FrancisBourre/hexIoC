@@ -1,6 +1,6 @@
 package hex.ioc.assembler;
 
-import hex.di.SpeedInjector;
+import hex.di.Injector;
 import hex.di.IBasicInjector;
 import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.assembler.ApplicationContext;
@@ -19,7 +19,7 @@ class ApplicationContextTest
 		var applicationContext 		: ApplicationContext	= cast applicationAssembler.getApplicationContext( "applicationContext" );
 		
 		Assert.equals( "applicationContext", applicationContext.getName(), "returned name should be the same passed during instantiation" );
-		Assert.isInstanceOf( applicationContext.getBasicInjector(), SpeedInjector, "injector returned should be an instance of Injector class" );
+		Assert.isInstanceOf( applicationContext.getBasicInjector(), Injector, "injector returned should be an instance of Injector class" );
 		
 		var injector : IBasicInjector = applicationContext.getBasicInjector();
 		Assert.equals( injector.getInstance( IBasicInjector ), injector, "injectors should be the same" );

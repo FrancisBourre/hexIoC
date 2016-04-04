@@ -1,6 +1,6 @@
 package hex.ioc.parser.xml;
 
-import hex.di.SpeedInjector;
+import hex.di.Injector;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.core.IContextFactory;
 import hex.ioc.parser.preprocess.Preprocessor;
@@ -463,7 +463,7 @@ class ObjectXMLParserTest
 		Assert.isInstanceOf( amazonService, MockAmazonService, "" );
 		Assert.isInstanceOf( facebookService, MockFacebookService, "" );
 
-		var injector = new SpeedInjector();
+		var injector = new Injector();
 		serviceLocator.configure( injector, new Dispatcher(), null );
 
 		Assert.isInstanceOf( injector.getInstance( IMockAmazonService ), MockAmazonService, "" );
@@ -484,7 +484,7 @@ class ObjectXMLParserTest
 		Assert.isNotNull( amazonService0, "" );
 		Assert.isNotNull( amazonService1, "" );
 
-		var injector = new SpeedInjector();
+		var injector = new Injector();
 		serviceLocator.configure( injector, new Dispatcher(), null );
 
 		Assert.isInstanceOf( injector.getInstance( IMockAmazonService, "amazon0" ),  MockAmazonService, "" );

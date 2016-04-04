@@ -1,13 +1,13 @@
 package hex.ioc.parser.xml.mock;
 
-import hex.di.ISpeedInjectorContainer;
+import hex.di.IInjectorContainer;
 import hex.event.AdapterStrategy;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class MockChatEventAdapterStrategyWithInjection extends AdapterStrategy implements ISpeedInjectorContainer
+class MockChatEventAdapterStrategyWithInjection extends AdapterStrategy implements IInjectorContainer
 {
 	@Inject( "parser" )
 	public var parser : IMockMessageParserModule;

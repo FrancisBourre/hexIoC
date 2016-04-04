@@ -6,7 +6,7 @@ import hex.control.macro.MacroExecutor;
 import hex.core.HashCodeFactory;
 import hex.di.IBasicInjector;
 import hex.di.IDependencyInjector;
-import hex.di.SpeedInjector;
+import hex.di.Injector;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
 import hex.domain.DomainUtil;
@@ -84,7 +84,7 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		this._contextDispatcher = ApplicationDomainDispatcher.getInstance().getDomainDispatcher( domain );
 		
 		//build injector
-		var injector = new SpeedInjector();
+		var injector = new Injector();
 		injector.mapToValue( IBasicInjector, injector );
 		injector.mapToValue( IDependencyInjector, injector );
 		injector.mapToType( IMacroExecutor, MacroExecutor );
