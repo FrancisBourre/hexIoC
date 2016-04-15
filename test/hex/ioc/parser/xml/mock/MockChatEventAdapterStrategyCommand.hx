@@ -22,7 +22,7 @@ class MockChatEventAdapterStrategyCommand extends AsyncCommand implements IInjec
 	@Inject
 	public var message : String;
 
-	override public function execute( ?request : Request ) : Void
+	public function execute( ?request : Request ) : Void
 	{
 		Timer.delay( this.testAsyncCallback, 300 );
 	}

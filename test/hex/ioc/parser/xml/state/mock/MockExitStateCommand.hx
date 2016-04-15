@@ -9,7 +9,7 @@ import hex.control.Request;
  */
 class MockExitStateCommand extends BasicCommand
 {
-	override public function execute( ?request : Request ) : Void 
+	public function execute( ?request : Request ) : Void 
 	{
 		( cast this.getOwner() ).commandWasCalled = true;
 	}

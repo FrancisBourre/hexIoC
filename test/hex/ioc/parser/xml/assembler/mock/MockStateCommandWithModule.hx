@@ -17,7 +17,7 @@ class MockStateCommandWithModule extends BasicCommand implements IInjectorContai
 	@Inject
 	public var module : IModule;
 	
-	override public function execute( ?request : Request ) : Void 
+	public function execute( ?request : Request ) : Void 
 	{
 		MockStateCommandWithModule.callCount++;
 		MockStateCommandWithModule.lastInjectedModule = this.module;

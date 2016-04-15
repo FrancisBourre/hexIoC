@@ -17,7 +17,7 @@ class MockStateCommand extends BasicCommand implements IInjectorContainer
 	@Inject
 	public var context : ApplicationContext;
 	
-	override public function execute( ?request : Request ) : Void 
+	public function execute( ?request : Request ) : Void 
 	{
 		MockStateCommand.callCount++;
 		MockStateCommand.lastInjecteContext = this.context;

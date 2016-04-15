@@ -22,7 +22,7 @@ class AbstractParserCommand extends AsyncCommand implements IParserCommand
 	}
 	
 	@final
-	override public function execute( ?request : Request ) : Void 
+	public function execute( ?request : Request ) : Void 
 	{
 		if ( this._contextData != null )
 		{
