@@ -1,5 +1,7 @@
 package hex.ioc.parser.xml;
 
+import com.tenderowls.xml176.Xml176Parser;
+import hex.ioc.core.ContextAttributeList;
 import hex.ioc.parser.preprocess.Preprocessor;
 import hex.ioc.parser.preprocess.MacroPreprocessor;
 import hex.ioc.parser.xml.XMLFileReader;
@@ -19,7 +21,6 @@ class XMLFileReader
 	static var _includeMatcher 	: EReg = ~/<include.*?file=("|')([^"']+)\1.*?(?:(?:\/>)|(?:>[\W\w\t\r\n]*?<\/include *>))/g;
 	static var _headerMatcher 	: EReg = ~/(?:<\?xml[^>]+>\s*)<([a-zA-Z0-9-_:]+)[^>]*>([\s\S]*)<\/\1\s*>/;
 
-	static var _rootFolder		: String = "";
 	static var _compiledClass	: Array<String>;
 	static var _primType		: Array<String> = [	ContextTypeList.STRING,
 	ContextTypeList.INT,
@@ -41,10 +42,10 @@ class XMLFileReader
 		{
 			var f = function( eReg: EReg ) : String
 			{
-
-				var fileName : String = XMLFileReader._includeMatcher.matched( 2 );
-				var data : String = XMLFileReader.readFile( fileName );
-				return XMLFileReader.cleanHeader( data );
+				var fileName 	= XMLFileReader._includeMatcher.matched( 2 );
+				var xmlRawData 	= XMLFileReader.readFile( fileName );
+				var clean 		= XMLFileReader.cleanHeader( xmlRawData.data );
+				return clean;
 			}
 
 			data = XMLFileReader._includeMatcher.map( data, f );
@@ -63,16 +64,15 @@ class XMLFileReader
 		{
 			return data;
 		}
-
 	}
 
-	static function readFile( fileName : String )
+	static function readFile( fileName : String ) : XMLRawData
 	{
 		try
 		{
-			var path = Context.resolvePath( XMLFileReader._rootFolder + fileName );
+			var path = Context.resolvePath( fileName );
 			Context.registerModuleDependency( Context.getLocalModule(), path );
-			return sys.io.File.getContent( path );
+			return {lineCount:0, path:path, fileName:fileName, data:sys.io.File.getContent( path )};
 		}
 		catch ( error : Dynamic )
 		{
@@ -85,7 +85,14 @@ class XMLFileReader
 		if ( type != null && XMLFileReader._primType.indexOf( type ) == -1 && XMLFileReader._compiledClass.indexOf( type ) == -1 )
 		{
 			XMLFileReader._compiledClass.push( type );
-			Context.getType( type );
+			try
+			{
+				Context.getType( type );
+			}
+			catch ( e : haxe.macro.Error )
+			{
+				Context.error( e.message, e.pos );
+			}
 			return true;
 		}
 		else
@@ -128,12 +135,13 @@ class XMLFileReader
 		}
 	}
 
-	static function _parseNode( xml : Xml ) : Void
+	static function _parseNode( xml : Xml, doc : Xml176Document ) : Void
 	{
-		var identifier : String = XMLAttributeUtil.getID( xml );
+		var identifier : String = xml.get( ContextAttributeList.ID );
 		if ( identifier == null )
 		{
-			throw new ParsingException( "XMLFileReader encounters parsing error with '" + xml.nodeName + "' node. You must set an id attribute." );
+			//doc.getAttrPosition( identifier );
+			//Context.error( "XMLFileReader encounters parsing error with '" + xml.nodeName + "' node at line " + xml.line + ". You must set an id attribute.", Context.currentPos() );
 		}
 
 		var type 		: String;
@@ -142,15 +150,15 @@ class XMLFileReader
 		var staticRef	: String;
 
 		// Build object.
-		type = XMLAttributeUtil.getType( xml );
+		type = xml.get( ContextAttributeList.TYPE );
 
 		if ( type == ContextTypeList.XML )
 		{
-			XMLFileReader._forceCompilation( XMLAttributeUtil.getParserClass( xml ) );
+			XMLFileReader._forceCompilation( xml.get( ContextAttributeList.PARSER_CLASS ) );
 		}
 		else
 		{
-			args 		= ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR ) ? XMLParserUtil.getItems( xml ) : XMLParserUtil.getArguments( xml, type );
+			args = ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR ) ? XMLParserUtil.getItems( xml ) : XMLParserUtil.getArguments( xml, type );
 
 			if ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR )
 			{
@@ -174,14 +182,14 @@ class XMLFileReader
 			}
 
 			XMLFileReader._forceCompilation( type );
-			XMLFileReader._forceCompilation( XMLAttributeUtil.getMapType( xml ) );
-			XMLFileReader._includeStaticRef( XMLAttributeUtil.getStaticRef( xml ) );
+			XMLFileReader._forceCompilation( xml.get( ContextAttributeList.MAP_TYPE ) );
+			XMLFileReader._includeStaticRef( xml.get( ContextAttributeList.STATIC_REF ) );
 
 			// Build property.
 			var propertyIterator = xml.elementsNamed( ContextNameList.PROPERTY );
 			while ( propertyIterator.hasNext() )
 			{
-				XMLFileReader._includeStaticRef( XMLAttributeUtil.getStaticRef( propertyIterator.next() ) );
+				XMLFileReader._includeStaticRef( propertyIterator.next().get( ContextAttributeList.STATIC_REF ) );
 			}
 
 			// Build method call.
@@ -205,7 +213,7 @@ class XMLFileReader
 			while( listenIterator.hasNext() )
 			{
 				var listener = listenIterator.next();
-				var channelName : String = XMLAttributeUtil.getRef( listener );
+				var channelName : String = listener.get( ContextAttributeList.REF );
 
 				if ( channelName != null )
 				{
@@ -218,7 +226,7 @@ class XMLFileReader
 				}
 				else
 				{
-					throw new ParsingException( "XMLFileReader encounters parsing error with '" + xml.nodeName + "' node, 'ref' attribute is mandatory in a 'listen' node." );
+					Context.error( "XMLFileReader encounters parsing error with '" + xml.nodeName + "' node, 'ref' attribute is mandatory in a 'listen' node.", Context.currentPos() );
 				}
 			}
 		}
@@ -227,23 +235,23 @@ class XMLFileReader
 
 	macro public static function readXmlFile( fileName : String, ?m : Expr ) : ExprOf<String>
 	{
-		var data = XMLFileReader.readFile( fileName );
-		data = XMLFileReader.checkForInclude( data );
+		var xmlRawData = XMLFileReader.readFile( fileName );
+		var data = XMLFileReader.checkForInclude( xmlRawData.data );
 		data = MacroPreprocessor.parse( data, m );
 		
 		try
 		{
-			var xml : Xml = Xml.parse( data );
+			var doc = Xml176Parser.parse( data );
 			XMLFileReader._compiledClass = [];
 
-			var iterator = xml.firstElement().elements();
+			var iterator = doc.document.firstElement().elements();
 			while ( iterator.hasNext() )
 			{
-				XMLFileReader._parseNode( iterator.next() );
+				XMLFileReader._parseNode( iterator.next(), doc );
 			}
 
 		}
-		catch ( error : Dynamic )
+		catch ( error : haxe.macro.Error )
 		{
 			Context.error( 'Xml parsing failed @$fileName $error', Context.currentPos() );
 		}
@@ -251,3 +259,4 @@ class XMLFileReader
 		return macro $v{ data };
 	}
 }
+

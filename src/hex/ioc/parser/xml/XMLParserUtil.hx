@@ -127,46 +127,6 @@ class XMLParserUtil
 		return obj;
 	}
 	
-	public static function concatXmlList(configList:Array<String>, name:String):String
-	{
-		var result:String = '<?xml version="1.0" encoding="utf-8" ?><root name="' + name + '">';
-		
-		var l:UInt = configList.length;
-		
-		var matcher = ~/<\?xml[^>]+>\s*<\s*(\w+)\s*>([\s\S]*)<\s*\/\s*\1\s*>/;
-		
-		for ( i in 0...l )
-		{
-			if ( matcher.match(configList[i]) )
-			{
-				result += matcher.matched(2);
-			}
-		}
-		
-		result += "</root>";
-		
-		return result;
-	}
-	
-	public static function getConfigList(list:Array<String>):Array<String>
-	{
-		var result = new Array<String>();
-		
-		var l:UInt = list.length;
-		
-		for ( i in 0...l )
-		{
-			result.push( haxe.Resource.getString(list[i]) );
-		}
-		
-		return result;
-	}
-	
-	public static function getConcatenatedConfig( configKeyList : Array<String>, name : String ) : String
-	{
-		return XMLParserUtil.concatXmlList( XMLParserUtil.getConfigList( configKeyList ), name );
-	}
-	
 	static public function getIfList( xml : Xml ) : Array<String>
 	{
 		var s : String = XMLAttributeUtil.getIf( xml );
