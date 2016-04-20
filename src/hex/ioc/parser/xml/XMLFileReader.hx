@@ -1,6 +1,7 @@
 package hex.ioc.parser.xml;
 
 import com.tenderowls.xml176.Xml176Parser;
+import haxe.ds.GenericStack;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.parser.preprocess.Preprocessor;
 import hex.ioc.parser.preprocess.MacroPreprocessor;
@@ -12,6 +13,8 @@ import hex.ioc.core.ContextTypeList;
 import hex.ioc.error.ParsingException;
 import hex.ioc.vo.DomainListenerVOArguments;
 
+using StringTools;
+
 /**
  * ...
  * @author Francis Bourre
@@ -19,64 +22,106 @@ import hex.ioc.vo.DomainListenerVOArguments;
 class XMLFileReader
 {
 	static var _includeMatcher 	: EReg = ~/<include.*?file=("|')([^"']+)\1.*?(?:(?:\/>)|(?:>[\W\w\t\r\n]*?<\/include *>))/g;
-	static var _headerMatcher 	: EReg = ~/(?:<\?xml[^>]+>\s*)<([a-zA-Z0-9-_:]+)[^>]*>([\s\S]*)<\/\1\s*>/;
+	//static var _headerMatcher 	: EReg = ~/((?:<\?xml[^>]+>\s*)<([a-zA-Z0-9-_:]+)[^>]*>)([\s\S]*)<\/\2\s*>/;
+	static var _headerMatcher 	: EReg = ~/((?:<\?xml[^>]+>\s*)<([a-zA-Z0-9-_:]+)[^>]*>[\r\n]?)([\s\S]*)<\/\2\s*>/;
 
 	static var _compiledClass	: Array<String>;
 	static var _primType		: Array<String> = [	ContextTypeList.STRING,
-	ContextTypeList.INT,
-	ContextTypeList.UINT,
-	ContextTypeList.FLOAT,
-	ContextTypeList.BOOLEAN,
-	ContextTypeList.NULL,
-	ContextTypeList.OBJECT,
-	ContextTypeList.XML,
-	ContextTypeList.CLASS,
-	ContextTypeList.FUNCTION,
-	ContextTypeList.ARRAY
-	];
+													ContextTypeList.INT,
+													ContextTypeList.UINT,
+													ContextTypeList.FLOAT,
+													ContextTypeList.BOOLEAN,
+													ContextTypeList.NULL,
+													ContextTypeList.OBJECT,
+													ContextTypeList.XML,
+													ContextTypeList.CLASS,
+													ContextTypeList.FUNCTION,
+													ContextTypeList.ARRAY
+													];
 
 	#if macro
-	static function checkForInclude( data : String )
+	static function checkForInclude( xmlRawData : XMLRawData, xrdStack : GenericStack<XMLRawData>, ?m : Expr )
 	{
-		if ( XMLFileReader._includeMatcher.match( data ) )
+		xrdStack.add( xmlRawData );
+		
+		if ( XMLFileReader._includeMatcher.match( xmlRawData.data ) )
 		{
 			var f = function( eReg: EReg ) : String
 			{
 				var fileName 	= XMLFileReader._includeMatcher.matched( 2 );
-				var xmlRawData 	= XMLFileReader.readFile( fileName );
-				var clean 		= XMLFileReader.cleanHeader( xmlRawData.data );
-				return clean;
+				var xrd 		= XMLFileReader.readFile( fileName, xmlRawData, XMLFileReader._includeMatcher.matchedPos(), m );
+				XMLFileReader.cleanHeader( xrd );
+
+				xrd = checkForInclude( xrd, xrdStack, m );
+				return xrd.data;
 			}
 
-			data = XMLFileReader._includeMatcher.map( data, f );
+			xmlRawData.data = XMLFileReader._includeMatcher.map( xmlRawData.data, f );
 		}
 
-		return data;
+		return xmlRawData;
 	}
 
-	static function cleanHeader( data : String )
+	static function cleanHeader( xrd : XMLRawData )
 	{
-		if ( XMLFileReader._headerMatcher.match( data ) )
+		if ( XMLFileReader._headerMatcher.match( xrd.data ) )
 		{
-			return XMLFileReader._headerMatcher.matched( 2 );
-		}
-		else
-		{
-			return data;
+			xrd.header = XMLFileReader._headerMatcher.matched( 1 ).length;
+			xrd.data = XMLFileReader._headerMatcher.matched( 3 );
+			xrd.length = xrd.data.length;
 		}
 	}
 
-	static function readFile( fileName : String ) : XMLRawData
+	static function readFile( fileName : String, parent : XMLRawData = null, includePosition : { pos : Int, len : Int } = null, ?preProcessData : Expr ) : XMLRawData
 	{
 		try
 		{
+			//resolve
 			var path = Context.resolvePath( fileName );
 			Context.registerModuleDependency( Context.getLocalModule(), path );
-			return {lineCount:0, path:path, fileName:fileName, data:sys.io.File.getContent( path )};
+			
+			//read data
+			var data = sys.io.File.getContent( path );
+			
+			//preprocess
+			data = MacroPreprocessor.parse( data, preProcessData );
+			
+			//instantiate XMLRawData result
+			var result = 	{ 	
+								data: 				data,
+								length: 			data.length, 
+								path: 				path,
+								
+								parent: 			parent, 
+								children: 			[], 
+								
+								header: 			0, 
+								position: 			( includePosition == null ? 0 : includePosition.pos ), 
+								includePosition: 	includePosition,
+
+								absLength: 			0, 
+								absPosition: 		0, 
+								absIncludeLength: 	( includePosition == null ? 0 : includePosition.len )
+							};
+			
+			//set child to parent
+			if ( parent != null )
+			{
+				parent.children.push( result );
+			}
+			
+			return result;
 		}
 		catch ( error : Dynamic )
 		{
-			return Context.error( 'File loading failed @$fileName $error', Context.currentPos() );
+			if ( parent == null )
+			{
+				return Context.error( 'File loading failed @$fileName $error', Context.currentPos() );
+			}
+			else
+			{
+				return Context.error( '$error', Context.makePosition( {min: includePosition.pos + parent.header, max: includePosition.pos + includePosition.len + parent.header, file: parent.path } ) );
+			}
 		}
 	}
 
@@ -93,6 +138,7 @@ class XMLFileReader
 			{
 				Context.error( e.message, e.pos );
 			}
+			
 			return true;
 		}
 		else
@@ -134,14 +180,60 @@ class XMLFileReader
 			return false;
 		}
 	}
+	
+	static function makePosition( pos : { from: Int, ?to: Int }, collection : Array<XMLRawData> ) : haxe.macro.Position
+	{
+		var element = findEntry( pos, collection );
+		
+		var posFrom = pos.from - element.absPosition + element.header;
+		var posTo 	= pos.to - element.absPosition + element.header;
+		
+		var childOffset = 0;
+		for ( child in element.children )
+		{
+			if ( child.absPosition < pos.from )
+			{
+				childOffset += child.absIncludeLength - child.absLength;
+			}
+		}
+		
+		return Context.makePosition( { min: posFrom + childOffset, max: posTo + childOffset, file: element.path } );
+	}
+	
+	static function findEntry( pos, collection : Array<XMLRawData> )
+	{
+		var result : XMLRawData = null;
+		
+		for ( element in collection )
+		{
+			if ( pos.from >= element.absPosition && pos.to < element.absPosition + element.absLength )
+			{
+				if ( result == null || element.absPosition > result.absPosition )
+				{
+					result = element;
+				}
+			}
+		}
 
-	static function _parseNode( xml : Xml, doc : Xml176Document ) : Void
+		return result;
+	}
+	
+	static function makePositionFromNode( xml : Xml, doc : Xml176Document, collection : Array<XMLRawData> ) : haxe.macro.Position
+	{
+		return makePosition( doc.getNodePosition( xml ), collection );
+	}
+	
+	static function makePositionFromAttribute( xml : Xml, doc : Xml176Document, collection : Array<XMLRawData>, attributeName : String ) : haxe.macro.Position
+	{
+		return makePosition( doc.getAttrPosition( xml, attributeName ), collection );
+	}
+
+	static function _parseNode( xml : Xml, doc : Xml176Document, xrd : XMLRawData, xrdCollection : Array<XMLRawData> ) : Void
 	{
 		var identifier : String = xml.get( ContextAttributeList.ID );
 		if ( identifier == null )
 		{
-			//doc.getAttrPosition( identifier );
-			//Context.error( "XMLFileReader encounters parsing error with '" + xml.nodeName + "' node at line " + xml.line + ". You must set an id attribute.", Context.currentPos() );
+			Context.error( "XMLFileReader parsing error with '" + xml.nodeName + "' node, 'id' attribute not found.", makePositionFromNode( xml, doc, xrdCollection ) );
 		}
 
 		var type 		: String;
@@ -181,7 +273,15 @@ class XMLFileReader
 				}
 			}
 
-			XMLFileReader._forceCompilation( type );
+			try
+			{
+				XMLFileReader._forceCompilation( type );
+			}
+			catch ( e : String )
+			{
+				Context.error( "XMLFileReader parsing error with '" + xml.nodeName + "' node, '" + type + "' type not found.", makePositionFromAttribute( xml, doc, xrdCollection, ContextAttributeList.TYPE ) );
+			}
+			
 			XMLFileReader._forceCompilation( xml.get( ContextAttributeList.MAP_TYPE ) );
 			XMLFileReader._includeStaticRef( xml.get( ContextAttributeList.STATIC_REF ) );
 
@@ -226,28 +326,74 @@ class XMLFileReader
 				}
 				else
 				{
-					Context.error( "XMLFileReader encounters parsing error with '" + xml.nodeName + "' node, 'ref' attribute is mandatory in a 'listen' node.", Context.currentPos() );
+					Context.error( "XMLFileReader parsing error with '" + xml.nodeName + "' node, 'ref' attribute is mandatory in a 'listen' node.", makePositionFromNode( listener, doc, xrdCollection ) );
 				}
 			}
 		}
 	}
 	#end
-
+	
+	static function updateParentSize( xrd : XMLRawData, lengthOffset : UInt, includeLengthOffset : UInt )
+	{
+		var parent = xrd.parent;
+		parent.absLength += lengthOffset;
+		parent.absIncludeLength += includeLengthOffset;
+		
+		if ( parent.parent != null )
+		{
+			updateParentSize( parent, lengthOffset, includeLengthOffset );
+		}
+	}
+	
+	static function updateChildPosition( xrd : XMLRawData, offset : UInt ) : Void
+	{
+		for ( child in xrd.children )
+		{
+			child.absPosition += offset;
+			if ( child.children.length > 0 )
+			{
+				updateChildPosition( child, offset );
+			}
+		}
+	}
+	
 	macro public static function readXmlFile( fileName : String, ?m : Expr ) : ExprOf<String>
 	{
-		var xmlRawData = XMLFileReader.readFile( fileName );
-		var data = XMLFileReader.checkForInclude( xmlRawData.data );
-		data = MacroPreprocessor.parse( data, m );
+		var xrdStack = new GenericStack<XMLRawData>();
 		
+		var xmlRawData = XMLFileReader.readFile( fileName, null, null, m );
+		xmlRawData = XMLFileReader.checkForInclude( xmlRawData, xrdStack );
+		
+		var xrdCollection : Array<XMLRawData> = [];
+		var i = 0;
+		while ( !xrdStack.isEmpty() )
+		{
+			var xrd 		= xrdStack.pop();
+			xrd.absLength 	+= xrd.length;
+			xrd.absPosition += xrd.position;
+
+			if ( xrd.parent != null )
+			{
+				updateParentSize( xrd, xrd.length, xrd.absIncludeLength );
+			}
+			
+			if ( xrd.children.length > 0 )
+			{
+				updateChildPosition( xrd, xrd.position );
+			}
+
+			xrdCollection.push( xrd );
+		}
+
 		try
 		{
-			var doc = Xml176Parser.parse( data );
+			var doc = Xml176Parser.parse( xmlRawData.data, xmlRawData.path );
 			XMLFileReader._compiledClass = [];
 
 			var iterator = doc.document.firstElement().elements();
 			while ( iterator.hasNext() )
 			{
-				XMLFileReader._parseNode( iterator.next(), doc );
+				XMLFileReader._parseNode( iterator.next(), doc, xmlRawData, xrdCollection );
 			}
 
 		}
@@ -256,7 +402,6 @@ class XMLFileReader
 			Context.error( 'Xml parsing failed @$fileName $error', Context.currentPos() );
 		}
 
-		return macro $v{ data };
+		return macro $v{ xmlRawData.data };
 	}
 }
-
