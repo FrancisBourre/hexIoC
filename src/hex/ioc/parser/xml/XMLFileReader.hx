@@ -22,7 +22,6 @@ using StringTools;
 class XMLFileReader
 {
 	static var _includeMatcher 	: EReg = ~/<include.*?file=("|')([^"']+)\1.*?(?:(?:\/>)|(?:>[\W\w\t\r\n]*?<\/include *>))/g;
-	//static var _headerMatcher 	: EReg = ~/((?:<\?xml[^>]+>\s*)<([a-zA-Z0-9-_:]+)[^>]*>)([\s\S]*)<\/\2\s*>/;
 	static var _headerMatcher 	: EReg = ~/((?:<\?xml[^>]+>\s*)<([a-zA-Z0-9-_:]+)[^>]*>[\r\n]?)([\s\S]*)<\/\2\s*>/;
 
 	static var _compiledClass	: Array<String>;
