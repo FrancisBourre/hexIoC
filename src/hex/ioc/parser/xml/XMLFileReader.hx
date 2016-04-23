@@ -249,8 +249,6 @@ class XMLFileReader
 		}
 		else
 		{
-			args = ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR ) ? XMLParserUtil.getItems( xml ) : XMLParserUtil.getArguments( xml, type );
-
 			if ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR )
 			{
 				args = XMLParserUtil.getItems( xml );
