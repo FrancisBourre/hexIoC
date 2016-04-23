@@ -1,6 +1,5 @@
 package hex.ioc.assembler;
 
-import hex.collection.HashMap;
 import hex.error.IllegalArgumentException;
 import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.core.ContextFactory;
@@ -28,8 +27,8 @@ class ApplicationAssembler implements IApplicationAssembler
 		
 	}
 	
-	var _mApplicationContext 		= new HashMap<String, AbstractApplicationContext>();
-	var _mBuilderFactories 			= new HashMap<AbstractApplicationContext, IContextFactory>();
+	var _mApplicationContext 		= new Map<String, AbstractApplicationContext>();
+	var _mContextFactories 			= new Map<AbstractApplicationContext, IContextFactory>();
 	var _conditionalProperties 		= new Map<String, Bool>();
 	var _strictMode					: Bool = true;
 	
@@ -113,18 +112,15 @@ class ApplicationAssembler implements IApplicationAssembler
 
 	public function getBuilderFactory( applicationContext : AbstractApplicationContext ) : IContextFactory
 	{
-		return this._mBuilderFactories.get( applicationContext );
+		return this._mContextFactories.get( applicationContext );
 	}
 
 	public function release() : Void
 	{
-		var builderFactories : Array<IContextFactory> = this._mBuilderFactories.getValues();
-		for ( builderFactory in builderFactories )
-		{
-			builderFactory.release();
-		}
-		this._mApplicationContext.clear();
-		this._mBuilderFactories.clear();
+		var itFactory = this._mContextFactories.iterator();
+		while ( itFactory.hasNext() ) itFactory.next().release();
+		this._mApplicationContext = new Map();
+		this._mContextFactories = new Map();
 	}
 
 	public function buildProperty(  applicationContext 	: AbstractApplicationContext,
@@ -262,26 +258,29 @@ class ApplicationAssembler implements IApplicationAssembler
 	
 	public function buildEverything() : Void
 	{
-		var builderFactories 	: Array<IContextFactory> 	= this._mBuilderFactories.getValues();
-		var len 				: Int 						= builderFactories.length;
-		var i 					: Int;
+		var itFactory = this._mContextFactories.iterator();
+		var builderFactories 	: Array<IContextFactory> = [];
+		while ( itFactory.hasNext() ) builderFactories.push( itFactory.next() );
 		
-		for ( i in 0...len ) builderFactories[ i ].buildAllStateTransitions();
+		var itFactory = this._mContextFactories.iterator();
+		while ( itFactory.hasNext() ) itFactory.next().buildAllStateTransitions();
 		
-		var applicationContexts : Array<AbstractApplicationContext> = null;
+		var applicationContexts : Array<AbstractApplicationContext> = [];
+		var itContext = this._mApplicationContext.iterator();
+		while ( itContext.hasNext() ) applicationContexts.push( itContext.next() );
 		
-		applicationContexts = this._mApplicationContext.getValues();
 		for ( applicationcontext in applicationContexts )
 		{
 			applicationcontext._dispatch( ApplicationAssemblerMessage.ASSEMBLING_START );
 		}
 
+		var len : Int = builderFactories.length;
+		var i 	: Int;
 		for ( i in 0...len ) builderFactories[ i ].buildAllObjects();
 		for ( i in 0...len ) builderFactories[ i ].assignAllDomainListeners();
 		for ( i in 0...len ) builderFactories[ i ].callAllMethods();
 		for ( i in 0...len ) builderFactories[ i ].callModuleInitialisation();
 		
-		applicationContexts = this._mApplicationContext.getValues();
 		for ( applicationcontext in applicationContexts )
 		{
 			applicationcontext._dispatch( ApplicationAssemblerMessage.ASSEMBLING_END );
@@ -292,7 +291,7 @@ class ApplicationAssembler implements IApplicationAssembler
 	{
 		var applicationContext : AbstractApplicationContext;
 
-		if ( this._mApplicationContext.containsKey( applicationContextName ) )
+		if ( this._mApplicationContext.exists( applicationContextName ) )
 		{
 			applicationContext = this._mApplicationContext.get( applicationContextName );
 
@@ -301,8 +300,8 @@ class ApplicationAssembler implements IApplicationAssembler
 			var builderFactory : IContextFactory = new ContextFactory( applicationContextName, applicationContextClass );
 			applicationContext = builderFactory.getApplicationContext();
 			
-			this._mApplicationContext.put( applicationContextName, applicationContext);
-			this._mBuilderFactories.put( applicationContext, builderFactory );
+			this._mApplicationContext.set( applicationContextName, applicationContext);
+			this._mContextFactories.set( applicationContext, builderFactory );
 		}
 
 		return applicationContext;
