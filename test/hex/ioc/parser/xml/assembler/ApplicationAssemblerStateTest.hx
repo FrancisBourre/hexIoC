@@ -82,7 +82,7 @@ class ApplicationAssemblerStateTest
 		var xml : Xml = Xml.parse( source );
 		this._build( xml );
 		
-		this._builderFactory = this._applicationAssembler.getBuilderFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
+		this._builderFactory = this._applicationAssembler.getContextFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
 	}
 	
 	@Test( "test extending state transitions" )
@@ -107,7 +107,7 @@ class ApplicationAssemblerStateTest
 		var xml : Xml = Xml.parse( source );
 		this._build( xml );
 		
-		var builderFactory : IContextFactory = this._applicationAssembler.getBuilderFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
+		var builderFactory : IContextFactory = this._applicationAssembler.getContextFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
 		var coreFactory = builderFactory.getCoreFactory();
 		var module : MockModule = coreFactory.locate( "module" );
 		var anotherModule : MockModule = coreFactory.locate( "anotherModule" );

@@ -58,7 +58,7 @@ class ObjectXMLParserTest
 	{
 		this._applicationAssembler 	= new ApplicationAssembler();
 		this._applicationContext 	= this._applicationAssembler.getApplicationContext( "applicationContext" );
-		this._builderFactory 		= this._applicationAssembler.getBuilderFactory( this._applicationContext );
+		this._builderFactory 		= this._applicationAssembler.getContextFactory( this._applicationContext );
 	}
 
 	@After
@@ -389,7 +389,7 @@ class ObjectXMLParserTest
 
 		var builderFactory : IContextFactory;
 
-		builderFactory = this._applicationAssembler.getBuilderFactory( applicationContextParent );
+		builderFactory = this._applicationAssembler.getContextFactory( applicationContextParent );
 		var parentRectangle  : MockRectangle = builderFactory.getCoreFactory().locate( "rect0" );
 		Assert.isInstanceOf( parentRectangle, MockRectangle, "" );
 		Assert.equals( 10, parentRectangle.x, "" );
@@ -397,7 +397,7 @@ class ObjectXMLParserTest
 		Assert.equals( 30, parentRectangle.width, "" );
 		Assert.equals( 110, parentRectangle.height, "" );
 
-		builderFactory = this._applicationAssembler.getBuilderFactory( applicationContextChild );
+		builderFactory = this._applicationAssembler.getContextFactory( applicationContextChild );
 		var childRectangle : MockRectangle = builderFactory.getCoreFactory().locate( "rect0" );
 		Assert.isInstanceOf( childRectangle, MockRectangle, "" );
 		Assert.equals( 40, childRectangle.x, "" );
@@ -405,7 +405,7 @@ class ObjectXMLParserTest
 		Assert.equals( 60, childRectangle.width, "" );
 		Assert.equals( 70, childRectangle.height, "" );
 
-		builderFactory = this._applicationAssembler.getBuilderFactory( applicationContextSubChild );
+		builderFactory = this._applicationAssembler.getContextFactory( applicationContextSubChild );
 		var subChildRectangle : MockRectangle = builderFactory.getCoreFactory().locate( "rect0" );
 		Assert.isInstanceOf( subChildRectangle, MockRectangle, "" );
 		Assert.equals( 80, subChildRectangle.x, "" );

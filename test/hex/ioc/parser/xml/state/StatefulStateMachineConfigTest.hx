@@ -29,7 +29,7 @@ class StatefulStateMachineConfigTest
 	public function setUp() : Void
 	{
 		this._applicationAssembler 	= new ApplicationAssembler();
-		this._builderFactory 		= this._applicationAssembler.getBuilderFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
+		this._builderFactory 		= this._applicationAssembler.getContextFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
 	}
 
 	@After

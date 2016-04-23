@@ -110,7 +110,7 @@ class ApplicationAssembler implements IApplicationAssembler
 		return true;
 	}
 
-	public function getBuilderFactory( applicationContext : AbstractApplicationContext ) : IContextFactory
+	public function getContextFactory( applicationContext : AbstractApplicationContext ) : IContextFactory
 	{
 		return this._mContextFactories.get( applicationContext );
 	}
@@ -136,7 +136,7 @@ class ApplicationAssembler implements IApplicationAssembler
 	{
 		if ( this.allowsIfList( ifList ) && this.allowsIfNotList( ifNotList ) )
 		{
-			this.getBuilderFactory( applicationContext ).registerPropertyVO( ownerID, new PropertyVO( ownerID, name, value, type, ref, method, staticRef ) );
+			this.getContextFactory( applicationContext ).registerPropertyVO( ownerID, new PropertyVO( ownerID, name, value, type, ref, method, staticRef ) );
 		}
 	}
 
@@ -198,7 +198,7 @@ class ApplicationAssembler implements IApplicationAssembler
 			}
 
 			var constructorVO = new ConstructorVO( ownerID, type, args, factory, singleton, injectInto, null, mapType, staticRef );
-			this.getBuilderFactory( applicationContext ).registerConstructorVO( ownerID, constructorVO );
+			this.getContextFactory( applicationContext ).registerConstructorVO( ownerID, constructorVO );
 		}
 	}
 
@@ -222,7 +222,7 @@ class ApplicationAssembler implements IApplicationAssembler
 				}
 			}
 
-			this.getBuilderFactory( applicationContext ).registerMethodCallVO( new MethodCallVO( ownerID, methodCallName, args ) );
+			this.getContextFactory( applicationContext ).registerMethodCallVO( new MethodCallVO( ownerID, methodCallName, args ) );
 		}
 	}
 
@@ -235,7 +235,7 @@ class ApplicationAssembler implements IApplicationAssembler
 	{
 		if ( this.allowsIfList( ifList ) && this.allowsIfNotList( ifNotList ) )
 		{
-			this.getBuilderFactory( applicationContext ).registerDomainListenerVO( new DomainListenerVO( ownerID, listenedDomainName, args ) );
+			this.getContextFactory( applicationContext ).registerDomainListenerVO( new DomainListenerVO( ownerID, listenedDomainName, args ) );
 		}
 	}
 	
@@ -252,7 +252,7 @@ class ApplicationAssembler implements IApplicationAssembler
 		{
 			this._registerID( applicationContext, ownerID );
 			var stateTransition = new StateTransitionVO( ownerID, staticReference, instanceReference, enterList, exitList );
-			this.getBuilderFactory( applicationContext ).registerStateTransitionVO( ownerID, stateTransition );
+			this.getContextFactory( applicationContext ).registerStateTransitionVO( ownerID, stateTransition );
 		}
 	}
 	
@@ -309,6 +309,6 @@ class ApplicationAssembler implements IApplicationAssembler
 	
 	function _registerID( applicationContext : AbstractApplicationContext, ID : String ) : Bool
 	{
-		return this.getBuilderFactory( applicationContext ).registerID( ID );
+		return this.getContextFactory( applicationContext ).registerID( ID );
 	}
 }

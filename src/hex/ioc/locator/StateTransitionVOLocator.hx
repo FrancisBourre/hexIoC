@@ -7,7 +7,7 @@ import hex.control.command.CommandMapping;
 import hex.control.command.ICommand;
 import hex.control.command.ICommandMapping;
 import hex.di.IContextOwner;
-import hex.ioc.core.ContextFactory;
+import hex.ioc.core.IContextFactory;
 import hex.ioc.core.ICoreFactory;
 import hex.ioc.di.ContextOwnerWrapper;
 import hex.ioc.error.BuildingException;
@@ -21,14 +21,14 @@ import hex.state.State;
  */
 class StateTransitionVOLocator extends Locator<String, StateTransitionVO>
 {
-	var _builderFactory : ContextFactory;
+	var _contextFactory : IContextFactory;
 	var _stateUnmapper : HashMap<State, StateUnmapper>;
 
-	public function new( builderFactory : ContextFactory )
+	public function new( contextFactory : IContextFactory )
 	{
 		super();
 		
-		this._builderFactory 	= builderFactory;
+		this._contextFactory 	= contextFactory;
 		this._stateUnmapper 	= new HashMap();
 	}
 	
@@ -37,7 +37,7 @@ class StateTransitionVOLocator extends Locator<String, StateTransitionVO>
 		if ( this.isRegisteredWithKey( key ) )
 		{
 			var vo : StateTransitionVO = this.locate( key );
-			var coreFactory : ICoreFactory = this._builderFactory.getCoreFactory();
+			var coreFactory : ICoreFactory = this._contextFactory.getCoreFactory();
 			
 			
 			var state : State = null;
@@ -82,7 +82,7 @@ class StateTransitionVOLocator extends Locator<String, StateTransitionVO>
 					enterContextOwner = new ContextOwnerWrapper( coreFactory, enterVO.contextOwner );
 				}
 				
-				enterMapping.setContextOwner( enterContextOwner != null ? enterContextOwner : this._builderFactory.getApplicationContext() );
+				enterMapping.setContextOwner( enterContextOwner != null ? enterContextOwner : this._contextFactory.getApplicationContext() );
 				if ( enterVO.fireOnce )
 				{
 					enterMapping.once();
@@ -103,7 +103,7 @@ class StateTransitionVOLocator extends Locator<String, StateTransitionVO>
 					exitContextOwner = new ContextOwnerWrapper( coreFactory, exitVO.contextOwner );
 				}
 				
-				exitMapping.setContextOwner( exitContextOwner != null ? exitContextOwner : this._builderFactory.getApplicationContext() );
+				exitMapping.setContextOwner( exitContextOwner != null ? exitContextOwner : this._contextFactory.getApplicationContext() );
 				if ( exitVO.fireOnce )
 				{
 					exitMapping.once();

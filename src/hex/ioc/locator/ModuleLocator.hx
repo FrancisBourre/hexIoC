@@ -2,7 +2,7 @@ package hex.ioc.locator;
 
 import hex.collection.Locator;
 import hex.collection.LocatorMessage;
-import hex.ioc.core.ContextFactory;
+import hex.ioc.core.IContextFactory;
 import hex.module.IModule;
 
 /**
@@ -11,12 +11,12 @@ import hex.module.IModule;
  */
 class ModuleLocator extends Locator<String, IModule>
 {
-	var _builderFactory : ContextFactory;
+	var _contextFactory : IContextFactory;
 
-	public function new( builderFactory : ContextFactory )
+	public function new( contextFactory : IContextFactory )
 	{
 		super();
-		this._builderFactory = builderFactory;
+		this._contextFactory = contextFactory;
 	}
 	
 	public function callModuleInitialisation() 
