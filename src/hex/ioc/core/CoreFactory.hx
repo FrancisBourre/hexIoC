@@ -1,6 +1,5 @@
 package hex.ioc.core;
 
-import hex.collection.HashMap;
 import hex.collection.ILocatorListener;
 import hex.collection.LocatorMessage;
 import hex.core.IAnnotationParsable;
@@ -23,7 +22,7 @@ class CoreFactory implements ICoreFactory
 	var _injector 				: IBasicInjector;
 	var _annotationProvider 	: IAnnotationProvider;
 	var _dispatcher 			: IDispatcher<ILocatorListener<String, Dynamic>>;
-	var _map 					: HashMap<String, Dynamic>;
+	var _map 					: Map<String, {}>;
 	
 	static var _fastEvalMethod : Dynamic->String->ICoreFactory->Dynamic = FastEval.fromTarget;
 	
@@ -32,7 +31,7 @@ class CoreFactory implements ICoreFactory
 		this._injector 				= injector;
 		this._annotationProvider 	= annotationProvider;
 		this._dispatcher 			= new Dispatcher<ILocatorListener<String, Dynamic>>();
-		this._map 					= new HashMap();
+		this._map 					= new Map();
 	}
 	
 	public function addListener( listener : ILocatorListener<String, Dynamic> ) : Bool
@@ -47,17 +46,23 @@ class CoreFactory implements ICoreFactory
 	
 	public function keys() : Array<String> 
 	{
-		return this._map.getKeys();
+		var a = [];
+		var it = this._map.keys();
+		while ( it.hasNext() ) a.push( it.next() );
+		return a;
 	}
 	
 	public function values() : Array<Dynamic> 
 	{
-		return this._map.getValues();
+		var a = [];
+		var it = this._map.iterator();
+		while ( it.hasNext() ) a.push( it.next() );
+		return a;
 	}
 	
 	public function locate( key: String ) : Dynamic 
 	{
-		if ( this._map.containsKey( key ) )
+		if ( this._map.exists( key ) )
         {
             return this._map.get( key );
         }
@@ -65,7 +70,7 @@ class CoreFactory implements ICoreFactory
         {
             var props : Array<String> = key.split( "." );
 			var baseKey : String = props.shift();
-			if ( this._map.containsKey( baseKey ) )
+			if ( this._map.exists( baseKey ) )
 			{
 				var target : Dynamic = this._map.get( baseKey );
 				return this.fastEvalFromTarget( target, props.join(".") );
@@ -77,19 +82,19 @@ class CoreFactory implements ICoreFactory
 	
 	public function isRegisteredWithKey( key : Dynamic ) : Bool 
 	{
-		return this._map.containsKey( key );
+		return this._map.exists( key );
 	}
 	
 	public function isInstanceRegistered( instance : Dynamic ) : Bool
 	{
-		return this._map.containsValue( instance );
+		return this.values().indexOf( instance ) != -1;
 	}
 	
 	public function register( key : String, element : Dynamic ) : Bool 
 	{
-		if ( !this._map.containsKey( key ) )
+		if ( !this._map.exists( key ) )
 		{
-			this._map.put( key, element ) ;
+			this._map.set( key, element ) ;
 			this._dispatcher.dispatch( LocatorMessage.REGISTER, [ key, element ] ) ;
 			return true ;
 		}
@@ -101,7 +106,7 @@ class CoreFactory implements ICoreFactory
 	
 	public function unregisterWithKey( key : String ) : Bool
 	{
-		if ( this._map.containsKey( key ) )
+		if ( this._map.exists( key ) )
 		{
 			var instance : Dynamic = this._map.get( key );
 			this._map.remove( key ) ;
@@ -122,16 +127,13 @@ class CoreFactory implements ICoreFactory
 	
 	public function getKeyOfInstance( instance : Dynamic ) : String
 	{
-		var key : String;
-		if ( this._map.containsValue( instance ) )
+		var iterator = this._map.keys();
+		while( iterator.hasNext() )
 		{
-			var keys : Array<String> = this._map.getKeys();
-			for( key in keys )
+			var key = iterator.next();
+			if ( this._map.get( key ) == instance ) 
 			{
-				if ( this._map.get( key ) == instance ) 
-				{
-					return key;
-				}
+				return key;
 			}
 		}
 
@@ -283,7 +285,7 @@ class CoreFactory implements ICoreFactory
 	
 	public function clear() : Void
 	{
-		this._map.clear();
+		this._map = new Map();
 	}
 	
 	public function getBasicInjector() : IBasicInjector
