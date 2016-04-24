@@ -11,6 +11,6 @@ import hex.ioc.parser.xml.state.StatefulStateMachineConfigTest;
 class IoCXmlSuite
 {
 	@Suite( "Xml" )
-    public var list : Array<Class<Dynamic>> = [ApplicationAssemblerStateTest, ApplicationContextBuildingTest, ObjectXMLParserTest, StatefulStateMachineConfigTest, XmlParserUtilTest];
+    public var list : Array<Class<Dynamic>> = [ApplicationAssemblerStateTest, ApplicationContextBuildingTest, ObjectXMLParserTest, StatefulStateMachineConfigTest, XmlCompilerTest, XmlParserUtilTest];
 	
 }

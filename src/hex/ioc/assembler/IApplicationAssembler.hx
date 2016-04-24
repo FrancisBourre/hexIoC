@@ -1,5 +1,6 @@
 package hex.ioc.assembler;
 
+import hex.ioc.core.IContextFactory;
 import hex.ioc.vo.CommandMappingVO;
 import hex.ioc.vo.DomainListenerVOArguments;
 
@@ -8,6 +9,7 @@ import hex.ioc.vo.DomainListenerVOArguments;
  */
 interface IApplicationAssembler 
 {
+	function getContextFactory( applicationContext : AbstractApplicationContext ) : IContextFactory;
 	function buildEverything() : Void;
 	function release() : Void;
 	function buildProperty( applicationContext : AbstractApplicationContext, ownerID : String, name : String = null, value : String = null, type : String = null, ref : String = null, method : String = null, staticRef : String = null, ifList : Array<String> = null, ifNotList : Array<String> = null ) : Void;
