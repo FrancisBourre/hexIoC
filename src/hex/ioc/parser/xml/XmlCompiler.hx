@@ -512,40 +512,6 @@ class XmlCompiler
 		
 		var assembler = XmlCompiler._assembler;
 
-		
-/*
-		var expr = macro 
-		{
-			trace( "XmlCompiler starts compilation..." );
-		};
-
-		var mainBlock;
-		switch ( expr.expr )
-		{
-			case EBlock( block ):
-				mainBlock = block;
-			default:
-				null;
-		}
-*/
-		
-		/*
-		//Create runtime applicationAssembler
-		var applicationAssemblerTypePath = getTypePath( Type.getClassName( ApplicationAssembler ) );
-		mainBlock.push( macro @:mergeBlock { var applicationAssembler = new $applicationAssemblerTypePath(); } );
-		
-		//Create runtime applicationContext
-		mainBlock.push( getApplicationContext( doc, xrdCollection ) );
-		
-		//Create runtime coreFactory
-		mainBlock.push( macro @:mergeBlock { var coreFactory = applicationContext.getCoreFactory(); } );
-		
-		//mainBlock.push( macro @:mergeBlock { coreFactory.register( "test", "hello" ); } );
-		
-		//return application assembler
-		mainBlock.push( macro { applicationAssembler; } );
-		*/
-		
 		//Create runtime applicationAssembler
 		var applicationAssemblerTypePath = getTypePath( Type.getClassName( ApplicationAssembler ) );
 		assembler.addExpression( macro @:mergeBlock { var applicationAssembler = new $applicationAssemblerTypePath(); } );

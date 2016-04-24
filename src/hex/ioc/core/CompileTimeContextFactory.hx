@@ -486,13 +486,10 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		if ( id != null )
 		{
 			this._coreFactory.register( id, constructorVO.result );
-			//this._mainBlock.push( macro @:mergeBlock { coreFactory.register( $v{ id }, $v{constructorVO.result} ); } );
+
 			#if macro
-			trace( id );
-			trace( constructorVO.result );
 			this._mainBlock.push( macro @:mergeBlock { coreFactory.register( $v{ id }, $v{constructorVO.result} ); } );
 			#end
-			//this._mainBlock.push( macro @:mergeBlock { coreFactory.register( "test", "hello" ); } );
 		}
 
 		return constructorVO.result;
