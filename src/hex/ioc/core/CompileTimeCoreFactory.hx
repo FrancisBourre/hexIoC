@@ -51,7 +51,7 @@ class CompileTimeCoreFactory implements ICoreFactory
 	
 	public function isRegisteredWithKey( key : String ) : Bool 
 	{
-		return null;
+		return false;
 	}
 	
 	public function locate( key : String ) : Dynamic 
@@ -61,12 +61,12 @@ class CompileTimeCoreFactory implements ICoreFactory
 	
 	public function register( key : String, element : Dynamic ) : Bool 
 	{
-		return null;
+		return false;
 	}
 	
 	public function unregister( key: String ) : Bool 
 	{
-		return null;
+		return false;
 	}
 	
 	public function add( map : Map<String, Dynamic> ) : Void 
@@ -76,12 +76,12 @@ class CompileTimeCoreFactory implements ICoreFactory
 	
 	public function addListener( listener : ILocatorListener<String, Dynamic> ) : Bool 
 	{
-		return null;
+		return false;
 	}
 	
 	public function removeListener( listener : ILocatorListener<String, Dynamic> ) : Bool 
 	{
-		return null;
+		return false;
 	}
 	
 	public function fastEvalFromTarget( target : Dynamic, toEval : String ) : Dynamic
