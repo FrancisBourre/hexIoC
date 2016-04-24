@@ -41,7 +41,7 @@ import hex.metadata.IAnnotationProvider;
  */
 class CompileTimeContextFactory implements IContextFactory implements ILocatorListener<String, Dynamic>
 {
-	var _mainBlock 					: Array<Expr>;
+	var _expressions 				: Array<Expr>;
 	
 	var _annotationProvider			: IAnnotationProvider;
 	//var _contextDispatcher			: IDispatcher<{}>;
@@ -57,9 +57,9 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	var _domainListenerVOLocator 	: DomainListenerVOLocator;
 	var _stateTransitionVOLocator 	: StateTransitionVOLocator;
 	
-	public function new( mainBlock : Array<Expr>, applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null  )
+	public function new( expressions : Array<Expr>, applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null  )
 	{
-		this._mainBlock = mainBlock;
+		this._expressions = expressions;
 		
 		/*
 		//build contextDispatcher
@@ -78,16 +78,14 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		*/
 		
 		//build coreFactory
-		this._coreFactory = new CompileTimeCoreFactory();
+		this._coreFactory = new CompileTimeCoreFactory( this._expressions );
 		
 		if ( applicationContextClass != null )
 		{
-//			this._applicationContext = Type.createInstance( applicationContextClass, [ this._contextDispatcher, this._coreFactory, applicationContextName ] );
 			this._applicationContext = new AbstractApplicationContext( this._coreFactory, applicationContextName );
 		} 
 		else
 		{
-			//ApplicationContext instantiation
 			this._applicationContext = new AbstractApplicationContext( this._coreFactory, applicationContextName );
 		}
 		
@@ -490,7 +488,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 			this._coreFactory.register( id, constructorVO.result );
 
 			#if macro
-			this._mainBlock.push( macro @:mergeBlock { coreFactory.register( $v{ id }, $v{constructorVO.result} ); } );
+			this._expressions.push( macro @:mergeBlock { coreFactory.register( $v{ id }, $v{constructorVO.result} ); } );
 			#end
 		}
 
