@@ -3,8 +3,8 @@ package hex.ioc.parser.xml;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import hex.ioc.assembler.AbstractApplicationContext;
-import hex.ioc.assembler.CompileTimeApplicationAssembler;
-import hex.ioc.core.CompileTimeCoreFactory;
+import hex.compiler.assembler.CompileTimeApplicationAssembler;
+import hex.compiler.core.CompileTimeCoreFactory;
 
 import hex.ioc.core.ContextNameList;
 import hex.ioc.core.ContextTypeList;

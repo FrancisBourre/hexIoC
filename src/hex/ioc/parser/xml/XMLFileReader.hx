@@ -2,6 +2,7 @@ package hex.ioc.parser.xml;
 
 import com.tenderowls.xml176.Xml176Parser;
 import haxe.ds.GenericStack;
+import hex.compiler.parser.xml.XMLRawData;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.parser.preprocess.Preprocessor;
 import hex.ioc.parser.preprocess.MacroPreprocessor;

@@ -1,4 +1,4 @@
-package hex.ioc.parser.xml;
+package hex.compiler.parser.xml;
 
 /**
  * @author Francis Bourre

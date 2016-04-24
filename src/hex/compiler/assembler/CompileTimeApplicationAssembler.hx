@@ -1,8 +1,10 @@
-package hex.ioc.assembler;
+package hex.compiler.assembler;
 
 import haxe.macro.Expr;
 import hex.error.IllegalArgumentException;
-import hex.ioc.core.CompileTimeContextFactory;
+import hex.ioc.assembler.AbstractApplicationContext;
+import hex.ioc.assembler.IApplicationAssembler;
+import hex.compiler.core.CompileTimeContextFactory;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.core.IContextFactory;
 import hex.ioc.error.BuildingException;

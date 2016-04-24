@@ -1,7 +1,8 @@
-package hex.ioc.core;
+package hex.compiler.core;
 
 import haxe.macro.Expr;
 import hex.collection.ILocatorListener;
+import hex.compiler.core.CompileTimeCoreFactory;
 import hex.core.HashCodeFactory;
 import hex.event.IEvent;
 import hex.ioc.assembler.AbstractApplicationContext;
@@ -20,6 +21,10 @@ import hex.ioc.control.BuildStringCommand;
 import hex.ioc.control.BuildUIntCommand;
 import hex.ioc.control.BuildXMLCommand;
 import hex.ioc.control.IBuildCommand;
+import hex.ioc.core.ContextTypeList;
+import hex.ioc.core.IContextFactory;
+import hex.ioc.core.ICoreFactory;
+import hex.ioc.core.IDExpert;
 import hex.ioc.locator.ConstructorVOLocator;
 import hex.ioc.locator.DomainListenerVOLocator;
 import hex.ioc.locator.MethodCallVOLocator;

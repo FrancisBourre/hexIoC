@@ -1,4 +1,4 @@
-package hex.ioc.core;
+package hex.compiler.core;
 
 import haxe.ds.HashMap;
 import haxe.macro.Expr;
@@ -10,6 +10,7 @@ import hex.error.IllegalArgumentException;
 import hex.error.NoSuchElementException;
 import hex.event.Dispatcher;
 import hex.event.IDispatcher;
+import hex.ioc.core.ICoreFactory;
 import hex.log.Stringifier;
 import hex.service.IService;
 

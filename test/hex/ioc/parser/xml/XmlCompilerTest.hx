@@ -1,4 +1,5 @@
 package hex.ioc.parser.xml;
+import hex.compiler.parser.xml.XmlCompiler;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.ApplicationAssembler;

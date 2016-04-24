@@ -1,12 +1,12 @@
-package hex.ioc.parser.xml;
+package hex.compiler.parser.xml;
 
 import com.tenderowls.xml176.Xml176Parser;
 import haxe.ds.GenericStack;
 import hex.domain.Domain;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.ApplicationAssembler;
-import hex.ioc.assembler.CompileTimeApplicationAssembler;
-import hex.ioc.core.CompileTimeCoreFactory;
+import hex.compiler.assembler.CompileTimeApplicationAssembler;
+import hex.compiler.core.CompileTimeCoreFactory;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.parser.preprocess.Preprocessor;
 import hex.ioc.parser.preprocess.MacroPreprocessor;
@@ -15,6 +15,8 @@ import haxe.macro.Expr;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.error.ParsingException;
+import hex.ioc.parser.xml.XMLAttributeUtil;
+import hex.ioc.parser.xml.XMLParserUtil;
 import hex.ioc.vo.DomainListenerVOArguments;
 
 using StringTools;
