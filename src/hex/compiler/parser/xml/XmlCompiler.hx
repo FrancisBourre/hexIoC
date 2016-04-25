@@ -2,22 +2,20 @@ package hex.compiler.parser.xml;
 
 import com.tenderowls.xml176.Xml176Parser;
 import haxe.ds.GenericStack;
-import hex.domain.Domain;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.ApplicationAssembler;
 import hex.compiler.assembler.CompileTimeApplicationAssembler;
 import hex.compiler.core.CompileTimeCoreFactory;
 import hex.ioc.core.ContextAttributeList;
-import hex.ioc.parser.preprocess.Preprocessor;
 import hex.ioc.parser.preprocess.MacroPreprocessor;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.core.ContextTypeList;
-import hex.ioc.error.ParsingException;
 import hex.ioc.parser.xml.XMLAttributeUtil;
 import hex.ioc.parser.xml.XMLParserUtil;
 import hex.ioc.vo.DomainListenerVOArguments;
+import hex.util.MacroUtil;
 
 using StringTools;
 
@@ -381,21 +379,6 @@ class XmlCompiler
 		}
 	}
 	
-	static function getFieldExpression( className : String )
-	{
-		Context.getType( className );
-		return className.split( "." );
-	}
-	
-	static function getTypePath( className : String ) : TypePath
-	{
-		Context.getType( className );
-		var pack = className.split( "." );
-		var className = pack[ pack.length -1 ];
-		pack.splice( pack.length - 1, 1 );
-		return { pack: pack, name: className };
-	}
-	
 	static function getApplicationContext( doc : Xml176Document, xrdCollection : Array<XMLRawData> ) : ExprOf<AbstractApplicationContext>
 	{
 		var xml = doc.document.firstElement();
@@ -407,7 +390,7 @@ class XmlCompiler
 		{
 			try
 			{
-				applicationContextClass = getFieldExpression( applicationContextClassName );
+				applicationContextClass = MacroUtil.getPack( applicationContextClassName );
 			}
 			catch ( error : Dynamic )
 			{
@@ -515,7 +498,7 @@ class XmlCompiler
 		var assembler = XmlCompiler._assembler;
 
 		//Create runtime applicationAssembler
-		var applicationAssemblerTypePath = getTypePath( Type.getClassName( ApplicationAssembler ) );
+		var applicationAssemblerTypePath = MacroUtil.getTypePath( Type.getClassName( ApplicationAssembler ) );
 		assembler.addExpression( macro @:mergeBlock { var applicationAssembler = new $applicationAssemblerTypePath(); } );
 		
 		//Create runtime applicationContext
