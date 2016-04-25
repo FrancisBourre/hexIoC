@@ -30,7 +30,7 @@ class ClassImportHelper
 	}
 	
 	#if macro
-	public function _forceCompilation( type : String ) : Bool
+	public function forceCompilation( type : String ) : Bool
 	{
 		if ( type != null && ClassImportHelper._primType.indexOf( type ) == -1 && this._compiledClass.indexOf( type ) == -1 )
 		{
@@ -52,7 +52,7 @@ class ClassImportHelper
 		}
 	}
 
-	public function _getClassFullyQualifiedNameFromStaticRef( staticRef : String ) : String
+	public function getClassFullyQualifiedNameFromStaticRef( staticRef : String ) : String
 	{
 		var a : Array<String> = staticRef.split( "." );
 		var type : String = a[ a.length - 1 ];
@@ -60,11 +60,11 @@ class ClassImportHelper
 		return a.join( "." );
 	}
 
-	public function _includeStaticRef( staticRef : String ) : Bool
+	public function includeStaticRef( staticRef : String ) : Bool
 	{
 		if ( staticRef != null )
 		{
-			this._forceCompilation( this._getClassFullyQualifiedNameFromStaticRef( staticRef ) );
+			this.forceCompilation( this.getClassFullyQualifiedNameFromStaticRef( staticRef ) );
 			return true;
 		}
 		else
@@ -73,11 +73,11 @@ class ClassImportHelper
 		}
 	}
 
-	public function _includeClass( arg : Dynamic ) : Bool
+	public function includeClass( arg : Dynamic ) : Bool
 	{
 		if ( arg.type == ContextTypeList.CLASS )
 		{
-			this._forceCompilation( arg.value );
+			this.forceCompilation( arg.value );
 			return true;
 		}
 		else

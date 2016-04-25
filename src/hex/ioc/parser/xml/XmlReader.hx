@@ -41,7 +41,7 @@ class XmlReader
 
 		if ( type == ContextTypeList.XML )
 		{
-			XmlReader._importHelper._forceCompilation( xml.get( ContextAttributeList.PARSER_CLASS ) );
+			XmlReader._importHelper.forceCompilation( xml.get( ContextAttributeList.PARSER_CLASS ) );
 		}
 		else
 		{
@@ -50,8 +50,8 @@ class XmlReader
 				args = XMLParserUtil.getItems( xml );
 				for ( arg in args )
 				{
-					XmlReader._importHelper._includeClass( arg.key );
-					XmlReader._importHelper._includeClass( arg.value );
+					XmlReader._importHelper.includeClass( arg.key );
+					XmlReader._importHelper.includeClass( arg.value );
 				}
 			}
 			else
@@ -59,30 +59,30 @@ class XmlReader
 				args = XMLParserUtil.getArguments( xml, type );
 				for ( arg in args )
 				{
-					if ( !XmlReader._importHelper._includeStaticRef( arg.staticRef ) )
+					if ( !XmlReader._importHelper.includeStaticRef( arg.staticRef ) )
 					{
-						XmlReader._importHelper._includeClass( arg );
+						XmlReader._importHelper.includeClass( arg );
 					}
 				}
 			}
 
 			try
 			{
-				XmlReader._importHelper._forceCompilation( type );
+				XmlReader._importHelper.forceCompilation( type );
 			}
 			catch ( e : String )
 			{
 				Context.error( "XmlReader parsing error with '" + xml.nodeName + "' node, '" + type + "' type not found.", positionTracker.makePositionFromAttribute( xml, ContextAttributeList.TYPE ) );
 			}
 			
-			XmlReader._importHelper._forceCompilation( xml.get( ContextAttributeList.MAP_TYPE ) );
-			XmlReader._importHelper._includeStaticRef( xml.get( ContextAttributeList.STATIC_REF ) );
+			XmlReader._importHelper.forceCompilation( xml.get( ContextAttributeList.MAP_TYPE ) );
+			XmlReader._importHelper.includeStaticRef( xml.get( ContextAttributeList.STATIC_REF ) );
 
 			// Build property.
 			var propertyIterator = xml.elementsNamed( ContextNameList.PROPERTY );
 			while ( propertyIterator.hasNext() )
 			{
-				XmlReader._importHelper._includeStaticRef( propertyIterator.next().get( ContextAttributeList.STATIC_REF ) );
+				XmlReader._importHelper.includeStaticRef( propertyIterator.next().get( ContextAttributeList.STATIC_REF ) );
 			}
 
 			// Build method call.
@@ -94,9 +94,9 @@ class XmlReader
 				args = XMLParserUtil.getMethodCallArguments( methodCallItem );
 				for ( arg in args )
 				{
-					if ( !XmlReader._importHelper._includeStaticRef( arg.staticRef ) )
+					if ( !XmlReader._importHelper.includeStaticRef( arg.staticRef ) )
 					{
-						XmlReader._importHelper._includeClass( arg );
+						XmlReader._importHelper.includeClass( arg );
 					}
 				}
 			}
@@ -113,8 +113,8 @@ class XmlReader
 					var listenerArgs : Array<DomainListenerVOArguments> = XMLParserUtil.getEventArguments( listener );
 					for ( listenerArg in listenerArgs )
 					{
-						XmlReader._importHelper._includeStaticRef( listenerArg.staticRef );
-						XmlReader._importHelper._forceCompilation( listenerArg.strategy );
+						XmlReader._importHelper.includeStaticRef( listenerArg.staticRef );
+						XmlReader._importHelper.forceCompilation( listenerArg.strategy );
 					}
 				}
 				else

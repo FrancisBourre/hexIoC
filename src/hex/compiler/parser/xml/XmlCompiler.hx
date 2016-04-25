@@ -55,7 +55,7 @@ class XmlCompiler
 			args.push( { ownerID: identifier, value: xml.firstElement().toString() } );
 			factory = xml.get( ContextAttributeList.PARSER_CLASS );
 			XmlCompiler._assembler.buildObject( applicationContext, identifier, type, args, factory );
-			XmlCompiler._importHelper._forceCompilation( factory );
+			XmlCompiler._importHelper.forceCompilation( factory );
 		}
 		else
 		{
@@ -77,8 +77,8 @@ class XmlCompiler
 				args = XMLParserUtil.getItems( xml );
 				for ( arg in args )
 				{
-					XmlCompiler._importHelper._includeClass( arg.key );
-					XmlCompiler._importHelper._includeClass( arg.value );
+					XmlCompiler._importHelper.includeClass( arg.key );
+					XmlCompiler._importHelper.includeClass( arg.value );
 				}
 			}
 			else
@@ -86,24 +86,24 @@ class XmlCompiler
 				args = XMLParserUtil.getArguments( xml, type );
 				for ( arg in args )
 				{
-					if ( !XmlCompiler._importHelper._includeStaticRef( arg.staticRef ) )
+					if ( !XmlCompiler._importHelper.includeStaticRef( arg.staticRef ) )
 					{
-						XmlCompiler._importHelper._includeClass( arg );
+						XmlCompiler._importHelper.includeClass( arg );
 					}
 				}
 			}
 
 			try
 			{
-				XmlCompiler._importHelper._forceCompilation( type );
+				XmlCompiler._importHelper.forceCompilation( type );
 			}
 			catch ( e : String )
 			{
 				Context.error( "XmlCompiler parsing error with '" + xml.nodeName + "' node, '" + type + "' type not found.", positionTracker.makePositionFromAttribute( xml, ContextAttributeList.TYPE ) );
 			}
 			
-			XmlCompiler._importHelper._forceCompilation( mapType );
-			XmlCompiler._importHelper._includeStaticRef( staticRef );
+			XmlCompiler._importHelper.forceCompilation( mapType );
+			XmlCompiler._importHelper.includeStaticRef( staticRef );
 			
 			XmlCompiler._assembler.buildObject( applicationContext, identifier, type, args, factory, singleton, injectInto, mapType, staticRef, ifList, ifNotList );
 
@@ -112,7 +112,7 @@ class XmlCompiler
 			while ( propertyIterator.hasNext() )
 			{
 				var property = propertyIterator.next();
-				XmlCompiler._importHelper._includeStaticRef( property.get( ContextAttributeList.STATIC_REF ) );
+				XmlCompiler._importHelper.includeStaticRef( property.get( ContextAttributeList.STATIC_REF ) );
 				
 				XmlCompiler._assembler.buildProperty (
 						applicationContext,
@@ -137,9 +137,9 @@ class XmlCompiler
 				args = XMLParserUtil.getMethodCallArguments( methodCallItem );
 				for ( arg in args )
 				{
-					if ( !XmlCompiler._importHelper._includeStaticRef( arg.staticRef ) )
+					if ( !XmlCompiler._importHelper.includeStaticRef( arg.staticRef ) )
 					{
-						XmlCompiler._importHelper._includeClass( arg );
+						XmlCompiler._importHelper.includeClass( arg );
 					}
 				}
 				
@@ -158,8 +158,8 @@ class XmlCompiler
 					var listenerArgs : Array<DomainListenerVOArguments> = XMLParserUtil.getEventArguments( listener );
 					for ( listenerArg in listenerArgs )
 					{
-						XmlCompiler._importHelper._includeStaticRef( listenerArg.staticRef );
-						XmlCompiler._importHelper._forceCompilation( listenerArg.strategy );
+						XmlCompiler._importHelper.includeStaticRef( listenerArg.staticRef );
+						XmlCompiler._importHelper.forceCompilation( listenerArg.strategy );
 					}
 					
 					XmlCompiler._assembler.buildDomainListener( applicationContext, identifier, channelName, listenerArgs, XMLParserUtil.getIfList( listener ), XMLParserUtil.getIfNotList( listener ) );
