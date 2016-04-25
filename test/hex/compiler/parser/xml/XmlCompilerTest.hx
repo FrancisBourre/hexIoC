@@ -1,9 +1,10 @@
-package hex.ioc.parser.xml;
-import hex.compiler.parser.xml.XmlCompiler;
+package hex.compiler.parser.xml;
+
 import hex.domain.ApplicationDomainDispatcher;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.core.IContextFactory;
+import hex.ioc.parser.xml.ApplicationXMLParser;
 import hex.unittest.assertion.Assert;
 
 /**

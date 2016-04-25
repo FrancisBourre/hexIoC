@@ -13,5 +13,5 @@ import hex.ioc.vo.IoCVOSuite;
 class IOCSuite
 {
 	@Suite( "IOC" )
-    public var list : Array<Class<Dynamic>> = [IoCAssemblerSuite, IoCControlSuite, IoCCoreSuite, IoCParserSuite, IoCVOSuite];
+    public var list : Array<Class<Dynamic>> = [ IoCAssemblerSuite, IoCControlSuite, IoCCoreSuite, IoCParserSuite, IoCVOSuite ];
 }

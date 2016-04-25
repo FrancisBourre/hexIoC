@@ -1,5 +1,6 @@
 package hex;
 
+import hex.compiler.CompilerSuite;
 import hex.ioc.IOCSuite;
 
 /**
@@ -9,5 +10,5 @@ import hex.ioc.IOCSuite;
 class HexIoCSuite
 {
 	@Suite( "HexIoC suite" )
-    public var list : Array<Class<Dynamic>> = [IOCSuite];
+    public var list : Array<Class<Dynamic>> = [ CompilerSuite, IOCSuite ];
 }
