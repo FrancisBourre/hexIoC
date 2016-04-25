@@ -86,7 +86,7 @@ class ObjectXMLParserTest
 	@Test( "test building String" )
 	public function testBuildingString() : Void
 	{
-		this.build( XMLFileReader.readXmlFile( "context/testBuildingString.xml" ) );
+		this.build( XmlReader.readXmlFile( "context/testBuildingString.xml" ) );
 		var s : String = this._builderFactory.getCoreFactory().locate( "s" );
 		Assert.equals( "hello", s, "" );
 	}
@@ -94,7 +94,7 @@ class ObjectXMLParserTest
 	@Test( "test building anonymous object" )
 	public function testBuildingAnonymousObject() : Void
 	{
-		this.build(  XMLFileReader.readXmlFile( "context/anonymousObject.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/anonymousObject.xml" ) );
 		var obj : Dynamic = this._builderFactory.getCoreFactory().locate( "obj" );
 
 		Assert.equals( "Francis", obj.name, "" );
@@ -108,7 +108,7 @@ class ObjectXMLParserTest
 	@Test( "test building simple instance with arguments" )
 	public function testBuildingSimpleInstanceWithArguments() : Void
 	{
-		this.build(  XMLFileReader.readXmlFile( "context/simpleInstanceWithArguments.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/simpleInstanceWithArguments.xml" ) );
 
 		var size : Size = this._builderFactory.getCoreFactory().locate( "size" );
 		Assert.isInstanceOf( size, Size, "" );
@@ -119,7 +119,7 @@ class ObjectXMLParserTest
 	@Test( "test building multiple instances with references" )
 	public function testBuildingMultipleInstancesWithReferences() : Void
 	{
-		this.build(  XMLFileReader.readXmlFile( "context/multipleInstancesWithReferences.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/multipleInstancesWithReferences.xml" ) );
 
 		var rectSize : Point = this._builderFactory.getCoreFactory().locate( "rectSize" );
 		Assert.isInstanceOf( rectSize, Point, "" );
@@ -143,7 +143,7 @@ class ObjectXMLParserTest
 	@Test( "test building multiple instances with method calls" )
 	public function testBuildingMultipleInstancesWithMethodCall() : Void
 	{
-		this.build(  XMLFileReader.readXmlFile( "context/multipleInstancesWithMethodCall.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/multipleInstancesWithMethodCall.xml" ) );
 
 		var rectSize : Point = this._builderFactory.getCoreFactory().locate( "rectSize" );
 		Assert.isInstanceOf( rectSize, Point, "" );
@@ -174,7 +174,7 @@ class ObjectXMLParserTest
 	@Test( "test building instance with singleton method" )
 	public function testBuildingInstanceWithSingletonMethod() : Void
 	{
-		this.build(  XMLFileReader.readXmlFile( "context/instanceWithSingletonMethod.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/instanceWithSingletonMethod.xml" ) );
 
 		var service : MockServiceProvider = this._builderFactory.getCoreFactory().locate( "service" );
 		Assert.isInstanceOf( service, MockServiceProvider, "" );
@@ -184,7 +184,7 @@ class ObjectXMLParserTest
 	@Test( "test building instance with factory static method" )
 	public function testBuildingInstanceWithFactoryStaticMethod() : Void
 	{
-		this.build(  XMLFileReader.readXmlFile( "context/instanceWithFactoryStaticMethod.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/instanceWithFactoryStaticMethod.xml" ) );
 
 		var rect : MockRectangle = this._builderFactory.getCoreFactory().locate( "rect" );
 		Assert.isInstanceOf( rect, MockRectangle, "" );
@@ -197,7 +197,7 @@ class ObjectXMLParserTest
 	@Test( "test building instance with factory singleton method" )
 	public function testFactoryWithFactorySingletonMethod() : Void
 	{
-		this.build(  XMLFileReader.readXmlFile( "context/instanceWithFactorySingletonMethod.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/instanceWithFactorySingletonMethod.xml" ) );
 
 		var point : Point = this._builderFactory.getCoreFactory().locate( "point" );
 		Assert.isInstanceOf( point, Point, "" );
@@ -211,7 +211,7 @@ class ObjectXMLParserTest
 		var injector = this._applicationContext.getBasicInjector();
 		injector.mapToValue( String, 'hola mundo' );
 
-		this.build(  XMLFileReader.readXmlFile( "context/injectIntoAttribute.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/injectIntoAttribute.xml" ) );
 
 		var instance : MockClassWithInjectedProperty = this._builderFactory.getCoreFactory().locate( "instance" );
 		Assert.isInstanceOf( instance, MockClassWithInjectedProperty, "" );
@@ -221,7 +221,7 @@ class ObjectXMLParserTest
 	@Test( "test building XML with parser class" )
 	public function testBuildingXMLWithParserClass() : Void
 	{
-		this.build(  XMLFileReader.readXmlFile( "context/xmlWithParserClass.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/xmlWithParserClass.xml" ) );
 
 		var fruits : Array<MockFruitVO> = this._builderFactory.getCoreFactory().locate( "fruits" );
 		Assert.equals( 3, fruits.length, "" );
@@ -238,7 +238,7 @@ class ObjectXMLParserTest
 	@Test( "test building Array filled with references" )
 	public function testBuildingArrayFilledWithReferences() : Void
 	{
-		this.build(  XMLFileReader.readXmlFile( "context/arrayFilledWithReferences.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/arrayFilledWithReferences.xml" ) );
 
 		var fruits : Array<MockFruitVO> = this._builderFactory.getCoreFactory().locate( "fruits" );
 		Assert.equals( 3, fruits.length, "" );
@@ -255,7 +255,7 @@ class ObjectXMLParserTest
 	@Test( "test building Map filled with references" )
 	public function testBuildingMapFilledWithReferences() : Void
 	{
-		this.build(  XMLFileReader.readXmlFile( "context/hashmapFilledWithReferences.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/hashmapFilledWithReferences.xml" ) );
 
 		var fruits : HashMap<Dynamic, MockFruitVO> = this._builderFactory.getCoreFactory().locate( "fruits" );
 		Assert.isNotNull( fruits, "" );
@@ -275,7 +275,7 @@ class ObjectXMLParserTest
 	@Test( "test building two modules listening each other" )
 	public function testBuildingTwoModulesListeningEachOther() : Void
 	{
-		this.build(  XMLFileReader.readXmlFile( "context/twoModulesListeningEachOther.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/twoModulesListeningEachOther.xml" ) );
 
 		var chat : MockChatModule = this._builderFactory.getCoreFactory().locate( "chat" );
 		Assert.isNotNull( chat, "" );
@@ -291,7 +291,7 @@ class ObjectXMLParserTest
 	@Test( "test building two modules listening each other with adapter" )
 	public function testBuildingTwoModulesListeningEachOtherWithAdapter() : Void
 	{
-		this.build(  XMLFileReader.readXmlFile( "context/twoModulesListeningEachOtherWithAdapter.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/twoModulesListeningEachOtherWithAdapter.xml" ) );
 
 		var chat : MockChatModule = this._builderFactory.getCoreFactory().locate( "chat" );
 		Assert.isNotNull( chat, "" );
@@ -308,7 +308,7 @@ class ObjectXMLParserTest
 	@Test( "test building two modules listening each other with adapter and injection" )
 	public function testBuildingTwoModulesListeningEachOtherWithAdapterAndInjection() : Void
 	{
-		this.build(  XMLFileReader.readXmlFile( "context/twoModulesListeningEachOtherWithAdapterAndInjection.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/twoModulesListeningEachOtherWithAdapterAndInjection.xml" ) );
 
 		var chat : MockChatModule = this._builderFactory.getCoreFactory().locate( "chat" );
 		Assert.isNotNull( chat, "" );
@@ -326,7 +326,7 @@ class ObjectXMLParserTest
 	@Test( "test domain dispatch after module initialisation" )
 	public function testDomainDispatchAfterModuleInitialisation() : Void
 	{
-		this.build(  XMLFileReader.readXmlFile( "context/domainDispatchAfterModuleInitialisation.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/domainDispatchAfterModuleInitialisation.xml" ) );
 
 		var sender : MockSenderModule = this._builderFactory.getCoreFactory().locate( "sender" );
 		Assert.isNotNull( sender, "" );
@@ -421,7 +421,7 @@ class ObjectXMLParserTest
 	@Test( "test target sub property" )
 	public function testTargetSubProperty() : Void
 	{
-		this.build(  XMLFileReader.readXmlFile( "context/targetSubProperty.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/targetSubProperty.xml" ) );
 
 		var mockObject : MockObjectWithRegtangleProperty = this._builderFactory.getCoreFactory().locate( "mockObject" );
 		Assert.isInstanceOf( mockObject, MockObjectWithRegtangleProperty, "" );
@@ -431,7 +431,7 @@ class ObjectXMLParserTest
 	@Test( "test building class reference" )
 	public function testBuildingClassReference() : Void
 	{
-		this.build(  XMLFileReader.readXmlFile( "context/classReference.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/classReference.xml" ) );
 
 		var rectangleClass : Class<MockRectangle> = this._builderFactory.getCoreFactory().locate( "RectangleClass" );
 		Assert.isInstanceOf( rectangleClass, Class, "" );
@@ -453,7 +453,7 @@ class ObjectXMLParserTest
 	@Test( "test building serviceLocator" )
 	public function testBuildingServiceLocator() : Void
 	{
-		this.build(  XMLFileReader.readXmlFile( "context/serviceLocator.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/serviceLocator.xml" ) );
 
 		var serviceLocator : ServiceLocator = this._builderFactory.getCoreFactory().locate( "serviceLocator" );
 		Assert.isInstanceOf( serviceLocator, ServiceLocator, "" );
@@ -474,7 +474,7 @@ class ObjectXMLParserTest
 	@Test( "test building serviceLocator with map names" )
 	public function testBuildingServiceLocatorWithMapNames() : Void
 	{
-		this.build(  XMLFileReader.readXmlFile( "context/serviceLocatorWithMapNames.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/serviceLocatorWithMapNames.xml" ) );
 
 		var serviceLocator : ServiceLocator = this._builderFactory.getCoreFactory().locate( "serviceLocator" );
 		Assert.isInstanceOf( serviceLocator, ServiceLocator, "" );
@@ -494,8 +494,8 @@ class ObjectXMLParserTest
 	@Test( "test parsing twice" )
 	public function testParsingTwice() : Void
 	{
-		this.build(  XMLFileReader.readXmlFile( "context/mockRectangle.xml" ) );
-		this.build(  XMLFileReader.readXmlFile( "context/mockRectangleCopy.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/mockRectangle.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/mockRectangleCopy.xml" ) );
 
 		var rect0 : MockRectangle = this._builderFactory.getCoreFactory().locate( "rect0" );
 		Assert.isInstanceOf( rect0, MockRectangle, "" );
@@ -515,7 +515,7 @@ class ObjectXMLParserTest
 	@Test( "test module listening service" )
 	public function testModuleListeningService() : Void
 	{
-		this.build(  XMLFileReader.readXmlFile( "context/moduleListeningService.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/moduleListeningService.xml" ) );
 
 		var myService : IMockStubStatefulService = this._builderFactory.getCoreFactory().locate( "myService" );
 		Assert.isNotNull( myService, "" );
@@ -531,7 +531,7 @@ class ObjectXMLParserTest
 	@Test( "test module listening service with strategy and module injection" )
 	public function testModuleListeningServiceWithStrategyAndModuleInjection() : Void
 	{
-		this.build(  XMLFileReader.readXmlFile( "context/moduleListeningServiceWithStrategyAndModuleInjection.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/moduleListeningServiceWithStrategyAndModuleInjection.xml" ) );
 
 		var myService : IMockStubStatefulService = this._builderFactory.getCoreFactory().locate( "myService" );
 		Assert.isNotNull( myService, "" );
@@ -547,7 +547,7 @@ class ObjectXMLParserTest
 	@Test( "test module listening service with strategy and context injection" )
 	public function testModuleListeningServiceWithStrategyAndContextInjection() : Void
 	{
-		this.build(  XMLFileReader.readXmlFile( "context/moduleListeningServiceWithStrategyAndContextInjection.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/moduleListeningServiceWithStrategyAndContextInjection.xml" ) );
 
 		var mockDividerHelper : IMockDividerHelper = this._builderFactory.getCoreFactory().locate( "mockDividerHelper" );
 		Assert.isNotNull( mockDividerHelper, "" );
@@ -571,7 +571,7 @@ class ObjectXMLParserTest
 	@Test( "test static-ref" )
 	public function testStaticRef() : Void
 	{
-		this.build(  XMLFileReader.readXmlFile( "context/staticRef.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/staticRef.xml" ) );
 
 		var note : String = this._builderFactory.getCoreFactory().locate( "constant" );
 		Assert.isNotNull( note, "" );
@@ -589,7 +589,7 @@ class ObjectXMLParserTest
 	@Async( "test EventProxy" )
 	public function testEventProxy() : Void
 	{
-		this.build(  XMLFileReader.readXmlFile( "context/eventProxy.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/eventProxy.xml" ) );
 
 		var eventProxy : EventProxy = this._builderFactory.getCoreFactory().locate( "eventProxy" );
 		Assert.isNotNull( eventProxy, "" );
@@ -619,7 +619,7 @@ class ObjectXMLParserTest
 	@Async( "test EventTrigger" )
 	public function testEventTrigger() : Void
 	{
-		this.build(  XMLFileReader.readXmlFile( "context/eventTrigger.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/eventTrigger.xml" ) );
 
 		var eventTrigger : Dynamic = this._builderFactory.getCoreFactory().locate( "eventTrigger" );
 		Assert.isNotNull( eventTrigger, "" );
@@ -640,7 +640,7 @@ class ObjectXMLParserTest
 	@Test( "test map-type attribute" )
 	public function testMapTypeAttribute() : Void
 	{
-		this.build(  XMLFileReader.readXmlFile( "context/mapTypeAttribute.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/mapTypeAttribute.xml" ) );
 
 		var myModule : MockMappedModule = this._builderFactory.getCoreFactory().locate( "myModule" );
 		Assert.isNotNull( myModule, "" );
@@ -653,7 +653,7 @@ class ObjectXMLParserTest
 	public function testIfAttribute() : Void
 	{
 		this._applicationAssembler.addConditionalProperty ( ["production" => true, "debug" => false, "release" => false] );
-		this.build(  XMLFileReader.readXmlFile( "context/ifAttribute.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/ifAttribute.xml" ) );
 		
 		Assert.equals( "hello production", this._builderFactory.getCoreFactory().locate( "message" ), "message value should equal 'hello production'" );
 	}
@@ -684,7 +684,7 @@ class ObjectXMLParserTest
 	@Test( "test file preprocessor" )
 	public function testAnotherFilePreprocessor() : Void
 	{
-		this.build(  XMLFileReader.readXmlFile( "context/preprocessor.xml", [	"hello" 		=> "bonjour",
+		this.build(  XmlReader.readXmlFile( "context/preprocessor.xml", [	"hello" 		=> "bonjour",
 																					"contextName" 	=> 'applicationContext',
 																					"context" 		=> 'name="${contextName}"',
 																					"node" 			=> '<msg id="message" value="${hello}"/>' ] ) );

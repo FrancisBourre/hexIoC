@@ -18,7 +18,7 @@ using StringTools;
  * ...
  * @author Francis Bourre
  */
-class XMLFileReader
+class XmlReader
 {
 	static var _importHelper : ClassImportHelper;
 	
@@ -41,7 +41,7 @@ class XMLFileReader
 
 		if ( type == ContextTypeList.XML )
 		{
-			XMLFileReader._importHelper._forceCompilation( xml.get( ContextAttributeList.PARSER_CLASS ) );
+			XmlReader._importHelper._forceCompilation( xml.get( ContextAttributeList.PARSER_CLASS ) );
 		}
 		else
 		{
@@ -50,8 +50,8 @@ class XMLFileReader
 				args = XMLParserUtil.getItems( xml );
 				for ( arg in args )
 				{
-					XMLFileReader._importHelper._includeClass( arg.key );
-					XMLFileReader._importHelper._includeClass( arg.value );
+					XmlReader._importHelper._includeClass( arg.key );
+					XmlReader._importHelper._includeClass( arg.value );
 				}
 			}
 			else
@@ -59,30 +59,30 @@ class XMLFileReader
 				args = XMLParserUtil.getArguments( xml, type );
 				for ( arg in args )
 				{
-					if ( !XMLFileReader._importHelper._includeStaticRef( arg.staticRef ) )
+					if ( !XmlReader._importHelper._includeStaticRef( arg.staticRef ) )
 					{
-						XMLFileReader._importHelper._includeClass( arg );
+						XmlReader._importHelper._includeClass( arg );
 					}
 				}
 			}
 
 			try
 			{
-				XMLFileReader._importHelper._forceCompilation( type );
+				XmlReader._importHelper._forceCompilation( type );
 			}
 			catch ( e : String )
 			{
-				Context.error( "XMLFileReader parsing error with '" + xml.nodeName + "' node, '" + type + "' type not found.", positionTracker.makePositionFromAttribute( xml, ContextAttributeList.TYPE ) );
+				Context.error( "XmlReader parsing error with '" + xml.nodeName + "' node, '" + type + "' type not found.", positionTracker.makePositionFromAttribute( xml, ContextAttributeList.TYPE ) );
 			}
 			
-			XMLFileReader._importHelper._forceCompilation( xml.get( ContextAttributeList.MAP_TYPE ) );
-			XMLFileReader._importHelper._includeStaticRef( xml.get( ContextAttributeList.STATIC_REF ) );
+			XmlReader._importHelper._forceCompilation( xml.get( ContextAttributeList.MAP_TYPE ) );
+			XmlReader._importHelper._includeStaticRef( xml.get( ContextAttributeList.STATIC_REF ) );
 
 			// Build property.
 			var propertyIterator = xml.elementsNamed( ContextNameList.PROPERTY );
 			while ( propertyIterator.hasNext() )
 			{
-				XMLFileReader._importHelper._includeStaticRef( propertyIterator.next().get( ContextAttributeList.STATIC_REF ) );
+				XmlReader._importHelper._includeStaticRef( propertyIterator.next().get( ContextAttributeList.STATIC_REF ) );
 			}
 
 			// Build method call.
@@ -94,9 +94,9 @@ class XMLFileReader
 				args = XMLParserUtil.getMethodCallArguments( methodCallItem );
 				for ( arg in args )
 				{
-					if ( !XMLFileReader._importHelper._includeStaticRef( arg.staticRef ) )
+					if ( !XmlReader._importHelper._includeStaticRef( arg.staticRef ) )
 					{
-						XMLFileReader._importHelper._includeClass( arg );
+						XmlReader._importHelper._includeClass( arg );
 					}
 				}
 			}
@@ -113,13 +113,13 @@ class XMLFileReader
 					var listenerArgs : Array<DomainListenerVOArguments> = XMLParserUtil.getEventArguments( listener );
 					for ( listenerArg in listenerArgs )
 					{
-						XMLFileReader._importHelper._includeStaticRef( listenerArg.staticRef );
-						XMLFileReader._importHelper._forceCompilation( listenerArg.strategy );
+						XmlReader._importHelper._includeStaticRef( listenerArg.staticRef );
+						XmlReader._importHelper._forceCompilation( listenerArg.strategy );
 					}
 				}
 				else
 				{
-					Context.error( "XMLFileReader parsing error with '" + xml.nodeName + "' node, 'ref' attribute is mandatory in a 'listen' node.", positionTracker.makePositionFromNode( listener ) );
+					Context.error( "XmlReader parsing error with '" + xml.nodeName + "' node, 'ref' attribute is mandatory in a 'listen' node.", positionTracker.makePositionFromNode( listener ) );
 				}
 			}
 		}
@@ -136,12 +136,12 @@ class XMLFileReader
 		{
 			var doc = Xml176Parser.parse( xmlRawData.data, xmlRawData.path );
 			var positionTracker = new XmlPositionTracker( doc, xrdCollection );
-			XMLFileReader._importHelper = new ClassImportHelper();
+			XmlReader._importHelper = new ClassImportHelper();
 
 			var iterator = doc.document.firstElement().elements();
 			while ( iterator.hasNext() )
 			{
-				XMLFileReader._parseNode( iterator.next(), positionTracker );
+				XmlReader._parseNode( iterator.next(), positionTracker );
 			}
 
 		}
