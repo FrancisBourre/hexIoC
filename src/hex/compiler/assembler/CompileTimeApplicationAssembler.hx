@@ -74,7 +74,10 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 		ifNotList 			: Array<String> = null
 	) : Void
 	{
-		//
+		if ( this.allowsIfList( ifList ) && this.allowsIfNotList( ifNotList ) )
+		{
+			this.getContextFactory( applicationContext ).registerPropertyVO( ownerID, new PropertyVO( ownerID, name, value, type, ref, method, staticRef ) );
+		}
 	}
 
 	public function buildObject				(

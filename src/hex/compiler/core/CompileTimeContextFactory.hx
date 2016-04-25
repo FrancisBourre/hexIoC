@@ -2,6 +2,8 @@ package hex.compiler.core;
 
 import haxe.macro.Expr;
 import hex.collection.ILocatorListener;
+import hex.compiler.control.BuildObjectCommand;
+import hex.compiler.control.BuildStringCommand;
 import hex.compiler.core.CompileTimeCoreFactory;
 import hex.core.HashCodeFactory;
 import hex.event.IEvent;
@@ -15,9 +17,7 @@ import hex.ioc.control.BuildInstanceCommand;
 import hex.ioc.control.BuildIntCommand;
 import hex.ioc.control.BuildMapCommand;
 import hex.ioc.control.BuildNullCommand;
-import hex.ioc.control.BuildObjectCommand;
 import hex.ioc.control.BuildServiceLocatorCommand;
-import hex.ioc.control.BuildStringCommand;
 import hex.ioc.control.BuildUIntCommand;
 import hex.ioc.control.BuildXMLCommand;
 import hex.ioc.control.IBuildCommand;
@@ -65,7 +65,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	public function new( expressions : Array<Expr>, applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null  )
 	{
 		this._expressions = expressions;
-		
+		this._expressions.push( macro @:mergeBlock { var lastResult : Dynamic = null; } );
 		/*
 		//build contextDispatcher
 		var domain : Domain = DomainUtil.getDomain( applicationContextName, Domain );
@@ -168,7 +168,14 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		var propertyName : String = property.name;
 		if ( propertyName.indexOf(".") == -1 )
 		{
-			Reflect.setProperty( target, propertyName, this._getPropertyValue( property ) );
+			//Reflect.setProperty( target, propertyName, this._getPropertyValue( property ) );
+			var value = this._getPropertyValue( property );
+
+			#if macro
+			this._expressions.push( macro @:mergeBlock { trace( "lastResult:", lastResult); } );
+			this._expressions.push( macro @:mergeBlock { lastResult.$propertyName = $v{ value }; } );
+			//this._expressions.push( macro @:mergeBlock { Reflect.setField( lastResult, $v{ propertyName }, $v{ value } ); } );
+			#end
 		}
 		else
 		{
@@ -480,6 +487,9 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		var buildCommand 						= ( this._commandMap.exists( type ) ) ? this._commandMap.get( type ) : new BuildInstanceCommand();
 
 		var builderHelperVO 					= new BuildHelperVO();
+		#if macro
+		builderHelperVO.expressions 			= this._expressions;
+		#end
 		builderHelperVO.type 					= type;
 		builderHelperVO.contextFactory 			= this;
 		builderHelperVO.coreFactory 			= this._coreFactory;
@@ -490,11 +500,12 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 
 		if ( id != null )
 		{
-			this._coreFactory.register( id, constructorVO.result );
-
 			#if macro
-			this._expressions.push( macro @:mergeBlock { coreFactory.register( $v{ id }, $v{constructorVO.result} ); } );
+			this._expressions.push( macro @:mergeBlock { trace( $v{ id } ); } );
+			this._expressions.push( macro @:mergeBlock { coreFactory.register( $v{ id }, lastResult ); } );
 			#end
+
+			this._coreFactory.register( id, constructorVO.result );
 		}
 
 		return constructorVO.result;

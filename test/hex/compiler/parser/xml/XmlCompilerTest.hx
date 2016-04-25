@@ -37,13 +37,13 @@ class XmlCompilerTest
 		return this._applicationAssembler.getApplicationContext( "applicationContext" ).getCoreFactory();
 	}
 	
-	@Test( "test building String" )
+	/*@Test( "test building String" )
 	public function testBuildingString() : Void
 	{
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/testBuildingString.xml" );
 		var s : String = this._getCoreFactory().locate( "s" );
 		Assert.equals( "hello", s, "" );
-	}
+	}*/
 	
 	@Test( "test building anonymous object" )
 	public function testBuildingAnonymousObject() : Void
