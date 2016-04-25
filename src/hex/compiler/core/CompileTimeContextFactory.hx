@@ -448,20 +448,20 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		this._stateTransitionVOLocator 	= new StateTransitionVOLocator( this );
 		this._moduleLocator 			= new ModuleLocator( this );
 
-		/*this._commandMap.set( ContextTypeList.ARRAY, new BuildArrayCommand() );
+		this._commandMap.set( ContextTypeList.ARRAY, new BuildArrayCommand() );
 		this._commandMap.set( ContextTypeList.BOOLEAN, new BuildBooleanCommand() );
 		this._commandMap.set( ContextTypeList.INT, new BuildIntCommand() );
 		this._commandMap.set( ContextTypeList.NULL, new BuildNullCommand() );
 		this._commandMap.set( ContextTypeList.FLOAT, new BuildFloatCommand() );
-		this._commandMap.set( ContextTypeList.OBJECT, new BuildObjectCommand() );*/
+		this._commandMap.set( ContextTypeList.OBJECT, new BuildObjectCommand() );
 		this._commandMap.set( ContextTypeList.STRING, new BuildStringCommand() );
-		/*this._commandMap.set( ContextTypeList.UINT, new BuildUIntCommand() );
+		this._commandMap.set( ContextTypeList.UINT, new BuildUIntCommand() );
 		this._commandMap.set( ContextTypeList.DEFAULT, new BuildStringCommand() );
 		this._commandMap.set( ContextTypeList.HASHMAP, new BuildMapCommand() );
 		this._commandMap.set( ContextTypeList.SERVICE_LOCATOR, new BuildServiceLocatorCommand() );
 		this._commandMap.set( ContextTypeList.CLASS, new BuildClassCommand() );
 		this._commandMap.set( ContextTypeList.XML, new BuildXMLCommand() );
-		this._commandMap.set( ContextTypeList.FUNCTION, new BuildFunctionCommand() );*/
+		this._commandMap.set( ContextTypeList.FUNCTION, new BuildFunctionCommand() );
 
 		//we don't map ContextTypeList.INSTANCE to BuildInstanceCommand, because it's a stateful process;
 		

@@ -174,7 +174,7 @@ class CompileTimeCoreFactory implements ICoreFactory
 		
 		if ( classReference == null )
 		{
-			throw new IllegalArgumentException( Stringifier.stringify(this) + ".getClassReference fails with class named '" + qualifiedClassName + "'" );
+			throw new IllegalArgumentException( Stringifier.stringify( this ) + ".getClassReference fails with class named '" + qualifiedClassName + "'" );
 		}
 		
 		return classReference;
