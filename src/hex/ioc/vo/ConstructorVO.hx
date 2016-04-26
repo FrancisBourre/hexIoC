@@ -16,6 +16,7 @@ class ConstructorVO
 	public var              result          : Dynamic;
 	public var 				mapType			: String;
 	public var 				staticRef		: String;
+	public var 				isProperty		: Bool;
 		
 	public function new(  	id 				: String,
 							?type 			: String,
@@ -25,7 +26,8 @@ class ConstructorVO
 							?injectInto 	: Bool = false,
 							?ref 			: String,
 							?mapType 		: String,
-							?staticRef 		: String )
+							?staticRef 		: String,
+							?isProperty 	: Bool = false )
 	{
 		this.ID         = id;
 		this.type       = type;
@@ -36,6 +38,7 @@ class ConstructorVO
 		this.ref 		= ref;
 		this.mapType 	= mapType;
 		this.staticRef 	= staticRef;
+		this.isProperty = isProperty;
 	}
 
 	public function toString() : String
