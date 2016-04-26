@@ -44,9 +44,10 @@ class BuildUIntCommand implements IBuildCommand
 			constructorVO.result = number;
 			
 			#if macro
-			if ( !buildHelperVO.constructorVO.isProperty )
+			if ( !constructorVO.isProperty )
 			{
-				buildHelperVO.expressions.push( macro @:mergeBlock { lastResult = $v{ number }; } );
+				var idVar = constructorVO.ID;
+				buildHelperVO.expressions.push( macro @:mergeBlock { var $idVar = $v { number }; } );
 			}
 			#end
 		}

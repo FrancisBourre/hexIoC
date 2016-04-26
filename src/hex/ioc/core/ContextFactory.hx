@@ -175,7 +175,7 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		}
 	}
 
-	function _setPropertyValue( property : PropertyVO, target : Dynamic ) : Void
+	function _setPropertyValue( property : PropertyVO, target : Dynamic, id : String ) : Void
 	{
 		var propertyName : String = property.name;
 		if ( propertyName.indexOf(".") == -1 )
@@ -227,7 +227,7 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 			var properties : Array<PropertyVO> = this._propertyVOLocator.locate( key );
 			for ( p in properties )
 			{
-				this._setPropertyValue( p, instance );
+				this._setPropertyValue( p, instance, key );
 			}
 		}
 	}

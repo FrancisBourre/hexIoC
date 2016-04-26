@@ -4,6 +4,10 @@ import haxe.macro.Expr;
 import hex.collection.ILocatorListener;
 import hex.compiler.core.CompileTimeCoreFactory;
 import hex.core.HashCodeFactory;
+import hex.domain.ApplicationDomainDispatcher;
+import hex.domain.Domain;
+import hex.domain.DomainUtil;
+import hex.event.IDispatcher;
 import hex.event.IEvent;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.control.BuildArrayCommand;
@@ -49,7 +53,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	var _expressions 				: Array<Expr>;
 	
 	var _annotationProvider			: IAnnotationProvider;
-	//var _contextDispatcher			: IDispatcher<{}>;
+	var _contextDispatcher			: IDispatcher<{}>;
 	var _moduleLocator				: ModuleLocator;
 	var _applicationContext 		: AbstractApplicationContext;
 	var _commandMap 				: Map<String, IBuildCommand>;
@@ -65,14 +69,14 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	public function new( expressions : Array<Expr>, applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null  )
 	{
 		this._expressions = expressions;
-		this._expressions.push( macro @:mergeBlock { var lastResult : Dynamic = null; } );
-		/*
+
+		
 		//build contextDispatcher
 		var domain : Domain = DomainUtil.getDomain( applicationContextName, Domain );
 		this._contextDispatcher = ApplicationDomainDispatcher.getInstance().getDomainDispatcher( domain );
 		
 		//build injector
-		var injector = new Injector();
+		/*var injector = new Injector();
 		injector.mapToValue( IBasicInjector, injector );
 		injector.mapToValue( IDependencyInjector, injector );
 		injector.mapToType( IMacroExecutor, MacroExecutor );
@@ -163,7 +167,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		}
 	}
 
-	function _setPropertyValue( property : PropertyVO, target : Dynamic ) : Void
+	function _setPropertyValue( property : PropertyVO, target : Dynamic, id : String ) : Void
 	{
 		var propertyName : String = property.name;
 		if ( propertyName.indexOf(".") == -1 )
@@ -172,8 +176,8 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 			Reflect.setProperty( target, propertyName, value );
 
 			#if macro
-			this._expressions.push( macro @:mergeBlock { lastResult.$propertyName = $v{ value }; } );
-			//this._expressions.push( macro @:mergeBlock { Reflect.setField( lastResult, $v{ propertyName }, $v{ value } ); } );
+			var extVar = macro $i{ id };
+			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $v{ value }; } );
 			#end
 		}
 		else
@@ -221,7 +225,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 			var properties : Array<PropertyVO> = this._propertyVOLocator.locate( key );
 			for ( p in properties )
 			{
-				this._setPropertyValue( p, instance );
+				this._setPropertyValue( p, instance, key );
 			}
 		}
 	}
@@ -500,8 +504,9 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		if ( id != null )
 		{
 			#if macro
+			var extVar = macro $i{ id };
 			this._expressions.push( macro @:mergeBlock { trace( $v{ id } ); } );
-			this._expressions.push( macro @:mergeBlock { coreFactory.register( $v{ id }, lastResult ); } );
+			this._expressions.push( macro @:mergeBlock { coreFactory.register( $v{ id }, $extVar ); } );
 			#end
 
 			this._coreFactory.register( id, constructorVO.result );

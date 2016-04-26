@@ -41,9 +41,10 @@ class BuildBooleanCommand implements IBuildCommand
 		}
 		
 		#if macro
-		if ( !buildHelperVO.constructorVO.isProperty )
+		if ( !constructorVO.isProperty )
 		{
-			buildHelperVO.expressions.push( macro @:mergeBlock { lastResult = $v{ constructorVO.result }; } );
+			var idVar = constructorVO.ID;
+			buildHelperVO.expressions.push( macro @:mergeBlock { var $idVar = $v { constructorVO.result }; } );
 		}
 		#end
 	}

@@ -31,7 +31,16 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 
 	public function new()
 	{
+		#if macro
 		this._expressions = [ macro { trace( "XmlCompiler starts compilation..." ); } ];
+		
+		/*var tmp = "varName";
+		var extVar = macro $i { tmp };
+		var rx = 13;
+		this._expressions.push( macro { var $tmp = $v{rx}; } );
+		this._expressions.push( macro @:mergeBlock { var $tmp = $v{rx}; } );
+		this._expressions.push( macro @:mergeBlock { trace( varName ); } );*/
+		#end
 	}
 	
 	public function addExpression( expr : Expr ) : Void

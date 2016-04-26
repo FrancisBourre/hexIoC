@@ -20,9 +20,10 @@ class BuildNullCommand implements IBuildCommand
 		constructorVO.result = null;
 		
 		#if macro
-		if ( !buildHelperVO.constructorVO.isProperty )
+		if ( !constructorVO.isProperty )
 		{
-			buildHelperVO.expressions.push( macro @:mergeBlock { lastResult = null; } );
+			var idVar = constructorVO.ID;
+			buildHelperVO.expressions.push( macro @:mergeBlock { var $idVar = null; } );
 		}
 		#end
 	}

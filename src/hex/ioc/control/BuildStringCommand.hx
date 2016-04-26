@@ -43,9 +43,10 @@ class BuildStringCommand implements IBuildCommand
 		constructorVO.result = value;
 		
 		#if macro
-		if ( !buildHelperVO.constructorVO.isProperty )
+		if ( !constructorVO.isProperty )
 		{
-			buildHelperVO.expressions.push( macro @:mergeBlock { lastResult = $v{ value }; } );
+			var idVar = constructorVO.ID;
+			buildHelperVO.expressions.push( macro @:mergeBlock { var $idVar = $v { value }; } );
 		}
 		#end
 	}

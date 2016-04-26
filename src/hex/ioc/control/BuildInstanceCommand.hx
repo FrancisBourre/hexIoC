@@ -60,7 +60,9 @@ class BuildInstanceCommand implements IBuildCommand
 			{
 				#if macro
 				var tp = MacroUtil.getPack( constructorVO.type );
-				buildHelperVO.expressions.push( macro @:mergeBlock { lastResult = Type.createInstance( $p { tp }, [] ); } );
+				var idVar = constructorVO.ID;
+				buildHelperVO.expressions.push( macro @:mergeBlock { var $idVar = Type.createInstance( $p { tp }, [] ); } );
+
 				#else
 				var classReference = buildHelperVO.coreFactory.getClassReference( constructorVO.type );
 				
