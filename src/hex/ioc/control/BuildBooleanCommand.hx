@@ -39,5 +39,12 @@ class BuildBooleanCommand implements IBuildCommand
 		{
 			throw new IllegalArgumentException( this + ".build(" + value + ") failed." );
 		}
+		
+		#if macro
+		if ( !buildHelperVO.constructorVO.isProperty )
+		{
+			buildHelperVO.expressions.push( macro @:mergeBlock { lastResult = $v{ constructorVO.result }; } );
+		}
+		#end
 	}
 }

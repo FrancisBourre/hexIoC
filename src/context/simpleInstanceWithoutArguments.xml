@@ -1,0 +1,3 @@
+<root name="applicationContext">
+    <bean id="command" type="hex.control.command.BasicCommand"/>
+</root>

@@ -10,6 +10,7 @@ import hex.ioc.vo.ConstructorVO;
 import hex.metadata.AnnotationProvider;
 import hex.module.IModule;
 import hex.util.ClassUtil;
+import hex.util.MacroUtil;
 
 /**
  * ...
@@ -57,7 +58,12 @@ class BuildInstanceCommand implements IBuildCommand
 			}
 			else
 			{
+				#if macro
+				var tp = MacroUtil.getPack( constructorVO.type );
+				buildHelperVO.expressions.push( macro @:mergeBlock { lastResult = Type.createInstance( $p { tp }, [] ); } );
+				#else
 				var classReference = buildHelperVO.coreFactory.getClassReference( constructorVO.type );
+				
 				var isModule : Bool = ClassUtil.classExtendsOrImplements( classReference, IModule );
 				if ( isModule && constructorVO.ID != null && constructorVO.ID.length > 0 )
 				{
@@ -65,6 +71,7 @@ class BuildInstanceCommand implements IBuildCommand
 					AnnotationProvider.registerToDomain( buildHelperVO.contextFactory.getAnnotationProvider(), DomainUtil.getDomain( constructorVO.ID, Domain ) );
 				}
 				constructorVO.result = buildHelperVO.coreFactory.buildInstance( constructorVO.type, constructorVO.arguments, constructorVO.factory, constructorVO.singleton, constructorVO.injectInto );
+				#end
 			}
 
 			if ( Std.is( constructorVO.result, IModule ) )

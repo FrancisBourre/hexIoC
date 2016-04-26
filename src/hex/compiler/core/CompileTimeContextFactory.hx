@@ -2,8 +2,6 @@ package hex.compiler.core;
 
 import haxe.macro.Expr;
 import hex.collection.ILocatorListener;
-import hex.compiler.control.BuildObjectCommand;
-import hex.compiler.control.BuildStringCommand;
 import hex.compiler.core.CompileTimeCoreFactory;
 import hex.core.HashCodeFactory;
 import hex.event.IEvent;
@@ -17,7 +15,9 @@ import hex.ioc.control.BuildInstanceCommand;
 import hex.ioc.control.BuildIntCommand;
 import hex.ioc.control.BuildMapCommand;
 import hex.ioc.control.BuildNullCommand;
+import hex.ioc.control.BuildObjectCommand;
 import hex.ioc.control.BuildServiceLocatorCommand;
+import hex.ioc.control.BuildStringCommand;
 import hex.ioc.control.BuildUIntCommand;
 import hex.ioc.control.BuildXMLCommand;
 import hex.ioc.control.IBuildCommand;
@@ -146,11 +146,11 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	{
 		if ( property.method != null )
 		{
-			return this._build( new ConstructorVO( null, ContextTypeList.FUNCTION, [ property.method ] ) );
+			return this._build( new ConstructorVO( null, ContextTypeList.FUNCTION, [ property.method ], null, null, false, null, null, null, true ) );
 
 		} else if ( property.ref != null )
 		{
-			return this._build( new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, property.ref ) );
+			return this._build( new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, property.ref, null, null, true ) );
 
 		} else if ( property.staticRef != null )
 		{
@@ -159,7 +159,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		} else
 		{
 			var type : String = property.type != null ? property.type : ContextTypeList.STRING;
-			return this._build( new ConstructorVO( property.ownerID, type, [ property.value ] ) );
+			return this._build( new ConstructorVO( property.ownerID, type, [ property.value ], null, null, false, null, null, null, true ) );
 		}
 	}
 
@@ -168,11 +168,10 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		var propertyName : String = property.name;
 		if ( propertyName.indexOf(".") == -1 )
 		{
-			//Reflect.setProperty( target, propertyName, this._getPropertyValue( property ) );
 			var value = this._getPropertyValue( property );
+			Reflect.setProperty( target, propertyName, value );
 
 			#if macro
-			this._expressions.push( macro @:mergeBlock { trace( "lastResult:", lastResult); } );
 			this._expressions.push( macro @:mergeBlock { lastResult.$propertyName = $v{ value }; } );
 			//this._expressions.push( macro @:mergeBlock { Reflect.setField( lastResult, $v{ propertyName }, $v{ value } ); } );
 			#end

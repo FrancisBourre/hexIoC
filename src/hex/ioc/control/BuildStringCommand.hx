@@ -41,5 +41,12 @@ class BuildStringCommand implements IBuildCommand
 		}
 
 		constructorVO.result = value;
+		
+		#if macro
+		if ( !buildHelperVO.constructorVO.isProperty )
+		{
+			buildHelperVO.expressions.push( macro @:mergeBlock { lastResult = $v{ value }; } );
+		}
+		#end
 	}
 }

@@ -16,6 +16,13 @@ class BuildObjectCommand implements IBuildCommand
 
 	public function execute( buildHelperVO : BuildHelperVO ) : Void
 	{
-		buildHelperVO.constructorVO.result = {};
+		buildHelperVO.constructorVO.result = { };
+		
+		#if macro
+		if ( !buildHelperVO.constructorVO.isProperty )
+		{
+			buildHelperVO.expressions.push( macro @:mergeBlock { lastResult = {}; } );
+		}
+		#end
 	}
 }

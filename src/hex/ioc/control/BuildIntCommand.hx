@@ -41,6 +41,13 @@ class BuildIntCommand implements IBuildCommand
 		else
 		{
 			constructorVO.result = number;
+			
+			#if macro
+			if ( !buildHelperVO.constructorVO.isProperty )
+			{
+				buildHelperVO.expressions.push( macro @:mergeBlock { lastResult = $v{ number }; } );
+			}
+			#end
 		}
 	}
 }
