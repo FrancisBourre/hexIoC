@@ -91,6 +91,38 @@ class ObjectXMLParserTest
 		Assert.equals( "hello", s, "" );
 	}
 	
+	@Test( "test building Int" )
+	public function testBuildingInt() : Void
+	{
+		this.build( XmlReader.readXmlFile( "context/testBuildingInt.xml" ) );
+		var i : Int = this._builderFactory.getCoreFactory().locate( "i" );
+		Assert.equals( -3, i, "" );
+	}
+	
+	@Test( "test building Bool" )
+	public function testBuildingBool() : Void
+	{
+		this.build( XmlReader.readXmlFile( "context/testBuildingBool.xml" ) );
+		var b : Bool = this._builderFactory.getCoreFactory().locate( "b" );
+		Assert.isTrue( b, "" );
+	}
+	
+	@Test( "test building UInt" )
+	public function testBuildingUInt() : Void
+	{
+		this.build( XmlReader.readXmlFile( "context/testBuildingUInt.xml" ) );
+		var i : UInt = this._builderFactory.getCoreFactory().locate( "i" );
+		Assert.equals( 3, i, "" );
+	}
+	
+	@Test( "test building null" )
+	public function testBuildingNull() : Void
+	{
+		this.build( XmlReader.readXmlFile( "context/testBuildingNull.xml" ) );
+		var result : Dynamic = this._builderFactory.getCoreFactory().locate( "value" );
+		Assert.isNull( result, "" );
+	}
+	
 	@Test( "test building anonymous object" )
 	public function testBuildingAnonymousObject() : Void
 	{

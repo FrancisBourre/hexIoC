@@ -1,0 +1,3 @@
+<root name="applicationContext">
+    <test id="b" type="Bool" value="true"/>
+</root>
