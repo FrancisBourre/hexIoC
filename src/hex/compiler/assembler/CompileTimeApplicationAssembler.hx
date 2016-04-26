@@ -31,14 +31,7 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 
 	public function new()
 	{
-		this._mainExpr = macro { trace( "XmlCompiler starts compilation..." ); };
-		switch ( this._mainExpr.expr )
-		{
-			case EBlock( block ):
-				this._expressions = block;
-			default:
-				[];
-		}
+		this._expressions = [ macro { trace( "XmlCompiler starts compilation..." ); } ];
 	}
 	
 	public function addExpression( expr : Expr ) : Void
@@ -48,7 +41,7 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 	
 	public function getMainExpression() : Expr
 	{
-		return this._mainExpr;
+		return return macro $b{ this._expressions };
 	}
 	
 	public function getContextFactory( applicationContext : AbstractApplicationContext ) : IContextFactory
