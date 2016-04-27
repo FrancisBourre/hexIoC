@@ -74,24 +74,16 @@ class XMLParserUtil
 		}
 	}
 
-	public static function getMethodCallArguments( xml : Xml ) : Array<Dynamic>
+	public static function getMethodCallArguments( ownerID : String, xml : Xml ) : Array<ConstructorVO>
 	{
-		var args : Array<Dynamic> = [];
+		var args : Array<ConstructorVO> = [];
 		var iterator = xml.elementsNamed( ContextNameList.ARGUMENT );
-		
+
 		while ( iterator.hasNext() )
 		{
-			var item = iterator.next();
-			
-			var argItem : Dynamic					= {};
-			argItem.id 								= item.get( ContextAttributeList.ID );
-			argItem.staticRef 						= item.get( ContextAttributeList.STATIC_REF );
-			argItem.ref 							= item.get( ContextAttributeList.REF );
-			argItem.type 							= item.get( ContextAttributeList.TYPE );
-			argItem.value 							= item.get( ContextAttributeList.VALUE );
-			args.push( argItem );
+			args.push( _getConstructorVO( ownerID, iterator.next() ) );
 		}
-
+		
 		return args;
 	}
 
@@ -115,8 +107,48 @@ class XMLParserUtil
 
 		return args;
 	}
+	
+	public static function getMapArguments( ownerID : String, xml : Xml ) : Array<Dynamic>
+	{
+		var args : Array<Dynamic> = [];
+		var iterator = xml.elementsNamed( ContextNameList.ITEM );
 
-	public static function getItems( xml : Xml ) : Array<Dynamic>
+		while ( iterator.hasNext() )
+		{
+			var item = iterator.next();
+
+			var keyList 	= item.elementsNamed( ContextNameList.KEY );
+			var valueList 	= item.elementsNamed( ContextNameList.VALUE );
+			
+			if ( keyList.hasNext() )
+			{
+				args.push( { 	mapName:XMLAttributeUtil.getMapName( item ), 
+								key:XMLParserUtil._getAttributes( keyList.next() ), 
+								value:XMLParserUtil._getAttributes( valueList.next() ) } 
+							);
+			}
+		}
+		
+		/*if ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR )
+		{
+			for ( index in 0...length )
+			{
+				obj = args[ index ];
+				args[ index ] = new MapVO( _getConstructorVO( ownerID, obj.key ), _getConstructorVO( ownerID, obj.value ), obj.mapName );
+			}
+		}*/
+		
+		var length = args.length;
+		for ( index in 0...length )
+		{
+			var obj = args[ index ];
+			args[ index ] = new MapVO( _getConstructorVO( ownerID, obj.key ), _getConstructorVO( ownerID, obj.value ), obj.mapName );
+		}
+
+		return args;
+	}
+
+	public static function getItems( ownerID : String, xml : Xml ) : Array<Dynamic>
 	{
 		var args : Array<Dynamic> = [];
 		var iterator = xml.elementsNamed( ContextNameList.ITEM );

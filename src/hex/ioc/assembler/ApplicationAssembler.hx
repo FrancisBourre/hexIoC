@@ -219,11 +219,6 @@ class ApplicationAssembler implements IApplicationAssembler
 	{
 		if ( this.allowsIfList( ifList ) && this.allowsIfNotList( ifNotList ) )
 		{
-			if ( args != null )
-			{
-				_deserializeArguments( null, args );
-			}
-
 			this.getContextFactory( applicationContext ).registerMethodCallVO( new MethodCallVO( ownerID, methodCallName, args ) );
 		}
 	}

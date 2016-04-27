@@ -74,7 +74,7 @@ class XmlCompiler
 
 			if ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR )
 			{
-				args = XMLParserUtil.getItems( xml );
+				args = XMLParserUtil.getItems( identifier, xml );
 				for ( arg in args )
 				{
 					XmlCompiler._importHelper.includeClass( arg.key );
@@ -134,7 +134,7 @@ class XmlCompiler
 			{
 				var methodCallItem = methodCallIterator.next();
 
-				args = XMLParserUtil.getMethodCallArguments( methodCallItem );
+				args = XMLParserUtil.getMethodCallArguments( identifier, methodCallItem );
 				for ( arg in args )
 				{
 					if ( !XmlCompiler._importHelper.includeStaticRef( arg.staticRef ) )
@@ -143,7 +143,7 @@ class XmlCompiler
 					}
 				}
 				
-				XmlCompiler._assembler.buildMethodCall( applicationContext, identifier, xml.get( ContextAttributeList.NAME ), XMLParserUtil.getMethodCallArguments( methodCallItem ), XMLParserUtil.getIfList( methodCallItem ), XMLParserUtil.getIfNotList( methodCallItem ) );
+				XmlCompiler._assembler.buildMethodCall( applicationContext, identifier, xml.get( ContextAttributeList.NAME ), XMLParserUtil.getMethodCallArguments( identifier, methodCallItem ), XMLParserUtil.getIfList( methodCallItem ), XMLParserUtil.getIfNotList( methodCallItem ) );
 			}
 
 			// Build channel listener.

@@ -62,7 +62,7 @@ class ObjectXMLParser extends AbstractXMLParser
 		}
 		else
 		{
-			args 		= ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR ) ? XMLParserUtil.getItems( xml ) : XMLParserUtil.getArguments( identifier, xml, type );
+			args 		= ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR ) ? XMLParserUtil.getItems( identifier, xml ) : XMLParserUtil.getArguments( identifier, xml, type );
 			factory 	= XMLAttributeUtil.getFactoryMethod( xml );
 			singleton 	= XMLAttributeUtil.getSingletonAccess( xml );
 			injectInto	= XMLAttributeUtil.getInjectInto( xml );
@@ -103,7 +103,7 @@ class ObjectXMLParser extends AbstractXMLParser
 			while( methodCallIterator.hasNext() )
 			{
 				var methodCallItem = methodCallIterator.next();
-				this.getApplicationAssembler( ).buildMethodCall( applicationContext, identifier, XMLAttributeUtil.getName( methodCallItem ), XMLParserUtil.getMethodCallArguments( methodCallItem ), XMLParserUtil.getIfList( methodCallItem ), XMLParserUtil.getIfNotList( methodCallItem ) );
+				this.getApplicationAssembler( ).buildMethodCall( applicationContext, identifier, XMLAttributeUtil.getName( methodCallItem ), XMLParserUtil.getMethodCallArguments( identifier, methodCallItem ), XMLParserUtil.getIfList( methodCallItem ), XMLParserUtil.getIfNotList( methodCallItem ) );
 			}
 
 			// Build channel listener.

@@ -47,7 +47,7 @@ class XmlReader
 		{
 			if ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR )
 			{
-				args = XMLParserUtil.getItems( xml );
+				args = XMLParserUtil.getItems( identifier, xml );
 				for ( arg in args )
 				{
 					XmlReader._importHelper.includeClass( arg.key );
@@ -91,7 +91,7 @@ class XmlReader
 			{
 				var methodCallItem = methodCallIterator.next();
 
-				args = XMLParserUtil.getMethodCallArguments( methodCallItem );
+				args = XMLParserUtil.getMethodCallArguments( identifier, methodCallItem );
 				for ( arg in args )
 				{
 					if ( !XmlReader._importHelper.includeStaticRef( arg.staticRef ) )
