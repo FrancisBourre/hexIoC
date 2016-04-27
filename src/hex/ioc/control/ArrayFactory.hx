@@ -9,7 +9,7 @@ import hex.ioc.vo.ConstructorVO;
  */
 class ArrayFactory
 {
-	public function new()
+	function new()
 	{
 
 	}

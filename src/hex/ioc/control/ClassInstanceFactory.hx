@@ -16,7 +16,7 @@ import hex.util.MacroUtil;
  */
 class ClassInstanceFactory
 {
-	public function new()
+	function new()
 	{
 
 	}

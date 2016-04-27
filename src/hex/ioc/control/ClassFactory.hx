@@ -10,7 +10,7 @@ import hex.ioc.vo.ConstructorVO;
  */
 class ClassFactory
 {
-	public function new()
+	function new()
 	{
 
 	}

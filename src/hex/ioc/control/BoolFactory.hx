@@ -10,7 +10,7 @@ import hex.ioc.vo.ConstructorVO;
  */
 class BoolFactory
 {
-	public function new()
+	function new()
 	{
 
 	}

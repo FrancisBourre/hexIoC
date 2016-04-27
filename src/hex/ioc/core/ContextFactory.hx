@@ -11,26 +11,22 @@ import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
 import hex.domain.DomainUtil;
 import hex.domain.IApplicationDomainDispatcher;
-import hex.error.IllegalArgumentException;
-import hex.event.ClassAdapter;
-import hex.event.EventProxy;
-import hex.event.IAdapterStrategy;
 import hex.event.IDispatcher;
 import hex.event.IEvent;
-import hex.event.MessageType;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.ApplicationAssemblerMessage;
 import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.control.ArrayFactory;
 import hex.ioc.control.BoolFactory;
 import hex.ioc.control.ClassFactory;
+import hex.ioc.control.ClassInstanceFactory;
+import hex.ioc.control.DomainListenerFactory;
+import hex.ioc.control.DynamicObjectFactory;
 import hex.ioc.control.FloatFactory;
 import hex.ioc.control.FunctionFactory;
-import hex.ioc.control.ClassInstanceFactory;
-import hex.ioc.control.IntFactory;
 import hex.ioc.control.HashMapFactory;
+import hex.ioc.control.IntFactory;
 import hex.ioc.control.NullFactory;
-import hex.ioc.control.DynamicObjectFactory;
 import hex.ioc.control.ServiceLocatorFactory;
 import hex.ioc.control.StringFactory;
 import hex.ioc.control.UIntFactory;
@@ -41,20 +37,15 @@ import hex.ioc.locator.MethodCallVOLocator;
 import hex.ioc.locator.ModuleLocator;
 import hex.ioc.locator.PropertyVOLocator;
 import hex.ioc.locator.StateTransitionVOLocator;
-import hex.ioc.vo.FactoryVO;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
-import hex.ioc.vo.DomainListenerVOArguments;
+import hex.ioc.vo.FactoryVO;
 import hex.ioc.vo.MapVO;
 import hex.ioc.vo.MethodCallVO;
 import hex.ioc.vo.PropertyVO;
 import hex.ioc.vo.StateTransitionVO;
-import hex.log.Stringifier;
 import hex.metadata.AnnotationProvider;
 import hex.metadata.IAnnotationProvider;
-import hex.module.IModule;
-import hex.service.IService;
-import hex.service.ServiceConfiguration;
 
 /**
  * ...
@@ -68,7 +59,6 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 	var _applicationContext 		: AbstractApplicationContext;
 	var _factoryMap 				: Map<String, FactoryVO->Void>;
 	var _coreFactory 				: ICoreFactory;
-	var _applicationDomainHub 		: IApplicationDomainDispatcher;
 	var _IDExpert 					: IDExpert;
 	var _constructorVOLocator 		: ConstructorVOLocator;
 	var _propertyVOLocator 			: PropertyVOLocator;
@@ -285,96 +275,7 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 
 	public function assignDomainListener( id : String ) : Bool
 	{
-		var domainListener : DomainListenerVO			= this._domainListenerVOLocator.locate( id );
-		var listener : Dynamic 							= this._coreFactory.locate( domainListener.ownerID );
-		var args : Array<DomainListenerVOArguments> 	= domainListener.arguments;
-
-		// Check if event provider is a service
-		var service : IService<ServiceConfiguration> = null;
-		if ( this._coreFactory.isRegisteredWithKey( domainListener.listenedDomainName ) )
-		{
-			var located : Dynamic = this._coreFactory.locate( domainListener.listenedDomainName );
-			if ( Std.is( located, IService ) )
-			{
-				service = cast located;
-			}
-		}
-
-		if ( args != null && args.length > 0 )
-		{
-			for ( domainListenerArgument in args )
-			{
-				var method : String = Std.is( listener, EventProxy ) ? "handleCallback" : domainListenerArgument.method;
-				
-				var messageType : MessageType = domainListenerArgument.name != null ? 
-												new MessageType( domainListenerArgument.name ) : 
-												this._coreFactory.getStaticReference( domainListenerArgument.staticRef );
-
-				if ( ( method != null && Reflect.isFunction( Reflect.field( listener, method ) )) || domainListenerArgument.strategy != null )
-				{
-					var callback : Dynamic = domainListenerArgument.strategy != null ? this._getStrategyCallback( listener, method, domainListenerArgument.strategy, domainListenerArgument.injectedInModule ) : Reflect.field( listener, method );
-
-					if ( service == null )
-					{
-						var domain : Domain = DomainUtil.getDomain( domainListener.listenedDomainName, Domain );
-						this._applicationDomainHub.addHandler( messageType, listener, callback, domain );
-					}
-					else
-					{
-						service.addHandler( messageType, listener, callback );
-					}
-				}
-				else
-				{
-					if ( method == null )
-					{
-						throw new IllegalArgumentException( this + ".assignDomainListener failed. Callback should be defined (use 'method' attribute) in instance of '" 
-															+ Stringifier.stringify( listener ) + "' class with '" + domainListener.ownerID + "' id" );
-					}
-					else
-					{
-						throw new IllegalArgumentException( this + ".assignDomainListener failed. Method named '" + method + "' can't be found in instance of '" 
-															+ Stringifier.stringify( listener ) + "' class with '" + domainListener.ownerID + "' id" );
-					}
-				}
-			}
-
-			return true;
-
-		} else
-		{
-			var domain : Domain = DomainUtil.getDomain( domainListener.listenedDomainName, Domain );
-			return this._applicationDomainHub.addListener( listener, domain );
-		}
-	}
-
-	function _getStrategyCallback( listener : Dynamic, method : String, strategyClassName : String, injectedInModule : Bool = false ) : Dynamic
-	{
-		var callback : Dynamic 							= Reflect.field( listener, method );
-		var strategyClass : Class<IAdapterStrategy> 	= cast this._coreFactory.getClassReference( strategyClassName );
-		
-		
-		var adapter = new ClassAdapter();
-		adapter.setCallBackMethod( listener, callback );
-		adapter.setAdapterClass( strategyClass );
-		adapter.setAnnotationProvider( this._annotationProvider );
-		
-		if ( injectedInModule && Std.is( listener, IModule ) )
-		{
-			var basicInjector : IBasicInjector = listener.getBasicInjector();
-			adapter.setFactoryMethod( basicInjector, basicInjector.instantiateUnmapped );
-		}
-		else 
-		{
-			adapter.setFactoryMethod( this._applicationContext.getBasicInjector(), this._applicationContext.getBasicInjector().instantiateUnmapped );
-		}
-		
-		var f:Array<Dynamic>->Void = function( rest:Array<Dynamic> ):Void
-		{
-			( adapter.getCallbackAdapter() )( rest );
-		}
-		
-		return Reflect.makeVarArgs( f );
+		return DomainListenerFactory.build( id, this._domainListenerVOLocator, this._applicationContext, this._annotationProvider );
 	}
 	
 	public function registerMethodCallVO( methodCallVO : MethodCallVO ) : Void
@@ -448,7 +349,6 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 	function _init() : Void
 	{
 		this._factoryMap 				= new Map();
-		this._applicationDomainHub 		= ApplicationDomainDispatcher.getInstance();
 		this._IDExpert 					= new IDExpert();
 		this._constructorVOLocator 		= new ConstructorVOLocator();
 		this._propertyVOLocator 		= new PropertyVOLocator();
