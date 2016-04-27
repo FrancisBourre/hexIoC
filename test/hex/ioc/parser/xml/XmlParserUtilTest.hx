@@ -1,5 +1,6 @@
 package hex.ioc.parser.xml;
 
+import hex.ioc.vo.ConstructorVO;
 import hex.unittest.assertion.Assert;
 
 /**
@@ -13,13 +14,13 @@ class XmlParserUtilTest
 	{
 		var xml : String = '<size id="rectSize" type="flash.geom.Point"><argument type="Int" value="30"/><argument type="Bool" value="true"/></size>';
 		var argXML : Xml = Xml.parse( xml );
-		var args : Array<Dynamic> = XMLParserUtil.getArguments( argXML.firstElement(), "" );
+		var args : Array<ConstructorVO> = XMLParserUtil.getArguments( "ownerID", argXML.firstElement(), "" );
 
 		Assert.equals( 2, args.length, "Arguments length should be 2" );
 		Assert.equals( "Int", args[0].type, "Type should be 'Int'" );
-		Assert.equals( "30", args[0].value, "Value should be '30'" );
+		Assert.equals( "30", args[0].arguments[ 0 ], "Value should be '30'" );
 		Assert.equals( "Bool", args[1].type, "Type should be 'Bool'" );
-		Assert.equals( "true", args[1].value, "Value should be 'true'" );
+		Assert.equals( "true", args[1].arguments[ 0 ], "Value should be 'true'" );
 	}
 	
 	@Test( "test getArguments with single argument" )
@@ -27,11 +28,11 @@ class XmlParserUtilTest
 	{
 		var xml : String = '<class id="userInfoServiceNoteClass" type="Class" value="service.userinfo.note.UserInfoServiceNote"/>';
 		var argXML : Xml = Xml.parse( xml );
-		var args : Array<Dynamic> = XMLParserUtil.getArguments( argXML.firstElement(), "" );
+		var args : Array<ConstructorVO> = XMLParserUtil.getArguments( "ownerID", argXML.firstElement(), "" );
 		
 		Assert.equals( 1, args.length, "Arguments length should be 1" );
 		Assert.equals( "String", args[0].type, "Type should be 'Class'" );
-		Assert.equals( "service.userinfo.note.UserInfoServiceNote", args[0].value, "Value should be 'service.userinfo.note.UserInfoServiceNote'" );
+		Assert.equals( "service.userinfo.note.UserInfoServiceNote", args[0].arguments[ 0 ], "Value should be 'service.userinfo.note.UserInfoServiceNote'" );
 	}
 	
 	@Test( "test getEventArguments" )

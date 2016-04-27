@@ -12,6 +12,7 @@ import hex.ioc.core.ContextNameList;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.parser.xml.XMLAttributeUtil;
 import hex.ioc.parser.xml.XMLParserUtil;
+import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVOArguments;
 import hex.util.MacroUtil;
 
@@ -51,9 +52,8 @@ class XmlCompiler
 
 		if ( type == ContextTypeList.XML )
 		{
-			args = [];
-			args.push( { ownerID: identifier, value: xml.firstElement().toString() } );
 			factory = xml.get( ContextAttributeList.PARSER_CLASS );
+			args = [ new ConstructorVO( identifier, ContextTypeList.STRING, [ xml.firstElement().toString() ] ) ];
 			XmlCompiler._assembler.buildObject( applicationContext, identifier, type, args, factory );
 			XmlCompiler._importHelper.forceCompilation( factory );
 		}
@@ -83,7 +83,7 @@ class XmlCompiler
 			}
 			else
 			{
-				args = XMLParserUtil.getArguments( xml, type );
+				args = XMLParserUtil.getArguments( identifier, xml, type );
 				for ( arg in args )
 				{
 					if ( !XmlCompiler._importHelper.includeStaticRef( arg.staticRef ) )

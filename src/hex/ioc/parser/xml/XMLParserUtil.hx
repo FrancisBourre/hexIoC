@@ -3,7 +3,9 @@ package hex.ioc.parser.xml;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.core.ContextTypeList;
+import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVOArguments;
+import hex.ioc.vo.MapVO;
 
 /**
  * ...
@@ -16,23 +18,16 @@ class XMLParserUtil
 		
 	}
 	
-	public static function getArguments( xml : Xml, type : String ) : Array<Dynamic>
+	public static function getArguments( ownerID : String, xml : Xml, type : String ) : Array<ConstructorVO>
 	{
-		var args : Array<Dynamic> = [];
+		var args : Array<ConstructorVO> = [];
 		var iterator = xml.elementsNamed( ContextNameList.ARGUMENT );
 
 		if ( iterator.hasNext() )
 		{
 			while ( iterator.hasNext() )
 			{
-				var item = iterator.next();
-
-				var argItem : Dynamic					= {};
-				argItem.staticRef 						= item.get( ContextAttributeList.STATIC_REF );
-				argItem.ref 							= item.get( ContextAttributeList.REF );
-				argItem.type 							= item.get( ContextAttributeList.TYPE );
-				argItem.value 							= item.get( ContextAttributeList.VALUE );
-				args.push( argItem );
+				args.push( _getConstructorVO( ownerID, iterator.next() ) );
 			}
 		}
 		else
@@ -40,11 +35,43 @@ class XMLParserUtil
 			var value : String = XMLAttributeUtil.getValue( xml );
 			if ( value != null ) 
 			{
-				args.push( { type:ContextTypeList.STRING, value:xml.get( ContextAttributeList.VALUE ) } );
+				args.push( new ConstructorVO( ownerID, ContextTypeList.STRING, [ xml.get( ContextAttributeList.VALUE ) ] ) );
 			}
 		}
 
 		return args;
+	}
+	
+	static function _getConstructorVO( ownerID : String, item : Xml ) : ConstructorVO
+	{
+		var method 		= item.get( ContextAttributeList.METHOD );
+		var ref 		= item.get( ContextAttributeList.REF );
+		var staticRef 	= item.get( ContextAttributeList.STATIC_REF );
+		
+		
+		if ( method != null )
+		{
+			return new ConstructorVO( null, ContextTypeList.FUNCTION, [ method ] );
+
+		} else if ( ref != null )
+		{
+			return new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, item.get( ContextAttributeList.REF ) );
+
+		} else if ( staticRef != null )
+		{
+			return new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, null, null, item.get( ContextAttributeList.STATIC_REF ) );
+
+		} else
+		{
+			var type : String = item.get( ContextAttributeList.TYPE );
+			
+			if ( type == null )
+			{
+				type = ContextTypeList.STRING;
+			}
+
+			return new ConstructorVO( ownerID, type, [ item.get( ContextAttributeList.VALUE ) ] );
+		}
 	}
 
 	public static function getMethodCallArguments( xml : Xml ) : Array<Dynamic>

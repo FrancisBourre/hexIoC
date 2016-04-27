@@ -11,11 +11,13 @@ class MapVO
 
 	public var key 		: Dynamic;
 	public var value 	: Dynamic;
+	public var mapName 	: String;
 
-	public function new( key : ConstructorVO, value : ConstructorVO )
+	public function new( key : ConstructorVO, value : ConstructorVO, ?mapName : String )
 	{
-		this._key 	= key;
-		this._value = value;
+		this._key 		= key;
+		this._value 	= value;
+		this.mapName 	= mapName;
 	}
 
 	public function getPropertyKey() : ConstructorVO

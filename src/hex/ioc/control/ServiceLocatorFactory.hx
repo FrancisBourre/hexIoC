@@ -3,7 +3,7 @@ package hex.ioc.control;
 import hex.ioc.vo.FactoryVO;
 import hex.config.stateful.ServiceLocator;
 import hex.ioc.vo.ConstructorVO;
-import hex.ioc.vo.ServiceLocatorVO;
+import hex.ioc.vo.MapVO;
 
 /**
  * ...
@@ -21,7 +21,7 @@ class ServiceLocatorFactory
 		var constructorVO : ConstructorVO = factoryVO.constructorVO;
 
 		var serviceLocator = new ServiceLocator();
-		var args : Array<ServiceLocatorVO> = cast constructorVO.arguments;
+		var args : Array<MapVO> = cast constructorVO.arguments;
 
 		if ( args.length <= 0 )
 		{

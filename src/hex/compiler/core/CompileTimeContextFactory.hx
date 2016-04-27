@@ -135,7 +135,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	}
 	
 	//
-	public function registerPropertyVO( id : String, propertyVO : PropertyVO  ) : Void
+	public function registerPropertyVO( id : String, propertyVO : PropertyVO ) : Void
 	{
 		if ( this._propertyVOLocator.isRegisteredWithKey( id ) )
 		{

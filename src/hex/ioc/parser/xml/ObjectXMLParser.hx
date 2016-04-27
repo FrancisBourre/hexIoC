@@ -2,9 +2,11 @@ package hex.ioc.parser.xml;
 
 import hex.error.Exception;
 import hex.ioc.assembler.AbstractApplicationContext;
+import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.error.ParsingException;
+import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVOArguments;
 
 /**
@@ -54,14 +56,13 @@ class ObjectXMLParser extends AbstractXMLParser
 
 		if ( type == ContextTypeList.XML )
 		{
-			args = [];
-			args.push( { ownerID:identifier, value:xml.firstElement().toString() } );
-			factory = XMLAttributeUtil.getParserClass( xml );
+			factory = xml.get( ContextAttributeList.PARSER_CLASS );
+			args = [ new ConstructorVO( identifier, ContextTypeList.STRING, [ xml.firstElement().toString() ] ) ];
 			this.getApplicationAssembler().buildObject( applicationContext, identifier, type, args, factory );
 		}
 		else
 		{
-			args 		= ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR ) ? XMLParserUtil.getItems( xml ) : XMLParserUtil.getArguments( xml, type );
+			args 		= ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR ) ? XMLParserUtil.getItems( xml ) : XMLParserUtil.getArguments( identifier, xml, type );
 			factory 	= XMLAttributeUtil.getFactoryMethod( xml );
 			singleton 	= XMLAttributeUtil.getSingletonAccess( xml );
 			injectInto	= XMLAttributeUtil.getInjectInto( xml );

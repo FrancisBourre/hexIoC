@@ -56,7 +56,7 @@ class XmlReader
 			}
 			else
 			{
-				args = XMLParserUtil.getArguments( xml, type );
+				args = XMLParserUtil.getArguments( identifier, xml, type );
 				for ( arg in args )
 				{
 					if ( !XmlReader._importHelper.includeStaticRef( arg.staticRef ) )

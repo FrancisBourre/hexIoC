@@ -13,7 +13,6 @@ import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVOArguments;
 import hex.ioc.vo.MapVO;
 import hex.ioc.vo.PropertyVO;
-import hex.ioc.vo.ServiceLocatorVO;
 
 /**
  * ...
@@ -106,25 +105,13 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 				var index : Int;
 				var obj : Dynamic;
 
-				if ( type == ContextTypeList.HASHMAP )
+				if ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR )
 				{
 					for ( index in 0...length )
 					{
 						obj = args[ index ];
-						args[ index ] = new MapVO( _getConstructorVO( ownerID, obj.key ), _getConstructorVO( ownerID, obj.value ) );
+						args[ index ] = new MapVO( _getConstructorVO( ownerID, obj.key ), _getConstructorVO( ownerID, obj.value ), obj.mapName );
 					}
-				}
-				else if ( type == ContextTypeList.SERVICE_LOCATOR )
-				{
-					for ( index in 0...length )
-					{
-						obj = args[ index ];
-						args[ index ] = new ServiceLocatorVO( _getConstructorVO( ownerID, obj.key ), _getConstructorVO( ownerID, obj.value ), obj.mapName );
-					}
-				}
-				else
-				{
-					_deserializeArguments( ownerID, args );
 				}
 			}
 
