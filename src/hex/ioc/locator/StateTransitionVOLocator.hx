@@ -14,6 +14,7 @@ import hex.ioc.error.BuildingException;
 import hex.ioc.vo.CommandMappingVO;
 import hex.ioc.vo.StateTransitionVO;
 import hex.state.State;
+import hex.util.ClassUtil;
 
 /**
  * ...
@@ -39,11 +40,10 @@ class StateTransitionVOLocator extends Locator<String, StateTransitionVO>
 			var vo : StateTransitionVO = this.locate( key );
 			var coreFactory : ICoreFactory = this._contextFactory.getCoreFactory();
 			
-			
 			var state : State = null;
 			if ( vo.staticReference != null )
 			{
-				state = coreFactory.getStaticReference( vo.staticReference );
+				state = ClassUtil.getStaticReference( vo.staticReference );
 			}
 			else if ( vo.instanceReference != null )
 			{
@@ -73,7 +73,7 @@ class StateTransitionVOLocator extends Locator<String, StateTransitionVO>
 			var enterList : Array<CommandMappingVO> = vo.enterList;
 			for ( enterVO in enterList )
 			{
-				var enterCommandClass : Class<ICommand> = cast coreFactory.getClassReference( enterVO.commandClassName );
+				var enterCommandClass : Class<ICommand> = cast ClassUtil.getClassReference( enterVO.commandClassName );
 				var enterMapping = new CommandMapping( enterCommandClass );
 				
 				var enterContextOwner : IContextOwner = null;
@@ -94,7 +94,7 @@ class StateTransitionVOLocator extends Locator<String, StateTransitionVO>
 			var exitList : Array<CommandMappingVO> = vo.exitList;
 			for ( exitVO in exitList )
 			{
-				var exitCommandClass : Class<ICommand> = cast coreFactory.getClassReference( exitVO.commandClassName );
+				var exitCommandClass : Class<ICommand> = cast ClassUtil.getClassReference( exitVO.commandClassName );
 				var exitMapping = new CommandMapping( exitCommandClass );
 				
 				var exitContextOwner : IContextOwner = null;

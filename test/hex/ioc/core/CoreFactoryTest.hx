@@ -11,6 +11,7 @@ import hex.metadata.IAnnotationProvider;
 import hex.structures.Point;
 import hex.structures.Size;
 import hex.unittest.assertion.Assert;
+import hex.util.ClassUtil;
 
 /**
  * ...
@@ -18,8 +19,6 @@ import hex.unittest.assertion.Assert;
  */
 class CoreFactoryTest
 {
-	public static inline var STATIC_REF : String = "static_ref";
-	
 	var _coreFactory : CoreFactory;
 
     @Before
@@ -107,21 +106,7 @@ class CoreFactoryTest
 		this._coreFactory.register( "key", value );
 		Assert.equals( "key", this._coreFactory.getKeyOfInstance( value ), "'getKeyOfInstance' should return value associated to the key" );
 	}
-	
-	@Test( "Test getClassReference" )
-    public function testGetClassReference() : Void
-    {
-		Assert.equals( CoreFactoryTest, this._coreFactory.getClassReference( "hex.ioc.core.CoreFactoryTest" ), "'getClassReference' should return the right class reference" );
-		Assert.methodCallThrows( IllegalArgumentException, this._coreFactory, this._coreFactory.getClassReference, ["dummy.unavailable.Class"], "'getClassReference' should throw IllegalArgumentException" );
-	}
-	
-	@Test( "Test getStaticReference" )
-    public function testGetStaticReference() : Void
-    {
-		Assert.equals( "static_ref", this._coreFactory.getStaticReference( "hex.ioc.core.CoreFactoryTest.STATIC_REF" ), "'getStaticReference' should return the right static property" );
-		Assert.methodCallThrows( IllegalArgumentException, this._coreFactory, this._coreFactory.getStaticReference, ["hex.ioc.core.CoreFactoryTest.UnavailableStaticRef"], "'getStaticReference' should throw IllegalArgumentException" );
-	}
-	
+
 	@Test( "Test buildInstance with arguments" )
     public function testBuildInstanceWithArguments() : Void
     {

@@ -11,6 +11,7 @@ import hex.event.IDispatcher;
 import hex.log.Stringifier;
 import hex.metadata.IAnnotationProvider;
 import hex.service.IService;
+import hex.util.ClassUtil;
 import hex.util.FastEval;
 
 /**
@@ -159,41 +160,13 @@ class CoreFactory implements ICoreFactory
         }
 	}
 	
-	public function getClassReference( qualifiedClassName : String ) : Class<Dynamic>
-	{
-		var classReference : Class<Dynamic> = Type.resolveClass( qualifiedClassName );
-		
-		if ( classReference == null )
-		{
-			throw new IllegalArgumentException( Stringifier.stringify(this) + ".getClassReference fails with class named '" + qualifiedClassName + "'" );
-		}
-		
-		return classReference;
-	}
-	
-	public function getStaticReference( qualifiedClassName : String ) : Dynamic
-	{
-		var a : Array<String> = qualifiedClassName.split( "." );
-		var type : String = a[ a.length - 1 ];
-		a.splice( a.length - 1, 1 );
-		var classReference : Class<Dynamic>  = this.getClassReference( a.join( "." ) );
-		var staticRef : Dynamic = Reflect.field( classReference, type );
-		
-		if ( staticRef == null )
-		{
-			throw new IllegalArgumentException( Stringifier.stringify(this) + ".getStaticReference fails with '" + qualifiedClassName + "'" );
-		}
-		
-		return staticRef;
-	}
-	
 	public function buildInstance( qualifiedClassName : String, ?args : Array<Dynamic>, ?factoryMethod : String, ?singletonAccess : String, ?instantiateUnmapped : Bool = false ) : Dynamic
 	{
 		var classReference 	: Class<Dynamic>;
 
 		try
 		{
-			classReference = this.getClassReference( qualifiedClassName );
+			classReference = ClassUtil.getClassReference( qualifiedClassName );
 		}
 		catch ( e : IllegalArgumentException )
 		{

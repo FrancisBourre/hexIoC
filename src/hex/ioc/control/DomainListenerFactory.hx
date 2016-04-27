@@ -19,6 +19,7 @@ import hex.metadata.IAnnotationProvider;
 import hex.module.IModule;
 import hex.service.IService;
 import hex.service.ServiceConfiguration;
+import hex.util.ClassUtil;
 
 /**
  * ...
@@ -52,7 +53,7 @@ class DomainListenerFactory
 				
 				var messageType : MessageType = domainListenerArgument.name != null ? 
 												new MessageType( domainListenerArgument.name ) : 
-												coreFactory.getStaticReference( domainListenerArgument.staticRef );
+												ClassUtil.getStaticReference( domainListenerArgument.staticRef );
 
 				if ( ( method != null && Reflect.isFunction( Reflect.field( listener, method ) )) || domainListenerArgument.strategy != null )
 				{
@@ -95,8 +96,7 @@ class DomainListenerFactory
 	static function _getStrategyCallback( annotationProvider : IAnnotationProvider, applicationContext : AbstractApplicationContext, listener : Dynamic, method : String, strategyClassName : String, injectedInModule : Bool = false ) : Dynamic
 	{
 		var callback : Dynamic 							= Reflect.field( listener, method );
-		var strategyClass : Class<IAdapterStrategy> 	= cast applicationContext.getCoreFactory().getClassReference( strategyClassName );
-		
+		var strategyClass : Class<IAdapterStrategy> 	= cast ClassUtil.getClassReference( strategyClassName );
 		
 		var adapter = new ClassAdapter();
 		adapter.setCallBackMethod( listener, callback );

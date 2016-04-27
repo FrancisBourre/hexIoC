@@ -27,32 +27,14 @@ class ClassInstanceFactory
 
 		if ( constructorVO.ref != null )
 		{
-			var key : String = constructorVO.ref;
-
-			if ( key.indexOf(".") != -1 )
-			{
-				key = Std.string( ( key.split( "." ) ).shift() );
-			}
-
-			if ( !( factoryVO.coreFactory.isRegisteredWithKey( key ) ) )
-			{
-				factoryVO.contextFactory.buildObject( key );
-			}
-
-			constructorVO.result = factoryVO.coreFactory.locate( key );
-
-			if ( constructorVO.ref.indexOf( "." ) != -1 )
-			{
-				var args : Array<String> = constructorVO.ref.split( "." );
-				args.shift();
-				constructorVO.result = factoryVO.coreFactory.fastEvalFromTarget( constructorVO.result, args.join( "." )  );
-			}
+			trace( constructorVO );
+			ReferenceFactory.build( factoryVO );
 		}
 		else
 		{
 			if ( constructorVO.staticRef != null )
 			{
-				constructorVO.result = factoryVO.coreFactory.getStaticReference( constructorVO.staticRef );
+				constructorVO.result = ClassUtil.getStaticReference( constructorVO.staticRef );
 			}
 			else
 			{
@@ -62,7 +44,7 @@ class ClassInstanceFactory
 				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = Type.createInstance( $p { tp }, [] ); } );
 
 				#else
-				var classReference = factoryVO.coreFactory.getClassReference( constructorVO.type );
+				var classReference = ClassUtil.getClassReference( constructorVO.type );
 				
 				var isModule : Bool = ClassUtil.classExtendsOrImplements( classReference, IModule );
 				if ( isModule && constructorVO.ID != null && constructorVO.ID.length > 0 )

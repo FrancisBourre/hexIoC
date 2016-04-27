@@ -15,6 +15,7 @@ import hex.ioc.vo.MethodCallVO;
 import hex.ioc.vo.PropertyVO;
 import hex.ioc.vo.ServiceLocatorVO;
 import hex.ioc.vo.StateTransitionVO;
+import hex.util.ClassUtil;
 
 /**
  * ...
@@ -200,6 +201,43 @@ class ApplicationAssembler implements IApplicationAssembler
 			var constructorVO = new ConstructorVO( ownerID, type, args, factory, singleton, injectInto, null, mapType, staticRef );
 			this.getContextFactory( applicationContext ).registerConstructorVO( ownerID, constructorVO );
 		}
+	}
+	
+	static function _deserializeArguments( ownerID : String, args : Array<Dynamic> ) : Array<Dynamic>
+	{
+		var length 	: Int = args.length;
+		var index 	: Int;
+		var obj 	: Dynamic;
+		
+		for ( index in 0...length )
+		{
+			obj = args[ index ];
+			var property : PropertyVO = new PropertyVO( ownerID, obj.name, obj.value, obj.type, obj.ref, obj.method, obj.staticRef );
+			
+			//
+			if ( property.method != null )
+			{
+				args[ index ] = new ConstructorVO( null, ContextTypeList.FUNCTION, [ property.method ] );
+
+			} else if ( property.ref != null )
+			{
+				args[ index ] = new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, property.ref );
+
+			} else if ( property.staticRef != null )
+			{
+				//return new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, property.ref );
+
+			} else
+			{
+				var type : String = property.type != null ? property.type : ContextTypeList.STRING;
+				args[ index ] = new ConstructorVO( property.ownerID, type, [ property.value ] );
+			}
+		//	
+			
+			//args[ index ] = property;
+		}
+		
+		return args;
 	}
 
 	public function buildMethodCall( 	applicationContext 	: AbstractApplicationContext, 

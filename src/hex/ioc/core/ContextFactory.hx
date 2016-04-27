@@ -46,6 +46,7 @@ import hex.ioc.vo.PropertyVO;
 import hex.ioc.vo.StateTransitionVO;
 import hex.metadata.AnnotationProvider;
 import hex.metadata.IAnnotationProvider;
+import hex.util.ClassUtil;
 
 /**
  * ...
@@ -155,7 +156,7 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 
 		} else if ( property.staticRef != null )
 		{
-			return this._coreFactory.getStaticReference( property.staticRef );
+			return ClassUtil.getStaticReference( property.staticRef );
 
 		} else
 		{
