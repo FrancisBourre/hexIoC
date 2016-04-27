@@ -9,7 +9,7 @@ import hex.ioc.vo.ConstructorVO;
  */
 class NullFactory
 {
-	public function new()
+	function new()
 	{
 
 	}

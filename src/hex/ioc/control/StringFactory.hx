@@ -11,7 +11,7 @@ import hex.log.Logger;
  */
 class StringFactory
 {
-	public function new()
+	function new()
 	{
 
 	}
@@ -19,6 +19,7 @@ class StringFactory
 	static public function build( factoryVO : FactoryVO ) : Void
 	{
 		var constructorVO : ConstructorVO = factoryVO.constructorVO;
+		trace( constructorVO );
 
 		var value : String 	= null;
 		var args 			= constructorVO.arguments;

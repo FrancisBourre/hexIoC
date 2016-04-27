@@ -27,7 +27,7 @@ class ClassInstanceFactory
 
 		if ( constructorVO.ref != null )
 		{
-			trace( constructorVO );
+			//trace( constructorVO );
 			ReferenceFactory.build( factoryVO );
 		}
 		else

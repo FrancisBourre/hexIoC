@@ -27,6 +27,11 @@ import hex.util.ClassUtil;
  */
 class DomainListenerFactory
 {
+	function new()
+	{
+
+	}
+	
 	static public function build( id : String, domainListenerVOLocator : DomainListenerVOLocator, applicationContext : AbstractApplicationContext, annotationProvider : IAnnotationProvider ) : Bool
 	{
 		var coreFactory : ICoreFactory 					= applicationContext.getCoreFactory();

@@ -111,11 +111,7 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 					for ( index in 0...length )
 					{
 						obj = args[ index ];
-						var keyDic 		: Dynamic 		= obj.key;
-						var valueDic 	: Dynamic 		= obj.value;
-						var pKeyDic 	: PropertyVO 	= new PropertyVO( ownerID, keyDic.name, keyDic.value, keyDic.type, keyDic.ref, keyDic.method, keyDic.staticRef );
-						var pValueDic 	: PropertyVO 	= new PropertyVO( ownerID, valueDic.name, valueDic.value, valueDic.type, valueDic.ref, valueDic.method, valueDic.staticRef );
-						args[ index ] 					= new MapVO( pKeyDic, pValueDic );
+						args[ index ] = new MapVO( _getConstructorVO( ownerID, obj.key ), _getConstructorVO( ownerID, obj.value ) );
 					}
 				}
 				else if ( type == ContextTypeList.SERVICE_LOCATOR )
@@ -123,26 +119,50 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 					for ( index in 0...length )
 					{
 						obj = args[ index ];
-						var keySC 		: Dynamic 		= obj.key;
-						var valueSC 	: Dynamic 		= obj.value;
-						var pKeySC 		: PropertyVO 	= new PropertyVO( ownerID, keySC.name, keySC.value, keySC.type, keySC.ref, keySC.method, keySC.staticRef );
-						var pValueSC 	: PropertyVO 	= new PropertyVO( ownerID, valueSC.name, valueSC.value, valueSC.type, valueSC.ref, valueSC.method, valueSC.staticRef );
-						args[ index ] 					= new ServiceLocatorVO( pKeySC, pValueSC, obj.mapName );
+						args[ index ] = new ServiceLocatorVO( _getConstructorVO( ownerID, obj.key ), _getConstructorVO( ownerID, obj.value ), obj.mapName );
 					}
 				}
 				else
 				{
-					for ( index in 0...length )
-					{
-						obj = args[ index ];
-						var propertyVO : PropertyVO = new PropertyVO( ownerID, obj.name, obj.value, obj.type, obj.ref, obj.method, obj.staticRef );
-						args[ index ] = propertyVO;
-					}
+					_deserializeArguments( ownerID, args );
 				}
 			}
 
 			var constructorVO = new ConstructorVO( ownerID, type, args, factory, singleton, injectInto, null, mapType, staticRef );
 			this.getContextFactory( applicationContext ).registerConstructorVO( ownerID, constructorVO );
+		}
+	}
+	
+	static function _deserializeArguments( ownerID : String, args : Array<Dynamic> ) :Void
+	{
+		var length 	: Int = args.length;
+		var index 	: Int;
+		var obj 	: Dynamic;
+		
+		for ( index in 0...length )
+		{
+			args[ index ] = _getConstructorVO( ownerID,  args[ index ] );
+		}
+	}
+	
+	static function _getConstructorVO( ownerID : String, obj : Dynamic ) : ConstructorVO
+	{
+		if ( obj.method != null )
+		{
+			return new ConstructorVO( null, ContextTypeList.FUNCTION, [ obj.method ] );
+
+		} else if ( obj.ref != null )
+		{
+			return new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, obj.ref );
+
+		} else if ( obj.staticRef != null )
+		{
+			return new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, null, null, obj.staticRef );
+
+		} else
+		{
+			var type : String = obj.type != null ? obj.type : ContextTypeList.STRING;
+			return new ConstructorVO( ownerID, type, [ obj.value ] );
 		}
 	}
 

@@ -12,7 +12,7 @@ import hex.log.Logger;
  */
 class HashMapFactory
 {
-	public function new()
+	function new()
 	{
 
 	}

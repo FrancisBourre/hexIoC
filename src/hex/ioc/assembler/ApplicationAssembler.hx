@@ -168,11 +168,7 @@ class ApplicationAssembler implements IApplicationAssembler
 					for ( index in 0...length )
 					{
 						obj = args[ index ];
-						var keyDic 		: Dynamic 		= obj.key;
-						var valueDic 	: Dynamic 		= obj.value;
-						var pKeyDic 	: PropertyVO 	= new PropertyVO( ownerID, keyDic.name, keyDic.value, keyDic.type, keyDic.ref, keyDic.method, keyDic.staticRef );
-						var pValueDic 	: PropertyVO 	= new PropertyVO( ownerID, valueDic.name, valueDic.value, valueDic.type, valueDic.ref, valueDic.method, valueDic.staticRef );
-						args[ index ] 					= new MapVO( pKeyDic, pValueDic );
+						args[ index ] = new MapVO( _getValue( ownerID, obj.key ), _getValue( ownerID, obj.value ) );
 					}
 				}
 				else if ( type == ContextTypeList.SERVICE_LOCATOR )
@@ -180,21 +176,12 @@ class ApplicationAssembler implements IApplicationAssembler
 					for ( index in 0...length )
 					{
 						obj = args[ index ];
-						var keySC 		: Dynamic 		= obj.key;
-						var valueSC 	: Dynamic 		= obj.value;
-						var pKeySC 		: PropertyVO 	= new PropertyVO( ownerID, keySC.name, keySC.value, keySC.type, keySC.ref, keySC.method, keySC.staticRef );
-						var pValueSC 	: PropertyVO 	= new PropertyVO( ownerID, valueSC.name, valueSC.value, valueSC.type, valueSC.ref, valueSC.method, valueSC.staticRef );
-						args[ index ] 					= new ServiceLocatorVO( pKeySC, pValueSC, obj.mapName );
+						args[ index ] = new ServiceLocatorVO( _getValue( ownerID, obj.key ), _getValue( ownerID, obj.value ), obj.mapName );
 					}
 				}
 				else
 				{
-					for ( index in 0...length )
-					{
-						obj = args[ index ];
-						var propertyVO : PropertyVO = new PropertyVO( ownerID, obj.name, obj.value, obj.type, obj.ref, obj.method, obj.staticRef );
-						args[ index ] = propertyVO;
-					}
+					_deserializeArguments( ownerID, args );
 				}
 			}
 
@@ -203,7 +190,7 @@ class ApplicationAssembler implements IApplicationAssembler
 		}
 	}
 	
-	static function _deserializeArguments( ownerID : String, args : Array<Dynamic> ) : Array<Dynamic>
+	static function _deserializeArguments( ownerID : String, args : Array<Dynamic> ) : Void
 	{
 		var length 	: Int = args.length;
 		var index 	: Int;
@@ -211,33 +198,29 @@ class ApplicationAssembler implements IApplicationAssembler
 		
 		for ( index in 0...length )
 		{
-			obj = args[ index ];
-			var property : PropertyVO = new PropertyVO( ownerID, obj.name, obj.value, obj.type, obj.ref, obj.method, obj.staticRef );
-			
-			//
-			if ( property.method != null )
-			{
-				args[ index ] = new ConstructorVO( null, ContextTypeList.FUNCTION, [ property.method ] );
-
-			} else if ( property.ref != null )
-			{
-				args[ index ] = new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, property.ref );
-
-			} else if ( property.staticRef != null )
-			{
-				//return new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, property.ref );
-
-			} else
-			{
-				var type : String = property.type != null ? property.type : ContextTypeList.STRING;
-				args[ index ] = new ConstructorVO( property.ownerID, type, [ property.value ] );
-			}
-		//	
-			
-			//args[ index ] = property;
+			args[ index ] = _getValue( ownerID,  args[ index ] );
 		}
-		
-		return args;
+	}
+	
+	static function _getValue( ownerID : String, obj : Dynamic ) : ConstructorVO
+	{
+		if ( obj.method != null )
+		{
+			return new ConstructorVO( null, ContextTypeList.FUNCTION, [ obj.method ] );
+
+		} else if ( obj.ref != null )
+		{
+			return new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, obj.ref );
+
+		} else if ( obj.staticRef != null )
+		{
+			return new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, null, null, obj.staticRef );
+
+		} else
+		{
+			var type : String = obj.type != null ? obj.type : ContextTypeList.STRING;
+			return new ConstructorVO( ownerID, type, [ obj.value ] );
+		}
 	}
 
 	public function buildMethodCall( 	applicationContext 	: AbstractApplicationContext, 
@@ -251,13 +234,7 @@ class ApplicationAssembler implements IApplicationAssembler
 		{
 			if ( args != null )
 			{
-				var length : Int = args.length;
-				for ( i in 0...length )
-				{
-					var obj : Dynamic = args[ i ];
-					var prop = new PropertyVO( obj.id, obj.name, obj.value, obj.type, obj.ref, obj.method, obj.staticRef );
-					args[ i ] = prop;
-				}
+				_deserializeArguments( null, args );
 			}
 
 			this.getContextFactory( applicationContext ).registerMethodCallVO( new MethodCallVO( ownerID, methodCallName, args ) );

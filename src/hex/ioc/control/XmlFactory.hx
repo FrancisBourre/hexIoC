@@ -11,7 +11,7 @@ import hex.ioc.vo.ConstructorVO;
  */
 class XmlFactory
 {
-	public function new()
+	function new()
 	{
 
 	}

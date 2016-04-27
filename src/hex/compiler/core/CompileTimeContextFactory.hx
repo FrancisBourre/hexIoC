@@ -192,30 +192,13 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 
 	public function deserializeArguments( arguments : Array<Dynamic> ) : Array<Dynamic>
 	{
-		var result : Array<Dynamic> = null;
-		var length : Int = arguments.length;
-
-		if ( length > 0 ) 
+		var l : Int = arguments.length;
+		for ( i in 0...l )
 		{
-			result = [];
+			arguments[ i ] = this._build( arguments[ i ] );
 		}
 
-		for ( obj in arguments )
-		{
-			if ( Std.is( obj, PropertyVO ) )
-			{
-				result.push( this._getPropertyValue( cast obj ) );
-			}
-			else if ( Std.is( obj, MapVO ) )
-			{
-				var mapVO : MapVO = cast obj;
-				mapVO.key = this._getPropertyValue( mapVO.getPropertyKey() );
-				mapVO.value = this._getPropertyValue( mapVO.getPropertyValue() );
-				result.push( mapVO );
-			}
-		}
-
-		return result;
+		return arguments;
 	}
 	
 	//listen to CoreFactory
@@ -245,9 +228,27 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		if ( this._constructorVOLocator.isRegisteredWithKey( id ) )
 		{
 			var cons : ConstructorVO = this._constructorVOLocator.locate( id );
-			if ( cons.arguments != null )
+			
+			var args = cons.arguments;
+			if ( args != null )
 			{
-				cons.arguments = this.deserializeArguments( cons.arguments );
+				if ( cons.type == ContextTypeList.HASHMAP || cons.type == ContextTypeList.SERVICE_LOCATOR )
+				{
+					var result = [];
+					for ( obj in args )
+					{
+						var mapVO : MapVO = cast obj;
+						mapVO.key = this._build( mapVO.getPropertyKey() );
+						mapVO.value = this._build( mapVO.getPropertyValue() );
+						result.push( mapVO );
+					}
+					cons.arguments = result;
+				}
+				else
+				{
+					cons.arguments = this.deserializeArguments( cons.arguments );
+				}
+				
 			}
 
 			this._build( cons, id );
@@ -299,9 +300,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		var method : MethodCallVO 	= this._methodCallVOLocator.locate( id );
 		var cons = new ConstructorVO( null, ContextTypeList.FUNCTION, [ method.ownerID + "." + method.name ] );
 		var func : Dynamic 			= this._build( cons );
-		var args : Array<Dynamic> 	= this.deserializeArguments( method.arguments );
-		
-		Reflect.callMethod( this._coreFactory.locate( method.ownerID ), func, args );
+		Reflect.callMethod( this._coreFactory.locate( method.ownerID ), func, this.deserializeArguments( method.arguments ) );
 	}
 
 	public function callAllMethods() : Void
@@ -406,7 +405,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		{
 			#if macro
 			var extVar = macro $i{ id };
-			this._expressions.push( macro @:mergeBlock { trace( $v{ id } ); } );
+			//this._expressions.push( macro @:mergeBlock { trace( $v{ id } ); } );
 			this._expressions.push( macro @:mergeBlock { coreFactory.register( $v{ id }, $extVar ); } );
 			#end
 

@@ -6,24 +6,24 @@ package hex.ioc.vo;
  */
 class MapVO
 {
-	var _key 	: PropertyVO;
-	var _value 	: PropertyVO;
+	var _key 	: ConstructorVO;
+	var _value 	: ConstructorVO;
 
 	public var key 		: Dynamic;
 	public var value 	: Dynamic;
 
-	public function new( key : PropertyVO, value : PropertyVO )
+	public function new( key : ConstructorVO, value : ConstructorVO )
 	{
 		this._key 	= key;
 		this._value = value;
 	}
 
-	public function getPropertyKey() : PropertyVO
+	public function getPropertyKey() : ConstructorVO
 	{
 		return this._key;
 	}
 
-	public function getPropertyValue() : PropertyVO
+	public function getPropertyValue() : ConstructorVO
 	{
 		return this._value;
 	}

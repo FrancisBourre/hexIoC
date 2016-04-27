@@ -11,7 +11,7 @@ import hex.ioc.vo.ServiceLocatorVO;
  */
 class ServiceLocatorFactory
 {
-	public function new()
+	function new()
 	{
 
 	}

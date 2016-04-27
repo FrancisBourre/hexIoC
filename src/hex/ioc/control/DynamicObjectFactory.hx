@@ -9,7 +9,7 @@ import hex.ioc.vo.ConstructorVO;
  */
 class DynamicObjectFactory
 {
-	public function new()
+	function new()
 	{
 
 	}
