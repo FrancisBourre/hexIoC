@@ -12,7 +12,7 @@ import hex.ioc.locator.ModuleLocator;
  * ...
  * @author Francis Bourre
  */
-class BuildHelperVO
+class FactoryVO
 {
 	public var type 					: String;
 	public var contextFactory 			: IContextFactory;

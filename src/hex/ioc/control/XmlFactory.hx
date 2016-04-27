@@ -1,6 +1,6 @@
 package hex.ioc.control;
 
-import hex.ioc.vo.BuildHelperVO;
+import hex.ioc.vo.FactoryVO;
 import hex.data.IParser;
 import hex.ioc.error.ParsingException;
 import hex.ioc.vo.ConstructorVO;
@@ -9,16 +9,16 @@ import hex.ioc.vo.ConstructorVO;
  * ...
  * @author Francis Bourre
  */
-class BuildXMLCommand implements IBuildCommand
+class XmlFactory
 {
 	public function new()
 	{
 
 	}
 
-	public function execute( buildHelperVO : BuildHelperVO ) : Void
+	static public function build( factoryVO : FactoryVO ) : Void
 	{
-		var constructorVO : ConstructorVO = buildHelperVO.constructorVO;
+		var constructorVO : ConstructorVO = factoryVO.constructorVO;
 
 		var args : Array<Dynamic> 	= constructorVO.arguments;
 		var factory : String 		= constructorVO.factory;
@@ -37,19 +37,19 @@ class BuildXMLCommand implements IBuildCommand
 				{
 					try
 					{
-						var parser : IParser = buildHelperVO.coreFactory.buildInstance( factory );
+						var parser : IParser = factoryVO.coreFactory.buildInstance( factory );
 						constructorVO.result = parser.parse( Xml.parse( source ) );
 					}
 					catch ( error : Dynamic )
 					{
-						throw new ParsingException( this + ".execute() failed to deserialize XML with '" + factory + "' deserializer class." );
+						throw new ParsingException( "XmlFactory.build() failed to deserialize XML with '" + factory + "' deserializer class." );
 					}
 				}
 			}
 			else
 			{
 				#if debug
-				trace( this + ".execute() returns an empty XML." );
+				trace( "XmlFactory.build() returns an empty XML." );
 				#end
 				
 				constructorVO.result = Xml.parse( "" );
@@ -58,7 +58,7 @@ class BuildXMLCommand implements IBuildCommand
 		else
 		{
 			#if debug
-			trace( this + ".execute() returns an empty XML." );
+			trace( "XmlFactory.build() returns an empty XML." );
 			#end
 			
 			constructorVO.result = Xml.parse( "" );

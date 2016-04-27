@@ -7,5 +7,5 @@ package hex.ioc.control;
 class IoCControlSuite
 {
 	@Suite( "Control" )
-    public var list : Array<Class<Dynamic>> = [BuildArrayCommandTest, BuildBooleanCommandTest, BuildClassCommandTest, BuildFloatCommandTest, BuildIntcommandTest, BuildNullCommandTest, BuildStringCommandTest, BuildUIntCommandTest];
+    public var list : Array<Class<Dynamic>> = [ArrayFactoryTest, BoolFactoryTest, ClassFactoryTest, FloatFactoryTest, IntFactoryTest, NullFactoryTest, StringFactoryTest, UIntFactoryTest];
 }

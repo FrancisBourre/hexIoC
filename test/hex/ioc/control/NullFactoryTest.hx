@@ -1,7 +1,7 @@
 package hex.ioc.control;
 
-import hex.ioc.control.BuildNullCommand;
-import hex.ioc.vo.BuildHelperVO;
+import hex.ioc.control.NullFactory;
+import hex.ioc.vo.FactoryVO;
 import hex.ioc.vo.ConstructorVO;
 import hex.unittest.assertion.Assert;
 
@@ -9,15 +9,14 @@ import hex.unittest.assertion.Assert;
  * ...
  * @author Francis Bourre
  */
-class BuildNullCommandTest
+class NullFactoryTest
 {
 	@Test( "Test execute" )
     public function testExecute() : Void
     {
-		var cmd = new BuildNullCommand();
-		var helper = new BuildHelperVO();
+		var helper = new FactoryVO();
 		helper.constructorVO 		= new ConstructorVO( "test" );
-		cmd.execute( helper );
+		NullFactory.build( helper );
 		Assert.isNull( helper.constructorVO.result, "constructorVO.result should be null" );
 	}
 }

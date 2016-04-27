@@ -1,6 +1,6 @@
 package hex.ioc.control;
 
-import hex.ioc.vo.BuildHelperVO;
+import hex.ioc.vo.FactoryVO;
 import hex.config.stateful.ServiceLocator;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.ServiceLocatorVO;
@@ -9,23 +9,23 @@ import hex.ioc.vo.ServiceLocatorVO;
  * ...
  * @author Francis Bourre
  */
-class BuildServiceLocatorCommand implements IBuildCommand
+class ServiceLocatorFactory
 {
 	public function new()
 	{
 
 	}
 
-	public function execute( buildHelperVO : BuildHelperVO ) : Void
+	static public function build( factoryVO : FactoryVO ) : Void
 	{
-		var constructorVO : ConstructorVO = buildHelperVO.constructorVO;
+		var constructorVO : ConstructorVO = factoryVO.constructorVO;
 
 		var serviceLocator = new ServiceLocator();
 		var args : Array<ServiceLocatorVO> = cast constructorVO.arguments;
 
 		if ( args.length <= 0 )
 		{
-			trace( this + ".execute(" + args + ") returns an empty ServiceConfig." );
+			trace( "ServiceLocatorFactory.build(" + args + ") returns an empty ServiceConfig." );
 
 		} else
 		{
@@ -37,7 +37,7 @@ class BuildServiceLocatorCommand implements IBuildCommand
 
 				} else
 				{
-					trace( this + ".execute() adds item with a 'null' key for '"  + item.value +"' value." );
+					trace( "ServiceLocatorFactory.build() adds item with a 'null' key for '"  + item.value +"' value." );
 				}
 			}
 		}

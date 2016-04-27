@@ -1,21 +1,21 @@
 package hex.compiler.control;
 
-import hex.ioc.control.IBuildCommand;
-import hex.ioc.vo.BuildHelperVO;
+import hex.ioc.control.IFactory;
+import hex.ioc.vo.FactoryVO;
 import hex.ioc.vo.ConstructorVO;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class BuildObjectCommand implements IBuildCommand
+class BuildObjectCommand implements IFactory
 {
 	public function new()
 	{
 
 	}
 
-	public function execute( buildHelperVO : BuildHelperVO ) : Void
+	public function execute( buildHelperVO : FactoryVO ) : Void
 	{
 		buildHelperVO.constructorVO.result = {};
 		

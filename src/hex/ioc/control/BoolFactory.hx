@@ -1,6 +1,6 @@
 package hex.ioc.control;
 
-import hex.ioc.vo.BuildHelperVO;
+import hex.ioc.vo.FactoryVO;
 import hex.error.IllegalArgumentException;
 import hex.ioc.vo.ConstructorVO;
 
@@ -8,16 +8,16 @@ import hex.ioc.vo.ConstructorVO;
  * ...
  * @author Francis Bourre
  */
-class BuildBooleanCommand implements IBuildCommand
+class BoolFactory
 {
 	public function new()
 	{
 
 	}
 	
-	public function execute( buildHelperVO : BuildHelperVO ) : Void
+	static public function build( factoryVO : FactoryVO ) : Void
 	{
-		var constructorVO : ConstructorVO = buildHelperVO.constructorVO;
+		var constructorVO : ConstructorVO = factoryVO.constructorVO;
 
 		var value : String 	= "";
 		var args 			= constructorVO.arguments;
@@ -37,14 +37,14 @@ class BuildBooleanCommand implements IBuildCommand
 		}
 		else
 		{
-			throw new IllegalArgumentException( this + ".build(" + value + ") failed." );
+			throw new IllegalArgumentException( "BoolFactory.build(" + value + ") failed." );
 		}
 		
 		#if macro
 		if ( !constructorVO.isProperty )
 		{
 			var idVar = constructorVO.ID;
-			buildHelperVO.expressions.push( macro @:mergeBlock { var $idVar = $v { constructorVO.result }; } );
+			factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $v { constructorVO.result }; } );
 		}
 		#end
 	}

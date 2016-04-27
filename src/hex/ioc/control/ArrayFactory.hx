@@ -1,22 +1,22 @@
 package hex.ioc.control;
 
-import hex.ioc.vo.BuildHelperVO;
+import hex.ioc.vo.FactoryVO;
 import hex.ioc.vo.ConstructorVO;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class BuildArrayCommand implements IBuildCommand
+class ArrayFactory
 {
 	public function new()
 	{
 
 	}
 	
-	public function execute( buildHelperVO : BuildHelperVO ) : Void
+	static public function build( factoryVO : FactoryVO ) : Void
 	{
-		var constructorVO : ConstructorVO = buildHelperVO.constructorVO;
+		var constructorVO : ConstructorVO = factoryVO.constructorVO;
 
 		var array : Array<Dynamic> = [];
 		var args : Array<Dynamic> = constructorVO.arguments;

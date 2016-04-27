@@ -1,6 +1,6 @@
 package hex.ioc.control;
 
-import hex.ioc.vo.BuildHelperVO;
+import hex.ioc.vo.FactoryVO;
 import hex.error.IllegalArgumentException;
 import hex.ioc.vo.ConstructorVO;
 
@@ -8,16 +8,16 @@ import hex.ioc.vo.ConstructorVO;
  * ...
  * @author Francis Bourre
  */
-class BuildFloatCommand implements IBuildCommand
+class FloatFactory
 {
 	public function new()
 	{
 
 	}
 	
-	public function execute( buildHelperVO : BuildHelperVO ) : Void
+	static public function build( factoryVO : FactoryVO ) : Void
 	{
-		var constructorVO : ConstructorVO = buildHelperVO.constructorVO;
+		var constructorVO : ConstructorVO = factoryVO.constructorVO;
 
 		var args : Array<Dynamic> 	= constructorVO.arguments;
 		var number : Float 	= Math.NaN;
@@ -33,7 +33,7 @@ class BuildFloatCommand implements IBuildCommand
 		}
 		else
 		{
-			throw new IllegalArgumentException( this + ".execute(" + number + ") failed." );
+			throw new IllegalArgumentException( "FloatFactory.build(" + number + ") failed." );
 		}
 	}
 }

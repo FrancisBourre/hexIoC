@@ -1,6 +1,6 @@
 package hex.ioc.control;
 
-import hex.ioc.vo.BuildHelperVO;
+import hex.ioc.vo.FactoryVO;
 import hex.collection.HashMap;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.MapVO;
@@ -10,16 +10,16 @@ import hex.log.Logger;
  * ...
  * @author Francis Bourre
  */
-class BuildMapCommand implements IBuildCommand
+class HashMapFactory
 {
 	public function new()
 	{
 
 	}
 
-	public function execute( buildHelperVO : BuildHelperVO ) : Void
+	static public function build( factoryVO : FactoryVO ) : Void
 	{
-		var constructorVO : ConstructorVO = buildHelperVO.constructorVO;
+		var constructorVO : ConstructorVO = factoryVO.constructorVO;
 
 		var map = new HashMap<Dynamic, Dynamic>();
 		var args : Array<MapVO> = cast constructorVO.arguments;
@@ -27,7 +27,7 @@ class BuildMapCommand implements IBuildCommand
 		if ( args.length == 0 )
 		{
 			#if debug
-			Logger.WARN( this + ".execute(" + args + ") returns an empty HashMap." );
+			Logger.WARN( "HashMapFactory.build(" + args + ") returns an empty HashMap." );
 			#end
 
 		} else
@@ -40,7 +40,7 @@ class BuildMapCommand implements IBuildCommand
 
 				} else
 				{
-					trace( this + ".execute() adds item with a 'null' key for '"  + item.value +"' value." );
+					trace( "HashMapFactory.build() adds item with a 'null' key for '"  + item.value +"' value." );
 				}
 			}
 		}
@@ -49,7 +49,7 @@ class BuildMapCommand implements IBuildCommand
 
 		if ( constructorVO.mapType != null )
 		{
-			buildHelperVO.contextFactory.getApplicationContext().getBasicInjector().mapToValue( HashMap, constructorVO.result, constructorVO.ID );
+			factoryVO.contextFactory.getApplicationContext().getBasicInjector().mapToValue( HashMap, constructorVO.result, constructorVO.ID );
 		}
 	}
 }

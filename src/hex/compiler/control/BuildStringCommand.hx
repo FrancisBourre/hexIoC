@@ -1,7 +1,7 @@
 package hex.compiler.control;
 
-import hex.ioc.control.IBuildCommand;
-import hex.ioc.vo.BuildHelperVO;
+import hex.ioc.control.IFactory;
+import hex.ioc.vo.FactoryVO;
 import hex.error.IllegalArgumentException;
 import hex.ioc.vo.ConstructorVO;
 import hex.log.Logger;
@@ -10,14 +10,14 @@ import hex.log.Logger;
  * ...
  * @author Francis Bourre
  */
-class BuildStringCommand implements IBuildCommand
+class BuildStringCommand implements IFactory
 {
 	public function new()
 	{
 
 	}
 	
-	public function execute( buildHelperVO : BuildHelperVO ) : Void
+	public function execute( buildHelperVO : FactoryVO ) : Void
 	{
 		var constructorVO : ConstructorVO = buildHelperVO.constructorVO;
 
