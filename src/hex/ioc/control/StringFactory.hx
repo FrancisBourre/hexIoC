@@ -19,7 +19,6 @@ class StringFactory
 	static public function build( factoryVO : FactoryVO ) : Void
 	{
 		var constructorVO : ConstructorVO = factoryVO.constructorVO;
-		trace( constructorVO );
 
 		var value : String 	= null;
 		var args 			= constructorVO.arguments;

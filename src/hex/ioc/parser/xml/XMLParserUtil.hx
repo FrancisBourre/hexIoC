@@ -27,7 +27,7 @@ class XMLParserUtil
 		{
 			while ( iterator.hasNext() )
 			{
-				args.push( _getConstructorVO( ownerID, iterator.next() ) );
+				args.push( _getConstructorVOFromXML( ownerID, iterator.next() ) );
 			}
 		}
 		else
@@ -42,7 +42,7 @@ class XMLParserUtil
 		return args;
 	}
 	
-	static function _getConstructorVO( ownerID : String, item : Xml ) : ConstructorVO
+	static function _getConstructorVOFromXML( ownerID : String, item : Xml ) : ConstructorVO
 	{
 		var method 		= item.get( ContextAttributeList.METHOD );
 		var ref 		= item.get( ContextAttributeList.REF );
@@ -73,6 +73,38 @@ class XMLParserUtil
 			return new ConstructorVO( ownerID, type, [ item.get( ContextAttributeList.VALUE ) ] );
 		}
 	}
+	
+	static function _getConstructorVO( ownerID : String, item : Dynamic ) : ConstructorVO
+	{
+		var type 		= item.type;
+		var method 		= item.method;
+		var ref 		= item.ref;
+		var staticRef 	= item.staticRef;
+		var value 		= item.value;
+		
+		
+		if ( method != null )
+		{
+			return new ConstructorVO( null, ContextTypeList.FUNCTION, [ method ] );
+
+		} else if ( ref != null )
+		{
+			return new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, ref );
+
+		} else if ( staticRef != null )
+		{
+			return new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, null, null, staticRef );
+
+		} else
+		{
+			if ( type == null )
+			{
+				type = ContextTypeList.STRING;
+			}
+
+			return new ConstructorVO( ownerID, type, [ value ] );
+		}
+	}
 
 	public static function getMethodCallArguments( ownerID : String, xml : Xml ) : Array<ConstructorVO>
 	{
@@ -81,7 +113,7 @@ class XMLParserUtil
 
 		while ( iterator.hasNext() )
 		{
-			args.push( _getConstructorVO( ownerID, iterator.next() ) );
+			args.push( _getConstructorVOFromXML( ownerID, iterator.next() ) );
 		}
 		
 		return args;
@@ -116,56 +148,14 @@ class XMLParserUtil
 		while ( iterator.hasNext() )
 		{
 			var item = iterator.next();
-
 			var keyList 	= item.elementsNamed( ContextNameList.KEY );
 			var valueList 	= item.elementsNamed( ContextNameList.VALUE );
 			
 			if ( keyList.hasNext() )
 			{
-				args.push( { 	mapName:XMLAttributeUtil.getMapName( item ), 
-								key:XMLParserUtil._getAttributes( keyList.next() ), 
-								value:XMLParserUtil._getAttributes( valueList.next() ) } 
-							);
-			}
-		}
-		
-		/*if ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR )
-		{
-			for ( index in 0...length )
-			{
-				obj = args[ index ];
-				args[ index ] = new MapVO( _getConstructorVO( ownerID, obj.key ), _getConstructorVO( ownerID, obj.value ), obj.mapName );
-			}
-		}*/
-		
-		var length = args.length;
-		for ( index in 0...length )
-		{
-			var obj = args[ index ];
-			args[ index ] = new MapVO( _getConstructorVO( ownerID, obj.key ), _getConstructorVO( ownerID, obj.value ), obj.mapName );
-		}
-
-		return args;
-	}
-
-	public static function getItems( ownerID : String, xml : Xml ) : Array<Dynamic>
-	{
-		var args : Array<Dynamic> = [];
-		var iterator = xml.elementsNamed( ContextNameList.ITEM );
-
-		while ( iterator.hasNext() )
-		{
-			var item = iterator.next();
-
-			var keyList 	= item.elementsNamed( ContextNameList.KEY );
-			var valueList 	= item.elementsNamed( ContextNameList.VALUE );
-			
-			if ( keyList.hasNext() )
-			{
-				args.push( { 	mapName:XMLAttributeUtil.getMapName( item ), 
-								key:XMLParserUtil._getAttributes( keyList.next() ), 
-								value:XMLParserUtil._getAttributes( valueList.next() ) } 
-							);
+				var key 	= XMLParserUtil._getAttributes( keyList.next() );
+				var value 	= XMLParserUtil._getAttributes( valueList.next() );			
+				args.push( new MapVO( _getConstructorVO( ownerID, key ), _getConstructorVO( ownerID, value ), XMLAttributeUtil.getMapName( item ) ) );
 			}
 		}
 

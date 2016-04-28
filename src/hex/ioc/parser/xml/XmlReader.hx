@@ -47,11 +47,14 @@ class XmlReader
 		{
 			if ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR )
 			{
-				args = XMLParserUtil.getItems( identifier, xml );
+				args = XMLParserUtil.getMapArguments( identifier, xml );
 				for ( arg in args )
 				{
-					XmlReader._importHelper.includeClass( arg.key );
-					XmlReader._importHelper.includeClass( arg.value );
+					if ( arg.key != null )
+						XmlReader._importHelper.includeClass( arg.key.type );
+					
+					if ( arg.value != null )
+						XmlReader._importHelper.includeClass( arg.value.type );
 				}
 			}
 			else

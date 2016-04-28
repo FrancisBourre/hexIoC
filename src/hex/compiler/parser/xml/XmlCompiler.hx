@@ -74,11 +74,14 @@ class XmlCompiler
 
 			if ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR )
 			{
-				args = XMLParserUtil.getItems( identifier, xml );
+				args = XMLParserUtil.getMapArguments( identifier, xml );
 				for ( arg in args )
 				{
-					XmlCompiler._importHelper.includeClass( arg.key );
-					XmlCompiler._importHelper.includeClass( arg.value );
+					if ( arg.key != null )
+						XmlCompiler._importHelper.includeClass( arg.key );
+					
+					if ( arg.value != null )
+						XmlCompiler._importHelper.includeClass( arg.value );
 				}
 			}
 			else

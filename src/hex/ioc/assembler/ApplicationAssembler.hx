@@ -155,23 +155,6 @@ class ApplicationAssembler implements IApplicationAssembler
 		if ( this.allowsIfList( ifList ) && this.allowsIfNotList( ifNotList ) )
 		{
 			this._registerID( applicationContext, ownerID );
-			
-			if ( args != null )
-			{
-				var length : Int = args.length;
-				var index : Int;
-				var obj : Dynamic;
-
-				if ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR )
-				{
-					for ( index in 0...length )
-					{
-						obj = args[ index ];
-						args[ index ] = new MapVO( _getConstructorVO( ownerID, obj.key ), _getConstructorVO( ownerID, obj.value ), obj.mapName );
-					}
-				}
-			}
-
 			var constructorVO = new ConstructorVO( ownerID, type, args, factory, singleton, injectInto, null, mapType, staticRef );
 			this.getContextFactory( applicationContext ).registerConstructorVO( ownerID, constructorVO );
 		}

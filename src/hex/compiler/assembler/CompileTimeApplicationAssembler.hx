@@ -32,13 +32,6 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 	{
 		#if macro
 		this._expressions = [ macro { trace( "XmlCompiler starts compilation..." ); } ];
-		
-		/*var tmp = "varName";
-		var extVar = macro $i { tmp };
-		var rx = 13;
-		this._expressions.push( macro { var $tmp = $v{rx}; } );
-		this._expressions.push( macro @:mergeBlock { var $tmp = $v{rx}; } );
-		this._expressions.push( macro @:mergeBlock { trace( varName ); } );*/
 		#end
 	}
 	
@@ -98,23 +91,6 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 		if ( this.allowsIfList( ifList ) && this.allowsIfNotList( ifNotList ) )
 		{
 			this._registerID( applicationContext, ownerID );
-			
-			if ( args != null )
-			{
-				var length : Int = args.length;
-				var index : Int;
-				var obj : Dynamic;
-
-				if ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR )
-				{
-					for ( index in 0...length )
-					{
-						obj = args[ index ];
-						args[ index ] = new MapVO( _getConstructorVO( ownerID, obj.key ), _getConstructorVO( ownerID, obj.value ), obj.mapName );
-					}
-				}
-			}
-
 			var constructorVO = new ConstructorVO( ownerID, type, args, factory, singleton, injectInto, null, mapType, staticRef );
 			this.getContextFactory( applicationContext ).registerConstructorVO( ownerID, constructorVO );
 		}
