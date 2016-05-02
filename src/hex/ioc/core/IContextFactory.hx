@@ -23,8 +23,6 @@ interface IContextFactory
 	
 	function registerPropertyVO( id : String, propertyVO : PropertyVO  ) : Void;
 	
-	function deserializeArguments( arguments : Array<Dynamic> ) : Array<Dynamic>;
-	
 	function registerConstructorVO( id : String, constructorVO : ConstructorVO ) : Void;
 	
 	function buildObject( id : String ) : Void;

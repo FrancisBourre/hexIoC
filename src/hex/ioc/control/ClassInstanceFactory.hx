@@ -41,6 +41,7 @@ class ClassInstanceFactory
 				#if macro
 				var tp = MacroUtil.getPack( constructorVO.type );
 				var idVar = constructorVO.ID;
+				var idArgs = idVar + "args";
 				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = Type.createInstance( $p { tp }, [] ); } );
 
 				#else

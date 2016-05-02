@@ -189,17 +189,6 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 			Reflect.setProperty( target, propertyName, this._getPropertyValue( property ) );
 		}
 	}
-
-	public function deserializeArguments( arguments : Array<Dynamic> ) : Array<Dynamic>
-	{
-		var l : Int = arguments.length;
-		for ( i in 0...l )
-		{
-			arguments[ i ] = this._build( arguments[ i ] );
-		}
-
-		return arguments;
-	}
 	
 	//listen to CoreFactory
 	public function onRegister( key : String, instance : Dynamic ) : Void
@@ -246,9 +235,13 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 				}
 				else
 				{
-					cons.arguments = this.deserializeArguments( cons.arguments );
+					var arguments = cons.arguments;
+					var l : Int = arguments.length;
+					for ( i in 0...l )
+					{
+						arguments[ i ] = this._build( arguments[ i ] );
+					}
 				}
-				
 			}
 
 			this._build( cons, id );
@@ -300,7 +293,15 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		var method : MethodCallVO 	= this._methodCallVOLocator.locate( id );
 		var cons = new ConstructorVO( null, ContextTypeList.FUNCTION, [ method.ownerID + "." + method.name ] );
 		var func : Dynamic 			= this._build( cons );
-		Reflect.callMethod( this._coreFactory.locate( method.ownerID ), func, this.deserializeArguments( method.arguments ) );
+		
+		var arguments = method.arguments;
+		var l : Int = arguments.length;
+		for ( i in 0...l )
+		{
+			arguments[ i ] = this._build( arguments[ i ] );
+		}
+		
+		Reflect.callMethod( this._coreFactory.locate( method.ownerID ), func, arguments );
 	}
 
 	public function callAllMethods() : Void
