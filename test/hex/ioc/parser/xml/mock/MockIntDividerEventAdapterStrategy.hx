@@ -17,9 +17,8 @@ class MockIntDividerEventAdapterStrategy extends AdapterStrategy implements IInj
 		super( this, this.onAdapt );
 	}
 
-	public function onAdapt( args : Array<Dynamic> ) : Array<Dynamic>
+	public function onAdapt( mockIntVO : MockIntVO ) : Array<Dynamic>
 	{
-		var mockIntVO : MockIntVO = args[ 0 ];
 		var result : Float = helper.divide( mockIntVO.value, 2 );
 		return [ result ];
 	}

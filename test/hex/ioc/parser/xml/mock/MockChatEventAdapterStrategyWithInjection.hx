@@ -17,8 +17,8 @@ class MockChatEventAdapterStrategyWithInjection extends AdapterStrategy implemen
 		super( this, this.onAdapt );
 	}
 	
-	public function onAdapt( args : Array<Dynamic> ) : Array<Dynamic>
+	public function onAdapt( s : String ) : Array<Dynamic>
 	{
-		return [ parser.parse( args[0] ) ];
+		return [ parser.parse( s ) ];
 	}
 }

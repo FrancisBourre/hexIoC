@@ -13,8 +13,8 @@ class MockChatAdapterStrategy extends AdapterStrategy
 		super( this, this.onAdapt );
 	}
 	
-	public function onAdapt( args : Array<Dynamic> ) : Array<Dynamic>
+	public function onAdapt( s : String ) : Array<Dynamic>
 	{
-		return [ args[0], Date.now() ];
+		return [s, Date.now() ];
 	}
 }

@@ -118,7 +118,7 @@ class DomainListenerFactory
 			adapter.setFactoryMethod( applicationContext.getBasicInjector(), applicationContext.getBasicInjector().instantiateUnmapped );
 		}
 		
-		var f:Array<Dynamic>->Void = function( rest:Array<Dynamic> ):Void
+		var f : Array<Dynamic>->Void = function( rest : Array<Dynamic> ) : Void
 		{
 			( adapter.getCallbackAdapter() )( rest );
 		}
