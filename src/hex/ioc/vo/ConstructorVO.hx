@@ -16,7 +16,9 @@ class ConstructorVO
 	public var              result          : Dynamic;
 	public var 				mapType			: String;
 	public var 				staticRef		: String;
-	public var 				isProperty		: Bool;
+	
+	public var 				isProperty		: Bool = false;
+	public var 				argumentName	: String;
 		
 	public function new(  	id 				: String,
 							?type 			: String,

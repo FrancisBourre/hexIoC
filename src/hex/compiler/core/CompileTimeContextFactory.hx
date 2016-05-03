@@ -233,14 +233,59 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 					}
 					cons.arguments = result;
 				}
-				else
+				else if ( 	cons.type == ContextTypeList.STRING || 
+							cons.type == ContextTypeList.INT || 
+							cons.type == ContextTypeList.UINT || 
+							cons.type == ContextTypeList.FLOAT || 
+							cons.type == ContextTypeList.BOOLEAN || 
+							cons.type == ContextTypeList.NULL || 
+							cons.type == ContextTypeList.OBJECT )
 				{
+					/*var tp = MacroUtil.getPack( constructorVO.type );
+					var idVar = constructorVO.ID;
+					var idArgs = idVar + "args";
+					factoryVO.expressions.push( macro @:mergeBlock { var $idVar = Type.createInstance( $p { tp }, [] ); } );*/
+					
+					/*var extVar = macro $i{ id };
+					this._expressions.push( macro @:mergeBlock { coreFactory.register( $v{ id }, $extVar ); } );*/
+					
+					/*var arguments = cons.arguments;
+					var l : Int = arguments.length;
+					for ( i in 0...l )
+					{
+						
+						
+						var argName = idArgs + i;
+						this._buildArg( arguments[ i ], argName );
+						
+						this._expressions.push( macro @:mergeBlock { $varIDArgs.push( 10 ); } );
+					}*/
+					
 					var arguments = cons.arguments;
 					var l : Int = arguments.length;
 					for ( i in 0...l )
 					{
 						arguments[ i ] = this._build( arguments[ i ] );
 					}
+				}
+				else
+				{
+					var idArgs = cons.ID + "Args";
+					var varIDArgs = macro $i { idArgs };
+					this._expressions.push( macro @:mergeBlock { var $idArgs = []; } );
+					
+					var arguments = cons.arguments;
+					var l : Int = arguments.length;
+					for ( i in 0...l )
+					{
+						var argName = idArgs + i;
+						var varArgName = macro $i { argName };
+						arguments[ i ].ID = argName;
+						this._buildArgument( arguments[ i ] );
+						
+						this._expressions.push( macro @:mergeBlock { $varIDArgs.push( $varArgName ); } );
+					}
+
 				}
 			}
 
@@ -406,7 +451,6 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		{
 			#if macro
 			var extVar = macro $i{ id };
-			//this._expressions.push( macro @:mergeBlock { trace( $v{ id } ); } );
 			this._expressions.push( macro @:mergeBlock { coreFactory.register( $v{ id }, $extVar ); } );
 			#end
 
@@ -416,4 +460,21 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		return constructorVO.result;
 	}
 	
+	function _buildArgument( constructorVO : ConstructorVO )
+	{
+		var type 								= constructorVO.type;
+		var buildMethod 						= ( this._factoryMap.exists( type ) ) ? this._factoryMap.get( type ) : ClassInstanceFactory.build;
+		
+		var builderHelperVO 					= new FactoryVO();
+		#if macro
+		builderHelperVO.expressions 			= this._expressions;
+		#end
+		builderHelperVO.type 					= type;
+		builderHelperVO.contextFactory 			= this;
+		builderHelperVO.coreFactory 			= this._coreFactory;
+		builderHelperVO.constructorVO 			= constructorVO;
+		builderHelperVO.moduleLocator 			= this._moduleLocator;
+
+		buildMethod( builderHelperVO );
+	}
 }

@@ -148,6 +148,39 @@ class ObjectXMLParserTest
 		Assert.equals( 20, size.height, "" );
 	}
 	
+	@Test( "test building multiple instances with arguments" )
+	public function testBuildingMultipleInstancesWithArguments() : Void
+	{
+		this.build(  XmlReader.readXmlFile( "context/multipleInstancesWithArguments.xml" ) );
+
+		var size : Size = this._builderFactory.getCoreFactory().locate( "size" );
+		Assert.isInstanceOf( size, Size, "" );
+		Assert.equals( 15, size.width, "" );
+		Assert.equals( 25, size.height, "" );
+
+		var position : Point = this._builderFactory.getCoreFactory().locate( "position" );
+		Assert.isInstanceOf( position, Point, "" );
+		Assert.equals( 35, position.x, "" );
+		Assert.equals( 45, position.y, "" );
+	}
+	
+	@Test( "test building single instance with references" )
+	public function testBuildingSingleInstanceWithReferences() : Void
+	{
+		this.build(  XmlReader.readXmlFile( "context/singleInstanceWithReferences.xml" ) );
+		
+		var x : Int = this._builderFactory.getCoreFactory().locate( "x" );
+		Assert.equals( 1, x, "" );
+		
+		var y : Int = this._builderFactory.getCoreFactory().locate( "y" );
+		Assert.equals( 2, y, "" );
+
+		var position : Point = this._builderFactory.getCoreFactory().locate( "position" );
+		Assert.isInstanceOf( position, Point, "" );
+		Assert.equals( 1, position.x, "" );
+		Assert.equals( 2, position.y, "" );
+	}
+	
 	@Test( "test building multiple instances with references" )
 	public function testBuildingMultipleInstancesWithReferences() : Void
 	{

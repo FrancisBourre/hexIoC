@@ -1,0 +1,10 @@
+<root name="applicationContext">
+    <bean id="size" type="hex.structures.Size">
+        <argument type="Int" value="15"/>
+        <argument type="Int" value="25"/>
+    </bean>
+	<bean id="position" type="hex.structures.Point">
+        <argument type="Int" value="35"/>
+        <argument type="Int" value="45"/>
+    </bean>
+</root>

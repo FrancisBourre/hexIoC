@@ -7,6 +7,7 @@ import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.core.IContextFactory;
 import hex.ioc.core.ICoreFactory;
 import hex.ioc.parser.xml.ApplicationXMLParser;
+import hex.structures.Point;
 import hex.structures.Size;
 import hex.unittest.assertion.Assert;
 
@@ -38,7 +39,7 @@ class XmlCompilerTest
 	{
 		return this._applicationAssembler.getApplicationContext( "applicationContext" ).getCoreFactory();
 	}
-	
+	/*
 	@Test( "test building String" )
 	public function testBuildingString() : Void
 	{
@@ -102,7 +103,7 @@ class XmlCompilerTest
 		Assert.isInstanceOf( command, BasicCommand, "" );
 	}
 	
-	@Ignore( "test building simple instance with arguments" )
+	@Test( "test building simple instance with arguments" )
 	public function testBuildingSimpleInstanceWithArguments() : Void
 	{
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/simpleInstanceWithArguments.xml" );
@@ -112,4 +113,37 @@ class XmlCompilerTest
 		Assert.equals( 10, size.width, "" );
 		Assert.equals( 20, size.height, "" );
 	}
+	*/
+	@Test( "test building multiple instances with arguments" )
+	public function testBuildingMultipleInstancesWithArguments() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/multipleInstancesWithArguments.xml" );
+
+		var size : Size = this._getCoreFactory().locate( "size" );
+		Assert.isInstanceOf( size, Size, "" );
+		Assert.equals( 15, size.width, "" );
+		Assert.equals( 25, size.height, "" );
+
+		var position : Point = this._getCoreFactory().locate( "position" );
+		Assert.isInstanceOf( position, Point, "" );
+		Assert.equals( 35, position.x, "" );
+		Assert.equals( 45, position.y, "" );
+	}
+	/*
+	@Test( "test building single instance with references" )
+	public function testBuildingSingleInstanceWithReferences() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/singleInstanceWithReferences.xml" );
+		
+		var x : Int = this._getCoreFactory().locate( "x" );
+		Assert.equals( 1, x, "" );
+		
+		var y : Int = this._getCoreFactory().locate( "y" );
+		Assert.equals( 2, y, "" );
+
+		var position : Point = this._getCoreFactory().locate( "position" );
+		Assert.isInstanceOf( position, Point, "" );
+		Assert.equals( 1, position.x, "" );
+		Assert.equals( 2, position.y, "" );
+	}*/
 }

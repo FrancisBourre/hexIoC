@@ -27,7 +27,7 @@ class ClassInstanceFactory
 
 		if ( constructorVO.ref != null )
 		{
-			//trace( constructorVO );
+			trace( constructorVO );
 			ReferenceFactory.build( factoryVO );
 		}
 		else
@@ -41,8 +41,9 @@ class ClassInstanceFactory
 				#if macro
 				var tp = MacroUtil.getPack( constructorVO.type );
 				var idVar = constructorVO.ID;
-				var idArgs = idVar + "args";
-				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = Type.createInstance( $p { tp }, [] ); } );
+				var idArgs = idVar + "Args";
+				var varIDArgs = macro $i{ idArgs };
+				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = Type.createInstance( $p { tp }, $varIDArgs ); } );
 
 				#else
 				var classReference = ClassUtil.getClassReference( constructorVO.type );
