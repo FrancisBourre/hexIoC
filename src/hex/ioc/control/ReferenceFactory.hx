@@ -29,12 +29,16 @@ class ReferenceFactory
 		{
 			factoryVO.contextFactory.buildObject( key );
 		}
-		
-		/*#if macro
-		var idVar = constructorVO.ID;
-		factoryVO.expressions.push( macro @:mergeBlock { var $idVar = coreFactory.locate( $v{ id } ); } );
-		#end*/
 
+		#if macro
+		if ( !constructorVO.isProperty )
+		{
+			var idVar = constructorVO.argumentName != null ? constructorVO.argumentName : constructorVO.ID;
+			var extVar = macro $i{ constructorVO.ref };
+			factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $extVar; } );
+		}
+		#end
+		
 		constructorVO.result = factoryVO.coreFactory.locate( key );
 
 		if ( constructorVO.ref.indexOf( "." ) != -1 )

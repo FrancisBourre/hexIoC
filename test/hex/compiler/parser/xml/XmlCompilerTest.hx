@@ -39,7 +39,7 @@ class XmlCompilerTest
 	{
 		return this._applicationAssembler.getApplicationContext( "applicationContext" ).getCoreFactory();
 	}
-	/*
+	
 	@Test( "test building String" )
 	public function testBuildingString() : Void
 	{
@@ -113,7 +113,7 @@ class XmlCompilerTest
 		Assert.equals( 10, size.width, "" );
 		Assert.equals( 20, size.height, "" );
 	}
-	*/
+	
 	@Test( "test building multiple instances with arguments" )
 	public function testBuildingMultipleInstancesWithArguments() : Void
 	{
@@ -129,7 +129,7 @@ class XmlCompilerTest
 		Assert.equals( 35, position.x, "" );
 		Assert.equals( 45, position.y, "" );
 	}
-	/*
+	
 	@Test( "test building single instance with references" )
 	public function testBuildingSingleInstanceWithReferences() : Void
 	{
@@ -145,5 +145,5 @@ class XmlCompilerTest
 		Assert.isInstanceOf( position, Point, "" );
 		Assert.equals( 1, position.x, "" );
 		Assert.equals( 2, position.y, "" );
-	}*/
+	}
 }
