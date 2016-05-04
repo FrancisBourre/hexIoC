@@ -45,10 +45,11 @@ class ClassInstanceFactory
 				var factory = constructorVO.factory;
 				if ( factory != null )
 				{
-					
 					if ( singleton != null )
 					{
-						
+						var idArgs = idVar + "Args";
+						var varIDArgs = macro $i { idArgs };
+						factoryVO.expressions.push( macro @:mergeBlock { var $idVar = Reflect.callMethod( $p { tp }, $p { tp }.$singleton().$factory, $varIDArgs ); } );
 					}
 					else
 					{

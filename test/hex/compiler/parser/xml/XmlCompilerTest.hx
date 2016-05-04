@@ -246,4 +246,15 @@ class XmlCompilerTest
 		Assert.equals( 30, rect.width, "" );
 		Assert.equals( 40, rect.height, "" );
 	}
+	
+	@Test( "test building instance with factory singleton method" )
+	public function testFactoryWithFactorySingletonMethod() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/instanceWithFactorySingletonMethod.xml" );
+
+		var point : Point = this._getCoreFactory().locate( "point" );
+		Assert.isInstanceOf( point, Point, "" );
+		Assert.equals( 10, point.x, "" );
+		Assert.equals( 20, point.y, "" );
+	}
 }
