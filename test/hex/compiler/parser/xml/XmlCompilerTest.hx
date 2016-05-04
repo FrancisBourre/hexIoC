@@ -233,4 +233,17 @@ class XmlCompilerTest
 		Assert.isInstanceOf( service, MockServiceProvider, "" );
 		Assert.equals( "http://localhost/amfphp/gateway.php", MockServiceProvider.getInstance().getGateway(), "" );
 	}
+	
+	@Test( "test building instance with factory static method" )
+	public function testBuildingInstanceWithFactoryStaticMethod() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/instanceWithFactoryStaticMethod.xml" );
+
+		var rect : MockRectangle = this._getCoreFactory().locate( "rect" );
+		Assert.isInstanceOf( rect, MockRectangle, "" );
+		Assert.equals( 10, rect.x, "" );
+		Assert.equals( 20, rect.y, "" );
+		Assert.equals( 30, rect.width, "" );
+		Assert.equals( 40, rect.height, "" );
+	}
 }

@@ -42,21 +42,24 @@ class ClassInstanceFactory
 				var idVar = constructorVO.ID;
 				
 				var singleton = constructorVO.singleton;
-				if ( constructorVO.factory != null )
+				var factory = constructorVO.factory;
+				if ( factory != null )
 				{
+					
 					if ( singleton != null )
 					{
 						
 					}
 					else
 					{
-						
+						var idArgs = idVar + "Args";
+						var varIDArgs = macro $i { idArgs };
+						factoryVO.expressions.push( macro @:mergeBlock { var $idVar = Reflect.callMethod( $p { tp }, $p { tp }.$factory, $varIDArgs ); } );
 					}
 				
 				}
 				else if ( singleton != null )
 				{
-					trace( singleton );
 					factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $p { tp }.$singleton(); } );
 				}
 				else
