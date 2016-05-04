@@ -50,11 +50,21 @@ class XmlReader
 				args = XMLParserUtil.getMapArguments( identifier, xml );
 				for ( arg in args )
 				{
-					if ( arg.key != null )
-						XmlReader._importHelper.includeClass( arg.key.type );
+					if ( arg.getPropertyKey() != null )
+					{
+						if ( arg.getPropertyKey().type == ContextTypeList.CLASS )
+						{
+							XmlReader._importHelper.includeClass( arg.getPropertyKey().arguments[0] );
+						}
+					}
 					
-					if ( arg.value != null )
-						XmlReader._importHelper.includeClass( arg.value.type );
+					if ( arg.getPropertyValue() != null )
+					{
+						if ( arg.getPropertyValue().type == ContextTypeList.CLASS )
+						{
+							XmlReader._importHelper.includeClass( arg.getPropertyValue().arguments[0] );
+						}
+					}
 				}
 			}
 			else

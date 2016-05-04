@@ -77,11 +77,21 @@ class XmlCompiler
 				args = XMLParserUtil.getMapArguments( identifier, xml );
 				for ( arg in args )
 				{
-					if ( arg.key != null )
-						XmlCompiler._importHelper.includeClass( arg.key );
+					if ( arg.getPropertyKey() != null )
+					{
+						if ( arg.getPropertyKey().type == ContextTypeList.CLASS )
+						{
+							XmlCompiler._importHelper.includeClass( arg.getPropertyKey().arguments[0] );
+						}
+					}
 					
-					if ( arg.value != null )
-						XmlCompiler._importHelper.includeClass( arg.value );
+					if ( arg.getPropertyValue() != null )
+					{
+						if ( arg.getPropertyValue().type == ContextTypeList.CLASS )
+						{
+							XmlCompiler._importHelper.includeClass( arg.getPropertyValue().arguments[0] );
+						}
+					}
 				}
 			}
 			else
