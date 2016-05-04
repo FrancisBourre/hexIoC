@@ -8,6 +8,7 @@ import hex.ioc.core.IContextFactory;
 import hex.ioc.core.ICoreFactory;
 import hex.ioc.parser.xml.ApplicationXMLParser;
 import hex.ioc.parser.xml.mock.MockRectangle;
+import hex.ioc.parser.xml.mock.MockServiceProvider;
 import hex.structures.Point;
 import hex.structures.Size;
 import hex.unittest.assertion.Assert;
@@ -221,5 +222,15 @@ class XmlCompilerTest
 		Assert.equals( 0, anotherRect.y, "" );
 		Assert.equals( 0, anotherRect.width, "" );
 		Assert.equals( 0, anotherRect.height, "" );
+	}
+	
+	@Test( "test building instance with singleton method" )
+	public function testBuildingInstanceWithSingletonMethod() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/instanceWithSingletonMethod.xml" );
+
+		var service : MockServiceProvider = this._getCoreFactory().locate( "service" );
+		Assert.isInstanceOf( service, MockServiceProvider, "" );
+		Assert.equals( "http://localhost/amfphp/gateway.php", MockServiceProvider.getInstance().getGateway(), "" );
 	}
 }

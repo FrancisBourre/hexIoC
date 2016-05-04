@@ -40,9 +40,31 @@ class ClassInstanceFactory
 				#if macro
 				var tp = MacroUtil.getPack( constructorVO.type );
 				var idVar = constructorVO.ID;
-				var idArgs = idVar + "Args";
-				var varIDArgs = macro $i{ idArgs };
-				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = Type.createInstance( $p { tp }, $varIDArgs ); } );
+				
+				var singleton = constructorVO.singleton;
+				if ( constructorVO.factory != null )
+				{
+					if ( singleton != null )
+					{
+						
+					}
+					else
+					{
+						
+					}
+				
+				}
+				else if ( singleton != null )
+				{
+					trace( singleton );
+					factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $p { tp }.$singleton(); } );
+				}
+				else
+				{
+					var idArgs = idVar + "Args";
+					var varIDArgs = macro $i{ idArgs };
+					factoryVO.expressions.push( macro @:mergeBlock { var $idVar = Type.createInstance( $p { tp }, $varIDArgs ); } );
+				}
 
 				#else
 				var classReference = ClassUtil.getClassReference( constructorVO.type );
