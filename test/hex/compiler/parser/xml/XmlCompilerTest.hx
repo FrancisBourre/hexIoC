@@ -7,6 +7,7 @@ import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.core.IContextFactory;
 import hex.ioc.core.ICoreFactory;
 import hex.ioc.parser.xml.ApplicationXMLParser;
+import hex.ioc.parser.xml.mock.MockRectangle;
 import hex.structures.Point;
 import hex.structures.Size;
 import hex.unittest.assertion.Assert;
@@ -52,7 +53,7 @@ class XmlCompilerTest
 	public function testBuildingInt() : Void
 	{
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/testBuildingInt.xml" );
-		var i : String = this._getCoreFactory().locate( "i" );
+		var i : Int = this._getCoreFactory().locate( "i" );
 		Assert.equals( -3, i, "" );
 	}
 	
@@ -145,5 +146,49 @@ class XmlCompilerTest
 		Assert.isInstanceOf( position, Point, "" );
 		Assert.equals( 1, position.x, "" );
 		Assert.equals( 2, position.y, "" );
+	}
+	
+	@Test( "test building multiple instances with references" )
+	public function testAssignInstancePropertyWithReference() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/instancePropertyWithReference.xml" );
+		
+		var width : Int = this._getCoreFactory().locate( "width" );
+		Assert.equals( 10, width, "" );
+		
+		var height : Int = this._getCoreFactory().locate( "height" );
+		Assert.equals( 20, height, "" );
+		
+		var size : Point = this._getCoreFactory().locate( "size" );
+		Assert.isInstanceOf( size, Point, "" );
+		Assert.equals( width, size.x, "" );
+		Assert.equals( height, size.y, "" );
+		
+		var rect : MockRectangle = this._getCoreFactory().locate( "rect" );
+		Assert.equals( width, rect.size.x, "" );
+		Assert.equals( height, rect.size.y, "" );
+	}
+	
+	@Test( "test building multiple instances with references" )
+	public function testBuildingMultipleInstancesWithReferences() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/multipleInstancesWithReferences.xml" );
+
+		var rectSize : Point = this._getCoreFactory().locate( "rectSize" );
+		Assert.isInstanceOf( rectSize, Point, "" );
+		Assert.equals( 30, rectSize.x, "" );
+		Assert.equals( 40, rectSize.y, "" );
+
+		var rectPosition : Point = this._getCoreFactory().locate( "rectPosition" );
+		Assert.isInstanceOf( rectPosition, Point, "" );
+		Assert.equals( 10, rectPosition.x, "" );
+		Assert.equals( 20, rectPosition.y, "" );
+
+		var rect : MockRectangle = this._getCoreFactory().locate( "rect" );
+		Assert.isInstanceOf( rect, MockRectangle, "" );
+		Assert.equals( 10, rect.x, "" );
+		Assert.equals( 20, rect.y, "" );
+		Assert.equals( 30, rect.size.x, "" );
+		Assert.equals( 40, rect.size.y, "" );
 	}
 }

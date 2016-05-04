@@ -1,4 +1,5 @@
 <root name="applicationContext">
+	
     <rectangle id="rect" type="hex.ioc.parser.xml.mock.MockRectangle">
         <argument ref="rectPosition.x"/>
         <argument ref="rectPosition.y"/>
@@ -14,4 +15,5 @@
         <property type="Int" name="x" value="10"/>
         <property type="Int" name="y" value="20"/>
     </position>
+	
 </root>

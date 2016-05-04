@@ -3,6 +3,7 @@ package hex.compiler.core;
 import haxe.macro.Expr;
 import hex.collection.ILocatorListener;
 import hex.collection.LocatorMessage;
+import hex.compiler.CompileTimeFastEval;
 import hex.core.IAnnotationParsable;
 import hex.di.IBasicInjector;
 import hex.error.IllegalArgumentException;
@@ -23,8 +24,8 @@ class CompileTimeCoreFactory implements ICoreFactory
 	var _expressions 			: Array<Expr>;
 	var _dispatcher 			: IDispatcher<ILocatorListener<String, Dynamic>>;
 	var _map 					: Map<String, {}>;
-	
-	static var _fastEvalMethod 	: Dynamic->String->ICoreFactory->Dynamic;
+
+	static var _fastEvalMethod : Dynamic->String->ICoreFactory->Dynamic = CompileTimeFastEval.fromTarget;
 	
 	public function new( expressions : Array<Expr> ) 
 	{

@@ -182,6 +182,27 @@ class ObjectXMLParserTest
 	}
 	
 	@Test( "test building multiple instances with references" )
+	public function testAssignInstancePropertyWithReference() : Void
+	{
+		this.build( XmlReader.readXmlFile( "context/instancePropertyWithReference.xml" ) );
+		
+		var width : Int = this._builderFactory.getCoreFactory().locate( "width" );
+		Assert.equals( 10, width, "" );
+		
+		var height : Int = this._builderFactory.getCoreFactory().locate( "height" );
+		Assert.equals( 20, height, "" );
+		
+		var size : Point = this._builderFactory.getCoreFactory().locate( "size" );
+		Assert.isInstanceOf( size, Point, "" );
+		Assert.equals( width, size.x, "" );
+		Assert.equals( height, size.y, "" );
+		
+		var rect : MockRectangle = this._builderFactory.getCoreFactory().locate( "rect" );
+		Assert.equals( width, rect.size.x, "" );
+		Assert.equals( height, rect.size.y, "" );
+	}
+	
+	@Test( "test building multiple instances with references" )
 	public function testBuildingMultipleInstancesWithReferences() : Void
 	{
 		this.build(  XmlReader.readXmlFile( "context/multipleInstancesWithReferences.xml" ) );

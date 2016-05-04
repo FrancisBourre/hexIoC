@@ -1,0 +1,15 @@
+<root name="applicationContext">
+	
+	<rectangle id="rect" type="hex.ioc.parser.xml.mock.MockRectangle">
+        <property name="size" ref="size" />
+    </rectangle>
+	
+    <size id="size" type="hex.structures.Point">
+        <property name="x" ref="width" />
+        <property name="y" ref="height" />
+    </size>
+	
+	<bean id="width" type="Int" value="10"/>
+	<bean id="height" type="Int" value="20"/>
+
+</root>

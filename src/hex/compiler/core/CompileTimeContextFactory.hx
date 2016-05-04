@@ -147,25 +147,55 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		}
 	}
 	
-	function _getPropertyValue( property : PropertyVO ) : Dynamic
+	function _getPropertyValue( property : PropertyVO, id : String ) : Dynamic
 	{
+		var value 			: Dynamic 	= null;
+		var propertyName 	: String 	= property.name;
+		
 		if ( property.method != null )
 		{
-			return this._build( new ConstructorVO( null, ContextTypeList.FUNCTION, [ property.method ], null, null, false, null, null, null, true ) );
+			//trace( "property.method:", property.method );
+			value = this._build( new ConstructorVO( null, ContextTypeList.FUNCTION, [ property.method ], null, null, false, null, null, null, true ) );
+			
+			#if macro
+			var extVar = macro $i{ id };
+			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $v{ value }; } );
+			#end
 
 		} else if ( property.ref != null )
 		{
-			return this._build( new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, property.ref, null, null, true ) );
+			//trace( "property.ref:", property.ref );
+			value = this._build( new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, property.ref, null, null, true ) );
+
+			#if macro
+			var extVar = macro $i{ id };
+			var refVar = macro $i{ property.ref };
+			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $refVar; } );
+			#end
 
 		} else if ( property.staticRef != null )
 		{
-			return ClassUtil.getStaticReference( property.staticRef );
+			//trace( "property.staticRef:", property.staticRef );
+			value = ClassUtil.getStaticReference( property.staticRef );
+			
+			#if macro
+			var extVar = macro $i{ id };
+			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $v{ value }; } );
+			#end
 
 		} else
 		{
+			//trace( "property.type:", property.type );
 			var type : String = property.type != null ? property.type : ContextTypeList.STRING;
-			return this._build( new ConstructorVO( property.ownerID, type, [ property.value ], null, null, false, null, null, null, true ) );
+			value = this._build( new ConstructorVO( property.ownerID, type, [ property.value ], null, null, false, null, null, null, true ) );
+			
+			#if macro
+			var extVar = macro $i{ id };
+			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $v{ value }; } );
+			#end
 		}
+		
+		return value;
 	}
 
 	function _setPropertyValue( property : PropertyVO, target : Dynamic, id : String ) : Void
@@ -173,20 +203,15 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		var propertyName : String = property.name;
 		if ( propertyName.indexOf(".") == -1 )
 		{
-			var value = this._getPropertyValue( property );
+			var value = this._getPropertyValue( property, id );
 			Reflect.setProperty( target, propertyName, value );
-
-			#if macro
-			var extVar = macro $i{ id };
-			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $v{ value }; } );
-			#end
 		}
 		else
 		{
 			var props : Array<String> = propertyName.split( "." );
 			propertyName = props.pop();
 			var target : Dynamic = this._coreFactory.fastEvalFromTarget( target, props.join(".") );
-			Reflect.setProperty( target, propertyName, this._getPropertyValue( property ) );
+			Reflect.setProperty( target, propertyName, this._getPropertyValue( property, id ) );
 		}
 	}
 	
