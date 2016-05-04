@@ -7,6 +7,7 @@ import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.core.IContextFactory;
 import hex.ioc.core.ICoreFactory;
 import hex.ioc.parser.xml.ApplicationXMLParser;
+import hex.ioc.parser.xml.mock.MockFruitVO;
 import hex.ioc.parser.xml.mock.MockRectangle;
 import hex.ioc.parser.xml.mock.MockServiceProvider;
 import hex.structures.Point;
@@ -256,5 +257,38 @@ class XmlCompilerTest
 		Assert.isInstanceOf( point, Point, "" );
 		Assert.equals( 10, point.x, "" );
 		Assert.equals( 20, point.y, "" );
+	}
+	
+	/*@Test( "test 'inject-into' attribute" )
+	public function testInjectIntoAttribute() : Void
+	{
+		var injector = this._applicationContext.getBasicInjector();
+		injector.mapToValue( String, 'hola mundo' );
+
+		this.build(  XmlReader.readXmlFile( "context/injectIntoAttribute.xml" ) );
+
+		var instance : MockClassWithInjectedProperty = this._builderFactory.getCoreFactory().locate( "instance" );
+		Assert.isInstanceOf( instance, MockClassWithInjectedProperty, "" );
+		Assert.equals( "hola mundo", instance.property, "" );
+	}*/
+	
+	@Test( "test building XML with parser class" )
+	public function testBuildingXMLWithParserClass() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/xmlWithParserClass.xml" );
+
+		/*var fruits : Array<MockFruitVO> = this._getCoreFactory().locate( "fruits" );
+		Assert.equals( 3, fruits.length, "" );
+		
+
+		var orange : MockFruitVO = fruits[0];
+		var apple : MockFruitVO = fruits[1];
+		var banana : MockFruitVO = fruits[2];
+
+		Assert.equals( "orange", orange.toString(), "" );
+		Assert.equals( "apple", apple.toString(), "" );
+		Assert.equals( "banana", banana.toString(), "" );
+		
+		trace("!!!", fruits );*/
 	}
 }
