@@ -325,6 +325,14 @@ class ObjectXMLParserTest
 	public function testBuildingArrayFilledWithReferences() : Void
 	{
 		this.build(  XmlReader.readXmlFile( "context/arrayFilledWithReferences.xml" ) );
+		
+		var text : Array<String> = this._builderFactory.getCoreFactory().locate( "text" );
+		Assert.equals( 2, text.length, "" );
+		Assert.equals( "hello", text[ 0 ], "" );
+		Assert.equals( "world", text[ 1 ], "" );
+		
+		var empty : Array<String> = this._builderFactory.getCoreFactory().locate( "empty" );
+		Assert.equals( 0, empty.length, "" );
 
 		var fruits : Array<MockFruitVO> = this._builderFactory.getCoreFactory().locate( "fruits" );
 		Assert.equals( 3, fruits.length, "" );
@@ -341,7 +349,7 @@ class ObjectXMLParserTest
 	@Test( "test building Map filled with references" )
 	public function testBuildingMapFilledWithReferences() : Void
 	{
-		this.build(  XmlReader.readXmlFile( "context/hashmapFilledWithReferences.xml" ) );
+		this.build( XmlReader.readXmlFile( "context/hashmapFilledWithReferences.xml" ) );
 
 		var fruits : HashMap<Dynamic, MockFruitVO> = this._builderFactory.getCoreFactory().locate( "fruits" );
 		Assert.isNotNull( fruits, "" );

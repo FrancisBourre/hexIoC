@@ -5,6 +5,13 @@
         <argument ref="fruit1" />
         <argument ref="fruit2" />
     </collection>
+	
+	<collection id="empty" type="Array"/>
+	
+	<collection id="text" type="Array">
+        <argument value="hello" />
+        <argument value="world" />
+    </collection>
 
     <fruit id="fruit0" type="hex.ioc.parser.xml.mock.MockFruitVO"><argument value="orange"/></fruit>
     <fruit id="fruit1" type="hex.ioc.parser.xml.mock.MockFruitVO"><argument value="apple"/></fruit>

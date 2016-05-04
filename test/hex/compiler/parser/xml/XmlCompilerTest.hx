@@ -289,10 +289,18 @@ class XmlCompilerTest
 		Assert.equals( "banana", banana.toString(), "" );
 	}
 	
-	@Test( "test building Array filled with references" )
-	public function testBuildingArrayFilledWithReferences() : Void
+	@Test( "test building Arrays" )
+	public function testBuildingArrays() : Void
 	{
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/arrayFilledWithReferences.xml" );
+		
+		var text : Array<String> = this._getCoreFactory().locate( "text" );
+		Assert.equals( 2, text.length, "" );
+		Assert.equals( "hello", text[ 0 ], "" );
+		Assert.equals( "world", text[ 1 ], "" );
+		
+		var empty : Array<String> = this._getCoreFactory().locate( "empty" );
+		Assert.equals( 0, empty.length, "" );
 
 		var fruits : Array<MockFruitVO> = this._getCoreFactory().locate( "fruits" );
 		Assert.equals( 3, fruits.length, "" );
