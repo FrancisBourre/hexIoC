@@ -277,9 +277,8 @@ class XmlCompilerTest
 	{
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/xmlWithParserClass.xml" );
 
-		/*var fruits : Array<MockFruitVO> = this._getCoreFactory().locate( "fruits" );
+		var fruits : Array<MockFruitVO> = this._getCoreFactory().locate( "fruits" );
 		Assert.equals( 3, fruits.length, "" );
-		
 
 		var orange : MockFruitVO = fruits[0];
 		var apple : MockFruitVO = fruits[1];
@@ -288,7 +287,22 @@ class XmlCompilerTest
 		Assert.equals( "orange", orange.toString(), "" );
 		Assert.equals( "apple", apple.toString(), "" );
 		Assert.equals( "banana", banana.toString(), "" );
-		
-		trace("!!!", fruits );*/
+	}
+	
+	@Test( "test building Array filled with references" )
+	public function testBuildingArrayFilledWithReferences() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/arrayFilledWithReferences.xml" );
+
+		var fruits : Array<MockFruitVO> = this._getCoreFactory().locate( "fruits" );
+		Assert.equals( 3, fruits.length, "" );
+
+		var orange 	: MockFruitVO = fruits[0];
+		var apple 	: MockFruitVO = fruits[1];
+		var banana 	: MockFruitVO = fruits[2];
+
+		Assert.equals( "orange", orange.toString(), "" );
+		Assert.equals( "apple", apple.toString(), "" );
+		Assert.equals( "banana", banana.toString(), "" );
 	}
 }

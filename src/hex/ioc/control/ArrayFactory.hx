@@ -27,5 +27,23 @@ class ArrayFactory
 		}
 
 		constructorVO.result = array;
+		
+		#if macro
+		var idVar = constructorVO.ID;
+				
+		//build arguments
+		var idArgs = idVar + "Args";
+		var varIDArgs = macro $i{ idArgs };
+		var args = [];
+		var arguments = constructorVO.arguments;
+		var l : Int = arguments.length;
+		for ( i in 0...l )
+		{
+			args.push( macro $i { idArgs + i } );
+		}
+		
+		//build instance
+		factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $a{ args }; } );
+		#end
 	}
 }
