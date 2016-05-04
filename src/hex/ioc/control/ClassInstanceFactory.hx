@@ -39,7 +39,19 @@ class ClassInstanceFactory
 			{
 				#if macro
 				var tp = MacroUtil.getPack( constructorVO.type );
+				var typePath = MacroUtil.getTypePath( constructorVO.type );
 				var idVar = constructorVO.ID;
+				
+				//build arguments
+				var idArgs = idVar + "Args";
+				var varIDArgs = macro $i{ idArgs };
+				var args = [];
+				var arguments = constructorVO.arguments;
+				var l : Int = arguments.length;
+				for ( i in 0...l )
+				{
+					args.push( macro $i { idArgs + i } );
+				}
 				
 				var singleton = constructorVO.singleton;
 				var factory = constructorVO.factory;
@@ -47,15 +59,13 @@ class ClassInstanceFactory
 				{
 					if ( singleton != null )
 					{
-						var idArgs = idVar + "Args";
-						var varIDArgs = macro $i { idArgs };
-						factoryVO.expressions.push( macro @:mergeBlock { var $idVar = Reflect.callMethod( $p { tp }, $p { tp }.$singleton().$factory, $varIDArgs ); } );
+						//factoryVO.expressions.push( macro @:mergeBlock { var $idVar = Reflect.callMethod( $p { tp }, $p { tp }.$singleton().$factory, $varIDArgs ); } );
+						factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $p { tp }.$singleton().$factory( $a{ args } ); } );
 					}
 					else
 					{
-						var idArgs = idVar + "Args";
-						var varIDArgs = macro $i { idArgs };
-						factoryVO.expressions.push( macro @:mergeBlock { var $idVar = Reflect.callMethod( $p { tp }, $p { tp }.$factory, $varIDArgs ); } );
+						//factoryVO.expressions.push( macro @:mergeBlock { var $idVar = Reflect.callMethod( $p { tp }, $p { tp }.$factory, $varIDArgs ); } );
+						factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $p { tp }.$factory( $a{ args } ); } );
 					}
 				
 				}
@@ -65,9 +75,8 @@ class ClassInstanceFactory
 				}
 				else
 				{
-					var idArgs = idVar + "Args";
-					var varIDArgs = macro $i{ idArgs };
-					factoryVO.expressions.push( macro @:mergeBlock { var $idVar = Type.createInstance( $p { tp }, $varIDArgs ); } );
+					factoryVO.expressions.push( macro @:mergeBlock { var $idVar = new $typePath( $a{ args } ); } );
+					//factoryVO.expressions.push( macro @:mergeBlock { var $idVar = Type.createInstance( $p { tp }, $a{ args } ); } );
 				}
 
 				#else

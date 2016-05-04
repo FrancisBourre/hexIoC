@@ -276,8 +276,8 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 				else
 				{
 					var idArgs = cons.ID + "Args";
-					var varIDArgs = macro $i { idArgs };
-					this._expressions.push( macro @:mergeBlock { var $idArgs = []; } );
+					//var varIDArgs = macro $i { idArgs };
+					//this._expressions.push( macro @:mergeBlock { var $idArgs = []; } );
 					
 					var arguments = cons.arguments;
 					var l : Int = arguments.length;
@@ -286,8 +286,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 						var varArgName = macro $i { idArgs + i };
 						arguments[ i ].argumentName = idArgs + i;
 						this._build( arguments[ i ] );
-						
-						this._expressions.push( macro @:mergeBlock { $varIDArgs.push( $varArgName ); } );
+						//this._expressions.push( macro @:mergeBlock { $varIDArgs.push( $varArgName ); } );
 					}
 
 				}
@@ -348,21 +347,19 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		#if macro
 		var idArgs = method.ownerID + "_" + method.name + "Args";
 		var varIDArgs = macro $i { idArgs };
-		this._expressions.push( macro @:mergeBlock { var $idArgs = []; } );
-					
-		
+		var args = [];
+
 		var l : Int = arguments.length;
 		for ( i in 0...l )
 		{
-			var varArgName = macro $i { idArgs + i };
 			arguments[ i ].argumentName = idArgs + i;
 			this._build( arguments[ i ] );
-			
-			this._expressions.push( macro @:mergeBlock { $varIDArgs.push( $varArgName ); } );
+			args.push( macro $i { idArgs + i } );
 		}
 		
 		var varOwner = macro $i{ method.ownerID };
-		this._expressions.push( macro @:mergeBlock { Reflect.callMethod( $varOwner, Reflect.field( $varOwner, $v{ methodName } ), $varIDArgs ); } );
+		this._expressions.push( macro @:mergeBlock { $varOwner.$methodName( $a{ args } ); } );
+		//this._expressions.push( macro @:mergeBlock { Reflect.callMethod( $varOwner, Reflect.field( $varOwner, $v{ methodName } ), $a{ args } ); } );
 		#end
 		
 		//Reflect.callMethod( this._coreFactory.locate( method.ownerID ), func, arguments );
