@@ -12,6 +12,7 @@ import hex.ioc.vo.CommandMappingVO;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVOArguments;
 import hex.ioc.vo.MapVO;
+import hex.ioc.vo.MethodCallVO;
 import hex.ioc.vo.PropertyVO;
 
 /**
@@ -138,7 +139,10 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 		ifNotList 			: Array<String> = null
 	) : Void
 	{
-		//
+		if ( this.allowsIfList( ifList ) && this.allowsIfNotList( ifNotList ) )
+		{
+			this.getContextFactory( applicationContext ).registerMethodCallVO( new MethodCallVO( ownerID, methodCallName, args ) );
+		}
 	}
 
 	public function buildDomainListener 	(

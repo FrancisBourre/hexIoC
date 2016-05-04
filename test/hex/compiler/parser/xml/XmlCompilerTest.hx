@@ -191,4 +191,35 @@ class XmlCompilerTest
 		Assert.equals( 30, rect.size.x, "" );
 		Assert.equals( 40, rect.size.y, "" );
 	}
+	
+	@Test( "test building multiple instances with method calls" )
+	public function testBuildingMultipleInstancesWithMethodCall() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/multipleInstancesWithMethodCall.xml" );
+
+		var rectSize : Point = this._getCoreFactory().locate( "rectSize" );
+		Assert.isInstanceOf( rectSize, Point, "" );
+		Assert.equals( 30, rectSize.x, "" );
+		Assert.equals( 40, rectSize.y, "" );
+
+		var rectPosition : Point = this._getCoreFactory().locate( "rectPosition" );
+		Assert.isInstanceOf( rectPosition, Point, "" );
+		Assert.equals( 10, rectPosition.x, "" );
+		Assert.equals( 20, rectPosition.y, "" );
+
+
+		var rect : MockRectangle = this._getCoreFactory().locate( "rect" );
+		Assert.isInstanceOf( rect, MockRectangle, "" );
+		Assert.equals( 10, rect.x, "" );
+		Assert.equals( 20, rect.y, "" );
+		Assert.equals( 30, rect.width, "" );
+		Assert.equals( 40, rect.height, "" );
+
+		var anotherRect : MockRectangle = this._getCoreFactory().locate( "anotherRect" );
+		Assert.isInstanceOf( anotherRect, MockRectangle, "" );
+		Assert.equals( 0, anotherRect.x, "" );
+		Assert.equals( 0, anotherRect.y, "" );
+		Assert.equals( 0, anotherRect.width, "" );
+		Assert.equals( 0, anotherRect.height, "" );
+	}
 }

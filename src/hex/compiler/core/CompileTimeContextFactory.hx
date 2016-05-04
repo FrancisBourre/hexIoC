@@ -339,18 +339,33 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	
 	public function callMethod( id : String ) : Void
 	{
-		var method : MethodCallVO 	= this._methodCallVOLocator.locate( id );
-		var cons = new ConstructorVO( null, ContextTypeList.FUNCTION, [ method.ownerID + "." + method.name ] );
-		var func : Dynamic 			= this._build( cons );
+		var method 			= this._methodCallVOLocator.locate( id );
+		var methodName 		= method.name;
+		var cons 			= new ConstructorVO( null, ContextTypeList.FUNCTION, [ method.ownerID + "." + methodName ] );
+		var func : Dynamic 	= this._build( cons );
+		var arguments 		= method.arguments;
+
+		#if macro
+		var idArgs = method.ownerID + "_" + method.name + "Args";
+		var varIDArgs = macro $i { idArgs };
+		this._expressions.push( macro @:mergeBlock { var $idArgs = []; } );
+					
 		
-		var arguments = method.arguments;
 		var l : Int = arguments.length;
 		for ( i in 0...l )
 		{
-			arguments[ i ] = this._build( arguments[ i ] );
+			var varArgName = macro $i { idArgs + i };
+			arguments[ i ].argumentName = idArgs + i;
+			this._build( arguments[ i ] );
+			
+			this._expressions.push( macro @:mergeBlock { $varIDArgs.push( $varArgName ); } );
 		}
 		
-		Reflect.callMethod( this._coreFactory.locate( method.ownerID ), func, arguments );
+		var varOwner = macro $i{ method.ownerID };
+		this._expressions.push( macro @:mergeBlock { Reflect.callMethod( $varOwner, Reflect.field( $varOwner, $v{ methodName } ), $varIDArgs ); } );
+		#end
+		
+		//Reflect.callMethod( this._coreFactory.locate( method.ownerID ), func, arguments );
 	}
 
 	public function callAllMethods() : Void

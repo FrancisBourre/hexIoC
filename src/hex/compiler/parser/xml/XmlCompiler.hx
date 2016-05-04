@@ -146,7 +146,7 @@ class XmlCompiler
 					}
 				}
 				
-				XmlCompiler._assembler.buildMethodCall( applicationContext, identifier, xml.get( ContextAttributeList.NAME ), XMLParserUtil.getMethodCallArguments( identifier, methodCallItem ), XMLParserUtil.getIfList( methodCallItem ), XMLParserUtil.getIfNotList( methodCallItem ) );
+				XmlCompiler._assembler.buildMethodCall( applicationContext, identifier, methodCallItem.get( ContextAttributeList.NAME ), XMLParserUtil.getMethodCallArguments( identifier, methodCallItem ), XMLParserUtil.getIfList( methodCallItem ), XMLParserUtil.getIfNotList( methodCallItem ) );
 			}
 
 			// Build channel listener.
