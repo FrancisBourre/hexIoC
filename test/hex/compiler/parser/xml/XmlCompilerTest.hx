@@ -7,6 +7,7 @@ import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.core.IContextFactory;
 import hex.ioc.core.ICoreFactory;
 import hex.ioc.parser.xml.ApplicationXMLParser;
+import hex.ioc.parser.xml.mock.MockCaller;
 import hex.ioc.parser.xml.mock.MockFruitVO;
 import hex.ioc.parser.xml.mock.MockRectangle;
 import hex.ioc.parser.xml.mock.MockServiceProvider;
@@ -194,6 +195,16 @@ class XmlCompilerTest
 		Assert.equals( 40, rect.size.y, "" );
 	}
 	
+	@Test( "test simple method call" )
+	public function testSimpleMethodCall() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/simpleMethodCall.xml" );
+
+		var caller : MockCaller = this._getCoreFactory().locate( "caller" );
+		Assert.isInstanceOf( caller, MockCaller, "" );
+		Assert.deepEquals( [ "hello", "world" ], MockCaller.passedArguments, "" );
+	}
+	
 	@Test( "test building multiple instances with method calls" )
 	public function testBuildingMultipleInstancesWithMethodCall() : Void
 	{
@@ -313,4 +324,24 @@ class XmlCompilerTest
 		Assert.equals( "apple", apple.toString(), "" );
 		Assert.equals( "banana", banana.toString(), "" );
 	}
+	
+	/*@Test( "test building Map filled with references" )
+	public function testBuildingMapFilledWithReferences() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/hashmapFilledWithReferences.xml" );
+
+		var fruits : HashMap<Dynamic, MockFruitVO> = this._getCoreFactory().locate( "fruits" );
+		Assert.isNotNull( fruits, "" );
+
+		var stubKey : Point = this._getCoreFactory().locate( "stubKey" );
+		Assert.isNotNull( stubKey, "" );
+
+		var orange 	: MockFruitVO = fruits.get( '0' );
+		var apple 	: MockFruitVO = fruits.get( 1 );
+		var banana 	: MockFruitVO = fruits.get( stubKey );
+
+		Assert.equals( "orange", orange.toString(), "" );
+		Assert.equals( "apple", apple.toString(), "" );
+		Assert.equals( "banana", banana.toString(), "" );
+	}*/
 }

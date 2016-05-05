@@ -321,8 +321,8 @@ class ObjectXMLParserTest
 		Assert.equals( "banana", banana.toString(), "" );
 	}
 	
-	@Test( "test building Array filled with references" )
-	public function testBuildingArrayFilledWithReferences() : Void
+	@Test( "test building Arrays" )
+	public function testBuildingArrays() : Void
 	{
 		this.build(  XmlReader.readXmlFile( "context/arrayFilledWithReferences.xml" ) );
 		

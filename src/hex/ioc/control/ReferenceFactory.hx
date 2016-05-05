@@ -37,25 +37,10 @@ class ReferenceFactory
 			var args : Array<String> = constructorVO.ref.split( "." );
 			args.shift();
 			constructorVO.result = factoryVO.coreFactory.fastEvalFromTarget( result, args.join( "." )  );
-			
-			#if macro
-			var p = macro $p { constructorVO.ref.split(".") };
-			var idVar = constructorVO.argumentName != null ? constructorVO.argumentName : constructorVO.ID;
-			factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $p; } );
-			#end
 		}
 		else 
 		{
 			constructorVO.result = result;
-			
-			#if macro
-			if ( !constructorVO.isProperty )
-			{
-				var idVar = constructorVO.argumentName != null ? constructorVO.argumentName : constructorVO.ID;
-				var extVar = macro $i{ key };
-				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $extVar; } );
-			}
-			#end
 		}
 	}
 }

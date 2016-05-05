@@ -41,13 +41,5 @@ class StringFactory
 		}
 
 		constructorVO.result = value;
-		
-		#if macro
-		if ( !constructorVO.isProperty )
-		{
-			var idVar = constructorVO.argumentName != null ? constructorVO.argumentName : constructorVO.ID;
-			factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $v { value }; } );
-		}
-		#end
 	}
 }

@@ -1,5 +1,7 @@
 package hex.ioc.vo;
 
+import haxe.macro.Expr;
+
 /**
  * ...
  * @author Francis Bourre
@@ -17,8 +19,11 @@ class ConstructorVO
 	public var 				mapType			: String;
 	public var 				staticRef		: String;
 	
+	#if macro
 	public var 				isProperty		: Bool = false;
 	public var 				argumentName	: String;
+	public var 				constructorArgs	: Array<Expr>;
+	#end
 		
 	public function new(  	id 				: String,
 							?type 			: String,
@@ -28,8 +33,7 @@ class ConstructorVO
 							?injectInto 	: Bool = false,
 							?ref 			: String,
 							?mapType 		: String,
-							?staticRef 		: String,
-							?isProperty 	: Bool = false )
+							?staticRef 		: String )
 	{
 		this.ID         = id;
 		this.type       = type;
@@ -40,7 +44,6 @@ class ConstructorVO
 		this.ref 		= ref;
 		this.mapType 	= mapType;
 		this.staticRef 	= staticRef;
-		this.isProperty = isProperty;
 	}
 
 	public function toString() : String

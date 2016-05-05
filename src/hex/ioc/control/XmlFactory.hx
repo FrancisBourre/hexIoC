@@ -35,30 +35,10 @@ class XmlFactory
 			{
 				if ( factory == null )
 				{
-					#if macro
-					if ( !constructorVO.isProperty )
-					{
-						var idVar = constructorVO.argumentName != null ? constructorVO.argumentName : constructorVO.ID;
-						factoryVO.expressions.push( macro @:mergeBlock { var $idVar = Xml.parse( $v { source } ); } );
-					}
-					#else
 					constructorVO.result = Xml.parse( source );
-					#end
 				}
 				else
 				{
-					#if macro
-					if ( !constructorVO.isProperty )
-					{
-						var idVar = constructorVO.argumentName != null ? constructorVO.argumentName : constructorVO.ID;
-						var typePath = MacroUtil.getTypePath( factory );
-						var parser = "factory_" + constructorVO.ID;
-						factoryVO.expressions.push( macro @:mergeBlock { var $parser = new $typePath(); } );
-						
-						var parserVar = macro $i{ parser };
-						factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $parserVar.parse( Xml.parse( $v { source } ) ); } );
-					}
-					#else
 					try
 					{
 						var parser : IParser = factoryVO.coreFactory.buildInstance( factory );
@@ -68,7 +48,6 @@ class XmlFactory
 					{
 						throw new ParsingException( "XmlFactory.build() failed to deserialize XML with '" + factory + "' deserializer class." );
 					}
-					#end
 				}
 			}
 			else
@@ -76,13 +55,8 @@ class XmlFactory
 				#if debug
 				trace( "XmlFactory.build() returns an empty XML." );
 				#end
-				
-				#if macro
-				var idVar = constructorVO.argumentName != null ? constructorVO.argumentName : constructorVO.ID;
-				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = Xml.parse( "" ); } );
-				#else
+
 				constructorVO.result = Xml.parse( "" );
-				#end
 			}
 		}
 		else
@@ -90,13 +64,8 @@ class XmlFactory
 			#if debug
 			trace( "XmlFactory.build() returns an empty XML." );
 			#end
-			
-			#if macro
-			var idVar = constructorVO.argumentName != null ? constructorVO.argumentName : constructorVO.ID;
-			factoryVO.expressions.push( macro @:mergeBlock { var $idVar = Xml.parse( "" ); } );
-			#else
+
 			constructorVO.result = Xml.parse( "" );
-			#end
 		}
 	}
 }

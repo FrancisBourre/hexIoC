@@ -18,13 +18,5 @@ class DynamicObjectFactory
 	{
 		var constructorVO = factoryVO.constructorVO;
 		factoryVO.constructorVO.result = { };
-		
-		#if macro
-		if ( !constructorVO.isProperty )
-		{
-			var idVar = constructorVO.argumentName != null ? constructorVO.argumentName : constructorVO.ID;
-			factoryVO.expressions.push( macro @:mergeBlock { var $idVar : Dynamic = $v { {} }; } );
-		}
-		#end
 	}
 }

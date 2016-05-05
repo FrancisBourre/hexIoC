@@ -1,5 +1,6 @@
-package hex.ioc.control;
+package hex.compiler.factory;
 
+import haxe.macro.Context;
 import hex.ioc.vo.FactoryVO;
 import hex.error.IllegalArgumentException;
 import hex.ioc.vo.ConstructorVO;
@@ -15,7 +16,8 @@ class BoolFactory
 
 	}
 	
-	static public function build( factoryVO : FactoryVO ) : Void
+	#if macro
+	static public function build( factoryVO : FactoryVO ) : Dynamic
 	{
 		var constructorVO : ConstructorVO = factoryVO.constructorVO;
 
@@ -37,7 +39,16 @@ class BoolFactory
 		}
 		else
 		{
-			throw new IllegalArgumentException( "BoolFactory.build(" + value + ") failed." );
+			Context.error( "BoolFactory.build(" + value + ") failed.", Context.currentPos() );
 		}
+		
+		if ( !constructorVO.isProperty )
+		{
+			var idVar = constructorVO.argumentName != null ? constructorVO.argumentName : constructorVO.ID;
+			factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $v { constructorVO.result }; } );
+		}
+		
+		return macro { $v { constructorVO.result } };
 	}
+	#end
 }
