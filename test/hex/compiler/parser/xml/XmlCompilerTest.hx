@@ -1,5 +1,6 @@
 package hex.compiler.parser.xml;
 
+import hex.collection.HashMap;
 import hex.control.command.BasicCommand;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.ioc.assembler.AbstractApplicationContext;
@@ -8,9 +9,11 @@ import hex.ioc.core.IContextFactory;
 import hex.ioc.core.ICoreFactory;
 import hex.ioc.parser.xml.ApplicationXMLParser;
 import hex.ioc.parser.xml.mock.MockCaller;
+import hex.ioc.parser.xml.mock.MockChatModule;
 import hex.ioc.parser.xml.mock.MockFruitVO;
 import hex.ioc.parser.xml.mock.MockRectangle;
 import hex.ioc.parser.xml.mock.MockServiceProvider;
+import hex.ioc.parser.xml.mock.MockTranslationModule;
 import hex.structures.Point;
 import hex.structures.Size;
 import hex.unittest.assertion.Assert;
@@ -325,7 +328,7 @@ class XmlCompilerTest
 		Assert.equals( "banana", banana.toString(), "" );
 	}
 	
-	/*@Test( "test building Map filled with references" )
+	@Test( "test building Map filled with references" )
 	public function testBuildingMapFilledWithReferences() : Void
 	{
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/hashmapFilledWithReferences.xml" );
@@ -343,5 +346,21 @@ class XmlCompilerTest
 		Assert.equals( "orange", orange.toString(), "" );
 		Assert.equals( "apple", apple.toString(), "" );
 		Assert.equals( "banana", banana.toString(), "" );
+	}
+	
+	/*@Test( "test building two modules listening each other" )
+	public function testBuildingTwoModulesListeningEachOther() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/twoModulesListeningEachOther.xml" );
+
+		var chat : MockChatModule = this._getCoreFactory().locate( "chat" );
+		Assert.isNotNull( chat, "" );
+		Assert.isNull( chat.translatedMessage, "" );
+
+		var translation : MockTranslationModule = this._getCoreFactory().locate( "translation" );
+		Assert.isNotNull( translation, "" );
+
+		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "Bonjour" ] );
+		Assert.equals( "Hello", chat.translatedMessage, "" );
 	}*/
 }

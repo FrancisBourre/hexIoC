@@ -158,23 +158,15 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		if ( property.method != null )
 		{
 			#if macro
-			//trace( "property.method:", property.method );
-			var prop = new ConstructorVO( null, ContextTypeList.FUNCTION, [ property.method ], null, null, false, null, null, null );
-			prop.isProperty = true;
-			value = this._build( prop );
-			
+			value = this._buildArgument( new ConstructorVO( null, ContextTypeList.FUNCTION, [ property.method ], null, null, false, null, null, null ) );
 			var extVar = macro $i{ id };
-			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $v{ value }; } );
+			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $value; } );
 			#end
 
 		} else if ( property.ref != null )
 		{
 			#if macro
-			//trace( "property.ref:", property.ref );
-			var prop = new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, property.ref, null, null );
-			prop.isProperty = true;
-			value = this._build( prop );
-			
+			value = this._buildArgument( new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, property.ref, null, null ) );
 			var extVar = macro $i{ id };
 			var refVar = macro $i{ property.ref };
 			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $refVar; } );
@@ -187,21 +179,17 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 			
 			#if macro
 			var extVar = macro $i{ id };
-			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $v{ value }; } );
+			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $value; } );
 			#end
 
 		} else
 		{
 			#if macro
-			//trace( "property.type:", property.type );
 			var type : String = property.type != null ? property.type : ContextTypeList.STRING;
-			
-			var prop = new ConstructorVO( property.ownerID, type, [ property.value ], null, null, false, null, null, null );
-			prop.isProperty = true;
-			value = this._build( prop );
+			value = this._buildArgument( new ConstructorVO( property.ownerID, type, [ property.value ], null, null, false, null, null, null ) );
 			
 			var extVar = macro $i{ id };
-			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $v{ value }; } );
+			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $value; } );
 			#end
 		}
 		
@@ -263,8 +251,8 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 					for ( obj in args )
 					{
 						var mapVO : MapVO = cast obj;
-						mapVO.key = this._build( mapVO.getPropertyKey() );
-						mapVO.value = this._build( mapVO.getPropertyValue() );
+						mapVO.key = this._buildArgument( mapVO.getPropertyKey() );
+						mapVO.value = this._buildArgument( mapVO.getPropertyValue() );
 						result.push( mapVO );
 					}
 					cons.arguments = result;
@@ -300,8 +288,6 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 						//arguments[ i ].argumentName = idArgs + i;
 						//this._build( arguments[ i ] );
 						
-						arguments[ i ].isProperty = true;
-						//args.push( this._buildArgument( arguments[ i ] ) );
 						args.push( this._buildArgument( arguments[ i ] ) );
 					}
 					cons.constructorArgs = args;
@@ -375,7 +361,6 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 			args.push( macro $i { idArgs + i } );
 			*/
 			
-			arguments[ i ].isProperty = true;
 			args.push( this._buildArgument( arguments[ i ] ) );
 		}
 		
@@ -502,6 +487,8 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	#if macro
 	function _buildArgument( constructorVO : ConstructorVO, ?id : String ) : Dynamic
 	{
+		constructorVO.isProperty = true;
+		
 		var type 								= constructorVO.type;
 		var buildMethod 						= ( this._factoryMap.exists( type ) ) ? this._factoryMap.get( type ) : ClassInstanceFactory.build;
 
