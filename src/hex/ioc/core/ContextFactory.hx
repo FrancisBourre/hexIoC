@@ -395,7 +395,6 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		if ( id != null )
 		{
 			this._coreFactory.register( id, constructorVO.result );
-			trace( id, constructorVO.result  );
 		}
 
 		return constructorVO.result;
