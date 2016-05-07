@@ -54,7 +54,7 @@ class XmlReader
 					{
 						if ( arg.getPropertyKey().type == ContextTypeList.CLASS )
 						{
-							XmlReader._importHelper.includeClass( arg.getPropertyKey().arguments[0] );
+							XmlReader._importHelper.forceCompilation( arg.getPropertyKey().arguments[0] );
 						}
 					}
 					
@@ -62,7 +62,7 @@ class XmlReader
 					{
 						if ( arg.getPropertyValue().type == ContextTypeList.CLASS )
 						{
-							XmlReader._importHelper.includeClass( arg.getPropertyValue().arguments[0] );
+							XmlReader._importHelper.forceCompilation( arg.getPropertyValue().arguments[0] );
 						}
 					}
 				}
