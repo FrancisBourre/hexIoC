@@ -24,10 +24,6 @@ class HashMapFactory
 		var args : Array<MapVO> = cast constructorVO.arguments;
 		
 		var idVar = constructorVO.ID;
-		
-		//var typePath = MacroUtil.asTypePath( "hex.collection.HashMap" );
-		//var e = macro { new $typePath(); };
-		
 		var e = Context.parseInlineString( "new HashMap<Dynamic, Dynamic>()", Context.currentPos() );
 		factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
 		

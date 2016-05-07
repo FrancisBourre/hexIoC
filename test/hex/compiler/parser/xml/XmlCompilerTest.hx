@@ -11,6 +11,7 @@ import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.core.IContextFactory;
 import hex.ioc.core.ICoreFactory;
 import hex.ioc.parser.xml.ApplicationXMLParser;
+import hex.ioc.parser.xml.mock.AnotherMockAmazonService;
 import hex.ioc.parser.xml.mock.ClassWithConstantConstantArgument;
 import hex.ioc.parser.xml.mock.IMockAmazonService;
 import hex.ioc.parser.xml.mock.IMockFacebookService;
@@ -427,6 +428,26 @@ class XmlCompilerTest
 		Assert.isInstanceOf( injector.getInstance( IMockAmazonService ), MockAmazonService, "" );
 		Assert.isInstanceOf( injector.getInstance( IMockFacebookService ), MockFacebookService, "" );
 		Assert.equals( facebookService, injector.getInstance( IMockFacebookService ), "" );
+	}
+	
+	@Test( "test building serviceLocator with map names" )
+	public function testBuildingServiceLocatorWithMapNames() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/serviceLocatorWithMapNames.xml" );
+
+		var serviceLocator : ServiceLocator = this._getCoreFactory().locate( "serviceLocator" );
+		Assert.isInstanceOf( serviceLocator, ServiceLocator, "" );
+
+		var amazonService0 : IMockAmazonService = serviceLocator.getService( IMockAmazonService, "amazon0" );
+		var amazonService1 : IMockAmazonService = serviceLocator.getService( IMockAmazonService, "amazon1" );
+		Assert.isNotNull( amazonService0, "" );
+		Assert.isNotNull( amazonService1, "" );
+
+		var injector = new Injector();
+		serviceLocator.configure( injector, new Dispatcher(), null );
+
+		Assert.isInstanceOf( injector.getInstance( IMockAmazonService, "amazon0" ),  MockAmazonService, "" );
+		Assert.isInstanceOf( injector.getInstance( IMockAmazonService, "amazon1" ), AnotherMockAmazonService, "" );
 	}
 	
 	@Test( "test static-ref" )
