@@ -59,7 +59,7 @@ class XMLParserUtil
 
 		} else if ( staticRef != null )
 		{
-			return new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, null, null, item.get( ContextAttributeList.STATIC_REF ) );
+			return new ConstructorVO( null, ContextTypeList.STATIC_VARIABLE, null, null, null, false, null, null, item.get( ContextAttributeList.STATIC_REF ) );
 
 		} else
 		{

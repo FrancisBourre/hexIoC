@@ -73,7 +73,7 @@ class ObjectXMLParser extends AbstractXMLParser
 
 			if ( type == null )
 			{
-				type = staticRef != null ? ContextTypeList.INSTANCE : ContextTypeList.STRING;
+				type = staticRef != null ? ContextTypeList.STATIC_VARIABLE : ContextTypeList.STRING;
 			}
 
 			this.getApplicationAssembler( ).buildObject( applicationContext, identifier, type, args, factory, singleton, injectInto, mapType, staticRef, ifList, ifNotList );

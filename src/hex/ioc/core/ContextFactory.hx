@@ -10,7 +10,6 @@ import hex.di.Injector;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
 import hex.domain.DomainUtil;
-import hex.domain.IApplicationDomainDispatcher;
 import hex.event.IDispatcher;
 import hex.event.IEvent;
 import hex.ioc.assembler.AbstractApplicationContext;
@@ -28,6 +27,7 @@ import hex.ioc.control.HashMapFactory;
 import hex.ioc.control.IntFactory;
 import hex.ioc.control.NullFactory;
 import hex.ioc.control.ServiceLocatorFactory;
+import hex.ioc.control.StaticVariableFactory;
 import hex.ioc.control.StringFactory;
 import hex.ioc.control.UIntFactory;
 import hex.ioc.control.XmlFactory;
@@ -156,7 +156,7 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 
 		} else if ( property.staticRef != null )
 		{
-			return ClassUtil.getStaticReference( property.staticRef );
+			return ClassUtil.getStaticVariableReference( property.staticRef );
 
 		} else
 		{
@@ -373,6 +373,7 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		this._factoryMap.set( ContextTypeList.XML, XmlFactory.build );
 		this._factoryMap.set( ContextTypeList.FUNCTION, FunctionFactory.build );
 		this._factoryMap.set( ContextTypeList.INSTANCE, ClassInstanceFactory.build );
+		this._factoryMap.set( ContextTypeList.STATIC_VARIABLE, StaticVariableFactory.build );
 		
 		this._coreFactory.addListener( this );
 	}
@@ -394,6 +395,7 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		if ( id != null )
 		{
 			this._coreFactory.register( id, constructorVO.result );
+			trace( id, constructorVO.result  );
 		}
 
 		return constructorVO.result;

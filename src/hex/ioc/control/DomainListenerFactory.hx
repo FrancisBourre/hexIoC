@@ -58,7 +58,7 @@ class DomainListenerFactory
 				
 				var messageType : MessageType = domainListenerArgument.name != null ? 
 												new MessageType( domainListenerArgument.name ) : 
-												ClassUtil.getStaticReference( domainListenerArgument.staticRef );
+												ClassUtil.getStaticVariableReference( domainListenerArgument.staticRef );
 
 				if ( ( method != null && Reflect.isFunction( Reflect.field( listener, method ) )) || domainListenerArgument.strategy != null )
 				{

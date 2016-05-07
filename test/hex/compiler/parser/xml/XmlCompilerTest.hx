@@ -8,11 +8,13 @@ import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.core.IContextFactory;
 import hex.ioc.core.ICoreFactory;
 import hex.ioc.parser.xml.ApplicationXMLParser;
+import hex.ioc.parser.xml.mock.ClassWithConstantConstantArgument;
 import hex.ioc.parser.xml.mock.MockCaller;
 import hex.ioc.parser.xml.mock.MockChatModule;
 import hex.ioc.parser.xml.mock.MockFruitVO;
 import hex.ioc.parser.xml.mock.MockRectangle;
 import hex.ioc.parser.xml.mock.MockServiceProvider;
+import hex.ioc.parser.xml.mock.MockStubStatefulService;
 import hex.ioc.parser.xml.mock.MockTranslationModule;
 import hex.structures.Point;
 import hex.structures.Size;
@@ -363,4 +365,34 @@ class XmlCompilerTest
 		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "Bonjour" ] );
 		Assert.equals( "Hello", chat.translatedMessage, "" );
 	}*/
+	
+	@Test( "test static-ref" )
+	public function testStaticRef() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile(  "context/staticRef.xml" );
+
+		var note : String = this._getCoreFactory().locate( "constant" );
+		Assert.isNotNull( note, "" );
+		Assert.equals( note, MockStubStatefulService.INT_VO_UPDATE, "" );
+	}
+	
+	@Test( "test static-ref property" )
+	public function testStaticProperty() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile(  "context/staticRefProperty.xml" );
+
+		var object : Dynamic = this._getCoreFactory().locate( "object" );
+		Assert.isNotNull( object, "" );
+		Assert.equals( object.property, MockStubStatefulService.INT_VO_UPDATE, "" );
+	}
+	
+	@Test( "test static-ref argument" )
+	public function testStaticArgument() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile(  "context/staticRefArgument.xml" );
+
+		var instance : ClassWithConstantConstantArgument = this._getCoreFactory().locate( "instance" );
+		Assert.isNotNull( instance, "" );
+		Assert.equals( instance.constant, MockStubStatefulService.INT_VO_UPDATE, "" );
+	}
 }

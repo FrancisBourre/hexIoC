@@ -28,55 +28,37 @@ class ClassInstanceFactory
 		}
 		else
 		{
-			if ( constructorVO.staticRef != null )
+			var idVar = constructorVO.ID;
+			var tp = MacroUtil.getPack( constructorVO.type );
+			var typePath = MacroUtil.getTypePath( constructorVO.type );
+			
+			//build instance
+			var singleton = constructorVO.singleton;
+			var factory = constructorVO.factory;
+			if ( factory != null )
 			{
-				//constructorVO.result = ClassUtil.getStaticReference( constructorVO.staticRef );
-			}
-			else
-			{
-				var tp = MacroUtil.getPack( constructorVO.type );
-				var typePath = MacroUtil.getTypePath( constructorVO.type );
-				var idVar = constructorVO.ID;
-				
-				//build instance
-				var singleton = constructorVO.singleton;
-				var factory = constructorVO.factory;
-				if ( factory != null )
+				if ( singleton != null )
 				{
-					if ( singleton != null )
-					{
-						e = macro { $p { tp }.$singleton().$factory( $a{ constructorVO.constructorArgs } ); };
-						factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
-					}
-					else
-					{
-						e = macro { $p { tp }.$factory( $a{ constructorVO.constructorArgs } ); };
-						factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
-					}
-				
-				}
-				else if ( singleton != null )
-				{
-					e = macro { $p { tp }.$singleton(); };
+					e = macro { $p { tp }.$singleton().$factory( $a{ constructorVO.constructorArgs } ); };
 					factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
 				}
 				else
 				{
-					e = macro { new $typePath( $a{ constructorVO.constructorArgs } ); };
+					e = macro { $p { tp }.$factory( $a{ constructorVO.constructorArgs } ); };
 					factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
 				}
+			
 			}
-
-			/*if ( Std.is( constructorVO.result, IModule ) )
+			else if ( singleton != null )
 			{
-				factoryVO.moduleLocator.register( constructorVO.ID, constructorVO.result );
+				e = macro { $p { tp }.$singleton(); };
+				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
 			}
-
-			if ( constructorVO.mapType != null )
+			else
 			{
-				var classToMap : Class<Dynamic> = Type.resolveClass( constructorVO.mapType );
-				factoryVO.contextFactory.getApplicationContext().getBasicInjector().mapToValue( classToMap, constructorVO.result, constructorVO.ID );
-			}*/
+				e = macro { new $typePath( $a{ constructorVO.constructorArgs } ); };
+				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
+			}
 		}
 		
 		return e;

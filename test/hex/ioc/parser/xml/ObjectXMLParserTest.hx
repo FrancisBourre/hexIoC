@@ -670,10 +670,22 @@ class ObjectXMLParserTest
 		var note : String = this._builderFactory.getCoreFactory().locate( "constant" );
 		Assert.isNotNull( note, "" );
 		Assert.equals( note, MockStubStatefulService.INT_VO_UPDATE, "" );
+	}
+	
+	@Test( "test static-ref property" )
+	public function testStaticRefProperty() : Void
+	{
+		this.build(  XmlReader.readXmlFile( "context/staticRefProperty.xml" ) );
 
 		var object : Dynamic = this._builderFactory.getCoreFactory().locate( "object" );
 		Assert.isNotNull( object, "" );
 		Assert.equals( object.property, MockStubStatefulService.INT_VO_UPDATE, "" );
+	}
+	
+	@Test( "test static-ref argument" )
+	public function testStaticRefArgument() : Void
+	{
+		this.build(  XmlReader.readXmlFile( "context/staticRefArgument.xml" ) );
 
 		var instance : ClassWithConstantConstantArgument = this._builderFactory.getCoreFactory().locate( "instance" );
 		Assert.isNotNull( instance, "" );

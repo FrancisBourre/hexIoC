@@ -2,6 +2,7 @@ package hex.compiler.core;
 
 import haxe.macro.Expr;
 import hex.collection.ILocatorListener;
+import hex.compiler.factory.StaticVariableFactory;
 
 
 import hex.compiler.factory.ArrayFactory;
@@ -174,10 +175,8 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 
 		} else if ( property.staticRef != null )
 		{
-			//trace( "property.staticRef:", property.staticRef );
-			value = ClassUtil.getStaticReference( property.staticRef );
-			
 			#if macro
+			value = this._buildArgument( new ConstructorVO( null, ContextTypeList.STATIC_VARIABLE, null, null, null, false, null, null,  property.staticRef ) );
 			var extVar = macro $i{ id };
 			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $value; } );
 			#end
@@ -287,7 +286,6 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 						//var varArgName = macro $i { idArgs + i };
 						//arguments[ i ].argumentName = idArgs + i;
 						//this._build( arguments[ i ] );
-						
 						args.push( this._buildArgument( arguments[ i ] ) );
 					}
 					cons.constructorArgs = args;
@@ -450,6 +448,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		this._factoryMap.set( ContextTypeList.CLASS, ClassFactory.build );
 		this._factoryMap.set( ContextTypeList.XML, XmlFactory.build );
 		this._factoryMap.set( ContextTypeList.FUNCTION, FunctionFactory.build );
+		this._factoryMap.set( ContextTypeList.STATIC_VARIABLE, StaticVariableFactory.build );
 		#end
 		
 		this._coreFactory.addListener( this );

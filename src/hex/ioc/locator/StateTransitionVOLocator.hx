@@ -43,7 +43,7 @@ class StateTransitionVOLocator extends Locator<String, StateTransitionVO>
 			var state : State = null;
 			if ( vo.staticReference != null )
 			{
-				state = ClassUtil.getStaticReference( vo.staticReference );
+				state = ClassUtil.getStaticVariableReference( vo.staticReference );
 			}
 			else if ( vo.instanceReference != null )
 			{

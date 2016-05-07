@@ -14,6 +14,7 @@ import hex.ioc.parser.xml.XMLAttributeUtil;
 import hex.ioc.parser.xml.XMLParserUtil;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVOArguments;
+import hex.util.ClassUtil;
 import hex.util.MacroUtil;
 
 using StringTools;
@@ -69,7 +70,7 @@ class XmlCompiler
 			
 			if ( type == null )
 			{
-				type = staticRef != null ? ContextTypeList.INSTANCE : ContextTypeList.STRING;
+				type = staticRef != null ? ContextTypeList.STATIC_VARIABLE : ContextTypeList.STRING;
 			}
 
 			if ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR )
@@ -108,10 +109,19 @@ class XmlCompiler
 
 			try
 			{
-				XmlCompiler._importHelper.forceCompilation( type );
+				if ( type != ContextTypeList.STATIC_VARIABLE )
+				{
+					XmlCompiler._importHelper.forceCompilation( type );
+				}
+				else
+				{
+					var t = ClassUtil.getClassNameFromStaticReference( staticRef );
+					XmlCompiler._importHelper.forceCompilation( t );
+				}
+				
 			}
 			catch ( e : String )
-			{
+			{trace( type );
 				Context.error( "XmlCompiler parsing error with '" + xml.nodeName + "' node, '" + type + "' type not found.", positionTracker.makePositionFromAttribute( xml, ContextAttributeList.TYPE ) );
 			}
 			

@@ -1,0 +1,11 @@
+<root name="applicationContext">
+
+    <object id="object" type="Object">
+        <property name="property" static-ref="hex.ioc.parser.xml.mock.MockStubStatefulService.INT_VO_UPDATE"/>
+    </object>
+
+    <instance id="instance" type="hex.ioc.parser.xml.mock.ClassWithConstantConstantArgument">
+        <argument static-ref="hex.ioc.parser.xml.mock.MockStubStatefulService.INT_VO_UPDATE"/>
+    </instance>
+
+</root>

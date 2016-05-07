@@ -9,6 +9,7 @@ class ContextTypeList
 	public inline static var ARRAY 				: String = "Array";
 	public inline static var BOOLEAN 			: String = "Bool";
 	public inline static var INSTANCE 			: String = "Instance";
+	public inline static var STATIC_VARIABLE 	: String = "StaticVariable";
 	public inline static var INT 				: String = "Int";
 	public inline static var NULL 				: String = "null";
 	public inline static var FLOAT 				: String = "Float";
