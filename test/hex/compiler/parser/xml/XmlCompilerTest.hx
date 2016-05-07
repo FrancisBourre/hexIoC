@@ -382,7 +382,7 @@ class XmlCompilerTest
 		Assert.isInstanceOf( rectangleClass, Class, "" );
 		Assert.isInstanceOf( Type.createInstance( rectangleClass, [] ), MockRectangle, "" );
 
-		/*var classContainer = this._getCoreFactory().locate( "classContainer" );
+		var classContainer = this._getCoreFactory().locate( "classContainer" );
 
 		var anotherRectangleClass : Class<MockRectangle> = classContainer.AnotherRectangleClass;
 		Assert.isInstanceOf( anotherRectangleClass, Class, "" );
@@ -392,7 +392,7 @@ class XmlCompilerTest
 
 		var anotherRectangleClassRef : Class<MockRectangle> = this._getCoreFactory().locate( "classContainer.AnotherRectangleClass" );
 		Assert.isInstanceOf( anotherRectangleClassRef, Class, "" );
-		Assert.equals( anotherRectangleClass, anotherRectangleClassRef, "" );*/
+		Assert.equals( anotherRectangleClass, anotherRectangleClassRef, "" );
 	}
 	
 	/*@Test( "test building serviceLocator" )
@@ -416,7 +416,7 @@ class XmlCompilerTest
 		Assert.equals( facebookService, injector.getInstance( IMockFacebookService ), "" );
 	}*/
 	
-	/*@Test( "test static-ref" )
+	@Test( "test static-ref" )
 	public function testStaticRef() : Void
 	{
 		this._applicationAssembler = XmlCompiler.readXmlFile(  "context/staticRef.xml" );
@@ -444,5 +444,5 @@ class XmlCompilerTest
 		var instance : ClassWithConstantConstantArgument = this._getCoreFactory().locate( "instance" );
 		Assert.isNotNull( instance, "" );
 		Assert.equals( instance.constant, MockStubStatefulService.INT_VO_UPDATE, "" );
-	}*/
+	}
 }
