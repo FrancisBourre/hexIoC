@@ -21,8 +21,6 @@ class HashMapFactory
 	static public function build( factoryVO : FactoryVO ) : Dynamic
 	{
 		var constructorVO : ConstructorVO = factoryVO.constructorVO;
-
-		var map = new HashMap<Dynamic, Dynamic>();
 		var args : Array<MapVO> = cast constructorVO.arguments;
 		
 		var idVar = constructorVO.ID;
@@ -54,8 +52,6 @@ class HashMapFactory
 				}
 			}
 		}
-
-		constructorVO.result = map;
 
 		if ( constructorVO.mapType != null )
 		{

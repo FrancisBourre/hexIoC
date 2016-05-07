@@ -90,6 +90,11 @@ class XmlReader
 			
 			XmlReader._importHelper.forceCompilation( xml.get( ContextAttributeList.MAP_TYPE ) );
 			XmlReader._importHelper.includeStaticRef( xml.get( ContextAttributeList.STATIC_REF ) );
+			
+			if ( type == ContextTypeList.CLASS )
+			{
+				XmlReader._importHelper.forceCompilation( args[ 0 ].arguments[ 0 ] );
+			}
 
 			// Build property.
 			var propertyIterator = xml.elementsNamed( ContextNameList.PROPERTY );

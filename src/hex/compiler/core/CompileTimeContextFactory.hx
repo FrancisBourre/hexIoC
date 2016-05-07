@@ -262,6 +262,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 							cons.type == ContextTypeList.FLOAT || 
 							cons.type == ContextTypeList.BOOLEAN || 
 							cons.type == ContextTypeList.NULL || 
+							cons.type == ContextTypeList.CLASS || 
 							cons.type == ContextTypeList.OBJECT )
 				{
 					var arguments = cons.arguments;

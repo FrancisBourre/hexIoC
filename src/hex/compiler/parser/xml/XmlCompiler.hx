@@ -67,7 +67,7 @@ class XmlCompiler
 			staticRef 	= xml.get( ContextAttributeList.STATIC_REF );
 			ifList 		= XMLParserUtil.getIfList( xml );
 			ifNotList 	= XMLParserUtil.getIfNotList( xml );
-			
+		
 			if ( type == null )
 			{
 				type = staticRef != null ? ContextTypeList.STATIC_VARIABLE : ContextTypeList.STRING;
@@ -121,13 +121,18 @@ class XmlCompiler
 				
 			}
 			catch ( e : String )
-			{trace( type );
+			{
 				Context.error( "XmlCompiler parsing error with '" + xml.nodeName + "' node, '" + type + "' type not found.", positionTracker.makePositionFromAttribute( xml, ContextAttributeList.TYPE ) );
 			}
 			
 			XmlCompiler._importHelper.forceCompilation( mapType );
 			XmlCompiler._importHelper.includeStaticRef( staticRef );
 			
+			if ( type == ContextTypeList.CLASS )
+			{
+				XmlCompiler._importHelper.forceCompilation( args[ 0 ].arguments[ 0 ] );
+			}
+
 			XmlCompiler._assembler.buildObject( applicationContext, identifier, type, args, factory, singleton, injectInto, mapType, staticRef, ifList, ifNotList );
 
 			// Build property.

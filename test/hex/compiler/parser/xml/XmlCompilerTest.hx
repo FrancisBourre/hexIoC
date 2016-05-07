@@ -1,16 +1,23 @@
 package hex.compiler.parser.xml;
 
 import hex.collection.HashMap;
+import hex.config.stateful.ServiceLocator;
 import hex.control.command.BasicCommand;
+import hex.di.Injector;
 import hex.domain.ApplicationDomainDispatcher;
+import hex.event.Dispatcher;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.core.IContextFactory;
 import hex.ioc.core.ICoreFactory;
 import hex.ioc.parser.xml.ApplicationXMLParser;
 import hex.ioc.parser.xml.mock.ClassWithConstantConstantArgument;
+import hex.ioc.parser.xml.mock.IMockAmazonService;
+import hex.ioc.parser.xml.mock.IMockFacebookService;
+import hex.ioc.parser.xml.mock.MockAmazonService;
 import hex.ioc.parser.xml.mock.MockCaller;
 import hex.ioc.parser.xml.mock.MockChatModule;
+import hex.ioc.parser.xml.mock.MockFacebookService;
 import hex.ioc.parser.xml.mock.MockFruitVO;
 import hex.ioc.parser.xml.mock.MockRectangle;
 import hex.ioc.parser.xml.mock.MockServiceProvider;
@@ -366,7 +373,50 @@ class XmlCompilerTest
 		Assert.equals( "Hello", chat.translatedMessage, "" );
 	}*/
 	
-	@Test( "test static-ref" )
+	@Test( "test building class reference" )
+	public function testBuildingClassReference() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/classReference.xml" );
+
+		var rectangleClass : Class<MockRectangle> = this._getCoreFactory().locate( "RectangleClass" );
+		Assert.isInstanceOf( rectangleClass, Class, "" );
+		Assert.isInstanceOf( Type.createInstance( rectangleClass, [] ), MockRectangle, "" );
+
+		/*var classContainer = this._getCoreFactory().locate( "classContainer" );
+
+		var anotherRectangleClass : Class<MockRectangle> = classContainer.AnotherRectangleClass;
+		Assert.isInstanceOf( anotherRectangleClass, Class, "" );
+		Assert.isInstanceOf( Type.createInstance( anotherRectangleClass, [] ), MockRectangle, "" );
+
+		Assert.equals( rectangleClass, anotherRectangleClass, "" );
+
+		var anotherRectangleClassRef : Class<MockRectangle> = this._getCoreFactory().locate( "classContainer.AnotherRectangleClass" );
+		Assert.isInstanceOf( anotherRectangleClassRef, Class, "" );
+		Assert.equals( anotherRectangleClass, anotherRectangleClassRef, "" );*/
+	}
+	
+	/*@Test( "test building serviceLocator" )
+	public function testBuildingServiceLocator() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/serviceLocator.xml" );
+
+		var serviceLocator : ServiceLocator = this._getCoreFactory().locate( "serviceLocator" );
+		Assert.isInstanceOf( serviceLocator, ServiceLocator, "" );
+
+		var amazonService : IMockAmazonService = serviceLocator.getService( IMockAmazonService );
+		var facebookService : IMockFacebookService = serviceLocator.getService( IMockFacebookService );
+		Assert.isInstanceOf( amazonService, MockAmazonService, "" );
+		Assert.isInstanceOf( facebookService, MockFacebookService, "" );
+
+		var injector = new Injector();
+		serviceLocator.configure( injector, new Dispatcher(), null );
+
+		Assert.isInstanceOf( injector.getInstance( IMockAmazonService ), MockAmazonService, "" );
+		Assert.isInstanceOf( injector.getInstance( IMockFacebookService ), MockFacebookService, "" );
+		Assert.equals( facebookService, injector.getInstance( IMockFacebookService ), "" );
+	}*/
+	
+	/*@Test( "test static-ref" )
 	public function testStaticRef() : Void
 	{
 		this._applicationAssembler = XmlCompiler.readXmlFile(  "context/staticRef.xml" );
@@ -394,5 +444,5 @@ class XmlCompilerTest
 		var instance : ClassWithConstantConstantArgument = this._getCoreFactory().locate( "instance" );
 		Assert.isNotNull( instance, "" );
 		Assert.equals( instance.constant, MockStubStatefulService.INT_VO_UPDATE, "" );
-	}
+	}*/
 }

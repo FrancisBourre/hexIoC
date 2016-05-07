@@ -1,8 +1,11 @@
 package hex.compiler.factory;
 
+import haxe.macro.Context;
+import haxe.macro.Expr;
 import hex.ioc.vo.FactoryVO;
 import hex.error.IllegalArgumentException;
 import hex.ioc.vo.ConstructorVO;
+import hex.util.MacroUtil;
 
 /**
  * ...
@@ -15,10 +18,11 @@ class ClassFactory
 
 	}
 	
+	#if macro
 	static public function build( factoryVO : FactoryVO ) : Dynamic
 	{
 		var constructorVO 		: ConstructorVO = factoryVO.constructorVO;
-		var clazz 				: Class<Dynamic>;
+		var e 					: Expr = null;
 		var qualifiedClassName 	: String = "";
 		
 		var args = constructorVO.arguments;
@@ -30,20 +34,21 @@ class ClassFactory
 
 		try
 		{
-			clazz = Type.resolveClass( qualifiedClassName );
+			var tp = MacroUtil.getPack( qualifiedClassName );
+			e = macro { $p { tp }; };
 		}
 		catch ( e : Dynamic )
 		{
-			clazz = null;
+			Context.error( "'" + qualifiedClassName + "' is not available", Context.currentPos() );
 		}
 		
-		if ( clazz == null )
+		if ( !constructorVO.isProperty )
 		{
-			throw new IllegalArgumentException( "'" + qualifiedClassName + "' is not available" );
+			var idVar = constructorVO.argumentName != null ? constructorVO.argumentName : constructorVO.ID;
+			factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
 		}
-
-		constructorVO.result = clazz;
 		
-		return null;
+		return e;
 	}
+	#end
 }
