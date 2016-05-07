@@ -1,9 +1,8 @@
 package hex.compiler.factory;
 
 import haxe.macro.Context;
-import hex.ioc.vo.FactoryVO;
-import hex.config.stateful.ServiceLocator;
 import hex.ioc.vo.ConstructorVO;
+import hex.ioc.vo.FactoryVO;
 import hex.ioc.vo.MapVO;
 import hex.util.MacroUtil;
 
@@ -29,7 +28,6 @@ class ServiceLocatorFactory
 		var typePath = MacroUtil.getTypePath( "hex.config.stateful.ServiceLocator" );
 		var e = macro { new $typePath(); };
 		
-		//var e = Context.parseInlineString( "new HashMap<Dynamic, Dynamic>()", Context.currentPos() );
 		factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
 		
 		var extVar = macro $i{ idVar };
@@ -40,24 +38,12 @@ class ServiceLocatorFactory
 
 		} else
 		{
-			/*for ( item in args )
-			{
-				if ( item.key != null )
-				{
-					serviceLocator.addService( item.key, item.value, item.mapName );
-
-				} else
-				{
-					trace( "ServiceLocatorFactory.build() adds item with a 'null' key for '"  + item.value +"' value." );
-				}
-			}*/
-			
 			for ( item in args )
 			{
 				if ( item.key != null )
-				{//trace( args );
-					var a = [ item.key, item.value, $v{ item.mapName } ];
-					//factoryVO.expressions.push( macro @:mergeBlock { $extVar.addService( $a{ a } ); } );
+				{
+					var a = [ item.key, item.value ];
+					factoryVO.expressions.push( macro @:mergeBlock { $extVar.addService( $a{ a } ); } );
 					
 				} else
 				{
@@ -65,8 +51,6 @@ class ServiceLocatorFactory
 				}
 			}
 		}
-
-		//constructorVO.result = serviceLocator;
 		
 		return e;
 	}

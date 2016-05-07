@@ -357,6 +357,19 @@ class XmlCompilerTest
 		Assert.equals( "banana", banana.toString(), "" );
 	}
 	
+	@Test( "test building Map with class reference" )
+	public function testBuildingMapWithClassReference() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/hashmapWithClassReference.xml" );
+
+		var map : HashMap<Class<IMockAmazonService>, Class<MockAmazonService>> = this._getCoreFactory().locate( "map" );
+		Assert.isNotNull( map, "" );
+		
+		var amazonServiceClass : Class<MockAmazonService> = map.get( IMockAmazonService );
+		Assert.equals( IMockAmazonService, map.getKeys()[ 0 ], "" );
+		Assert.equals( MockAmazonService, amazonServiceClass, "" );
+	}
+	
 	/*@Test( "test building two modules listening each other" )
 	public function testBuildingTwoModulesListeningEachOther() : Void
 	{
@@ -395,7 +408,7 @@ class XmlCompilerTest
 		Assert.equals( anotherRectangleClass, anotherRectangleClassRef, "" );
 	}
 	
-	/*@Test( "test building serviceLocator" )
+	@Test( "test building serviceLocator" )
 	public function testBuildingServiceLocator() : Void
 	{
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/serviceLocator.xml" );
@@ -414,7 +427,7 @@ class XmlCompilerTest
 		Assert.isInstanceOf( injector.getInstance( IMockAmazonService ), MockAmazonService, "" );
 		Assert.isInstanceOf( injector.getInstance( IMockFacebookService ), MockFacebookService, "" );
 		Assert.equals( facebookService, injector.getInstance( IMockFacebookService ), "" );
-	}*/
+	}
 	
 	@Test( "test static-ref" )
 	public function testStaticRef() : Void

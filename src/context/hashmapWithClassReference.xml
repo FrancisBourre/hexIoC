@@ -1,0 +1,5 @@
+<root name="applicationContext">
+    <collection id="map" type="hex.collection.HashMap">
+        <item> <key type="Class" value="hex.ioc.parser.xml.mock.IMockAmazonService"/> <value type="Class" value="hex.ioc.parser.xml.mock.MockAmazonService"/></item>
+    </collection>
+</root>
