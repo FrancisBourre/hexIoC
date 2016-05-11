@@ -25,6 +25,7 @@ import hex.ioc.control.FloatFactory;
 import hex.ioc.control.FunctionFactory;
 import hex.ioc.control.HashMapFactory;
 import hex.ioc.control.IntFactory;
+import hex.ioc.control.MappingConfigurationFactory;
 import hex.ioc.control.NullFactory;
 import hex.ioc.control.ServiceLocatorFactory;
 import hex.ioc.control.StaticVariableFactory;
@@ -212,7 +213,7 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 			var args = cons.arguments;
 			if ( args != null )
 			{
-				if ( cons.type == ContextTypeList.HASHMAP || cons.type == ContextTypeList.SERVICE_LOCATOR )
+				if ( cons.type == ContextTypeList.HASHMAP || cons.type == ContextTypeList.SERVICE_LOCATOR || cons.type == ContextTypeList.MAPPING_CONFIG )
 				{
 					var result = [];
 					for ( obj in args )
@@ -374,6 +375,7 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		this._factoryMap.set( ContextTypeList.FUNCTION, FunctionFactory.build );
 		this._factoryMap.set( ContextTypeList.INSTANCE, ClassInstanceFactory.build );
 		this._factoryMap.set( ContextTypeList.STATIC_VARIABLE, StaticVariableFactory.build );
+		this._factoryMap.set( ContextTypeList.MAPPING_CONFIG, MappingConfigurationFactory.build );
 		
 		this._coreFactory.addListener( this );
 	}

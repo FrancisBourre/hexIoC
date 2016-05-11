@@ -2,6 +2,7 @@ package hex.compiler.core;
 
 import haxe.macro.Expr;
 import hex.collection.ILocatorListener;
+import hex.compiler.factory.MappingConfigurationFactory;
 import hex.compiler.factory.StaticVariableFactory;
 
 
@@ -244,7 +245,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 			var args = cons.arguments;
 			if ( args != null )
 			{
-				if ( cons.type == ContextTypeList.HASHMAP || cons.type == ContextTypeList.SERVICE_LOCATOR )
+				if ( cons.type == ContextTypeList.HASHMAP || cons.type == ContextTypeList.SERVICE_LOCATOR || cons.type == ContextTypeList.MAPPING_CONFIG )
 				{
 					var result = [];
 					for ( obj in args )
@@ -450,6 +451,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		this._factoryMap.set( ContextTypeList.XML, XmlFactory.build );
 		this._factoryMap.set( ContextTypeList.FUNCTION, FunctionFactory.build );
 		this._factoryMap.set( ContextTypeList.STATIC_VARIABLE, StaticVariableFactory.build );
+		this._factoryMap.set( ContextTypeList.MAPPING_CONFIG, MappingConfigurationFactory.build );
 		#end
 		
 		this._coreFactory.addListener( this );

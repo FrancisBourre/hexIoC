@@ -45,7 +45,7 @@ class XmlReader
 		}
 		else
 		{
-			if ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR )
+			if ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR || type == ContextTypeList.MAPPING_CONFIG )
 			{
 				args = XMLParserUtil.getMapArguments( identifier, xml );
 				for ( arg in args )

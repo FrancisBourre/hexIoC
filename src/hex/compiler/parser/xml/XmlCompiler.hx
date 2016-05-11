@@ -73,7 +73,7 @@ class XmlCompiler
 				type = staticRef != null ? ContextTypeList.STATIC_VARIABLE : ContextTypeList.STRING;
 			}
 
-			if ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR )
+			if ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR || type == ContextTypeList.MAPPING_CONFIG )
 			{
 				args = XMLParserUtil.getMapArguments( identifier, xml );
 				for ( arg in args )

@@ -3,6 +3,7 @@ package hex.ioc.parser.xml;
 import hex.di.Injector;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.core.IContextFactory;
+import hex.ioc.di.MappingConfiguration;
 import hex.ioc.parser.preprocess.Preprocessor;
 import haxe.Timer;
 import hex.collection.HashMap;
@@ -542,6 +543,37 @@ class ObjectXMLParserTest
 		var anotherRectangleClassRef : Class<MockRectangle> = this._builderFactory.getCoreFactory().locate( "classContainer.AnotherRectangleClass" );
 		Assert.isInstanceOf( anotherRectangleClassRef, Class, "" );
 		Assert.equals( anotherRectangleClass, anotherRectangleClassRef, "" );
+	}
+	
+	@Test( "test building mapping configuration" )
+	public function testBuildingMappingConfiguration() : Void
+	{
+		this.build(  XmlReader.readXmlFile( "context/mappingConfiguration.xml" ) );
+
+		var config : MappingConfiguration = this._builderFactory.getCoreFactory().locate( "config" );
+		Assert.isInstanceOf( config, MappingConfiguration, "" );
+
+		var injector = new Injector();
+		config.configure( injector, new Dispatcher(), null );
+
+		Assert.isInstanceOf( injector.getInstance( IMockAmazonService ), MockAmazonService, "" );
+		Assert.isInstanceOf( injector.getInstance( IMockFacebookService ), MockFacebookService, "" );
+		Assert.equals( this._builderFactory.getCoreFactory().locate( "facebookService" ), injector.getInstance( IMockFacebookService ), "" );
+	}
+	
+	@Test( "test building mapping configuration with map names" )
+	public function testBuildingMappingConfigurationWithMapNames() : Void
+	{
+		this.build(  XmlReader.readXmlFile( "context/mappingConfigurationWithMapNames.xml" ) );
+
+		var config : MappingConfiguration = this._builderFactory.getCoreFactory().locate( "config" );
+		Assert.isInstanceOf( config, MappingConfiguration, "" );
+
+		var injector = new Injector();
+		config.configure( injector, new Dispatcher(), null );
+
+		Assert.isInstanceOf( injector.getInstance( IMockAmazonService, "amazon0" ),  MockAmazonService, "" );
+		Assert.isInstanceOf( injector.getInstance( IMockAmazonService, "amazon1" ), AnotherMockAmazonService, "" );
 	}
 	
 	@Test( "test building serviceLocator" )
