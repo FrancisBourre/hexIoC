@@ -226,13 +226,13 @@ applicationAssembler.buildEverything();
 </root>
 ```
 
-## Building a service locator with mapped classes
+## Building a mapping configuration with mapped service classes
 ```xml
 <root name="applicationContext">
-	<serviceLocator id="serviceLocator" type="hex.config.stateful.ServiceLocator">
+	<config id="config" type="hex.ioc.di.MappingConfiguration">
 		<item map-name="amazon0"> <key type="Class" value="hex.ioc.parser.xml.mock.IMockAmazonService"/> <value type="Class" value="hex.ioc.parser.xml.mock.MockAmazonService"/></item>
 		<item map-name="amazon1"> <key type="Class" value="hex.ioc.parser.xml.mock.IMockAmazonService"/> <value type="Class" value="hex.ioc.parser.xml.mock.AnotherMockAmazonService"/></item>
-	</serviceLocator>
+	</config>
 </root>
 ```
 
