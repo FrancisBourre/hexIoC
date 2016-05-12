@@ -155,7 +155,7 @@ class XMLParserUtil
 			{
 				var key 	= XMLParserUtil._getAttributes( keyList.next() );
 				var value 	= XMLParserUtil._getAttributes( valueList.next() );			
-				args.push( new MapVO( _getConstructorVO( ownerID, key ), _getConstructorVO( ownerID, value ), XMLAttributeUtil.getMapName( item ) ) );
+				args.push( new MapVO( _getConstructorVO( ownerID, key ), _getConstructorVO( ownerID, value ), XMLAttributeUtil.getMapName( item ), XMLAttributeUtil.getAsSingleton( item ) ) );
 			}
 		}
 

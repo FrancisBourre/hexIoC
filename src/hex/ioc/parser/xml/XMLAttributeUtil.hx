@@ -83,6 +83,11 @@ class XMLAttributeUtil
 	{
 		return xml.get( ContextAttributeList.MAP_NAME );
 	}
+	
+	static public function getAsSingleton( xml : Xml ) : Bool
+	{
+		return xml.get( ContextAttributeList.AS_SINGLETON ) ==  "true";
+	}
 
 	static public function getStaticRef( xml : Xml ) : String
 	{

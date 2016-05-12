@@ -1,4 +1,5 @@
 package hex.compiler.factory;
+
 import haxe.macro.Context;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.FactoryVO;
@@ -41,13 +42,7 @@ class MappingConfigurationFactory
 			{
 				if ( item.key != null )
 				{
-					var a = [ item.key, item.value ];
-
-					if ( item.mapName != null )
-					{
-						a.push( macro { $v { item.mapName } } );
-					}
-					
+					var a = [ item.key, item.value, macro { $v { item.mapName } }, macro { $v { item.asSingleton } } ];
 					factoryVO.expressions.push( macro @:mergeBlock { $extVar.addMapping( $a{ a } ); } );
 					
 				} else

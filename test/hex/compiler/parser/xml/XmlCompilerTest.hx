@@ -441,6 +441,32 @@ class XmlCompilerTest
 		Assert.isInstanceOf( injector.getInstance( IMockAmazonService, "amazon1" ), AnotherMockAmazonService, "" );
 	}
 	
+	@Test( "test building mapping configuration with singleton" )
+	public function testBuildingMappingConfigurationWithSingleton() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/mappingConfigurationWithSingleton.xml" );
+
+		var config = this._getCoreFactory().locate( "config" );
+		Assert.isInstanceOf( config, MappingConfiguration, "" );
+
+		var injector = new Injector();
+		config.configure( injector, new Dispatcher(), null );
+
+		var amazon0 = injector.getInstance( IMockAmazonService, "amazon0" );
+		Assert.isInstanceOf( amazon0,  MockAmazonService, "" );
+		
+		var copyOfAmazon0 = injector.getInstance( IMockAmazonService, "amazon0" );
+		Assert.isInstanceOf( copyOfAmazon0,  MockAmazonService, "" );
+		Assert.equals( amazon0, copyOfAmazon0, "" );
+		
+		var amazon1 = injector.getInstance( IMockAmazonService, "amazon1" );
+		Assert.isInstanceOf( amazon1, AnotherMockAmazonService, "" );
+		
+		var copyOfAmazon1 = injector.getInstance( IMockAmazonService, "amazon1" );
+		Assert.isInstanceOf( copyOfAmazon1,  AnotherMockAmazonService, "" );
+		Assert.notEquals( amazon1, copyOfAmazon1, "" );
+	}
+	
 	@Test( "test building serviceLocator" )
 	public function testBuildingServiceLocator() : Void
 	{

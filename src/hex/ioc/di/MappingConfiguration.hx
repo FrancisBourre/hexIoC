@@ -72,9 +72,9 @@ class MappingConfiguration extends Locator<String, Helper> implements IStatefulC
 		}
 	}
 	
-	public function addMapping( type : Class<Dynamic>, value : Dynamic, ?mapName : String = "", ?isSingleton : Bool = false ) : Bool
+	public function addMapping( type : Class<Dynamic>, value : Dynamic, ?mapName : String = "", ?asSingleton : Bool = false ) : Bool
 	{
-		return this._registerMapping( type, new Helper( value, mapName, isSingleton ), mapName );
+		return this._registerMapping( type, new Helper( value, mapName, asSingleton ), mapName );
 	}
 	
 	public function getMapping() : HashMap<Class<Dynamic>, Dynamic>
@@ -105,11 +105,11 @@ private class Helper
 	public var mapName		: String;
 	public var isSingleton	: Bool;
 
-	public function new( value : Dynamic, mapName : String, ?singleton : Bool = false  )
+	public function new( value : Dynamic, mapName : String, ?isSingleton : Bool = false  )
 	{
-		this.value 		= value;
-		this.mapName 	= mapName;
-		this.isSingleton 	= singleton;
+		this.value 			= value;
+		this.mapName 		= mapName;
+		this.isSingleton 	= isSingleton;
 	}
 	
 	public function toString() : String

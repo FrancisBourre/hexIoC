@@ -21,6 +21,7 @@ class ContextAttributeList
 	static public inline var LOCATOR 				: String = "locator";
 	public static inline var MAP_TYPE 				: String = "map-type";
 	public static inline var MAP_NAME 				: String = "map-name";
+	public static inline var AS_SINGLETON 			: String = "as-singleton";
 	public static inline var STRATEGY 				: String = "strategy";
 	public static inline var INJECTED_IN_MODULE 	: String = "injectedInModule";
 	public static inline var STATIC_REF 			: String = "static-ref";
