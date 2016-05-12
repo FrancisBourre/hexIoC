@@ -1,6 +1,7 @@
 package hex.compiler.factory;
 
 import haxe.macro.Context;
+import hex.ioc.di.MappingConfiguration;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.FactoryVO;
 import hex.ioc.vo.MapVO;
@@ -24,14 +25,11 @@ class MappingConfigurationFactory
 		var args : Array<MapVO> = cast constructorVO.arguments;
 		
 		var idVar = constructorVO.ID;
-		
-		var typePath = MacroUtil.getTypePath( "hex.ioc.di.MappingConfiguration" );
+		var typePath = MacroUtil.getTypePath( Type.getClassName( MappingConfiguration ) );
 		var e = macro { new $typePath(); };
-		
 		factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
 		
 		var extVar = macro $i{ idVar };
-
 		if ( args.length <= 0 )
 		{
 			Context.warning( "MappingConfigurationFactory.build(" + args + ") returns an empty ServiceConfig.", Context.currentPos() );

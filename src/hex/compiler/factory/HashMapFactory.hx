@@ -1,10 +1,12 @@
 package hex.compiler.factory;
 
 import haxe.macro.Context;
+import haxe.macro.Expr;
 import hex.collection.HashMap;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.FactoryVO;
 import hex.ioc.vo.MapVO;
+import hex.util.MacroUtil;
 
 /**
  * ...
@@ -24,8 +26,12 @@ class HashMapFactory
 		var args : Array<MapVO> = cast constructorVO.arguments;
 		
 		var idVar = constructorVO.ID;
-		var e = Context.parseInlineString( "new HashMap<Dynamic, Dynamic>()", Context.currentPos() );
+		var params = [ TPType( macro:Dynamic ), TPType( macro:Dynamic ) ];
+		var typePath = MacroUtil.getTypePath( Type.getClassName( HashMap ), params );
+		
+		var e = macro { new $typePath(); };
 		factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
+		
 		
 		var extVar = macro $i{ idVar };
 

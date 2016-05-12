@@ -1,6 +1,7 @@
 package hex.compiler.factory;
 
 import haxe.macro.Context;
+import hex.config.stateful.ServiceLocator;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.FactoryVO;
 import hex.ioc.vo.MapVO;
@@ -24,14 +25,11 @@ class ServiceLocatorFactory
 		var args : Array<MapVO> = cast constructorVO.arguments;
 		
 		var idVar = constructorVO.ID;
-		
-		var typePath = MacroUtil.getTypePath( "hex.config.stateful.ServiceLocator" );
+		var typePath = MacroUtil.getTypePath( Type.getClassName( ServiceLocator ) );
 		var e = macro { new $typePath(); };
-		
 		factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
 		
 		var extVar = macro $i{ idVar };
-
 		if ( args.length <= 0 )
 		{
 			Context.warning( "ServiceLocatorFactory.build(" + args + ") returns an empty ServiceConfig.", Context.currentPos() );
