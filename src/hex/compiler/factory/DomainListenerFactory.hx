@@ -8,6 +8,7 @@ import hex.error.IllegalArgumentException;
 import hex.event.ClassAdapter;
 import hex.event.EventProxy;
 import hex.event.IAdapterStrategy;
+import hex.event.IObservable;
 import hex.event.MessageType;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.core.ICoreFactory;
@@ -39,14 +40,14 @@ class DomainListenerFactory
 		var listener : Dynamic 							= coreFactory.locate( domainListener.ownerID );
 		var args : Array<DomainListenerVOArguments> 	= domainListener.arguments;
 
-		// Check if event provider is a service
-		var service : IService<ServiceConfiguration> = null;
+		// Check if event provider is observable
+		var observable : IObservable = null;
 		if ( coreFactory.isRegisteredWithKey( domainListener.listenedDomainName ) )
 		{
 			var located : Dynamic = coreFactory.locate( domainListener.listenedDomainName );
-			if ( Std.is( located, IService ) )
+			if ( Std.is( located, IObservable ) )
 			{
-				service = cast located;
+				observable = cast located;
 			}
 		}
 
@@ -61,14 +62,14 @@ class DomainListenerFactory
 				{
 					var callback : Dynamic = domainListenerArgument.strategy != null ? DomainListenerFactory._getStrategyCallback( annotationProvider, applicationContext, listener, method, domainListenerArgument.strategy, domainListenerArgument.injectedInModule ) : Reflect.field( listener, method );
 
-					if ( service == null )
+					if ( observable != null )
 					{
-						var domain : Domain = DomainUtil.getDomain( domainListener.listenedDomainName, Domain );
-						ApplicationDomainDispatcher.getInstance().addHandler( messageType, listener, callback, domain );
+						observable.addHandler( messageType, listener, callback );
 					}
 					else
 					{
-						service.addHandler( messageType, listener, callback );
+						var domain : Domain = DomainUtil.getDomain( domainListener.listenedDomainName, Domain );
+						ApplicationDomainDispatcher.getInstance().addHandler( messageType, listener, callback, domain );
 					}
 				}
 				else
