@@ -129,7 +129,6 @@ class XMLParserUtil
 			var item = iterator.next();
 			
 			var domainListenerVOArguments = new DomainListenerVOArguments();
-			domainListenerVOArguments.name 								= item.get( ContextAttributeList.NAME );
 			domainListenerVOArguments.staticRef 						= item.get( ContextAttributeList.STATIC_REF );
 			domainListenerVOArguments.method 							= item.get( ContextAttributeList.METHOD );
 			domainListenerVOArguments.strategy 							= item.get( ContextAttributeList.STRATEGY );

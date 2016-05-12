@@ -55,10 +55,7 @@ class DomainListenerFactory
 			for ( domainListenerArgument in args )
 			{
 				var method : String = Std.is( listener, EventProxy ) ? "handleCallback" : domainListenerArgument.method;
-				
-				var messageType : MessageType = domainListenerArgument.name != null ? 
-												new MessageType( domainListenerArgument.name ) : 
-												ClassUtil.getStaticVariableReference( domainListenerArgument.staticRef );
+				var messageType : MessageType = ClassUtil.getStaticVariableReference( domainListenerArgument.staticRef );
 
 				if ( ( method != null && Reflect.isFunction( Reflect.field( listener, method ) )) || domainListenerArgument.strategy != null )
 				{
