@@ -40,13 +40,7 @@ class ServiceLocatorFactory
 			{
 				if ( item.key != null )
 				{
-					var a = [ item.key, item.value ];
-
-					if ( item.mapName != null )
-					{
-						a.push( macro { $v { item.mapName } } );
-					}
-					
+					var a = [ item.key, item.value, macro { $v { item.mapName } } ];
 					factoryVO.expressions.push( macro @:mergeBlock { $extVar.addService( $a{ a } ); } );
 					
 				} else

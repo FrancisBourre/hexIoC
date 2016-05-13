@@ -32,9 +32,7 @@ class HashMapFactory
 		var e = macro { new $typePath(); };
 		factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
 		
-		
 		var extVar = macro $i{ idVar };
-
 		if ( args.length == 0 )
 		{
 			Context.warning( "HashMapFactory.build(" + args + ") returns an empty HashMap.", Context.currentPos() );
