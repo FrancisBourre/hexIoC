@@ -15,7 +15,6 @@ class MockXMLParser implements IParser
 	
 	public function parse( serializedContent : Dynamic, target : Dynamic = null ) : Dynamic 
 	{
-		trace( "####", serializedContent );
 		var collection : Array<MockFruitVO> = [];
 		var xml : Xml = cast serializedContent ;
 		
