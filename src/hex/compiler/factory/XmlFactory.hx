@@ -1,7 +1,6 @@
 package hex.compiler.factory;
 
 import hex.ioc.vo.FactoryVO;
-import hex.data.IParser;
 import hex.ioc.error.ParsingException;
 import hex.ioc.vo.ConstructorVO;
 import hex.util.MacroUtil;

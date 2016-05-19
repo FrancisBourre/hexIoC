@@ -1,9 +1,9 @@
 package hex.ioc.parser.preprocess;
 
-import hex.error.IllegalArgumentException;
 import hex.data.IParser;
+import hex.error.IllegalArgumentException;
 
-class Preprocessor implements IParser
+class Preprocessor implements IParser<String>
 {
 	var _property 	: Map<String, String>;
 	var _separator 	: EReg = ~/\$\{.*\}/;
@@ -25,7 +25,7 @@ class Preprocessor implements IParser
 		}
 	}
 
-	public function parse( serializedContent : Dynamic, target : Dynamic = null ) : Dynamic
+	public function parse( serializedContent : Dynamic, target : Dynamic = null ) : String
 	{
 		var context : String = cast serializedContent;
 

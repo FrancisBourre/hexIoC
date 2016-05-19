@@ -6,14 +6,14 @@ import hex.data.IParser;
  * ...
  * @author Francis Bourre
  */
-class MockXMLParser implements IParser
+class MockXMLParser implements IParser<Array<MockFruitVO>>
 {
 	public function new() 
 	{
 		
 	}
 	
-	public function parse( serializedContent : Dynamic, target : Dynamic = null ) : Dynamic 
+	public function parse( serializedContent : Dynamic, target : Dynamic = null ) : Array<MockFruitVO> 
 	{
 		var collection : Array<MockFruitVO> = [];
 		var xml : Xml = cast serializedContent ;
@@ -25,7 +25,7 @@ class MockXMLParser implements IParser
 			collection.push( new MockFruitVO( item.firstChild().nodeValue ) );
 
 		}
-		trace( collection );
+
 		return collection;
 	}
 }
