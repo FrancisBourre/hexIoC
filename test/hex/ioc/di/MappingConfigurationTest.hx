@@ -1,7 +1,7 @@
 package hex.ioc.di;
+
 import hex.event.Dispatcher;
 import hex.event.MessageType;
-import hex.service.ServiceConfiguration;
 import hex.service.stateful.IStatefulService;
 import hex.service.stateful.StatefulService;
 import hex.service.stateless.IStatelessService;
@@ -125,7 +125,7 @@ class MappingConfigurationTest
 	}
 }
 
-private class MockStatefulService extends StatefulService<ServiceConfiguration>
+private class MockStatefulService extends StatefulService
 {
 	public function new()
 	{

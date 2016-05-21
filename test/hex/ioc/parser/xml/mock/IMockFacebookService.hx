@@ -1,13 +1,12 @@
 package hex.ioc.parser.xml.mock;
 
-import hex.service.ServiceConfiguration;
 import hex.service.stateful.IStatefulService;
 
 /**
  * ...
  * @author Francis Bourre
  */
-interface IMockFacebookService extends IStatefulService<ServiceConfiguration>
+interface IMockFacebookService extends IStatefulService
 {
 	function getFriends() : Array<Dynamic>;
 }

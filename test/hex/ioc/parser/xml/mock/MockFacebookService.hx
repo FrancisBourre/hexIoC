@@ -1,20 +1,19 @@
 package hex.ioc.parser.xml.mock;
 
-import hex.service.ServiceConfiguration;
 import hex.service.stateful.StatefulService;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class MockFacebookService extends StatefulService<ServiceConfiguration> implements IMockFacebookService
+class MockFacebookService extends StatefulService implements IMockFacebookService
 {
 	public function new() 
 	{
 		super();
 	}
 	
-	@postConstruct
+	@PostConstruct
 	override public function createConfiguration() : Void
 	{
 		//do nothing

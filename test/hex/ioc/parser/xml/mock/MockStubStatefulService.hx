@@ -1,14 +1,13 @@
 package hex.ioc.parser.xml.mock;
 
 import hex.event.MessageType;
-import hex.service.ServiceConfiguration;
 import hex.service.stateful.StatefulService;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class MockStubStatefulService extends StatefulService<ServiceConfiguration> implements IMockStubStatefulService
+class MockStubStatefulService extends StatefulService implements IMockStubStatefulService
 {
 	public static var INT_VO_UPDATE 			= new MessageType( "onIntVOUpdate" );
 	public static var BOOLEAN_VO_UPDATE 		= new MessageType( "onBooleanVOUpdate" );
@@ -21,7 +20,7 @@ class MockStubStatefulService extends StatefulService<ServiceConfiguration> impl
 		super();
 	}
 	
-	@postConstruct
+	@PostConstruct
 	override public function createConfiguration() : Void
 	{
 		//do nothing
