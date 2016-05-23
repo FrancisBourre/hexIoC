@@ -330,7 +330,11 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 
 	public function assignDomainListener( id : String ) : Bool
 	{
-		return DomainListenerFactory.build( id, this._domainListenerVOLocator, this._applicationContext, this._annotationProvider );
+		#if macro
+		return DomainListenerFactory.build( this._getFactoryVO( null ), id, this._domainListenerVOLocator, this._applicationContext, this._annotationProvider );
+		#else
+		return false;
+		#end
 	}
 	
 	public function registerMethodCallVO( methodCallVO : MethodCallVO ) : Void
@@ -462,17 +466,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	{
 		var type 								= constructorVO.type;
 		var buildMethod 						= ( this._factoryMap.exists( type ) ) ? this._factoryMap.get( type ) : ClassInstanceFactory.build;
-
-		var builderHelperVO 					= new FactoryVO();
-		
-		builderHelperVO.expressions 			= this._expressions;
-		builderHelperVO.type 					= type;
-		builderHelperVO.contextFactory 			= this;
-		builderHelperVO.coreFactory 			= this._coreFactory;
-		builderHelperVO.constructorVO 			= constructorVO;
-		builderHelperVO.moduleLocator 			= this._moduleLocator;
-
-		buildMethod( builderHelperVO );
+		buildMethod( this._getFactoryVO( constructorVO ) );
 
 		if ( id != null )
 		{
@@ -484,9 +478,25 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 
 		return constructorVO.result;
 	}
-	#end
 	
-	#if macro
+	function _getFactoryVO( ?constructorVO : ConstructorVO ) : FactoryVO
+	{
+		var factoryVO 				= new FactoryVO();
+		factoryVO.expressions 		= this._expressions;
+		
+		if ( constructorVO != null )
+		{
+			factoryVO.type 			= constructorVO.type;
+			factoryVO.constructorVO = constructorVO;
+		}
+		
+		factoryVO.contextFactory 	= this;
+		factoryVO.coreFactory 		= this._coreFactory;
+		factoryVO.moduleLocator 	= this._moduleLocator;
+		
+		return factoryVO;
+	}
+	
 	function _buildArgument( constructorVO : ConstructorVO, ?id : String ) : Dynamic
 	{
 		constructorVO.isProperty = true;
@@ -494,16 +504,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		var type 								= constructorVO.type;
 		var buildMethod 						= ( this._factoryMap.exists( type ) ) ? this._factoryMap.get( type ) : ClassInstanceFactory.build;
 
-		var builderHelperVO 					= new FactoryVO();
-
-		builderHelperVO.expressions 			= this._expressions;
-		builderHelperVO.type 					= type;
-		builderHelperVO.contextFactory 			= this;
-		builderHelperVO.coreFactory 			= this._coreFactory;
-		builderHelperVO.constructorVO 			= constructorVO;
-		builderHelperVO.moduleLocator 			= this._moduleLocator;
-
-		var result = buildMethod( builderHelperVO );
+		var result = buildMethod( this._getFactoryVO( constructorVO ) );
 
 		if ( !constructorVO.isProperty )
 		{

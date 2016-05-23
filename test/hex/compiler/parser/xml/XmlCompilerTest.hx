@@ -372,7 +372,7 @@ class XmlCompilerTest
 		Assert.equals( MockAmazonService, amazonServiceClass, "" );
 	}
 	
-	/*@Test( "test building two modules listening each other" )
+	@Test( "test building two modules listening each other" )
 	public function testBuildingTwoModulesListeningEachOther() : Void
 	{
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/twoModulesListeningEachOther.xml" );
@@ -386,7 +386,7 @@ class XmlCompilerTest
 
 		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "Bonjour" ] );
 		Assert.equals( "Hello", chat.translatedMessage, "" );
-	}*/
+	}
 	
 	@Test( "test building class reference" )
 	public function testBuildingClassReference() : Void

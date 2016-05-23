@@ -10,6 +10,7 @@ import hex.ioc.core.IContextFactory;
 import hex.ioc.error.BuildingException;
 import hex.ioc.vo.CommandMappingVO;
 import hex.ioc.vo.ConstructorVO;
+import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.DomainListenerVOArguments;
 import hex.ioc.vo.MapVO;
 import hex.ioc.vo.MethodCallVO;
@@ -154,7 +155,10 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 		ifNotList 			: Array<String> = null
 	) : Void
 	{
-		//
+		if ( this.allowsIfList( ifList ) && this.allowsIfNotList( ifNotList ) )
+		{
+			this.getContextFactory( applicationContext ).registerDomainListenerVO( new DomainListenerVO( ownerID, listenedDomainName, args ) );
+		}
 	}
 
 	public function configureStateTransition(

@@ -1,5 +1,6 @@
 package hex.compiler.factory;
 
+import haxe.macro.Expr;
 import hex.di.IBasicInjector;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
@@ -9,18 +10,17 @@ import hex.event.ClassAdapter;
 import hex.event.EventProxy;
 import hex.event.IAdapterStrategy;
 import hex.event.IObservable;
-import hex.event.MessageType;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.core.ICoreFactory;
 import hex.ioc.locator.DomainListenerVOLocator;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.DomainListenerVOArguments;
+import hex.ioc.vo.FactoryVO;
 import hex.log.Stringifier;
 import hex.metadata.IAnnotationProvider;
 import hex.module.IModule;
-import hex.service.IService;
-import hex.service.ServiceConfiguration;
 import hex.util.ClassUtil;
+import hex.util.MacroUtil;
 
 /**
  * ...
@@ -33,8 +33,13 @@ class DomainListenerFactory
 
 	}
 	
-	static public function build( id : String, domainListenerVOLocator : DomainListenerVOLocator, applicationContext : AbstractApplicationContext, annotationProvider : IAnnotationProvider ) : Bool
+	#if macro
+	static public function build( factoryVO : FactoryVO, id : String, domainListenerVOLocator : DomainListenerVOLocator, applicationContext : AbstractApplicationContext, annotationProvider : IAnnotationProvider ) : Dynamic
 	{
+		var ApplicationDomainDispatcherClass = MacroUtil.getPack( Type.getClassName( ApplicationDomainDispatcher )  );
+		var DomainUtilClass = MacroUtil.getPack( Type.getClassName( DomainUtil )  );
+		var DomainClass = MacroUtil.getPack( Type.getClassName( Domain )  );
+			
 		var coreFactory : ICoreFactory 					= applicationContext.getCoreFactory();
 		var domainListener : DomainListenerVO			= domainListenerVOLocator.locate( id );
 		var listener : Dynamic 							= coreFactory.locate( domainListener.ownerID );
@@ -56,20 +61,26 @@ class DomainListenerFactory
 			for ( domainListenerArgument in args )
 			{
 				var method : String = Std.is( listener, EventProxy ) ? "handleCallback" : domainListenerArgument.method;
-				var messageType : MessageType = ClassUtil.getStaticVariableReference( domainListenerArgument.staticRef );
+				//var messageType : MessageType = ClassUtil.getStaticVariableReference( domainListenerArgument.staticRef );
 
-				if ( ( method != null && Reflect.isFunction( Reflect.field( listener, method ) )) || domainListenerArgument.strategy != null )
+				if ( ( method != null /*&& Reflect.isFunction( Reflect.field( listener, method ) )*/) || domainListenerArgument.strategy != null )
 				{
 					var callback : Dynamic = domainListenerArgument.strategy != null ? DomainListenerFactory._getStrategyCallback( annotationProvider, applicationContext, listener, method, domainListenerArgument.strategy, domainListenerArgument.injectedInModule ) : Reflect.field( listener, method );
 
 					if ( observable != null )
 					{
-						observable.addHandler( messageType, listener, callback );
+						//TODO implements observable publishers
+						//observable.addHandler( messageType, listener, callback );
 					}
 					else
 					{
-						var domain : Domain = DomainUtil.getDomain( domainListener.listenedDomainName, Domain );
-						ApplicationDomainDispatcher.getInstance().addHandler( messageType, listener, callback, domain );
+						var listenerID 			= domainListenerVOLocator.locate( id ).ownerID;
+						var listenedDomainName 	= domainListener.listenedDomainName;
+						var extVar 				= macro $i{ listenerID };
+						var messageType 		= MacroUtil.getStaticVariable( domainListenerArgument.staticRef );
+						
+						//TODO optimize calls to DomainUtil
+						factoryVO.expressions.push( macro @:mergeBlock { $p { ApplicationDomainDispatcherClass }.getInstance().addHandler( $messageType, $extVar, $extVar.$method, $p { DomainUtilClass }.getDomain( $v{ listenedDomainName }, $p { DomainClass } ) ); } );
 					}
 				}
 				else
@@ -91,8 +102,14 @@ class DomainListenerFactory
 
 		} else
 		{
-			var domain : Domain = DomainUtil.getDomain( domainListener.listenedDomainName, Domain );
-			return ApplicationDomainDispatcher.getInstance().addListener( listener, domain );
+			var listenerID = domainListenerVOLocator.locate( id ).ownerID;
+			var listenedDomainName = domainListener.listenedDomainName;
+			var extVar = macro $i{ listenerID };
+			
+			//TODO optimize calls to DomainUtil
+			factoryVO.expressions.push( macro @:mergeBlock { $p { ApplicationDomainDispatcherClass }.getInstance().addListener( $extVar, $p { DomainUtilClass }.getDomain( $v{ listenedDomainName }, $p { DomainClass } ) ); } );
+
+			return true;
 		}
 	}
 	
@@ -123,4 +140,5 @@ class DomainListenerFactory
 		
 		return Reflect.makeVarArgs( f );
 	}
+	#end
 }

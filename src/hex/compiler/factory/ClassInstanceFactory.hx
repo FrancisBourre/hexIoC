@@ -1,6 +1,10 @@
 package hex.compiler.factory;
 
+import haxe.macro.Context;
 import haxe.macro.Expr;
+import hex.domain.Domain;
+import hex.domain.DomainExpert;
+import hex.domain.DomainUtil;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.FactoryVO;
 import hex.util.MacroUtil;
@@ -32,6 +36,8 @@ class ClassInstanceFactory
 			var tp = MacroUtil.getPack( constructorVO.type );
 			var typePath = MacroUtil.getTypePath( constructorVO.type );
 			
+			
+			
 			//build instance
 			var singleton = constructorVO.singleton;
 			var factory = constructorVO.factory;
@@ -56,6 +62,22 @@ class ClassInstanceFactory
 			}
 			else
 			{
+				var classType = MacroUtil.getClassType( constructorVO.type );
+				var moduleInterface = MacroUtil.getClassType( "hex.module.IModule" );
+				if ( MacroUtil.implementsInterface( classType, moduleInterface ) )
+				{
+					//TODO register to AnnotationProvider
+					//AnnotationProvider.registerToDomain( factoryVO.contextFactory.getAnnotationProvider(), DomainUtil.getDomain( constructorVO.ID, Domain ) );
+					
+					var DomainExpertClass = MacroUtil.getPack( Type.getClassName( DomainExpert )  );
+					var DomainUtilClass = MacroUtil.getPack( Type.getClassName( DomainUtil )  );
+					var DomainClass = MacroUtil.getPack( Type.getClassName( Domain )  );
+					
+					//TODO register for every instance (from singleton and/or factory)
+					//TODO optimize calls to DomainUtil
+					factoryVO.expressions.push( macro @:mergeBlock { $p { DomainExpertClass }.getInstance().registerDomain( $p { DomainUtilClass }.getDomain( $v{ idVar }, $p { DomainClass } ) ); } );
+				}
+				
 				e = macro { new $typePath( $a{ constructorVO.constructorArgs } ); };
 				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
 			}
