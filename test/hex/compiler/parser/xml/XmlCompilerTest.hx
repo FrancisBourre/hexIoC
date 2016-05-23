@@ -359,19 +359,6 @@ class XmlCompilerTest
 		Assert.equals( "banana", banana.toString(), "" );
 	}
 	
-	@Test( "test building Map with class reference" )
-	public function testBuildingMapWithClassReference() : Void
-	{
-		this._applicationAssembler = XmlCompiler.readXmlFile( "context/hashmapWithClassReference.xml" );
-
-		var map : HashMap<Class<IMockAmazonService>, Class<MockAmazonService>> = this._getCoreFactory().locate( "map" );
-		Assert.isNotNull( map, "" );
-		
-		var amazonServiceClass : Class<MockAmazonService> = map.get( IMockAmazonService );
-		Assert.equals( IMockAmazonService, map.getKeys()[ 0 ], "" );
-		Assert.equals( MockAmazonService, amazonServiceClass, "" );
-	}
-	
 	@Test( "test building two modules listening each other" )
 	public function testBuildingTwoModulesListeningEachOther() : Void
 	{
@@ -386,6 +373,54 @@ class XmlCompilerTest
 
 		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "Bonjour" ] );
 		Assert.equals( "Hello", chat.translatedMessage, "" );
+	}
+	
+	/*@Test( "test building two modules listening each other with adapter" )
+	public function testBuildingTwoModulesListeningEachOtherWithAdapter() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/twoModulesListeningEachOtherWithAdapter.xml" );
+
+		var chat : MockChatModule = this._getCoreFactory().locate( "chat" );
+		Assert.isNotNull( chat, "" );
+		Assert.isNull( chat.translatedMessage, "" );
+
+		var translation : MockTranslationModule = this._getCoreFactory().locate( "translation" );
+		Assert.isNotNull( translation, "" );
+
+		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "Bonjour" ] );
+		Assert.equals( "Hello", chat.translatedMessage, "" );
+		Assert.isInstanceOf( chat.date, Date, "" );
+	}*/
+	
+	/*@Test( "test building two modules listening each other with adapter and injection" )
+	public function testBuildingTwoModulesListeningEachOtherWithAdapterAndInjection() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/twoModulesListeningEachOtherWithAdapterAndInjection.xml" );
+
+		var chat : MockChatModule = this._getCoreFactory().locate( "chat" );
+		Assert.isNotNull( chat, "" );
+
+		var receiver : MockReceiverModule = this._getCoreFactory().locate( "receiver" );
+		Assert.isNotNull( receiver, "" );
+
+		var parser : MockMessageParserModule = this._getCoreFactory().locate( "parser" );
+		Assert.isNotNull( parser, "" );
+
+		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "Bonjour" ] );
+		Assert.equals( "BONJOUR", receiver.message, "" );
+	}*/
+	
+	@Test( "test building Map with class reference" )
+	public function testBuildingMapWithClassReference() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/hashmapWithClassReference.xml" );
+
+		var map : HashMap<Class<IMockAmazonService>, Class<MockAmazonService>> = this._getCoreFactory().locate( "map" );
+		Assert.isNotNull( map, "" );
+		
+		var amazonServiceClass : Class<MockAmazonService> = map.get( IMockAmazonService );
+		Assert.equals( IMockAmazonService, map.getKeys()[ 0 ], "" );
+		Assert.equals( MockAmazonService, amazonServiceClass, "" );
 	}
 	
 	@Test( "test building class reference" )
