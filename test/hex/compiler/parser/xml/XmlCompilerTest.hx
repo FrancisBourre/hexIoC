@@ -1,5 +1,6 @@
 package hex.compiler.parser.xml;
 
+import haxe.Timer;
 import hex.collection.HashMap;
 import hex.config.stateful.ServiceLocator;
 import hex.control.command.BasicCommand;
@@ -38,6 +39,7 @@ import hex.ioc.parser.xml.mock.MockTranslationModule;
 import hex.structures.Point;
 import hex.structures.Size;
 import hex.unittest.assertion.Assert;
+import hex.unittest.runner.MethodRunner;
 
 /**
  * ...
@@ -593,6 +595,33 @@ class XmlCompilerTest
 		Assert.isInstanceOf( myModule, MockMappedModule, "" );
 		Assert.equals( myModule, this._applicationAssembler.getApplicationContext( "applicationContext" ).getBasicInjector().getInstance( IMockMappedModule, "myModule" ), "" );
 	}
+	
+	/*function _onCompleteHandler() : Void
+	{
+		var receiver : MockReceiverModule = this._getCoreFactory().locate( "receiver" );
+		Assert.equals( "BONJOUR:HTTP://GOOGLE.COM", receiver.message, "" );
+	}
+	
+	@Async( "test EventTrigger" )
+	public function testEventTrigger() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/eventTrigger.xml" );
+
+		var eventTrigger : Dynamic = this._getCoreFactory().locate( "eventTrigger" );
+		Assert.isNotNull( eventTrigger, "" );
+		
+		var chat : MockChatModule = this._getCoreFactory().locate( "chat" );
+		Assert.isNotNull( chat, "" );
+
+		var receiver : MockReceiverModule = this._getCoreFactory().locate( "receiver" );
+		Assert.isNotNull( receiver, "" );
+
+		var parser : MockMessageParserModule = this._getCoreFactory().locate( "parser" );
+		Assert.isNotNull( parser, "" );
+
+		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandler ), 500 );
+		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "bonjour" ] );
+	}*/
 	
 	@Test( "test module listening service" )
 	public function testModuleListeningService() : Void

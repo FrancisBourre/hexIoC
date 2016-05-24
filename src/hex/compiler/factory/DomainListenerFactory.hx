@@ -1,5 +1,6 @@
 package hex.compiler.factory;
 
+import haxe.macro.Context;
 import haxe.macro.Expr;
 import hex.di.IBasicInjector;
 import hex.domain.ApplicationDomainDispatcher;
@@ -60,12 +61,13 @@ class DomainListenerFactory
 		{
 			for ( domainListenerArgument in args )
 			{
+				//TODO implement EventProxy
 				var method : String = Std.is( listener, EventProxy ) ? "handleCallback" : domainListenerArgument.method;
-				//var messageType : MessageType = ClassUtil.getStaticVariableReference( domainListenerArgument.staticRef );
 
 				if ( ( method != null /*&& Reflect.isFunction( Reflect.field( listener, method ) )*/) || domainListenerArgument.strategy != null )
 				{
 					var listenerID 			= domainListenerVOLocator.locate( id ).ownerID;
+					var listenerVar 		= macro $i{ listenerID };
 					var listenedDomainName 	= domainListener.listenedDomainName;
 					var messageType 		= MacroUtil.getStaticVariable( domainListenerArgument.staticRef );
 					var strategyClassName 	= domainListenerArgument.strategy;
@@ -74,7 +76,7 @@ class DomainListenerFactory
 
 					if ( strategyClassName != null )
 					{
-						var listenerVar = macro $i{ listenerID };
+						
 						var StrategyClass = MacroUtil.getPack( strategyClassName );
 						var ClassAdapterClass = MacroUtil.getTypePath( Type.getClassName( ClassAdapter ) );
 						
@@ -85,15 +87,13 @@ class DomainListenerFactory
 						factoryVO.expressions.push( macro @:mergeBlock { $adapterVar.setAdapterClass( $p { StrategyClass } ); } );
 						//TODO set AnnotationProvider
 						//adapter.setAnnotationProvider( annotationProvider );
-						
-						var adapterExp = macro { Reflect.makeVarArgs( function( rest : Array<Dynamic> ) : Void { ( $adapterVar.getCallbackAdapter() )( rest ); } ); };
-						
+
 						if ( domainListenerArgument.injectedInModule && factoryVO.moduleLocator.isRegisteredWithKey( listenerID ) )
 						{
-							//var basicInjector : IBasicInjector = listener.getBasicInjector();
-							//adapter.setFactoryMethod( basicInjector, basicInjector.instantiateUnmapped );
-							
-							factoryVO.expressions.push( macro @:mergeBlock { $adapterVar.setFactoryMethod( $listenerVar.getBasicInjector(), $listenerVar.getBasicInjector().instantiateUnmapped ); } );
+							factoryVO.expressions.push( macro @:mergeBlock 
+							{ 
+								$adapterVar.setFactoryMethod( $listenerVar.getBasicInjector(), $listenerVar.getBasicInjector().instantiateUnmapped ); 
+							} );
 						}
 						else 
 						{
@@ -104,10 +104,11 @@ class DomainListenerFactory
 							} );
 						}
 						
+						var adapterExp = macro { Reflect.makeVarArgs( function( rest : Array<Dynamic> ) : Void { ( $adapterVar.getCallbackAdapter() )( rest ); } ); };
+						
 						if ( factoryVO.observableLocator.isRegisteredWithKey( listenedDomainName ) )
 						{
 							var dispatcherVar = macro $i{ listenedDomainName };
-							var listenerVar = macro $i { listenerID };
 							factoryVO.expressions.push( macro @:mergeBlock { $dispatcherVar.addHandler( $messageType, $listenerVar, $adapterExp ); } );
 						}
 						else
@@ -116,8 +117,8 @@ class DomainListenerFactory
 							factoryVO.expressions.push( macro @:mergeBlock 
 							{ 
 								$p { ApplicationDomainDispatcherClass } .getInstance()
-								.addHandler( $messageType, $listenerVar, $adapterExp, $p { DomainUtilClass }.getDomain( $v{ listenedDomainName }, $p { DomainClass } ) ); 
-								
+								.addHandler( $messageType, $listenerVar, $adapterExp, 
+								$p { DomainUtilClass }.getDomain( $v{ listenedDomainName }, $p { DomainClass } ) ); 
 							} );
 						}
 					}
@@ -129,34 +130,28 @@ class DomainListenerFactory
 							//observable.addHandler( messageType, listener, callback );
 							
 							var dispatcherVar = macro $i{ listenedDomainName };
-							var listenerVar = macro $i{ listenerID };
-							factoryVO.expressions.push( macro @:mergeBlock { $dispatcherVar.addHandler( $messageType, $listenerVar, $listenerVar.$method ); } );
+							factoryVO.expressions.push( macro @:mergeBlock 
+							{ 
+								$dispatcherVar.addHandler( $messageType, $listenerVar, $listenerVar.$method ); 
+							} );
 						}
 						else
 						{
-							var listenerID 			= domainListenerVOLocator.locate( id ).ownerID;
-							var listenedDomainName 	= domainListener.listenedDomainName;
-							var extVar 				= macro $i{ listenerID };
-							var messageType 		= MacroUtil.getStaticVariable( domainListenerArgument.staticRef );
-						
 							//TODO optimize calls to DomainUtil
-							factoryVO.expressions.push( macro @:mergeBlock { $p { ApplicationDomainDispatcherClass }.getInstance().addHandler( $messageType, $extVar, $extVar.$method, $p { DomainUtilClass }.getDomain( $v{ listenedDomainName }, $p { DomainClass } ) ); } );
+							var messageType = MacroUtil.getStaticVariable( domainListenerArgument.staticRef );
+							factoryVO.expressions.push( macro @:mergeBlock { $p { ApplicationDomainDispatcherClass }.getInstance().addHandler( $messageType, $listenerVar, $listenerVar.$method, $p { DomainUtilClass }.getDomain( $v{ listenedDomainName }, $p { DomainClass } ) ); } );
 						}
-					
-						
 					}
 				}
 				else
 				{
 					if ( method == null )
 					{
-						throw new IllegalArgumentException( "DomainListenerFactory.build failed. Callback should be defined (use 'method' attribute) in instance of '" 
-															+ Stringifier.stringify( listener ) + "' class with '" + domainListener.ownerID + "' id" );
+						Context.error( "DomainListenerFactory.build failed. Callback should be defined (use 'method' attribute) in node with '" + domainListener.ownerID + "' id", Context.currentPos() );
 					}
 					else
 					{
-						throw new IllegalArgumentException( "DomainListenerFactory.build failed. Method named '" + method + "' can't be found in instance of '" 
-															+ Stringifier.stringify( listener ) + "' class with '" + domainListener.ownerID + "' id" );
+						Context.error( "DomainListenerFactory.build failed. Method named '" + method + "' can't be found in node with '" + domainListener.ownerID + "' id", Context.currentPos() );
 					}
 				}
 			}
