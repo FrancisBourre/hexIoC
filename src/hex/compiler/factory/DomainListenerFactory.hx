@@ -65,22 +65,85 @@ class DomainListenerFactory
 
 				if ( ( method != null /*&& Reflect.isFunction( Reflect.field( listener, method ) )*/) || domainListenerArgument.strategy != null )
 				{
-					var callback : Dynamic = domainListenerArgument.strategy != null ? DomainListenerFactory._getStrategyCallback( annotationProvider, applicationContext, listener, method, domainListenerArgument.strategy, domainListenerArgument.injectedInModule ) : Reflect.field( listener, method );
+					var listenerID 			= domainListenerVOLocator.locate( id ).ownerID;
+					var listenedDomainName 	= domainListener.listenedDomainName;
+					var messageType 		= MacroUtil.getStaticVariable( domainListenerArgument.staticRef );
+					var strategyClassName 	= domainListenerArgument.strategy;
 
-					if ( observable != null )
+					//var callback : Dynamic = domainListenerArgument.strategy != null ? DomainListenerFactory._getStrategyCallback( annotationProvider, applicationContext, listener, method, domainListenerArgument.strategy, domainListenerArgument.injectedInModule ) : Reflect.field( listener, method );
+
+					if ( strategyClassName != null )
 					{
-						//TODO implements observable publishers
-						//observable.addHandler( messageType, listener, callback );
+						var listenerVar = macro $i{ listenerID };
+						var StrategyClass = MacroUtil.getPack( strategyClassName );
+						var ClassAdapterClass = MacroUtil.getTypePath( Type.getClassName( ClassAdapter ) );
+						
+						var adapterVarName = "__adapterFor__" + listenedDomainName + "__" + ( domainListenerArgument.staticRef.split( "." ).join( "_" ) );
+						factoryVO.expressions.push( macro @:mergeBlock { var $adapterVarName = new $ClassAdapterClass(); } );
+						var adapterVar = macro $i { adapterVarName };
+						factoryVO.expressions.push( macro @:mergeBlock { $adapterVar.setCallBackMethod( $listenerVar, $listenerVar.$method ); } );
+						factoryVO.expressions.push( macro @:mergeBlock { $adapterVar.setAdapterClass( $p { StrategyClass } ); } );
+						//TODO set AnnotationProvider
+						//adapter.setAnnotationProvider( annotationProvider );
+						
+						var adapterExp = macro { Reflect.makeVarArgs( function( rest : Array<Dynamic> ) : Void { ( $adapterVar.getCallbackAdapter() )( rest ); } ); };
+						
+						if ( domainListenerArgument.injectedInModule && factoryVO.moduleLocator.isRegisteredWithKey( listenerID ) )
+						{
+							//var basicInjector : IBasicInjector = listener.getBasicInjector();
+							//adapter.setFactoryMethod( basicInjector, basicInjector.instantiateUnmapped );
+							
+							factoryVO.expressions.push( macro @:mergeBlock { $adapterVar.setFactoryMethod( $listenerVar.getBasicInjector(), $listenerVar.getBasicInjector().instantiateUnmapped ); } );
+						}
+						else 
+						{
+							var applicationContextInjectorVar = macro $i { "applicationContextInjector" };
+							factoryVO.expressions.push( macro @:mergeBlock 
+							{ 
+								$adapterVar.setFactoryMethod( $applicationContextInjectorVar, $applicationContextInjectorVar.instantiateUnmapped ); 
+							} );
+						}
+						
+						if ( factoryVO.observableLocator.isRegisteredWithKey( listenedDomainName ) )
+						{
+							var dispatcherVar = macro $i{ listenedDomainName };
+							var listenerVar = macro $i { listenerID };
+							factoryVO.expressions.push( macro @:mergeBlock { $dispatcherVar.addHandler( $messageType, $listenerVar, $adapterExp ); } );
+						}
+						else
+						{
+							//TODO optimize calls to DomainUtil
+							factoryVO.expressions.push( macro @:mergeBlock 
+							{ 
+								$p { ApplicationDomainDispatcherClass } .getInstance()
+								.addHandler( $messageType, $listenerVar, $adapterExp, $p { DomainUtilClass }.getDomain( $v{ listenedDomainName }, $p { DomainClass } ) ); 
+								
+							} );
+						}
 					}
 					else
 					{
-						var listenerID 			= domainListenerVOLocator.locate( id ).ownerID;
-						var listenedDomainName 	= domainListener.listenedDomainName;
-						var extVar 				= macro $i{ listenerID };
-						var messageType 		= MacroUtil.getStaticVariable( domainListenerArgument.staticRef );
+						if ( factoryVO.observableLocator.isRegisteredWithKey( listenedDomainName ) )
+						{
+							//TODO implements observable publishers
+							//observable.addHandler( messageType, listener, callback );
+							
+							var dispatcherVar = macro $i{ listenedDomainName };
+							var listenerVar = macro $i{ listenerID };
+							factoryVO.expressions.push( macro @:mergeBlock { $dispatcherVar.addHandler( $messageType, $listenerVar, $listenerVar.$method ); } );
+						}
+						else
+						{
+							var listenerID 			= domainListenerVOLocator.locate( id ).ownerID;
+							var listenedDomainName 	= domainListener.listenedDomainName;
+							var extVar 				= macro $i{ listenerID };
+							var messageType 		= MacroUtil.getStaticVariable( domainListenerArgument.staticRef );
 						
-						//TODO optimize calls to DomainUtil
-						factoryVO.expressions.push( macro @:mergeBlock { $p { ApplicationDomainDispatcherClass }.getInstance().addHandler( $messageType, $extVar, $extVar.$method, $p { DomainUtilClass }.getDomain( $v{ listenedDomainName }, $p { DomainClass } ) ); } );
+							//TODO optimize calls to DomainUtil
+							factoryVO.expressions.push( macro @:mergeBlock { $p { ApplicationDomainDispatcherClass }.getInstance().addHandler( $messageType, $extVar, $extVar.$method, $p { DomainUtilClass }.getDomain( $v{ listenedDomainName }, $p { DomainClass } ) ); } );
+						}
+					
+						
 					}
 				}
 				else

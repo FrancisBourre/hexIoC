@@ -13,14 +13,24 @@ import hex.ioc.core.ICoreFactory;
 import hex.ioc.di.MappingConfiguration;
 import hex.ioc.parser.xml.ApplicationXMLParser;
 import hex.ioc.parser.xml.mock.AnotherMockAmazonService;
+import hex.ioc.parser.xml.mock.AnotherMockModuleWithServiceCallback;
 import hex.ioc.parser.xml.mock.ClassWithConstantConstantArgument;
 import hex.ioc.parser.xml.mock.IMockAmazonService;
+import hex.ioc.parser.xml.mock.IMockDividerHelper;
 import hex.ioc.parser.xml.mock.IMockFacebookService;
+import hex.ioc.parser.xml.mock.IMockMappedModule;
+import hex.ioc.parser.xml.mock.IMockStubStatefulService;
 import hex.ioc.parser.xml.mock.MockAmazonService;
+import hex.ioc.parser.xml.mock.MockBooleanVO;
 import hex.ioc.parser.xml.mock.MockCaller;
 import hex.ioc.parser.xml.mock.MockChatModule;
 import hex.ioc.parser.xml.mock.MockFacebookService;
 import hex.ioc.parser.xml.mock.MockFruitVO;
+import hex.ioc.parser.xml.mock.MockIntVO;
+import hex.ioc.parser.xml.mock.MockMappedModule;
+import hex.ioc.parser.xml.mock.MockMessageParserModule;
+import hex.ioc.parser.xml.mock.MockModuleWithServiceCallback;
+import hex.ioc.parser.xml.mock.MockReceiverModule;
 import hex.ioc.parser.xml.mock.MockRectangle;
 import hex.ioc.parser.xml.mock.MockServiceProvider;
 import hex.ioc.parser.xml.mock.MockStubStatefulService;
@@ -375,7 +385,7 @@ class XmlCompilerTest
 		Assert.equals( "Hello", chat.translatedMessage, "" );
 	}
 	
-	/*@Test( "test building two modules listening each other with adapter" )
+	@Test( "test building two modules listening each other with adapter" )
 	public function testBuildingTwoModulesListeningEachOtherWithAdapter() : Void
 	{
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/twoModulesListeningEachOtherWithAdapter.xml" );
@@ -390,9 +400,9 @@ class XmlCompilerTest
 		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "Bonjour" ] );
 		Assert.equals( "Hello", chat.translatedMessage, "" );
 		Assert.isInstanceOf( chat.date, Date, "" );
-	}*/
+	}
 	
-	/*@Test( "test building two modules listening each other with adapter and injection" )
+	@Test( "test building two modules listening each other with adapter and injection" )
 	public function testBuildingTwoModulesListeningEachOtherWithAdapterAndInjection() : Void
 	{
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/twoModulesListeningEachOtherWithAdapterAndInjection.xml" );
@@ -408,7 +418,7 @@ class XmlCompilerTest
 
 		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "Bonjour" ] );
 		Assert.equals( "BONJOUR", receiver.message, "" );
-	}*/
+	}
 	
 	@Test( "test building Map with class reference" )
 	public function testBuildingMapWithClassReference() : Void
@@ -546,7 +556,7 @@ class XmlCompilerTest
 	@Test( "test static-ref" )
 	public function testStaticRef() : Void
 	{
-		this._applicationAssembler = XmlCompiler.readXmlFile(  "context/staticRef.xml" );
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/staticRef.xml" );
 
 		var note : String = this._getCoreFactory().locate( "constant" );
 		Assert.isNotNull( note, "" );
@@ -556,7 +566,7 @@ class XmlCompilerTest
 	@Test( "test static-ref property" )
 	public function testStaticProperty() : Void
 	{
-		this._applicationAssembler = XmlCompiler.readXmlFile(  "context/staticRefProperty.xml" );
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/staticRefProperty.xml" );
 
 		var object : Dynamic = this._getCoreFactory().locate( "object" );
 		Assert.isNotNull( object, "" );
@@ -566,10 +576,77 @@ class XmlCompilerTest
 	@Test( "test static-ref argument" )
 	public function testStaticArgument() : Void
 	{
-		this._applicationAssembler = XmlCompiler.readXmlFile(  "context/staticRefArgument.xml" );
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/staticRefArgument.xml" );
 
 		var instance : ClassWithConstantConstantArgument = this._getCoreFactory().locate( "instance" );
 		Assert.isNotNull( instance, "" );
 		Assert.equals( instance.constant, MockStubStatefulService.INT_VO_UPDATE, "" );
+	}
+	
+	@Test( "test map-type attribute" )
+	public function testMapTypeAttribute() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/mapTypeAttribute.xml" );
+
+		var myModule : MockMappedModule = this._getCoreFactory().locate( "myModule" );
+		Assert.isNotNull( myModule, "" );
+		Assert.isInstanceOf( myModule, MockMappedModule, "" );
+		Assert.equals( myModule, this._applicationAssembler.getApplicationContext( "applicationContext" ).getBasicInjector().getInstance( IMockMappedModule, "myModule" ), "" );
+	}
+	
+	@Test( "test module listening service" )
+	public function testModuleListeningService() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/moduleListeningService.xml" );
+
+		var myService : IMockStubStatefulService = this._getCoreFactory().locate( "myService" );
+		Assert.isNotNull( myService, "" );
+
+		var myModule : MockModuleWithServiceCallback = this._getCoreFactory().locate( "myModule" );
+		Assert.isNotNull( myModule, "" );
+
+		var booleanVO = new MockBooleanVO( true );
+		myService.setBooleanVO( booleanVO );
+		Assert.isTrue( myModule.getBooleanValue(), "" );
+	}
+	
+	@Test( "test module listening service with strategy and module injection" )
+	public function testModuleListeningServiceWithStrategyAndModuleInjection() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/moduleListeningServiceWithStrategyAndModuleInjection.xml" );
+
+		var myService : IMockStubStatefulService = this._getCoreFactory().locate( "myService" );
+		Assert.isNotNull( myService, "" );
+
+		var myModule : MockModuleWithServiceCallback = this._getCoreFactory().locate( "myModule" );
+		Assert.isNotNull( myModule, "" );
+
+		var intVO = new MockIntVO( 7 );
+		myService.setIntVO( intVO );
+		Assert.equals( 3.5, ( myModule.getFloatValue() ), "" );
+	}
+	
+	@Test( "test module listening service with strategy and context injection" )
+	public function testModuleListeningServiceWithStrategyAndContextInjection() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/moduleListeningServiceWithStrategyAndContextInjection.xml" );
+
+		var mockDividerHelper : IMockDividerHelper = this._getCoreFactory().locate( "mockDividerHelper" );
+		Assert.isNotNull( mockDividerHelper, "" );
+
+		var myService : IMockStubStatefulService = this._getCoreFactory().locate( "myService" );
+		Assert.isNotNull( myService, "" );
+
+		var myModuleA : MockModuleWithServiceCallback = this._getCoreFactory().locate( "myModuleA" );
+		Assert.isNotNull( myModuleA, "" );
+
+		var myModuleB : AnotherMockModuleWithServiceCallback = this._getCoreFactory().locate( "myModuleB" );
+		Assert.isNotNull( myModuleB, "" );
+
+		myService.setIntVO( new MockIntVO( 7 ) );
+		Assert.equals( 3.5, ( myModuleA.getFloatValue() ), "" );
+
+		myService.setIntVO( new MockIntVO( 9 ) );
+		Assert.equals( 4.5, ( myModuleB.getFloatValue() ), "" );
 	}
 }

@@ -280,6 +280,9 @@ class XmlCompiler
 		//Create runtime applicationContext
 		assembler.addExpression( getApplicationContext( doc, positionTracker ) );
 		
+		//Create applicationcontext injector
+		assembler.addExpression( macro @:mergeBlock { var applicationContextInjector = applicationContext.getBasicInjector(); } );
+			
 		//Create runtime coreFactory
 		assembler.addExpression( macro @:mergeBlock { var coreFactory = applicationContext.getCoreFactory(); } );
 
