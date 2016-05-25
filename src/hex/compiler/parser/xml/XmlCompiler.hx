@@ -14,6 +14,7 @@ import hex.ioc.parser.xml.XMLAttributeUtil;
 import hex.ioc.parser.xml.XMLParserUtil;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVOArguments;
+import hex.metadata.AnnotationProvider;
 import hex.util.ClassUtil;
 import hex.util.MacroUtil;
 
@@ -281,7 +282,13 @@ class XmlCompiler
 		assembler.addExpression( getApplicationContext( doc, positionTracker ) );
 		
 		//Create applicationcontext injector
-		assembler.addExpression( macro @:mergeBlock { var applicationContextInjector = applicationContext.getBasicInjector(); } );
+		assembler.addExpression( macro @:mergeBlock { var __applicationContextInjector = applicationContext.getInjector(); } );
+		
+		//build annotation provider
+		var AnnotationProviderClass = MacroUtil.getTypePath( Type.getClassName( AnnotationProvider ) );
+		assembler.addExpression( macro @:mergeBlock { var __annotationProvider = new $AnnotationProviderClass(); } );
+		var annotationProviderVar = macro $i { "__annotationProvider" };
+		assembler.addExpression( macro @:mergeBlock { $annotationProviderVar.registerInjector( __applicationContextInjector ); } );
 			
 		//Create runtime coreFactory
 		assembler.addExpression( macro @:mergeBlock { var coreFactory = applicationContext.getCoreFactory(); } );

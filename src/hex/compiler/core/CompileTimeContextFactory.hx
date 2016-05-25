@@ -83,8 +83,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		//build contextDispatcher
 		var domain : Domain = DomainUtil.getDomain( applicationContextName, Domain );
 		this._contextDispatcher = ApplicationDomainDispatcher.getInstance().getDomainDispatcher( domain );
-		
-		//build injector
+
 		/*var injector = new Injector();
 		injector.mapToValue( IBasicInjector, injector );
 		injector.mapToValue( IDependencyInjector, injector );

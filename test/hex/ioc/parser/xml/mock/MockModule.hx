@@ -1,6 +1,6 @@
 package hex.ioc.parser.xml.mock;
 
-import hex.di.IBasicInjector;
+import hex.di.IDependencyInjector;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
 import hex.domain.DomainExpert;
@@ -71,7 +71,7 @@ class MockModule implements IModule
 		
 	}
 	
-	public function getBasicInjector() : IBasicInjector
+	public function getInjector() : IDependencyInjector
 	{
 		return null;
 	}

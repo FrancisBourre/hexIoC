@@ -4,6 +4,7 @@ import hex.collection.ILocatorListener;
 import hex.collection.LocatorMessage;
 import hex.core.IAnnotationParsable;
 import hex.di.IBasicInjector;
+import hex.di.IDependencyInjector;
 import hex.error.IllegalArgumentException;
 import hex.error.NoSuchElementException;
 import hex.event.Dispatcher;
@@ -20,14 +21,14 @@ import hex.util.FastEval;
  */
 class CoreFactory implements ICoreFactory
 {
-	var _injector 				: IBasicInjector;
+	var _injector 				: IDependencyInjector;
 	var _annotationProvider 	: IAnnotationProvider;
 	var _dispatcher 			: IDispatcher<ILocatorListener<String, Dynamic>>;
 	var _map 					: Map<String, {}>;
 	
 	static var _fastEvalMethod : Dynamic->String->ICoreFactory->Dynamic = FastEval.fromTarget;
 	
-	public function new( injector : IBasicInjector, annotationProvider : IAnnotationProvider ) 
+	public function new( injector : IDependencyInjector, annotationProvider : IAnnotationProvider ) 
 	{
 		this._injector 				= injector;
 		this._annotationProvider 	= annotationProvider;
@@ -261,7 +262,7 @@ class CoreFactory implements ICoreFactory
 		this._map = new Map();
 	}
 	
-	public function getBasicInjector() : IBasicInjector
+	public function getBasicInjector() : IDependencyInjector
 	{
 		return this._injector;
 	}

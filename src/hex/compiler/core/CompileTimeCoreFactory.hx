@@ -5,7 +5,7 @@ import hex.collection.ILocatorListener;
 import hex.collection.LocatorMessage;
 import hex.compiler.CompileTimeFastEval;
 import hex.core.IAnnotationParsable;
-import hex.di.IBasicInjector;
+import hex.di.IDependencyInjector;
 import hex.error.IllegalArgumentException;
 import hex.error.NoSuchElementException;
 import hex.event.Dispatcher;
@@ -34,7 +34,7 @@ class CompileTimeCoreFactory implements ICoreFactory
 		this._map 					= new Map();
 	}
 	
-	public function getBasicInjector() : IBasicInjector 
+	public function getBasicInjector() : IDependencyInjector 
 	{
 		return null;
 	}

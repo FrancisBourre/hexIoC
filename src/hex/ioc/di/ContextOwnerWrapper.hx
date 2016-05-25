@@ -1,7 +1,7 @@
 package hex.ioc.di;
 
-import hex.di.IBasicInjector;
 import hex.di.IContextOwner;
+import hex.di.IDependencyInjector;
 import hex.ioc.core.ICoreFactory;
 
 /**
@@ -19,8 +19,8 @@ class ContextOwnerWrapper implements IContextOwner
 		this._id 			= id;
 	}
 	
-	public function getBasicInjector() : IBasicInjector 
+	public function getInjector() : IDependencyInjector 
 	{
-		return ( cast this._coreFactory.locate( this._id ) ).getBasicInjector();
+		return ( cast this._coreFactory.locate( this._id ) ).getInjector();
 	}
 }

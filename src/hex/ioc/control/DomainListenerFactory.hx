@@ -106,12 +106,12 @@ class DomainListenerFactory
 		
 		if ( injectedInModule && Std.is( listener, IModule ) )
 		{
-			var basicInjector : IBasicInjector = listener.getBasicInjector();
+			var basicInjector : IBasicInjector = listener.getInjector();
 			adapter.setFactoryMethod( basicInjector, basicInjector.instantiateUnmapped );
 		}
 		else 
 		{
-			adapter.setFactoryMethod( applicationContext.getBasicInjector(), applicationContext.getBasicInjector().instantiateUnmapped );
+			adapter.setFactoryMethod( applicationContext.getInjector(), applicationContext.getInjector().instantiateUnmapped );
 		}
 		
 		var f : Array<Dynamic>->Void = function( rest : Array<Dynamic> ) : Void

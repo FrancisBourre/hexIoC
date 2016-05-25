@@ -1,7 +1,7 @@
 package hex.ioc.assembler;
 
-import hex.di.IBasicInjector;
 import hex.di.IContextOwner;
+import hex.di.IDependencyInjector;
 import hex.error.IllegalArgumentException;
 import hex.error.VirtualMethodException;
 import hex.event.MessageType;
@@ -59,7 +59,7 @@ class AbstractApplicationContext implements Dynamic<AbstractApplicationContext> 
 		return this._coreFactory;
 	}
 	
-	public function getBasicInjector() : IBasicInjector 
+	public function getInjector() : IDependencyInjector 
 	{
 		return this._coreFactory.getBasicInjector();
 	}

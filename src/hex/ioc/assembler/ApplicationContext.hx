@@ -39,7 +39,7 @@ class ApplicationContext extends AbstractApplicationContext
 	{
 		this._initStateList();
 		this._stateMachine = new StateMachine( this.state.CONTEXT_INITIALIZED );
-		this._stateController = new StateController( this.getBasicInjector(), this._stateMachine );
+		this._stateController = new StateController( this.getInjector(), this._stateMachine );
 		this._dispatcher.addListener( this._stateController );
 	}
 	

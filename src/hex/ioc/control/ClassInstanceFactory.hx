@@ -48,7 +48,7 @@ class ClassInstanceFactory
 			if ( constructorVO.mapType != null )
 			{
 				var classToMap : Class<Dynamic> = Type.resolveClass( constructorVO.mapType );
-				factoryVO.contextFactory.getApplicationContext().getBasicInjector().mapToValue( classToMap, constructorVO.result, constructorVO.ID );
+				factoryVO.contextFactory.getApplicationContext().getInjector().mapToValue( classToMap, constructorVO.result, constructorVO.ID );
 			}
 		}
 	}

@@ -49,7 +49,7 @@ class HashMapFactory
 
 		if ( constructorVO.mapType != null )
 		{
-			factoryVO.contextFactory.getApplicationContext().getBasicInjector().mapToValue( HashMap, constructorVO.result, constructorVO.ID );
+			factoryVO.contextFactory.getApplicationContext().getInjector().mapToValue( HashMap, constructorVO.result, constructorVO.ID );
 		}
 	}
 }

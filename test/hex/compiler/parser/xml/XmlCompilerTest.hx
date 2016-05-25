@@ -580,7 +580,7 @@ class XmlCompilerTest
 		var myModule : MockMappedModule = this._getCoreFactory().locate( "myModule" );
 		Assert.isNotNull( myModule, "" );
 		Assert.isInstanceOf( myModule, MockMappedModule, "" );
-		Assert.equals( myModule, this._applicationAssembler.getApplicationContext( "applicationContext" ).getBasicInjector().getInstance( IMockMappedModule, "myModule" ), "" );
+		Assert.equals( myModule, this._applicationAssembler.getApplicationContext( "applicationContext" ).getInjector().getInstance( IMockMappedModule, "myModule" ), "" );
 	}
 
 	@Test( "test module listening service" )
@@ -666,10 +666,24 @@ class XmlCompilerTest
 		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "bonjour" ] );
 	}
 	
+	/*@Test( "test domain dispatch after module initialisation" )
+	public function testDomainDispatchAfterModuleInitialisation() : Void
+	{
+		this.build(  XmlReader.readXmlFile( "context/domainDispatchAfterModuleInitialisation.xml" ) );
+
+		var sender : MockSenderModule = this._builderFactory.getCoreFactory().locate( "sender" );
+		Assert.isNotNull( sender, "" );
+
+		var receiver : MockReceiverModule = this._builderFactory.getCoreFactory().locate( "receiver" );
+		Assert.isNotNull( receiver, "" );
+
+		Assert.equals( "hello receiver", receiver.message, "" );
+	}*/
+	
 	/*@Test( "test 'inject-into' attribute" )
 	public function testInjectIntoAttribute() : Void
 	{
-		var injector = this._applicationContext.getBasicInjector();
+		var injector = this._applicationContext.getInjector();
 		injector.mapToValue( String, 'hola mundo' );
 
 		this.build(  XmlReader.readXmlFile( "context/injectIntoAttribute.xml" ) );

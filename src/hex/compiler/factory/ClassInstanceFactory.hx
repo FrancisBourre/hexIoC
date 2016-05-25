@@ -1,17 +1,16 @@
 package hex.compiler.factory;
-import hex.di.IBasicInjector;
-import hex.log.ILogger;
-
-import haxe.macro.Context;
 import haxe.macro.Expr;
+import hex.di.IDependencyInjector;
 import hex.domain.Domain;
 import hex.domain.DomainExpert;
 import hex.domain.DomainUtil;
 import hex.event.MessageType;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.FactoryVO;
+import hex.log.ILogger;
 import hex.module.IModule;
 import hex.util.MacroUtil;
+
 
 /**
  * ...
@@ -90,14 +89,20 @@ class ClassInstanceFactory
 				
 				e = macro { new $typePath( $a{ constructorVO.constructorArgs } ); };
 				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
+				
+				var annotationParsableInterface = MacroUtil.getClassType( "hex.core.IAnnotationParsable" );
+				if ( MacroUtil.implementsInterface( classType, annotationParsableInterface ) )
+				{
+					var instanceVar = macro $i { idVar };
+					factoryVO.expressions.push( macro @:mergeBlock { __annotationDataProvider.parse( $instanceVar ); } );
+				}
 			}
-			
+
 			if ( constructorVO.mapType != null )
 			{
-				var classToMap = MacroUtil.getPack( constructorVO.mapType );
-				var applicationContextInjectorVar = macro $i { "applicationContextInjector" };
 				var instanceVar = macro $i { idVar };
-				factoryVO.expressions.push( macro @:mergeBlock { $applicationContextInjectorVar.mapToValue( $p{ classToMap }, $instanceVar, $v { idVar } ); } );
+				var classToMap = MacroUtil.getPack( constructorVO.mapType );
+				factoryVO.expressions.push( macro @:mergeBlock { __applicationContextInjector.mapToValue( $p{ classToMap }, $instanceVar, $v { idVar } ); } );
 			}
 		}
 		
@@ -164,7 +169,7 @@ private class EmptyModule implements IModule
 		return null;
 	}
 	
-	public function getBasicInjector() : IBasicInjector 
+	public function getInjector() : IDependencyInjector 
 	{
 		return null;
 	}

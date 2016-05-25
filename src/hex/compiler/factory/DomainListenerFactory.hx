@@ -62,22 +62,20 @@ class DomainListenerFactory
 						}
 
 						factoryVO.expressions.push( macro @:mergeBlock { $adapterVar.setAdapterClass( $p { StrategyClass } ); } );
-						//TODO set AnnotationProvider
-						//adapter.setAnnotationProvider( annotationProvider );
+						factoryVO.expressions.push( macro @:mergeBlock { $adapterVar.setAnnotationProvider( __annotationProvider ); } );
 
 						if ( domainListenerArgument.injectedInModule && factoryVO.moduleLocator.isRegisteredWithKey( listenerID ) )
 						{
 							factoryVO.expressions.push( macro @:mergeBlock 
 							{ 
-								$adapterVar.setFactoryMethod( $listenerVar.getBasicInjector(), $listenerVar.getBasicInjector().instantiateUnmapped ); 
+								$adapterVar.setFactoryMethod( $listenerVar.getInjector(), $listenerVar.getInjector().instantiateUnmapped ); 
 							} );
 						}
 						else 
 						{
-							var applicationContextInjectorVar = macro $i { "applicationContextInjector" };
 							factoryVO.expressions.push( macro @:mergeBlock 
 							{ 
-								$adapterVar.setFactoryMethod( $applicationContextInjectorVar, $applicationContextInjectorVar.instantiateUnmapped ); 
+								$adapterVar.setFactoryMethod( __applicationContextInjector, __applicationContextInjector.instantiateUnmapped ); 
 							} );
 						}
 						

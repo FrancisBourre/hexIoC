@@ -295,7 +295,7 @@ class ObjectXMLParserTest
 	@Test( "test 'inject-into' attribute" )
 	public function testInjectIntoAttribute() : Void
 	{
-		var injector = this._applicationContext.getBasicInjector();
+		var injector = this._applicationContext.getInjector();
 		injector.mapToValue( String, 'hola mundo' );
 
 		this.build(  XmlReader.readXmlFile( "context/injectIntoAttribute.xml" ) );
@@ -810,7 +810,7 @@ class ObjectXMLParserTest
 		Assert.isNotNull( myModule, "" );
 		Assert.isInstanceOf( myModule, MockMappedModule, "" );
 		
-		Assert.equals( myModule, this._applicationContext.getBasicInjector().getInstance( IMockMappedModule, "myModule" ), "" );
+		Assert.equals( myModule, this._applicationContext.getInjector().getInstance( IMockMappedModule, "myModule" ), "" );
 	}
 	
 	@Test( "test if attribute" )
