@@ -61,6 +61,6 @@ class AbstractApplicationContext implements Dynamic<AbstractApplicationContext> 
 	
 	public function getInjector() : IDependencyInjector 
 	{
-		return this._coreFactory.getBasicInjector();
+		return this._coreFactory.getInjector();
 	}
 }

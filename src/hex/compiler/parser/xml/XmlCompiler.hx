@@ -283,15 +283,12 @@ class XmlCompiler
 		
 		//Create applicationcontext injector
 		assembler.addExpression( macro @:mergeBlock { var __applicationContextInjector = applicationContext.getInjector(); } );
-		
-		//build annotation provider
-		var AnnotationProviderClass = MacroUtil.getTypePath( Type.getClassName( AnnotationProvider ) );
-		assembler.addExpression( macro @:mergeBlock { var __annotationProvider = new $AnnotationProviderClass(); } );
-		var annotationProviderVar = macro $i { "__annotationProvider" };
-		assembler.addExpression( macro @:mergeBlock { $annotationProviderVar.registerInjector( __applicationContextInjector ); } );
 			
 		//Create runtime coreFactory
 		assembler.addExpression( macro @:mergeBlock { var coreFactory = applicationContext.getCoreFactory(); } );
+		
+		//Create runtime AnnotationProvider
+		assembler.addExpression( macro @:mergeBlock { var __annotationProvider = applicationContext.getCoreFactory().getAnnotationProvider(); } );
 
 		//build
 		XmlCompiler._assembler.buildEverything();

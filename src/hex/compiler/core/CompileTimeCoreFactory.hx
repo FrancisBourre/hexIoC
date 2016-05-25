@@ -12,6 +12,7 @@ import hex.event.Dispatcher;
 import hex.event.IDispatcher;
 import hex.ioc.core.ICoreFactory;
 import hex.log.Stringifier;
+import hex.metadata.IAnnotationProvider;
 import hex.service.IService;
 import hex.util.ClassUtil;
 
@@ -34,7 +35,12 @@ class CompileTimeCoreFactory implements ICoreFactory
 		this._map 					= new Map();
 	}
 	
-	public function getBasicInjector() : IDependencyInjector 
+	public function getInjector() : IDependencyInjector 
+	{
+		return null;
+	}
+	
+	public function getAnnotationProvider() : IAnnotationProvider
 	{
 		return null;
 	}

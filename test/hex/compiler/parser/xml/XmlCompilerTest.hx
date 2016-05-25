@@ -36,6 +36,7 @@ import hex.ioc.parser.xml.mock.MockRectangle;
 import hex.ioc.parser.xml.mock.MockServiceProvider;
 import hex.ioc.parser.xml.mock.MockStubStatefulService;
 import hex.ioc.parser.xml.mock.MockTranslationModule;
+import hex.metadata.MockObjectWithAnnotation;
 import hex.structures.Point;
 import hex.structures.Size;
 import hex.unittest.assertion.Assert;
@@ -664,6 +665,33 @@ class XmlCompilerTest
 
 		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandler ), 500 );
 		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "bonjour" ] );
+	}
+	
+	function getColorByName( name : String ) : Int
+	{
+		return name == "white" ? 0xFFFFFF : 0;
+	}
+
+	function getText( name : String ) : String
+	{
+		return name == "welcome" ? "Bienvenue" : null;
+	}
+	
+	@Test( "Test MockObject with annotation" )
+	public function testMockObjectWithAnnotation() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/testMockObjectWithAnnotation.xml" );
+		
+		var annotationProvider = this._applicationAssembler.getContextFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) ).getAnnotationProvider();
+
+		annotationProvider.registerMetaData( "color", this, this.getColorByName );
+		annotationProvider.registerMetaData( "language", this, this.getText );
+		
+		var mockObjectWithMetaData = this._getCoreFactory().locate( "mockObjectWithAnnotation" );
+		
+		Assert.equals( 0xffffff, mockObjectWithMetaData.colorTest, "color should be the same" );
+		Assert.equals( "Bienvenue", mockObjectWithMetaData.languageTest, "text should be the same" );
+		Assert.isNull( mockObjectWithMetaData.propWithoutMetaData, "property should be null" );
 	}
 	
 	/*@Test( "test domain dispatch after module initialisation" )

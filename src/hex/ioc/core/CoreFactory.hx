@@ -36,6 +36,11 @@ class CoreFactory implements ICoreFactory
 		this._map 					= new Map();
 	}
 	
+	public function getAnnotationProvider() : IAnnotationProvider 
+	{
+		return this._annotationProvider;
+	}
+	
 	public function addListener( listener : ILocatorListener<String, Dynamic> ) : Bool
 	{
 		return this._dispatcher.addListener( listener );
@@ -262,7 +267,7 @@ class CoreFactory implements ICoreFactory
 		this._map = new Map();
 	}
 	
-	public function getBasicInjector() : IDependencyInjector
+	public function getInjector() : IDependencyInjector
 	{
 		return this._injector;
 	}

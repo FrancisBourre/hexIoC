@@ -94,7 +94,8 @@ class ClassInstanceFactory
 				if ( MacroUtil.implementsInterface( classType, annotationParsableInterface ) )
 				{
 					var instanceVar = macro $i { idVar };
-					factoryVO.expressions.push( macro @:mergeBlock { __annotationDataProvider.parse( $instanceVar ); } );
+					var annotationProviderVar = macro $i { "__annotationProvider" };
+					factoryVO.expressions.push( macro @:mergeBlock { $annotationProviderVar.parse( $instanceVar ); } );
 				}
 			}
 
