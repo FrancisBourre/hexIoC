@@ -334,7 +334,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	public function assignDomainListener( id : String ) : Bool
 	{
 		#if macro
-		return DomainListenerFactory.build( this._getFactoryVO( null ), id, this._domainListenerVOLocator, this._applicationContext, this._annotationProvider );
+		return DomainListenerFactory.build( this._getFactoryVO( null ), this._domainListenerVOLocator.locate( id ) );
 		#else
 		return false;
 		#end
@@ -470,8 +470,8 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	#if macro
 	function _build( constructorVO : ConstructorVO, ?id : String ) : Dynamic
 	{
-		var type 								= constructorVO.type;
-		var buildMethod 						= ( this._factoryMap.exists( type ) ) ? this._factoryMap.get( type ) : ClassInstanceFactory.build;
+		var type 		= constructorVO.type;
+		var buildMethod = ( this._factoryMap.exists( type ) ) ? this._factoryMap.get( type ) : ClassInstanceFactory.build;
 		buildMethod( this._getFactoryVO( constructorVO ) );
 
 		if ( id != null )
