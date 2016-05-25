@@ -295,20 +295,7 @@ class XmlCompilerTest
 		Assert.equals( 10, point.x, "" );
 		Assert.equals( 20, point.y, "" );
 	}
-	
-	/*@Test( "test 'inject-into' attribute" )
-	public function testInjectIntoAttribute() : Void
-	{
-		var injector = this._applicationContext.getBasicInjector();
-		injector.mapToValue( String, 'hola mundo' );
 
-		this.build(  XmlReader.readXmlFile( "context/injectIntoAttribute.xml" ) );
-
-		var instance : MockClassWithInjectedProperty = this._builderFactory.getCoreFactory().locate( "instance" );
-		Assert.isInstanceOf( instance, MockClassWithInjectedProperty, "" );
-		Assert.equals( "hola mundo", instance.property, "" );
-	}*/
-	
 	@Test( "test building XML with parser class" )
 	public function testBuildingXMLWithParserClass() : Void
 	{
@@ -595,34 +582,7 @@ class XmlCompilerTest
 		Assert.isInstanceOf( myModule, MockMappedModule, "" );
 		Assert.equals( myModule, this._applicationAssembler.getApplicationContext( "applicationContext" ).getBasicInjector().getInstance( IMockMappedModule, "myModule" ), "" );
 	}
-	
-	/*function _onCompleteHandler() : Void
-	{
-		var receiver : MockReceiverModule = this._getCoreFactory().locate( "receiver" );
-		Assert.equals( "BONJOUR:HTTP://GOOGLE.COM", receiver.message, "" );
-	}
-	
-	@Async( "test EventTrigger" )
-	public function testEventTrigger() : Void
-	{
-		this._applicationAssembler = XmlCompiler.readXmlFile( "context/eventTrigger.xml" );
 
-		var eventTrigger : Dynamic = this._getCoreFactory().locate( "eventTrigger" );
-		Assert.isNotNull( eventTrigger, "" );
-		
-		var chat : MockChatModule = this._getCoreFactory().locate( "chat" );
-		Assert.isNotNull( chat, "" );
-
-		var receiver : MockReceiverModule = this._getCoreFactory().locate( "receiver" );
-		Assert.isNotNull( receiver, "" );
-
-		var parser : MockMessageParserModule = this._getCoreFactory().locate( "parser" );
-		Assert.isNotNull( parser, "" );
-
-		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandler ), 500 );
-		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "bonjour" ] );
-	}*/
-	
 	@Test( "test module listening service" )
 	public function testModuleListeningService() : Void
 	{
@@ -678,4 +638,44 @@ class XmlCompilerTest
 		myService.setIntVO( new MockIntVO( 9 ) );
 		Assert.equals( 4.5, ( myModuleB.getFloatValue() ), "" );
 	}
+	
+	function _onCompleteHandler() : Void
+	{
+		var receiver : MockReceiverModule = this._getCoreFactory().locate( "receiver" );
+		Assert.equals( "BONJOUR:HTTP://GOOGLE.COM", receiver.message, "" );
+	}
+	
+	@Async( "test EventTrigger" )
+	public function testEventTrigger() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/eventTrigger.xml" );
+
+		var eventTrigger : Dynamic = this._getCoreFactory().locate( "eventTrigger" );
+		Assert.isNotNull( eventTrigger, "" );
+		
+		var chat : MockChatModule = this._getCoreFactory().locate( "chat" );
+		Assert.isNotNull( chat, "" );
+
+		var receiver : MockReceiverModule = this._getCoreFactory().locate( "receiver" );
+		Assert.isNotNull( receiver, "" );
+
+		var parser : MockMessageParserModule = this._getCoreFactory().locate( "parser" );
+		Assert.isNotNull( parser, "" );
+
+		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandler ), 500 );
+		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "bonjour" ] );
+	}
+	
+	/*@Test( "test 'inject-into' attribute" )
+	public function testInjectIntoAttribute() : Void
+	{
+		var injector = this._applicationContext.getBasicInjector();
+		injector.mapToValue( String, 'hola mundo' );
+
+		this.build(  XmlReader.readXmlFile( "context/injectIntoAttribute.xml" ) );
+
+		var instance : MockClassWithInjectedProperty = this._builderFactory.getCoreFactory().locate( "instance" );
+		Assert.isInstanceOf( instance, MockClassWithInjectedProperty, "" );
+		Assert.equals( "hola mundo", instance.property, "" );
+	}*/
 }

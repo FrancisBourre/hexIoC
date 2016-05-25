@@ -41,28 +41,16 @@ class DomainListenerFactory
 		var DomainUtilClass = MacroUtil.getPack( Type.getClassName( DomainUtil )  );
 		var DomainClass = MacroUtil.getPack( Type.getClassName( Domain )  );
 			
-		var coreFactory : ICoreFactory 					= applicationContext.getCoreFactory();
 		var domainListener : DomainListenerVO			= domainListenerVOLocator.locate( id );
-		var listener : Dynamic 							= coreFactory.locate( domainListener.ownerID );
 		var args : Array<DomainListenerVOArguments> 	= domainListener.arguments;
-
-		// Check if event provider is observable
-		var observable : IObservable = null;
-		if ( coreFactory.isRegisteredWithKey( domainListener.listenedDomainName ) )
-		{
-			var located : Dynamic = coreFactory.locate( domainListener.listenedDomainName );
-			if ( Std.is( located, IObservable ) )
-			{
-				observable = cast located;
-			}
-		}
 
 		if ( args != null && args.length > 0 )
 		{
 			for ( domainListenerArgument in args )
 			{
 				//TODO implement EventProxy
-				var method : String = Std.is( listener, EventProxy ) ? "handleCallback" : domainListenerArgument.method;
+				//var method : String = Std.is( listener, EventProxy ) ? "handleCallback" : domainListenerArgument.method;
+				var method = domainListenerArgument.method;
 
 				if ( ( method != null /*&& Reflect.isFunction( Reflect.field( listener, method ) )*/) || domainListenerArgument.strategy != null )
 				{
@@ -83,7 +71,12 @@ class DomainListenerFactory
 						var adapterVarName = "__adapterFor__" + listenedDomainName + "__" + ( domainListenerArgument.staticRef.split( "." ).join( "_" ) );
 						factoryVO.expressions.push( macro @:mergeBlock { var $adapterVarName = new $ClassAdapterClass(); } );
 						var adapterVar = macro $i { adapterVarName };
-						factoryVO.expressions.push( macro @:mergeBlock { $adapterVar.setCallBackMethod( $listenerVar, $listenerVar.$method ); } );
+						
+						if ( method != null )
+						{
+							factoryVO.expressions.push( macro @:mergeBlock { $adapterVar.setCallBackMethod( $listenerVar, $listenerVar.$method ); } );
+						}
+
 						factoryVO.expressions.push( macro @:mergeBlock { $adapterVar.setAdapterClass( $p { StrategyClass } ); } );
 						//TODO set AnnotationProvider
 						//adapter.setAnnotationProvider( annotationProvider );
