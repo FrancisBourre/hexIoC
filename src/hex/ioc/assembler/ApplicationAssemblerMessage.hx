@@ -1,4 +1,5 @@
 package hex.ioc.assembler;
+
 import hex.event.MessageType;
 
 /**

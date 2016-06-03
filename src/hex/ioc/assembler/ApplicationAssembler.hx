@@ -249,10 +249,8 @@ class ApplicationAssembler implements IApplicationAssembler
 		var itContext = this._mApplicationContext.iterator();
 		while ( itContext.hasNext() ) applicationContexts.push( itContext.next() );
 		
-		for ( applicationcontext in applicationContexts )
-		{
-			applicationcontext._dispatch( ApplicationAssemblerMessage.ASSEMBLING_START );
-		}
+		itFactory = this._mContextFactories.iterator();
+		while ( itFactory.hasNext() ) itFactory.next().dispatchAssemblingStart();
 
 		var len : Int = builderFactories.length;
 		var i 	: Int;
@@ -261,10 +259,8 @@ class ApplicationAssembler implements IApplicationAssembler
 		for ( i in 0...len ) builderFactories[ i ].callAllMethods();
 		for ( i in 0...len ) builderFactories[ i ].callModuleInitialisation();
 		
-		for ( applicationcontext in applicationContexts )
-		{
-			applicationcontext._dispatch( ApplicationAssemblerMessage.ASSEMBLING_END );
-		}
+		itFactory = this._mContextFactories.iterator();
+		while ( itFactory.hasNext() ) itFactory.next().dispatchAssemblingEnd();
 	}
 
 	public function getApplicationContext( applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null ) : AbstractApplicationContext

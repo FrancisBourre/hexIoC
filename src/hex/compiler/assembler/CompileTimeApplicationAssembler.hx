@@ -186,14 +186,17 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 		var itFactory = this._mContextFactories.iterator();
 		var builderFactories 	: Array<IContextFactory> = [];
 		while ( itFactory.hasNext() ) builderFactories.push( itFactory.next() );
-		
+
 		var itFactory = this._mContextFactories.iterator();
 		while ( itFactory.hasNext() ) itFactory.next().buildAllStateTransitions();
-		
+
 		var applicationContexts : Array<AbstractApplicationContext> = [];
 		var itContext = this._mApplicationContext.iterator();
 		while ( itContext.hasNext() ) applicationContexts.push( itContext.next() );
 		
+		itFactory = this._mContextFactories.iterator();
+		while ( itFactory.hasNext() ) itFactory.next().dispatchAssemblingStart();
+
 		/*for ( applicationcontext in applicationContexts )
 		{
 			applicationcontext._dispatch( ApplicationAssemblerMessage.ASSEMBLING_START );
@@ -205,6 +208,9 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 		for ( i in 0...len ) builderFactories[ i ].assignAllDomainListeners();
 		for ( i in 0...len ) builderFactories[ i ].callAllMethods();
 		for ( i in 0...len ) builderFactories[ i ].callModuleInitialisation();
+		
+		itFactory = this._mContextFactories.iterator();
+		while ( itFactory.hasNext() ) itFactory.next().dispatchAssemblingEnd();
 		
 		/*for ( applicationcontext in applicationContexts )
 		{

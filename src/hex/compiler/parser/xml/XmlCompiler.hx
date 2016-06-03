@@ -262,11 +262,11 @@ class XmlCompiler
 		var expr;
 		if ( applicationContextClass != null )
 		{
-			expr = macro @:mergeBlock { var applicationContext = applicationAssembler.getApplicationContext( $v{ applicationContextName }, $p { applicationContextClass } ); };
+			expr = macro @:mergeBlock { var __applicationContext = applicationAssembler.getApplicationContext( $v{ applicationContextName }, $p { applicationContextClass } ); };
 		}
 		else
 		{
-			expr = macro @:mergeBlock { var applicationContext = applicationAssembler.getApplicationContext( $v{ applicationContextName } ); };
+			expr = macro @:mergeBlock { var __applicationContext = applicationAssembler.getApplicationContext( $v{ applicationContextName } ); };
 		}
 
 		
@@ -323,14 +323,18 @@ class XmlCompiler
 		//Create runtime applicationContext
 		assembler.addExpression( getApplicationContext( doc, positionTracker ) );
 		
+		//Dispatch CONTEXT_PARSED message
+		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.CONTEXT_PARSED" );
+		assembler.addExpression( macro @:mergeBlock { __applicationContext.dispatch( $messageType ); } );
+		
 		//Create applicationcontext injector
-		assembler.addExpression( macro @:mergeBlock { var __applicationContextInjector = applicationContext.getInjector(); } );
+		assembler.addExpression( macro @:mergeBlock { var __applicationContextInjector = __applicationContext.getInjector(); } );
 			
 		//Create runtime coreFactory
-		assembler.addExpression( macro @:mergeBlock { var coreFactory = applicationContext.getCoreFactory(); } );
+		assembler.addExpression( macro @:mergeBlock { var coreFactory = __applicationContext.getCoreFactory(); } );
 		
 		//Create runtime AnnotationProvider
-		assembler.addExpression( macro @:mergeBlock { var __annotationProvider = applicationContext.getCoreFactory().getAnnotationProvider(); } );
+		assembler.addExpression( macro @:mergeBlock { var __annotationProvider = __applicationContext.getCoreFactory().getAnnotationProvider(); } );
 
 		//build
 		XmlCompiler._assembler.buildEverything();

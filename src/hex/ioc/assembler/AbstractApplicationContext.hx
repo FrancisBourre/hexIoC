@@ -47,9 +47,8 @@ class AbstractApplicationContext implements Dynamic<AbstractApplicationContext> 
 			return false;
 		}
 	}
-	
-	@:allow( hex.ioc.assembler )
-	function _dispatch( messageType : MessageType, ?data : Array<Dynamic> ) : Void
+
+	public function dispatch( messageType : MessageType, ?data : Array<Dynamic> ) : Void
 	{
 		throw new VirtualMethodException( Stringifier.stringify( this ) + "._dispatch is not implemented" );
 	}

@@ -4,7 +4,9 @@ import haxe.macro.Expr;
 import hex.collection.ILocatorListener;
 import hex.compiler.factory.MappingConfigurationFactory;
 import hex.compiler.factory.StaticVariableFactory;
+import hex.ioc.assembler.ApplicationAssemblerMessage;
 import hex.ioc.locator.ObservableLocator;
+import hex.util.MacroUtil;
 
 import hex.compiler.factory.ArrayFactory;
 import hex.compiler.factory.BoolFactory;
@@ -78,11 +80,10 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	public function new( expressions : Array<Expr>, applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null  )
 	{
 		this._expressions = expressions;
-
 		
 		//build contextDispatcher
-		var domain : Domain = DomainUtil.getDomain( applicationContextName, Domain );
-		this._contextDispatcher = ApplicationDomainDispatcher.getInstance().getDomainDispatcher( domain );
+		//var domain : Domain = DomainUtil.getDomain( applicationContextName, Domain );
+		//this._contextDispatcher = ApplicationDomainDispatcher.getInstance().getDomainDispatcher( domain );
 
 		/*var injector = new Injector();
 		injector.mapToValue( IBasicInjector, injector );
@@ -108,11 +109,27 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		
 		//register applicationContext
 		/*injector.mapToValue( ApplicationContext, this._applicationContext );*/
-		this._coreFactory.register( applicationContextName, this._applicationContext );
-		
-		
-//		this._contextDispatcher.dispatch( ApplicationAssemblerMessage.CONTEXT_PARSED );
+		//this._coreFactory.register( applicationContextName, this._applicationContext );
+
 		this._init();
+	}
+	
+	public function dispatchAssemblingStart() : Void
+	{
+		#if macro
+		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.ASSEMBLING_START" );
+		this._expressions.push( macro @:mergeBlock { __applicationContext.dispatch( $messageType ); } );
+		#end
+		//this._contextDispatcher.dispatch( ApplicationAssemblerMessage.ASSEMBLING_START );
+	}
+	
+	public function dispatchAssemblingEnd() : Void
+	{
+		#if macro
+		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.ASSEMBLING_END" );
+		this._expressions.push( macro @:mergeBlock { __applicationContext.dispatch( $messageType ); } );
+		#end
+		//this._contextDispatcher.dispatch( ApplicationAssemblerMessage.ASSEMBLING_END );
 	}
 	
 	public function registerID( id : String ) : Bool
@@ -138,7 +155,10 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 			//this._stateTransitionVOLocator.buildStateTransition( key );
 		}
 		
-//		this._contextDispatcher.dispatch( ApplicationAssemblerMessage.STATE_TRANSITIONS_BUILT );
+		#if macro
+		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.STATE_TRANSITIONS_BUILT" );
+		this._expressions.push( macro @:mergeBlock { __applicationContext.dispatch( $messageType ); } );
+		#end
 	}
 	
 	//
@@ -303,7 +323,10 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 			this.buildObject( key );
 		}
 		
-//		this._contextDispatcher.dispatch( ApplicationAssemblerMessage.OBJECTS_BUILT );
+		#if macro
+		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.OBJECTS_BUILT" );
+		this._expressions.push( macro @:mergeBlock { __applicationContext.dispatch( $messageType ); } );
+		#end
 	}
 	
 	public function registerDomainListenerVO( domainListenerVO : DomainListenerVO ) : Void
@@ -320,7 +343,11 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		}
 		
 		this._domainListenerVOLocator.clear();
-//		this._contextDispatcher.dispatch( ApplicationAssemblerMessage.DOMAIN_LISTENERS_ASSIGNED );
+
+		#if macro
+		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.DOMAIN_LISTENERS_ASSIGNED" );
+		this._expressions.push( macro @:mergeBlock { __applicationContext.dispatch( $messageType ); } );
+		#end
 	}
 
 	public function assignDomainListener( id : String ) : Bool
@@ -372,13 +399,21 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		}
 		
 		this._methodCallVOLocator.clear();
-//		this._contextDispatcher.dispatch( ApplicationAssemblerMessage.METHODS_CALLED );
+
+		#if macro
+		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.METHODS_CALLED" );
+		this._expressions.push( macro @:mergeBlock { __applicationContext.dispatch( $messageType ); } );
+		#end
 	}
 	
 	public function callModuleInitialisation() : Void
 	{
 		this._moduleLocator.callModuleInitialisation();
-//		this._contextDispatcher.dispatch( ApplicationAssemblerMessage.MODULES_INITIALIZED );
+		
+		#if macro
+		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.MODULES_INITIALIZED" );
+		this._expressions.push( macro @:mergeBlock { __applicationContext.dispatch( $messageType ); } );
+		#end
 	}
 
 	public function getApplicationContext() : AbstractApplicationContext

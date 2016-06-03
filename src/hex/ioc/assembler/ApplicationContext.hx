@@ -43,8 +43,7 @@ class ApplicationContext extends AbstractApplicationContext
 		this._dispatcher.addListener( this._stateController );
 	}
 	
-	@:allow( hex.ioc.assembler )
-	override function _dispatch( messageType : MessageType, ?data : Array<Dynamic> ) : Void
+	override public function dispatch( messageType : MessageType, ?data : Array<Dynamic> ) : Void
 	{
 		this._dispatcher.dispatch( messageType, data );
 	}

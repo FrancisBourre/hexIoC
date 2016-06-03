@@ -22,16 +22,16 @@ class MockApplicationContext extends ApplicationContext
 	
 	public function fireApplicationInit() : Void
 	{
-		this._dispatch( MockStateContextMessage.APPLICATION_INIT );
+		this.dispatch( MockStateContextMessage.APPLICATION_INIT );
 	}
 	
 	public function fireSwitchState() : Void
 	{
-		this._dispatch( MockStateContextMessage.SWITCH_STATE );
+		this.dispatch( MockStateContextMessage.SWITCH_STATE );
 	}
 	
 	public function fireSwitchBack() : Void
 	{
-		this._dispatch( MockStateContextMessage.SWITCH_BACK );
+		this.dispatch( MockStateContextMessage.SWITCH_BACK );
 	}
 }

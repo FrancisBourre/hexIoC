@@ -50,4 +50,8 @@ interface IContextFactory
 	function getCoreFactory() : ICoreFactory;
 
 	function release() : Void;
+	
+	function dispatchAssemblingStart() : Void;
+	
+	function dispatchAssemblingEnd() : Void;
 }

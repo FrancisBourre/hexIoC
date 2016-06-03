@@ -107,6 +107,16 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		this._init();
 	}
 	
+	public function dispatchAssemblingStart() : Void
+	{
+		this._contextDispatcher.dispatch( ApplicationAssemblerMessage.ASSEMBLING_START );
+	}
+	
+	public function dispatchAssemblingEnd() : Void
+	{
+		this._contextDispatcher.dispatch( ApplicationAssemblerMessage.ASSEMBLING_END );
+	}
+	
 	public function registerID( id : String ) : Bool
 	{
 		return this._IDExpert.register( id );
