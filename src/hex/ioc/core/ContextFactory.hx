@@ -28,6 +28,7 @@ import hex.ioc.control.IntFactory;
 import hex.ioc.control.MappingConfigurationFactory;
 import hex.ioc.control.NullFactory;
 import hex.ioc.control.ServiceLocatorFactory;
+import hex.ioc.control.StateTransitionFactory;
 import hex.ioc.control.StaticVariableFactory;
 import hex.ioc.control.StringFactory;
 import hex.ioc.control.UIntFactory;
@@ -118,7 +119,11 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 	
 	public function buildStateTransition( key : String ) : Void
 	{
-		this._stateTransitionVOLocator.buildStateTransition( key );
+		if ( this._stateTransitionVOLocator.isRegisteredWithKey( key ) )
+		{
+			StateTransitionFactory.build( this._stateTransitionVOLocator.locate( key ), this );
+			this._stateTransitionVOLocator.unregister( key );
+		}
 	}
 	
 	public function buildAllStateTransitions() : Void
@@ -126,7 +131,7 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		var keys : Array<String> = this._stateTransitionVOLocator.keys();
 		for ( key in keys )
 		{
-			this._stateTransitionVOLocator.buildStateTransition( key );
+			this.buildStateTransition( key );
 		}
 		
 		this._contextDispatcher.dispatch( ApplicationAssemblerMessage.STATE_TRANSITIONS_BUILT );

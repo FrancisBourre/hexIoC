@@ -127,7 +127,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	
 	public function buildStateTransition( key : String ) : Void
 	{
-		this._stateTransitionVOLocator.buildStateTransition( key );
+		//this._stateTransitionVOLocator.buildStateTransition( key );
 	}
 	
 	public function buildAllStateTransitions() : Void
@@ -135,7 +135,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		var keys : Array<String> = this._stateTransitionVOLocator.keys();
 		for ( key in keys )
 		{
-			this._stateTransitionVOLocator.buildStateTransition( key );
+			//this._stateTransitionVOLocator.buildStateTransition( key );
 		}
 		
 //		this._contextDispatcher.dispatch( ApplicationAssemblerMessage.STATE_TRANSITIONS_BUILT );

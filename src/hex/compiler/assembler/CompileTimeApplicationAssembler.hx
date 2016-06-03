@@ -15,6 +15,7 @@ import hex.ioc.vo.DomainListenerVOArguments;
 import hex.ioc.vo.MapVO;
 import hex.ioc.vo.MethodCallVO;
 import hex.ioc.vo.PropertyVO;
+import hex.ioc.vo.StateTransitionVO;
 
 /**
  * ...
@@ -172,7 +173,12 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 		ifNotList 			: Array<String> = null
 	) : Void
 	{
-
+		if ( this.allowsIfList( ifList ) && this.allowsIfNotList( ifNotList ) )
+		{
+			this._registerID( applicationContext, ID );
+			var stateTransition = new StateTransitionVO( ID, staticReference, instanceReference, enterList, exitList );
+			this.getContextFactory( applicationContext ).registerStateTransitionVO( ID, stateTransition );
+		}
 	}
 
 	public function buildEverything() : Void

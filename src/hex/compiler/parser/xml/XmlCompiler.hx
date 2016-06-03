@@ -12,6 +12,7 @@ import hex.ioc.core.ContextNameList;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.parser.xml.XMLAttributeUtil;
 import hex.ioc.parser.xml.XMLParserUtil;
+import hex.ioc.vo.CommandMappingVO;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVOArguments;
 import hex.metadata.AnnotationProvider;
@@ -201,6 +202,38 @@ class XmlCompiler
 		}
 	}
 	
+	static function _parseStateNodes( applicationContext : AbstractApplicationContext, xml : Xml, positionTracker : XmlPositionTracker ) : Void
+	{
+		var identifier : String = xml.get( ContextAttributeList.ID );
+		if ( identifier == null )
+		{
+			Context.error( "XmlCompiler parsing error with '" + xml.nodeName + "' node, 'id' attribute not found.", positionTracker.makePositionFromNode( xml ) );
+		}
+		
+		var staticReference 	: String = xml.get( ContextAttributeList.STATIC_REF );
+		var instanceReference 	: String = xml.get( ContextAttributeList.REF );
+		
+		// Build enter list
+		var enterListIterator = xml.elementsNamed( ContextNameList.ENTER );
+		var enterList : Array<CommandMappingVO> = [];
+		while( enterListIterator.hasNext() )
+		{
+			var enterListItem = enterListIterator.next();
+			enterList.push( new CommandMappingVO( enterListItem.get( ContextAttributeList.COMMAND_CLASS ), enterListItem.get( ContextAttributeList.FIRE_ONCE ) == "true", enterListItem.get( ContextAttributeList.CONTEXT_OWNER ) ) );
+		}
+		
+		// Build exit list
+		var exitListIterator = xml.elementsNamed( ContextNameList.EXIT );
+		var exitList : Array<CommandMappingVO> = [];
+		while( exitListIterator.hasNext() )
+		{
+			var exitListItem = exitListIterator.next();
+			exitList.push( new CommandMappingVO( exitListItem.get( ContextAttributeList.COMMAND_CLASS ), exitListItem.get( ContextAttributeList.FIRE_ONCE ) == "true", exitListItem.get( ContextAttributeList.CONTEXT_OWNER ) ) );
+		}
+		
+		XmlCompiler._assembler.configureStateTransition( applicationContext, identifier, staticReference, instanceReference, enterList, exitList );
+	}
+	
 	static function getApplicationContext( doc : Xml176Document, positionTracker : XmlPositionTracker ) : ExprOf<AbstractApplicationContext>
 	{
 		var xml = doc.document.firstElement();
@@ -259,8 +292,17 @@ class XmlCompiler
 			XmlCompiler._assembler 		= new CompileTimeApplicationAssembler();
 			var applicationContext 		= XmlCompiler._assembler.getApplicationContext( "name" );
 			
-			//
-			var iterator = doc.document.firstElement().elements();
+			//States parsing
+			var iterator = doc.document.firstElement().elementsNamed( "state" );
+			while ( iterator.hasNext() )
+			{
+				var node = iterator.next();
+				XmlCompiler._parseStateNodes( applicationContext, node, positionTracker );
+				doc.document.firstElement().removeChild( node );
+			}
+			
+			//DSL parsing
+			iterator = doc.document.firstElement().elements();
 			while ( iterator.hasNext() )
 			{
 				XmlCompiler._parseNode( applicationContext, iterator.next(), positionTracker );
