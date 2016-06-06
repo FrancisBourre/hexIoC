@@ -116,6 +116,10 @@ class XmlReader
 					{
 						XmlReader._importHelper.includeClass( arg );
 					}
+					else if ( arg.type == ContextTypeList.CLASS )
+					{
+						XmlReader._importHelper.forceCompilation( arg.value );
+					}
 				}
 			}
 
@@ -142,6 +146,40 @@ class XmlReader
 			}
 		}
 	}
+	
+	static function _parseStateNodes( xml : Xml, positionTracker : XmlPositionTracker ) : Void
+	{
+		var identifier : String = xml.get( ContextAttributeList.ID );
+		if ( identifier == null )
+		{
+			Context.error( "XMLFileReader parsing error with '" + xml.nodeName + "' node, 'id' attribute not found.", positionTracker.makePositionFromNode( xml ) );
+		}
+		
+		var staticReference 	: String = xml.get( ContextAttributeList.STATIC_REF );
+		var instanceReference 	: String = xml.get( ContextAttributeList.REF );
+		
+		// Build enter list
+		var enterListIterator = xml.elementsNamed( ContextNameList.ENTER );
+		//var enterList : Array<CommandMappingVO> = [];
+		while( enterListIterator.hasNext() )
+		{
+			var enterListItem = enterListIterator.next();
+			XmlReader._importHelper.forceCompilation( enterListItem.get( ContextAttributeList.COMMAND_CLASS ) );
+			//enterList.push( new CommandMappingVO( enterListItem.get( ContextAttributeList.COMMAND_CLASS ), enterListItem.get( ContextAttributeList.FIRE_ONCE ) == "true", enterListItem.get( ContextAttributeList.CONTEXT_OWNER ) ) );
+		}
+		
+		// Build exit list
+		var exitListIterator = xml.elementsNamed( ContextNameList.EXIT );
+		//var exitList : Array<CommandMappingVO> = [];
+		while( exitListIterator.hasNext() )
+		{
+			var exitListItem = exitListIterator.next();
+			XmlReader._importHelper.forceCompilation( exitListItem.get( ContextAttributeList.COMMAND_CLASS ) );
+			//exitList.push( new CommandMappingVO( exitListItem.get( ContextAttributeList.COMMAND_CLASS ), exitListItem.get( ContextAttributeList.FIRE_ONCE ) == "true", exitListItem.get( ContextAttributeList.CONTEXT_OWNER ) ) );
+		}
+		
+		//XmlCompiler._assembler.configureStateTransition( applicationContext, identifier, staticReference, instanceReference, enterList, exitList );
+	}
 	#end
 	
 	macro public static function readXmlFile( fileName : String, ?m : Expr ) : ExprOf<String>
@@ -156,6 +194,16 @@ class XmlReader
 			var positionTracker = new XmlPositionTracker( doc, xrdCollection );
 			XmlReader._importHelper = new ClassImportHelper();
 
+			//States parsing
+			var iterator = doc.document.firstElement().elementsNamed( "state" );
+			while ( iterator.hasNext() )
+			{
+				var node = iterator.next();
+				XmlReader._parseStateNodes( node, positionTracker );
+				doc.document.firstElement().removeChild( node );
+			}
+			
+			//DSL parsing
 			var iterator = doc.document.firstElement().elements();
 			while ( iterator.hasNext() )
 			{
