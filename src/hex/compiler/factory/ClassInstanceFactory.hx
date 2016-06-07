@@ -162,7 +162,7 @@ private class EmptyModule implements IModule
 	
 	public function getDomain() : Domain 
 	{
-		return null;
+		return DomainUtil.getDomain( this._domainName, Domain );
 	}
 	
 	public function getLogger() : ILogger 

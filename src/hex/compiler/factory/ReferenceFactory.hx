@@ -31,7 +31,7 @@ class ReferenceFactory
 			factoryVO.contextFactory.buildObject( key );
 		}
 		
-		var result = factoryVO.coreFactory.locate( key );
+		//var result = factoryVO.coreFactory.locate( key );
 		
 		if ( constructorVO.ref.indexOf( "." ) != -1 )
 		{
@@ -42,7 +42,7 @@ class ReferenceFactory
 			if ( !constructorVO.isProperty )
 			{
 				var p = macro $p { constructorVO.ref.split(".") };
-				var idVar = constructorVO.argumentName != null ? constructorVO.argumentName : constructorVO.ID;
+				var idVar = constructorVO.ID;
 				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $p; } );
 			}
 			
@@ -54,7 +54,7 @@ class ReferenceFactory
 			
 			if ( !constructorVO.isProperty )
 			{
-				var idVar = constructorVO.argumentName != null ? constructorVO.argumentName : constructorVO.ID;
+				var idVar = constructorVO.ID;
 				var extVar = macro $i{ key };
 				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $extVar; } );
 				

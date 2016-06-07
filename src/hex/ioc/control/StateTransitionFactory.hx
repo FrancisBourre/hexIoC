@@ -92,5 +92,4 @@ class StateTransitionFactory
 			stateUnmapper.addExitMapping( exitMapping  );
 		}
 	}
-	
 }

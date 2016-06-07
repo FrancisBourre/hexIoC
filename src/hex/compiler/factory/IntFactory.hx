@@ -45,7 +45,7 @@ class IntFactory
 
 			if ( !constructorVO.isProperty )
 			{
-				var idVar = constructorVO.argumentName != null ? constructorVO.argumentName : constructorVO.ID;
+				var idVar = constructorVO.ID;
 				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $v { number }; } );
 			}
 		}

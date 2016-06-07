@@ -1,10 +1,10 @@
 package hex.compiler.assembler;
 
 import haxe.macro.Expr;
+import hex.compiler.core.CompileTimeContextFactory;
 import hex.error.IllegalArgumentException;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.IApplicationAssembler;
-import hex.compiler.core.CompileTimeContextFactory;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.core.IContextFactory;
 import hex.ioc.error.BuildingException;
@@ -12,7 +12,6 @@ import hex.ioc.vo.CommandMappingVO;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.DomainListenerVOArguments;
-import hex.ioc.vo.MapVO;
 import hex.ioc.vo.MethodCallVO;
 import hex.ioc.vo.PropertyVO;
 import hex.ioc.vo.StateTransitionVO;
@@ -197,11 +196,6 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 		itFactory = this._mContextFactories.iterator();
 		while ( itFactory.hasNext() ) itFactory.next().dispatchAssemblingStart();
 
-		/*for ( applicationcontext in applicationContexts )
-		{
-			applicationcontext._dispatch( ApplicationAssemblerMessage.ASSEMBLING_START );
-		}*/
-
 		var len : Int = builderFactories.length;
 		var i 	: Int;
 		for ( i in 0...len ) builderFactories[ i ].buildAllObjects();
@@ -211,11 +205,6 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 		
 		itFactory = this._mContextFactories.iterator();
 		while ( itFactory.hasNext() ) itFactory.next().dispatchAssemblingEnd();
-		
-		/*for ( applicationcontext in applicationContexts )
-		{
-			applicationcontext._dispatch( ApplicationAssemblerMessage.ASSEMBLING_END );
-		}*/
 	}
 
 	public function getApplicationContext( applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null ) : AbstractApplicationContext

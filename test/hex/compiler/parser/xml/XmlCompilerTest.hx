@@ -33,6 +33,7 @@ import hex.ioc.parser.xml.mock.MockMessageParserModule;
 import hex.ioc.parser.xml.mock.MockModuleWithServiceCallback;
 import hex.ioc.parser.xml.mock.MockReceiverModule;
 import hex.ioc.parser.xml.mock.MockRectangle;
+import hex.ioc.parser.xml.mock.MockSenderModule;
 import hex.ioc.parser.xml.mock.MockServiceProvider;
 import hex.ioc.parser.xml.mock.MockStubStatefulService;
 import hex.ioc.parser.xml.mock.MockTranslationModule;
@@ -408,6 +409,20 @@ class XmlCompilerTest
 
 		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "Bonjour" ] );
 		Assert.equals( "BONJOUR", receiver.message, "" );
+	}
+	
+	@Test( "test domain dispatch after module initialisation" )
+	public function testDomainDispatchAfterModuleInitialisation() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/domainDispatchAfterModuleInitialisation.xml" );
+
+		var sender : MockSenderModule = this._getCoreFactory().locate( "sender" );
+		Assert.isNotNull( sender, "" );
+
+		var receiver : MockReceiverModule = this._getCoreFactory().locate( "receiver" );
+		Assert.isNotNull( receiver, "" );
+
+		Assert.equals( "hello receiver", receiver.message, "" );
 	}
 	
 	@Test( "test building Map with class reference" )

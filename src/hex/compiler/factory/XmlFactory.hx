@@ -33,7 +33,7 @@ class XmlFactory
 				{
 					if ( !constructorVO.isProperty )
 					{
-						var idVar = constructorVO.argumentName != null ? constructorVO.argumentName : constructorVO.ID;
+						var idVar = constructorVO.ID;
 						factoryVO.expressions.push( macro @:mergeBlock { var $idVar = Xml.parse( $v { source } ); } );
 					}
 				}
@@ -41,7 +41,7 @@ class XmlFactory
 				{
 					if ( !constructorVO.isProperty )
 					{
-						var idVar = constructorVO.argumentName != null ? constructorVO.argumentName : constructorVO.ID;
+						var idVar = constructorVO.ID;
 						var typePath = MacroUtil.getTypePath( factory );
 						var parser = "factory_" + constructorVO.ID;
 						factoryVO.expressions.push( macro @:mergeBlock { var $parser = new $typePath(); } );
@@ -57,7 +57,7 @@ class XmlFactory
 				trace( "XmlFactory.build() returns an empty XML." );
 				#end
 				
-				var idVar = constructorVO.argumentName != null ? constructorVO.argumentName : constructorVO.ID;
+				var idVar = constructorVO.ID;
 				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = Xml.parse( "" ); } );
 			}
 		}
@@ -67,7 +67,7 @@ class XmlFactory
 			trace( "XmlFactory.build() returns an empty XML." );
 			#end
 
-			var idVar = constructorVO.argumentName != null ? constructorVO.argumentName : constructorVO.ID;
+			var idVar = constructorVO.ID;
 			factoryVO.expressions.push( macro @:mergeBlock { var $idVar = Xml.parse( "" ); } );
 		}
 		

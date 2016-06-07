@@ -22,7 +22,7 @@ class DynamicObjectFactory
 		#if macro
 		if ( !constructorVO.isProperty )
 		{
-			var idVar = constructorVO.argumentName != null ? constructorVO.argumentName : constructorVO.ID;
+			var idVar = constructorVO.ID;
 			factoryVO.expressions.push( macro @:mergeBlock { var $idVar : Dynamic = $v { {} }; } );
 		}
 		#end

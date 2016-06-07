@@ -325,7 +325,13 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 	
 	public function callModuleInitialisation() : Void
 	{
-		this._moduleLocator.callModuleInitialisation();
+		var modules = this._moduleLocator.values();
+		for ( module in modules )
+		{
+			module.initialize();
+		}
+		this._moduleLocator.clear();
+		
 		this._contextDispatcher.dispatch( ApplicationAssemblerMessage.MODULES_INITIALIZED );
 	}
 

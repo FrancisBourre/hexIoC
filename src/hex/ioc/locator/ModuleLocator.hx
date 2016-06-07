@@ -19,17 +19,6 @@ class ModuleLocator extends Locator<String, IModule>
 		this._contextFactory = contextFactory;
 	}
 	
-	public function callModuleInitialisation() 
-	{
-		var modules : Array<IModule> = this.values();
-		for ( module in modules )
-		{
-			module.initialize();
-		}
-		
-		this.clear();
-	}
-	
 	override function _dispatchRegisterEvent( key : String, element : IModule ) : Void 
 	{
 		this._dispatcher.dispatch( LocatorMessage.REGISTER, [ key, element ] );

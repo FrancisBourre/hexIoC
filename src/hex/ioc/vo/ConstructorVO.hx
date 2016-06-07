@@ -21,7 +21,6 @@ class ConstructorVO
 	
 	#if macro
 	public var 				isProperty		: Bool = false;
-	public var 				argumentName	: String;
 	public var 				constructorArgs	: Array<Expr>;
 	#end
 		

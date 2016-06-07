@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<root name="applicationContext" type="hex.ioc.parser.xml.context.mock.MockApplicationContext">
+	<test id="test" value="Hola Mundo"/>
+</root>

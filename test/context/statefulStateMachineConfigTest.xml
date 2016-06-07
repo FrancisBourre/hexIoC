@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<root name="applicationContext">
+
+	<initialState id="initialState" static-ref="hex.ioc.parser.xml.state.mock.MockStateEnum.INITIAL_STATE">
+		
+		<method-call name="addTransition">
+			<argument static-ref="hex.ioc.parser.xml.state.mock.MockStateMessage.TRIGGER_NEXT_STATE"/>
+			<argument static-ref="hex.ioc.parser.xml.state.mock.MockStateEnum.NEXT_STATE"/>
+		</method-call>
+
+		<method-call name="addExitCommand">
+			<argument type="Class" value="hex.ioc.parser.xml.state.mock.MockExitStateCommand"/>
+			<argument ref="myModule"/>
+		</method-call>
+
+	</initialState>
+
+	<stateConfig id="stateConfig" type="hex.state.config.stateful.StatefulStateMachineConfig">
+		<argument ref="initialState"/>
+	</stateConfig>
+
+	<module id="myModule" type="hex.ioc.parser.xml.state.mock.MockModuleWorkingWithStates">
+		<argument ref="stateConfig"/>
+	</module>
+
+</root>

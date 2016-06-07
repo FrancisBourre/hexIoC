@@ -1,12 +1,15 @@
-package hex.ioc.parser.xml.assembler;
+package hex.compiler.parser.xml.assembler;
 
 import hex.domain.ApplicationDomainDispatcher;
 import hex.ioc.assembler.ApplicationAssembler;
+import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.core.IContextFactory;
+import hex.ioc.core.ICoreFactory;
 import hex.ioc.parser.xml.assembler.mock.MockApplicationContext;
 import hex.ioc.parser.xml.assembler.mock.MockModule;
 import hex.ioc.parser.xml.assembler.mock.MockStateCommand;
 import hex.ioc.parser.xml.assembler.mock.MockStateCommandWithModule;
+import hex.state.State;
 import hex.unittest.assertion.Assert;
 
 /**
@@ -15,7 +18,6 @@ import hex.unittest.assertion.Assert;
  */
 class ApplicationAssemblerStateTest
 {
-	var _contextParser 				: ApplicationXMLParser;
 	var _builderFactory 			: IContextFactory;
 	var _applicationAssembler 		: ApplicationAssembler;
 		
@@ -37,26 +39,26 @@ class ApplicationAssemblerStateTest
 		MockStateCommandWithModule.lastInjectedModule 	= null;
 	}
 		
-	function build( xml : String ) : Void
+	function _getCoreFactory() : ICoreFactory
 	{
-		this._contextParser = new ApplicationXMLParser();
-		this._contextParser.parse( this._applicationAssembler, Xml.parse( xml ) );
-		this._applicationAssembler.buildEverything();
+		return this._applicationAssembler.getApplicationContext( "applicationContext" ).getCoreFactory();
 	}
 	
 	@Test( "test building state transitions" )
 	public function testBuildingStateTransitions() : Void
 	{
-		this.build( XmlReader.readXmlFile( "context/testBuildingStateTransitions.xml" ) );
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/testBuildingStateTransitions.xml" );
+		
 		this._builderFactory = this._applicationAssembler.getContextFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
 	}
 	
 	@Test( "test extending state transitions" )
 	public function testExtendingStateTransitions() : Void
 	{
-		this.build( XmlReader.readXmlFile( "context/testExtendingStateTransitions.xml" ) );
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/testExtendingStateTransitions.xml" );
 		
 		var builderFactory : IContextFactory = this._applicationAssembler.getContextFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
+
 		var coreFactory = builderFactory.getCoreFactory();
 		var module : MockModule = coreFactory.locate( "module" );
 		var anotherModule : MockModule = coreFactory.locate( "anotherModule" );

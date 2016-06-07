@@ -2,34 +2,26 @@ package hex.compiler.core;
 
 import haxe.macro.Expr;
 import hex.collection.ILocatorListener;
-import hex.compiler.factory.MappingConfigurationFactory;
-import hex.compiler.factory.StaticVariableFactory;
-import hex.ioc.assembler.ApplicationAssemblerMessage;
-import hex.ioc.locator.ObservableLocator;
-import hex.util.MacroUtil;
-
+import hex.compiler.core.CompileTimeCoreFactory;
 import hex.compiler.factory.ArrayFactory;
 import hex.compiler.factory.BoolFactory;
 import hex.compiler.factory.ClassFactory;
+import hex.compiler.factory.ClassInstanceFactory;
 import hex.compiler.factory.DomainListenerFactory;
+import hex.compiler.factory.DynamicObjectFactory;
 import hex.compiler.factory.FloatFactory;
 import hex.compiler.factory.FunctionFactory;
-import hex.compiler.factory.ClassInstanceFactory;
-import hex.compiler.factory.IntFactory;
 import hex.compiler.factory.HashMapFactory;
+import hex.compiler.factory.IntFactory;
+import hex.compiler.factory.MappingConfigurationFactory;
 import hex.compiler.factory.NullFactory;
-import hex.compiler.factory.DynamicObjectFactory;
 import hex.compiler.factory.ServiceLocatorFactory;
+import hex.compiler.factory.StateTransitionFactory;
+import hex.compiler.factory.StaticVariableFactory;
 import hex.compiler.factory.StringFactory;
 import hex.compiler.factory.UIntFactory;
 import hex.compiler.factory.XmlFactory;
-
-import hex.compiler.core.CompileTimeCoreFactory;
 import hex.core.HashCodeFactory;
-import hex.domain.ApplicationDomainDispatcher;
-import hex.domain.Domain;
-import hex.domain.DomainUtil;
-import hex.domain.IApplicationDomainDispatcher;
 import hex.event.IDispatcher;
 import hex.event.IEvent;
 import hex.ioc.assembler.AbstractApplicationContext;
@@ -41,17 +33,20 @@ import hex.ioc.locator.ConstructorVOLocator;
 import hex.ioc.locator.DomainListenerVOLocator;
 import hex.ioc.locator.MethodCallVOLocator;
 import hex.ioc.locator.ModuleLocator;
+import hex.ioc.locator.ObservableLocator;
 import hex.ioc.locator.PropertyVOLocator;
 import hex.ioc.locator.StateTransitionVOLocator;
-import hex.ioc.vo.FactoryVO;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
+import hex.ioc.vo.FactoryVO;
 import hex.ioc.vo.MapVO;
 import hex.ioc.vo.MethodCallVO;
 import hex.ioc.vo.PropertyVO;
 import hex.ioc.vo.StateTransitionVO;
 import hex.metadata.IAnnotationProvider;
-import hex.util.ClassUtil;
+import hex.util.MacroUtil;
+
+
 
 /**
  * ...
@@ -144,7 +139,15 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	
 	public function buildStateTransition( key : String ) : Void
 	{
-		//this._stateTransitionVOLocator.buildStateTransition( key );
+		#if macro
+		if ( this._stateTransitionVOLocator.isRegisteredWithKey( key ) )
+		{
+			var stateTransitionVO = this._stateTransitionVOLocator.locate( key );
+			stateTransitionVO.expressions = this._expressions;
+			StateTransitionFactory.build( stateTransitionVO, this );
+			this._stateTransitionVOLocator.unregister( key );
+		}
+		#end
 	}
 	
 	public function buildAllStateTransitions() : Void
@@ -152,7 +155,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		var keys : Array<String> = this._stateTransitionVOLocator.keys();
 		for ( key in keys )
 		{
-			//this._stateTransitionVOLocator.buildStateTransition( key );
+			this.buildStateTransition( key );
 		}
 		
 		#if macro
@@ -408,7 +411,14 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	
 	public function callModuleInitialisation() : Void
 	{
-		this._moduleLocator.callModuleInitialisation();
+		var modules = this._moduleLocator.values();
+		for ( module in modules )
+		{
+			var module = macro $i { module.getDomain().getName() };
+			this._expressions.push( macro @:mergeBlock { $module.initialize(); } );
+		}
+		
+		this._moduleLocator.clear();
 		
 		#if macro
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.MODULES_INITIALIZED" );

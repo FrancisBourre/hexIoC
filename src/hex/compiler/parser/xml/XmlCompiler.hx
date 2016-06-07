@@ -1,13 +1,12 @@
 package hex.compiler.parser.xml;
 
 import com.tenderowls.xml176.Xml176Parser;
-import hex.ioc.assembler.AbstractApplicationContext;
-import hex.ioc.assembler.ApplicationAssembler;
-import hex.compiler.assembler.CompileTimeApplicationAssembler;
-import hex.compiler.core.CompileTimeCoreFactory;
-import hex.ioc.core.ContextAttributeList;
 import haxe.macro.Context;
 import haxe.macro.Expr;
+import hex.compiler.assembler.CompileTimeApplicationAssembler;
+import hex.ioc.assembler.AbstractApplicationContext;
+import hex.ioc.assembler.ApplicationAssembler;
+import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.parser.xml.XMLAttributeUtil;
@@ -15,7 +14,6 @@ import hex.ioc.parser.xml.XMLParserUtil;
 import hex.ioc.vo.CommandMappingVO;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVOArguments;
-import hex.metadata.AnnotationProvider;
 import hex.util.ClassUtil;
 import hex.util.MacroUtil;
 
@@ -262,14 +260,13 @@ class XmlCompiler
 		var expr;
 		if ( applicationContextClass != null )
 		{
-			expr = macro @:mergeBlock { var __applicationContext = applicationAssembler.getApplicationContext( $v{ applicationContextName }, $p { applicationContextClass } ); };
+			expr = macro @:mergeBlock { var __applicationContext = applicationAssembler.getApplicationContext( $v { applicationContextName }, $p { applicationContextClass } ); var $applicationContextName = __applicationContext; };
 		}
 		else
 		{
-			expr = macro @:mergeBlock { var __applicationContext = applicationAssembler.getApplicationContext( $v{ applicationContextName } ); };
+			expr = macro @:mergeBlock { var __applicationContext = applicationAssembler.getApplicationContext( $v{ applicationContextName } ); var $applicationContextName = __applicationContext; };
 		}
 
-		
 		return expr;
 	}
 	#end
@@ -281,7 +278,7 @@ class XmlCompiler
 		var xrdCollection = r.collection;
 		var positionTracker : XmlPositionTracker;
 		var doc;
-		
+
 		try
 		{
 			doc = Xml176Parser.parse( xmlRawData.data, xmlRawData.path );
@@ -292,6 +289,14 @@ class XmlCompiler
 			XmlCompiler._assembler 		= new CompileTimeApplicationAssembler();
 			var applicationContext 		= XmlCompiler._assembler.getApplicationContext( "name" );
 			
+
+			//Create runtime applicationAssembler
+			var applicationAssemblerTypePath = MacroUtil.getTypePath( Type.getClassName( ApplicationAssembler ) );
+			XmlCompiler._assembler.addExpression( macro @:mergeBlock { var applicationAssembler = new $applicationAssemblerTypePath(); } );
+			
+			//Create runtime applicationContext
+			XmlCompiler._assembler.addExpression( getApplicationContext( doc, positionTracker ) );
+
 			//States parsing
 			var iterator = doc.document.firstElement().elementsNamed( "state" );
 			while ( iterator.hasNext() )
@@ -315,13 +320,6 @@ class XmlCompiler
 		}
 		
 		var assembler = XmlCompiler._assembler;
-
-		//Create runtime applicationAssembler
-		var applicationAssemblerTypePath = MacroUtil.getTypePath( Type.getClassName( ApplicationAssembler ) );
-		assembler.addExpression( macro @:mergeBlock { var applicationAssembler = new $applicationAssemblerTypePath(); } );
-		
-		//Create runtime applicationContext
-		assembler.addExpression( getApplicationContext( doc, positionTracker ) );
 		
 		//Dispatch CONTEXT_PARSED message
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.CONTEXT_PARSED" );
