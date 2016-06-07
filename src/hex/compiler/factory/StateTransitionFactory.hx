@@ -60,7 +60,7 @@ class StateTransitionFactory
 			}
 			else
 			{
-				vo.expressions.push( macro @:mergeBlock { enterMapping.setContextOwner( __applicationContext ); } );
+				vo.expressions.push( macro @:mergeBlock { enterMapping.setContextOwner( applicationContext ); } );
 			}
 			
 			if ( enterVO.fireOnce )

@@ -262,11 +262,11 @@ class XmlCompiler
 		var expr;
 		if ( applicationContextClass != null )
 		{
-			expr = macro @:mergeBlock { var __applicationContext = applicationAssembler.getApplicationContext( $v { applicationContextName }, $p { applicationContextClass } ); var $applicationContextName = __applicationContext; };
+			expr = macro @:mergeBlock { var applicationContext = applicationAssembler.getApplicationContext( $v { applicationContextName }, $p { applicationContextClass } ); };
 		}
 		else
 		{
-			expr = macro @:mergeBlock { var __applicationContext = applicationAssembler.getApplicationContext( $v{ applicationContextName } ); var $applicationContextName = __applicationContext; };
+			expr = macro @:mergeBlock { var applicationContext = applicationAssembler.getApplicationContext( $v { applicationContextName } ); };
 		}
 
 		return expr;
@@ -324,16 +324,16 @@ class XmlCompiler
 		
 		//Dispatch CONTEXT_PARSED message
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.CONTEXT_PARSED" );
-		assembler.addExpression( macro @:mergeBlock { __applicationContext.dispatch( $messageType ); } );
+		assembler.addExpression( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 		
 		//Create applicationcontext injector
-		assembler.addExpression( macro @:mergeBlock { var __applicationContextInjector = __applicationContext.getInjector(); } );
+		assembler.addExpression( macro @:mergeBlock { var __applicationContextInjector = applicationContext.getInjector(); } );
 			
 		//Create runtime coreFactory
-		assembler.addExpression( macro @:mergeBlock { var coreFactory = __applicationContext.getCoreFactory(); } );
+		assembler.addExpression( macro @:mergeBlock { var coreFactory = applicationContext.getCoreFactory(); } );
 		
 		//Create runtime AnnotationProvider
-		assembler.addExpression( macro @:mergeBlock { var __annotationProvider = __applicationContext.getCoreFactory().getAnnotationProvider(); } );
+		assembler.addExpression( macro @:mergeBlock { var __annotationProvider = applicationContext.getCoreFactory().getAnnotationProvider(); } );
 
 		//build
 		XmlCompiler._assembler.buildEverything();

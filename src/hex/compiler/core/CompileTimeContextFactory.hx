@@ -113,7 +113,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	{
 		#if macro
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.ASSEMBLING_START" );
-		this._expressions.push( macro @:mergeBlock { __applicationContext.dispatch( $messageType ); } );
+		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 		#end
 		//this._contextDispatcher.dispatch( ApplicationAssemblerMessage.ASSEMBLING_START );
 	}
@@ -122,7 +122,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	{
 		#if macro
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.ASSEMBLING_END" );
-		this._expressions.push( macro @:mergeBlock { __applicationContext.dispatch( $messageType ); } );
+		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 		#end
 		//this._contextDispatcher.dispatch( ApplicationAssemblerMessage.ASSEMBLING_END );
 	}
@@ -160,7 +160,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		
 		#if macro
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.STATE_TRANSITIONS_BUILT" );
-		this._expressions.push( macro @:mergeBlock { __applicationContext.dispatch( $messageType ); } );
+		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 		#end
 	}
 	
@@ -328,7 +328,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		
 		#if macro
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.OBJECTS_BUILT" );
-		this._expressions.push( macro @:mergeBlock { __applicationContext.dispatch( $messageType ); } );
+		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 		#end
 	}
 	
@@ -349,7 +349,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 
 		#if macro
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.DOMAIN_LISTENERS_ASSIGNED" );
-		this._expressions.push( macro @:mergeBlock { __applicationContext.dispatch( $messageType ); } );
+		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 		#end
 	}
 
@@ -405,7 +405,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 
 		#if macro
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.METHODS_CALLED" );
-		this._expressions.push( macro @:mergeBlock { __applicationContext.dispatch( $messageType ); } );
+		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 		#end
 	}
 	
@@ -422,7 +422,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		
 		#if macro
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.MODULES_INITIALIZED" );
-		this._expressions.push( macro @:mergeBlock { __applicationContext.dispatch( $messageType ); } );
+		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 		#end
 	}
 
