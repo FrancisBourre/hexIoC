@@ -57,44 +57,20 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 
 	}
 
-	public function buildProperty 			(
-		applicationContext 	: AbstractApplicationContext,
-		ownerID 			: String,
-		name 				: String = null,
-		value 				: String = null,
-		type 				: String = null,
-		ref 				: String = null,
-		method 				: String = null,
-		staticRef 			: String = null,
-		ifList 				: Array<String> = null,
-		ifNotList 			: Array<String> = null
-	) : Void
+	public function buildProperty( applicationContext : AbstractApplicationContext, propertyVO : PropertyVO ) : Void
 	{
-		if ( this.allowsIfList( ifList ) && this.allowsIfNotList( ifNotList ) )
+		if ( this.allowsIfList( propertyVO.ifList ) && this.allowsIfNotList( propertyVO.ifNotList ) )
 		{
-			this.getContextFactory( applicationContext ).registerPropertyVO( ownerID, new PropertyVO( ownerID, name, value, type, ref, method, staticRef ) );
+			this.getContextFactory( applicationContext ).registerPropertyVO( propertyVO );
 		}
 	}
-
-	public function buildObject				(
-		applicationContext 	: AbstractApplicationContext,
-		ownerID 			: String,
-		type 				: String = null,
-		args 				: Array<Dynamic> = null,
-		factory 			: String = null,
-		singleton 			: String = null,
-		injectInto 			: Bool = false,
-		mapType 			: String = null,
-		staticRef 			: String = null,
-		ifList 				: Array<String> = null,
-		ifNotList 			: Array<String> = null
-	) : Void
+	
+	public function buildObject( applicationContext : AbstractApplicationContext, constructorVO : ConstructorVO ) : Void
 	{
-		if ( this.allowsIfList( ifList ) && this.allowsIfNotList( ifNotList ) )
+		if ( this.allowsIfList( constructorVO.ifList ) && this.allowsIfNotList( constructorVO.ifNotList ) )
 		{
-			this._registerID( applicationContext, ownerID );
-			var constructorVO = new ConstructorVO( ownerID, type, args, factory, singleton, injectInto, null, mapType, staticRef );
-			this.getContextFactory( applicationContext ).registerConstructorVO( ownerID, constructorVO );
+			this._registerID( applicationContext, constructorVO.ID );
+			this.getContextFactory( applicationContext ).registerConstructorVO( constructorVO );
 		}
 	}
 	
@@ -131,52 +107,28 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 		}
 	}
 
-	public function buildMethodCall			(
-		applicationContext 	: AbstractApplicationContext,
-		ownerID 			: String,
-		methodCallName 		: String,
-		args 				: Array<Dynamic> = null,
-		ifList 				: Array<String> = null,
-		ifNotList 			: Array<String> = null
-	) : Void
+	public function buildMethodCall ( applicationContext : AbstractApplicationContext, methodCallVO : MethodCallVO ) : Void
 	{
-		if ( this.allowsIfList( ifList ) && this.allowsIfNotList( ifNotList ) )
+		if ( this.allowsIfList( methodCallVO.ifList ) && this.allowsIfNotList( methodCallVO.ifNotList ) )
 		{
-			this.getContextFactory( applicationContext ).registerMethodCallVO( new MethodCallVO( ownerID, methodCallName, args ) );
+			this.getContextFactory( applicationContext ).registerMethodCallVO( methodCallVO );
 		}
 	}
 
-	public function buildDomainListener 	(
-		applicationContext 	: AbstractApplicationContext,
-		ownerID 			: String,
-		listenedDomainName 	: String,
-		args 				: Array<DomainListenerVOArguments> = null,
-		ifList 				: Array<String> = null,
-		ifNotList 			: Array<String> = null
-	) : Void
+	public function buildDomainListener( applicationContext : AbstractApplicationContext, domainListenerVO : DomainListenerVO ) : Void
 	{
-		if ( this.allowsIfList( ifList ) && this.allowsIfNotList( ifNotList ) )
+		if ( this.allowsIfList( domainListenerVO.ifList ) && this.allowsIfNotList( domainListenerVO.ifNotList ) )
 		{
-			this.getContextFactory( applicationContext ).registerDomainListenerVO( new DomainListenerVO( ownerID, listenedDomainName, args ) );
+			this.getContextFactory( applicationContext ).registerDomainListenerVO( domainListenerVO );
 		}
 	}
 
-	public function configureStateTransition(
-		applicationContext 	: AbstractApplicationContext,
-		ID 					: String,
-		staticReference 	: String,
-		instanceReference 	: String,
-		enterList 			: Array<CommandMappingVO>,
-		exitList 			: Array<CommandMappingVO>,
-		ifList 				: Array<String> = null,
-		ifNotList 			: Array<String> = null
-	) : Void
+	public function configureStateTransition( applicationContext : AbstractApplicationContext, stateTransitionVO : StateTransitionVO ) : Void
 	{
-		if ( this.allowsIfList( ifList ) && this.allowsIfNotList( ifNotList ) )
+		if ( this.allowsIfList( stateTransitionVO.ifList ) && this.allowsIfNotList( stateTransitionVO.ifNotList ) )
 		{
-			this._registerID( applicationContext, ID );
-			var stateTransition = new StateTransitionVO( ID, staticReference, instanceReference, enterList, exitList );
-			this.getContextFactory( applicationContext ).registerStateTransitionVO( ID, stateTransition );
+			this._registerID( applicationContext, stateTransitionVO.ID );
+			this.getContextFactory( applicationContext ).registerStateTransitionVO( stateTransitionVO );
 		}
 	}
 

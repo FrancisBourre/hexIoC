@@ -15,15 +15,15 @@ interface IContextFactory
 {
 	function registerID( id : String ) : Bool;
 	
-	function registerStateTransitionVO( id : String, stateTransitionVO : StateTransitionVO ) : Void;
+	function registerStateTransitionVO( stateTransitionVO : StateTransitionVO ) : Void;
 	
 	function buildStateTransition( key : String ) : Void;
 	
 	function buildAllStateTransitions() : Void;
 	
-	function registerPropertyVO( id : String, propertyVO : PropertyVO  ) : Void;
+	function registerPropertyVO( propertyVO : PropertyVO  ) : Void;
 	
-	function registerConstructorVO( id : String, constructorVO : ConstructorVO ) : Void;
+	function registerConstructorVO( constructorVO : ConstructorVO ) : Void;
 	
 	function buildObject( id : String ) : Void;
 	

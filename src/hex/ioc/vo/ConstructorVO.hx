@@ -19,6 +19,9 @@ class ConstructorVO
 	public var 				mapType			: String;
 	public var 				staticRef		: String;
 	
+	public var ifList 						: Array<String> = null;
+	public var ifNotList 					: Array<String> = null;
+	
 	#if macro
 	public var 				isProperty		: Bool = false;
 	public var 				constructorArgs	: Array<Expr>;

@@ -5,6 +5,7 @@ import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.error.ParsingException;
 import hex.ioc.vo.CommandMappingVO;
+import hex.ioc.vo.StateTransitionVO;
 
 /**
  * ...
@@ -62,6 +63,10 @@ class StateXMLParser extends AbstractXMLParser
 			exitList.push( new CommandMappingVO( XMLAttributeUtil.getCommandClass( exitListItem ), XMLAttributeUtil.getFireOnce( exitListItem ), XMLAttributeUtil.getContextOwner( exitListItem ) ) );
 		}
 		
-		applicationAssembler.configureStateTransition( applicationContext, identifier, staticReference, instanceReference, enterList, exitList );
+		var stateTransitionVO 		= new StateTransitionVO( identifier, staticReference, instanceReference, enterList, exitList );
+		stateTransitionVO.ifList 	= XMLParserUtil.getIfList( xml );
+		stateTransitionVO.ifNotList = XMLParserUtil.getIfNotList( xml );
+		
+		applicationAssembler.configureStateTransition( applicationContext, stateTransitionVO );
 	}
 }

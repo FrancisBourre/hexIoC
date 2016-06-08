@@ -1,21 +1,23 @@
 package hex.compiler.parser.xml;
 
 import com.tenderowls.xml176.Xml176Parser;
-import hex.ioc.assembler.AbstractApplicationContext;
-import hex.ioc.assembler.ApplicationAssembler;
-import hex.compiler.assembler.CompileTimeApplicationAssembler;
-import hex.compiler.core.CompileTimeCoreFactory;
-import hex.ioc.core.ContextAttributeList;
 import haxe.macro.Context;
 import haxe.macro.Expr;
+import hex.compiler.assembler.CompileTimeApplicationAssembler;
+import hex.ioc.assembler.AbstractApplicationContext;
+import hex.ioc.assembler.ApplicationAssembler;
+import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.parser.xml.XMLAttributeUtil;
 import hex.ioc.parser.xml.XMLParserUtil;
 import hex.ioc.vo.CommandMappingVO;
 import hex.ioc.vo.ConstructorVO;
+import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.DomainListenerVOArguments;
-import hex.metadata.AnnotationProvider;
+import hex.ioc.vo.MethodCallVO;
+import hex.ioc.vo.PropertyVO;
+import hex.ioc.vo.StateTransitionVO;
 import hex.util.ClassUtil;
 import hex.util.MacroUtil;
 
@@ -57,7 +59,12 @@ class XmlCompiler
 		{
 			factory = xml.get( ContextAttributeList.PARSER_CLASS );
 			args = [ new ConstructorVO( identifier, ContextTypeList.STRING, [ xml.firstElement().toString() ] ) ];
-			XmlCompiler._assembler.buildObject( applicationContext, identifier, type, args, factory );
+			
+			var constructorVO 		= new ConstructorVO( identifier, type, args, factory );
+			constructorVO.ifList 	= XMLParserUtil.getIfList( xml );
+			constructorVO.ifNotList = XMLParserUtil.getIfNotList( xml );
+
+			XmlCompiler._assembler.buildObject( applicationContext, constructorVO );
 			XmlCompiler._importHelper.forceCompilation( factory );
 		}
 		else
@@ -134,8 +141,12 @@ class XmlCompiler
 			{
 				XmlCompiler._importHelper.forceCompilation( args[ 0 ].arguments[ 0 ] );
 			}
+			
+			var constructorVO 		= new ConstructorVO( identifier, type, args, factory, singleton, injectInto, null, mapType, staticRef );
+			constructorVO.ifList 	= ifList;
+			constructorVO.ifNotList = ifNotList;
 
-			XmlCompiler._assembler.buildObject( applicationContext, identifier, type, args, factory, singleton, injectInto, mapType, staticRef, ifList, ifNotList );
+			XmlCompiler._assembler.buildObject( applicationContext, constructorVO );
 
 			// Build property.
 			var propertyIterator = xml.elementsNamed( ContextNameList.PROPERTY );
@@ -144,18 +155,18 @@ class XmlCompiler
 				var property = propertyIterator.next();
 				XmlCompiler._importHelper.includeStaticRef( property.get( ContextAttributeList.STATIC_REF ) );
 				
-				XmlCompiler._assembler.buildProperty (
-						applicationContext,
-						identifier,
-						XMLAttributeUtil.getName( property ),
-						XMLAttributeUtil.getValue( property ),
-						XMLAttributeUtil.getType( property ),
-						XMLAttributeUtil.getRef( property ),
-						XMLAttributeUtil.getMethod( property ),
-						XMLAttributeUtil.getStaticRef( property ),
-						XMLParserUtil.getIfList( xml ),
-						XMLParserUtil.getIfNotList( xml )
-				);
+				var propertyVO = new PropertyVO ( 	identifier, 
+													XMLAttributeUtil.getName( property ),
+													XMLAttributeUtil.getValue( property ),
+													XMLAttributeUtil.getType( property ),
+													XMLAttributeUtil.getRef( property ),
+													XMLAttributeUtil.getMethod( property ),
+													XMLAttributeUtil.getStaticRef( property ) );
+				
+				propertyVO.ifList = XMLParserUtil.getIfList( xml );
+				propertyVO.ifNotList = XMLParserUtil.getIfNotList( xml );
+				
+				XmlCompiler._assembler.buildProperty( applicationContext, propertyVO );
 			}
 
 			// Build method call.
@@ -173,7 +184,11 @@ class XmlCompiler
 					}
 				}
 				
-				XmlCompiler._assembler.buildMethodCall( applicationContext, identifier, methodCallItem.get( ContextAttributeList.NAME ), XMLParserUtil.getMethodCallArguments( identifier, methodCallItem ), XMLParserUtil.getIfList( methodCallItem ), XMLParserUtil.getIfNotList( methodCallItem ) );
+				var methodCallVO 		= new MethodCallVO( identifier, methodCallItem.get( ContextAttributeList.NAME ), XMLParserUtil.getMethodCallArguments( identifier, methodCallItem ) );
+				methodCallVO.ifList 	= XMLParserUtil.getIfList( methodCallItem );
+				methodCallVO.ifNotList 	= XMLParserUtil.getIfNotList( methodCallItem );
+				
+				XmlCompiler._assembler.buildMethodCall( applicationContext, methodCallVO );
 			}
 
 			// Build channel listener.
@@ -192,7 +207,11 @@ class XmlCompiler
 						XmlCompiler._importHelper.forceCompilation( listenerArg.strategy );
 					}
 					
-					XmlCompiler._assembler.buildDomainListener( applicationContext, identifier, channelName, listenerArgs, XMLParserUtil.getIfList( listener ), XMLParserUtil.getIfNotList( listener ) );
+					var domainListenerVO 		= new DomainListenerVO( identifier, channelName, listenerArgs );
+					domainListenerVO.ifList 	= XMLParserUtil.getIfList( listener );
+					domainListenerVO.ifNotList 	= XMLParserUtil.getIfNotList( listener );
+					
+					XmlCompiler._assembler.buildDomainListener( applicationContext, domainListenerVO );
 				}
 				else
 				{
@@ -231,7 +250,11 @@ class XmlCompiler
 			exitList.push( new CommandMappingVO( exitListItem.get( ContextAttributeList.COMMAND_CLASS ), exitListItem.get( ContextAttributeList.FIRE_ONCE ) == "true", exitListItem.get( ContextAttributeList.CONTEXT_OWNER ) ) );
 		}
 		
-		XmlCompiler._assembler.configureStateTransition( applicationContext, identifier, staticReference, instanceReference, enterList, exitList );
+		var stateTransitionVO 		= new StateTransitionVO( identifier, staticReference, instanceReference, enterList, exitList );
+		stateTransitionVO.ifList 	= XMLParserUtil.getIfList( xml );
+		stateTransitionVO.ifNotList = XMLParserUtil.getIfNotList( xml );
+		
+		XmlCompiler._assembler.configureStateTransition( applicationContext, stateTransitionVO );
 	}
 	
 	static function getApplicationContext( doc : Xml176Document, positionTracker : XmlPositionTracker ) : ExprOf<AbstractApplicationContext>

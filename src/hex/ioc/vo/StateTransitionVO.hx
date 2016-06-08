@@ -16,6 +16,9 @@ class StateTransitionVO
 	public var enterList				: Array<CommandMappingVO>;
 	public var exitList					: Array<CommandMappingVO>;
 	
+	public var ifList 					: Array<String> = null;
+	public var ifNotList 				: Array<String> = null;
+	
 	#if macro
 	public var expressions 				: Array<Expr>;
 	#end

@@ -132,9 +132,9 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		return this._IDExpert.register( id );
 	}
 	
-	public function registerStateTransitionVO( id : String, stateTransitionVO : StateTransitionVO ) : Void
+	public function registerStateTransitionVO( stateTransitionVO : StateTransitionVO ) : Void
 	{
-		this._stateTransitionVOLocator.register( id, stateTransitionVO );
+		this._stateTransitionVOLocator.register( stateTransitionVO.ID, stateTransitionVO );
 	}
 	
 	public function buildStateTransition( key : String ) : Void
@@ -165,8 +165,10 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	}
 	
 	//
-	public function registerPropertyVO( id : String, propertyVO : PropertyVO ) : Void
+	public function registerPropertyVO( propertyVO : PropertyVO ) : Void
 	{
+		var id = propertyVO.ownerID;
+		
 		if ( this._propertyVOLocator.isRegisteredWithKey( id ) )
 		{
 			this._propertyVOLocator.locate( id ).push( propertyVO );
@@ -255,9 +257,9 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	public function handleEvent( e : IEvent ) : Void {}	
 	
 	//
-	public function registerConstructorVO( id : String, constructorVO : ConstructorVO ) : Void
+	public function registerConstructorVO( constructorVO : ConstructorVO ) : Void
 	{
-		this._constructorVOLocator.register( id, constructorVO );
+		this._constructorVOLocator.register( constructorVO.ID, constructorVO );
 	}
 	
 	public function buildObject( id : String ) : Void
