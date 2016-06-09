@@ -1,13 +1,12 @@
 package hex.ioc.parser.xml;
 
 import com.tenderowls.xml176.Xml176Parser;
+import haxe.macro.Context;
+import haxe.macro.Expr;
 import hex.compiler.parser.xml.ClassImportHelper;
-import hex.compiler.parser.xml.XMLRawData;
 import hex.compiler.parser.xml.XmlContextReader;
 import hex.compiler.parser.xml.XmlPositionTracker;
 import hex.ioc.core.ContextAttributeList;
-import haxe.macro.Context;
-import haxe.macro.Expr;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.vo.DomainListenerVOArguments;
@@ -160,25 +159,21 @@ class XmlReader
 		
 		// Build enter list
 		var enterListIterator = xml.elementsNamed( ContextNameList.ENTER );
-		//var enterList : Array<CommandMappingVO> = [];
+
 		while( enterListIterator.hasNext() )
 		{
 			var enterListItem = enterListIterator.next();
 			XmlReader._importHelper.forceCompilation( enterListItem.get( ContextAttributeList.COMMAND_CLASS ) );
-			//enterList.push( new CommandMappingVO( enterListItem.get( ContextAttributeList.COMMAND_CLASS ), enterListItem.get( ContextAttributeList.FIRE_ONCE ) == "true", enterListItem.get( ContextAttributeList.CONTEXT_OWNER ) ) );
 		}
 		
 		// Build exit list
 		var exitListIterator = xml.elementsNamed( ContextNameList.EXIT );
-		//var exitList : Array<CommandMappingVO> = [];
+
 		while( exitListIterator.hasNext() )
 		{
 			var exitListItem = exitListIterator.next();
 			XmlReader._importHelper.forceCompilation( exitListItem.get( ContextAttributeList.COMMAND_CLASS ) );
-			//exitList.push( new CommandMappingVO( exitListItem.get( ContextAttributeList.COMMAND_CLASS ), exitListItem.get( ContextAttributeList.FIRE_ONCE ) == "true", exitListItem.get( ContextAttributeList.CONTEXT_OWNER ) ) );
 		}
-		
-		//XmlCompiler._assembler.configureStateTransition( applicationContext, identifier, staticReference, instanceReference, enterList, exitList );
 	}
 	#end
 	
