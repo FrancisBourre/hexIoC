@@ -4,7 +4,7 @@ package hex.ioc.vo;
  * ...
  * @author Francis Bourre
  */
-class PropertyVO
+class PropertyVO extends AssemblerVO
 {
 	public var ownerID 		: String;
 	public var name 		: String;
@@ -13,9 +13,6 @@ class PropertyVO
 	public var ref 			: String;
 	public var method 		: String;
 	public var staticRef 	: String;
-	
-	public var ifList 				: Array<String> = null;
-	public var ifNotList 			: Array<String> = null;
 
 	public function new(    ownerID 	: String,
 							?name    	: String,
@@ -25,6 +22,8 @@ class PropertyVO
 							?method  	: String,
 							?staticRef  : String )
 		{
+			super();
+			
 			this.ownerID 	= ownerID;
 			this.name 		= name;
 			this.value 		= value;

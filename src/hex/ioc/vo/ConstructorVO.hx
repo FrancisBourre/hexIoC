@@ -6,7 +6,7 @@ import haxe.macro.Expr;
  * ...
  * @author Francis Bourre
  */
-class ConstructorVO
+class ConstructorVO extends AssemblerVO
 {
 	public var              ID              : String;
 	public var              type            : String;
@@ -18,9 +18,6 @@ class ConstructorVO
 	public var              result          : Dynamic;
 	public var 				mapType			: String;
 	public var 				staticRef		: String;
-	
-	public var ifList 						: Array<String> = null;
-	public var ifNotList 					: Array<String> = null;
 	
 	#if macro
 	public var 				isProperty		: Bool = false;
@@ -37,6 +34,8 @@ class ConstructorVO
 							?mapType 		: String,
 							?staticRef 		: String )
 	{
+		super();
+		
 		this.ID         = id;
 		this.type       = type;
 		this.arguments  = args;

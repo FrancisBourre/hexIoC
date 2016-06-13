@@ -11,6 +11,7 @@ import hex.ioc.core.ContextNameList;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.parser.xml.XMLAttributeUtil;
 import hex.ioc.parser.xml.XMLParserUtil;
+import hex.ioc.parser.xml.XmlAssemblingExceptionReporter;
 import hex.ioc.vo.CommandMappingVO;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
@@ -33,12 +34,12 @@ class XmlCompiler
 	static var _assembler 		: CompileTimeApplicationAssembler;
 	
 	#if macro
-	static function _parseNode( applicationContext : AbstractApplicationContext, xml : Xml, positionTracker : XmlPositionTracker ) : Void
+	static function _parseNode( applicationContext : AbstractApplicationContext, xml : Xml, exceptionReporter : XmlAssemblingExceptionReporter ) : Void
 	{
 		var identifier : String = xml.get( ContextAttributeList.ID );
 		if ( identifier == null )
 		{
-			Context.error( "XmlCompiler parsing error with '" + xml.nodeName + "' node, 'id' attribute not found.", positionTracker.makePositionFromNode( xml ) );
+			exceptionReporter.throwMissingIDException( xml );
 		}
 
 		var type 		: String;
@@ -111,7 +112,7 @@ class XmlCompiler
 				{
 					if ( !XmlCompiler._importHelper.includeStaticRef( arg.staticRef ) )
 					{
-						XmlCompiler._importHelper.includeClass( arg );
+						try { XmlCompiler._importHelper.includeClass( arg ); } catch ( e : String ) exceptionReporter.throwTypeNotFoundException( arg.value, arg );
 					}
 				}
 			}
@@ -127,11 +128,10 @@ class XmlCompiler
 					var t = ClassUtil.getClassNameFromStaticReference( staticRef );
 					XmlCompiler._importHelper.forceCompilation( t );
 				}
-				
 			}
 			catch ( e : String )
 			{
-				Context.error( "XmlCompiler parsing error with '" + xml.nodeName + "' node, '" + type + "' type not found.", positionTracker.makePositionFromAttribute( xml, ContextAttributeList.TYPE ) );
+				exceptionReporter.throwTypeNotFoundException( type, xml );
 			}
 			
 			XmlCompiler._importHelper.forceCompilation( mapType );
@@ -146,6 +146,8 @@ class XmlCompiler
 			constructorVO.ifList 	= ifList;
 			constructorVO.ifNotList = ifNotList;
 
+			exceptionReporter.register( constructorVO, xml );
+			constructorVO.exceptionReporter = exceptionReporter;
 			XmlCompiler._assembler.buildObject( applicationContext, constructorVO );
 
 			// Build property.
@@ -215,18 +217,18 @@ class XmlCompiler
 				}
 				else
 				{
-					Context.error( "XmlCompiler parsing error with '" + xml.nodeName + "' node, 'ref' attribute is mandatory in a 'listen' node.", positionTracker.makePositionFromNode( listener ) );
+					exceptionReporter.throwMissingListeningReferenceException( xml, listener );
 				}
 			}
 		}
 	}
 	
-	static function _parseStateNodes( applicationContext : AbstractApplicationContext, xml : Xml, positionTracker : XmlPositionTracker ) : Void
+	static function _parseStateNodes( applicationContext : AbstractApplicationContext, xml : Xml, exceptionReporter : XmlAssemblingExceptionReporter ) : Void
 	{
 		var identifier : String = xml.get( ContextAttributeList.ID );
 		if ( identifier == null )
 		{
-			Context.error( "XmlCompiler parsing error with '" + xml.nodeName + "' node, 'id' attribute not found.", positionTracker.makePositionFromNode( xml ) );
+			exceptionReporter.throwMissingIDException( xml );
 		}
 		
 		var staticReference 	: String = xml.get( ContextAttributeList.STATIC_REF );
@@ -257,7 +259,7 @@ class XmlCompiler
 		XmlCompiler._assembler.configureStateTransition( applicationContext, stateTransitionVO );
 	}
 	
-	static function getApplicationContext( doc : Xml176Document, positionTracker : XmlPositionTracker ) : ExprOf<AbstractApplicationContext>
+	static function getApplicationContext( doc : Xml176Document, exceptionReporter : XmlAssemblingExceptionReporter ) : ExprOf<AbstractApplicationContext>
 	{
 		var xml = doc.document.firstElement();
 		
@@ -272,14 +274,14 @@ class XmlCompiler
 			}
 			catch ( error : Dynamic )
 			{
-				Context.error( "XmlCompiler failed to instantiate applicationContext class typed '" + applicationContextClassName + "'", positionTracker.makePositionFromAttribute( xml, ContextAttributeList.TYPE ) );
+				exceptionReporter.throwTypeNotFoundException( applicationContextClassName, xml );
 			}
 		}
 		
 		var applicationContextName : String = xml.get( "name" );
 		if ( applicationContextName == null )
 		{
-			Context.error( "XmlCompiler failed to retrieve applicationContext name. You should add 'name' attribute to the root of your xml context", positionTracker.makePositionFromNode( xml  ) );
+			exceptionReporter.throwMissingApplicationContextNameException( xml );
 		}
 		
 		var expr;
@@ -302,12 +304,13 @@ class XmlCompiler
 		var xmlRawData = r.xrd;
 		var xrdCollection = r.collection;
 		var positionTracker : XmlPositionTracker;
+		var exceptionReporter : XmlAssemblingExceptionReporter;
 		var doc;
 		
 		try
 		{
 			doc = Xml176Parser.parse( xmlRawData.data, xmlRawData.path );
-			positionTracker = new XmlPositionTracker( doc, xrdCollection );
+			exceptionReporter = new XmlAssemblingExceptionReporter( new XmlPositionTracker( doc, xrdCollection ) );
 			XmlCompiler._importHelper = new ClassImportHelper();
 			
 			//
@@ -319,7 +322,7 @@ class XmlCompiler
 			while ( iterator.hasNext() )
 			{
 				var node = iterator.next();
-				XmlCompiler._parseStateNodes( applicationContext, node, positionTracker );
+				XmlCompiler._parseStateNodes( applicationContext, node, exceptionReporter );
 				doc.document.firstElement().removeChild( node );
 			}
 			
@@ -327,7 +330,7 @@ class XmlCompiler
 			iterator = doc.document.firstElement().elements();
 			while ( iterator.hasNext() )
 			{
-				XmlCompiler._parseNode( applicationContext, iterator.next(), positionTracker );
+				XmlCompiler._parseNode( applicationContext, iterator.next(), exceptionReporter );
 			}
 
 		}
@@ -343,7 +346,7 @@ class XmlCompiler
 		assembler.addExpression( macro @:mergeBlock { var applicationAssembler = new $applicationAssemblerTypePath(); } );
 		
 		//Create runtime applicationContext
-		assembler.addExpression( getApplicationContext( doc, positionTracker ) );
+		assembler.addExpression( getApplicationContext( doc, exceptionReporter ) );
 		
 		//Dispatch CONTEXT_PARSED message
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.CONTEXT_PARSED" );

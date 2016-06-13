@@ -16,5 +16,4 @@ class CommandMappingVO
 		this.fireOnce 			= fireOnce;
 		this.contextOwner 		= contextOwner;
 	}
-	
 }

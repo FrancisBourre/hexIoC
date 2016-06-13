@@ -115,7 +115,6 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.ASSEMBLING_START" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 		#end
-		//this._contextDispatcher.dispatch( ApplicationAssemblerMessage.ASSEMBLING_START );
 	}
 	
 	public function dispatchAssemblingEnd() : Void
@@ -124,7 +123,6 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.ASSEMBLING_END" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 		#end
-		//this._contextDispatcher.dispatch( ApplicationAssemblerMessage.ASSEMBLING_END );
 	}
 	
 	public function registerID( id : String ) : Bool
@@ -391,7 +389,6 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		
 		var varOwner = macro $i{ method.ownerID };
 		this._expressions.push( macro @:mergeBlock { $varOwner.$methodName( $a{ args } ); } );
-		//this._expressions.push( macro @:mergeBlock { Reflect.callMethod( $varOwner, Reflect.field( $varOwner, $v{ methodName } ), $a{ args } ); } );
 		#end
 	}
 

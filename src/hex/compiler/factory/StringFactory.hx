@@ -1,9 +1,8 @@
 package hex.compiler.factory;
 
 import haxe.macro.Context;
-import haxe.macro.Expr;
-import hex.ioc.vo.FactoryVO;
 import hex.ioc.vo.ConstructorVO;
+import hex.ioc.vo.FactoryVO;
 
 /**
  * ...
@@ -30,14 +29,14 @@ class StringFactory
 		}
 		else
 		{
-			Context.error( "StringFactory.build(" + value + ") returns empty String.", Context.currentPos() );
+			factoryVO.constructorVO.exceptionReporter.throwValueException( "String instance cannot returns empty String.", constructorVO );
 		}
 
 		if ( value == null )
 		{
 			value = "";
 			#if debug
-			Context.warning( "StringFactory.build(" + value + ") returns empty String.", Context.currentPos() );
+			Context.warning( "String instance cannot returns empty String.", Context.currentPos() );
 			#end
 		}
 

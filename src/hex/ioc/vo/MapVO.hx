@@ -31,5 +31,4 @@ class MapVO
 	{
 		return this._value;
 	}
-	
 }
