@@ -125,7 +125,7 @@ class XmlCompiler
 								
 							} catch ( e : String ) 
 							{
-								exceptionReporter.throwStaticRefNotFoundException( type.length > 0 ? type : arg.staticRef, node );
+								exceptionReporter.throwMissingTypeException( type.length > 0 ? type : arg.staticRef, node, ContextAttributeList.STATIC_REF );
 							}
 						}
 						else
@@ -138,7 +138,7 @@ class XmlCompiler
 									
 								} catch ( e : String ) 
 								{
-									exceptionReporter.throwClassNotFoundException( arg.arguments[ 0 ], node );
+									exceptionReporter.throwMissingTypeException( arg.arguments[ 0 ], node, ContextAttributeList.VALUE );
 								}
 							}
 						}
@@ -164,7 +164,7 @@ class XmlCompiler
 				}
 				catch ( e : String )
 				{
-					exceptionReporter.throwTypeNotFoundException( type, xml );
+					exceptionReporter.throwMissingTypeException( type, xml, ContextAttributeList.TYPE );
 				}
 			}
 			else
@@ -177,7 +177,7 @@ class XmlCompiler
 				}
 				catch ( e : String )
 				{
-					exceptionReporter.throwStaticRefNotFoundException( t, xml );
+					exceptionReporter.throwMissingTypeException( t, xml, ContextAttributeList.STATIC_REF );
 				}
 			}
 			
@@ -187,7 +187,7 @@ class XmlCompiler
 			}
 			catch ( e : String )
 			{
-				exceptionReporter.throwMappedTypeNotFoundException( mapType, xml );
+				exceptionReporter.throwMissingTypeException( mapType, xml, ContextAttributeList.MAP_TYPE );
 			}
 			
 			try
@@ -196,7 +196,7 @@ class XmlCompiler
 			}
 			catch ( e : String )
 			{
-				exceptionReporter.throwStaticRefNotFoundException( staticRef, xml );
+				exceptionReporter.throwMissingTypeException( staticRef, xml, ContextAttributeList.STATIC_REF );
 			}
 			
 			if ( type == ContextTypeList.CLASS )
@@ -229,7 +229,7 @@ class XmlCompiler
 					}
 					catch ( e : String )
 					{
-						exceptionReporter.throwStaticRefNotFoundException( type, property );
+						exceptionReporter.throwMissingTypeException( type, property, ContextAttributeList.STATIC_REF );
 					}
 				}
 				
@@ -271,7 +271,7 @@ class XmlCompiler
 							
 						} catch ( e : String ) 
 						{
-							exceptionReporter.throwStaticRefNotFoundException( type.length > 0 ? type : arg.staticRef, node );
+							exceptionReporter.throwMissingTypeException( type.length > 0 ? type : arg.staticRef, node, ContextAttributeList.STATIC_REF );
 						}
 					}
 					else
@@ -284,7 +284,7 @@ class XmlCompiler
 								
 							} catch ( e : String ) 
 							{
-								exceptionReporter.throwClassNotFoundException( arg.arguments[ 0 ], node );
+								exceptionReporter.throwMissingTypeException( arg.arguments[ 0 ], node, ContextAttributeList.VALUE );
 							}
 						}
 					}
@@ -327,7 +327,7 @@ class XmlCompiler
 							}
 							catch ( e : String )
 							{
-								exceptionReporter.throwStaticRefNotFoundException( type, node );
+								exceptionReporter.throwMissingTypeException( type, node, ContextAttributeList.STATIC_REF );
 							}
 						}
 						
@@ -337,7 +337,7 @@ class XmlCompiler
 						}
 						catch ( e : String )
 						{
-							exceptionReporter.throwStrategyNotFoundException( listenerArg.strategy, node );
+							exceptionReporter.throwMissingTypeException( listenerArg.strategy, node, ContextAttributeList.STRATEGY );
 						}
 
 						listenerArgs.push( listenerArg );
@@ -359,61 +359,47 @@ class XmlCompiler
 	
 	static function _parseStateNodes( applicationContext : AbstractApplicationContext, xml : Xml, exceptionReporter : XmlAssemblingExceptionReporter ) : Void
 	{
-		var identifier : String = xml.get( ContextAttributeList.ID );
+		var identifier = xml.get( ContextAttributeList.ID );
 		if ( identifier == null )
 		{
 			exceptionReporter.throwMissingIDException( xml );
 		}
 		
-		var staticReference 	: String = xml.get( ContextAttributeList.STATIC_REF );
-		var instanceReference 	: String = xml.get( ContextAttributeList.REF );
+		var staticReference 		= xml.get( ContextAttributeList.STATIC_REF );
+		var instanceReference 		= xml.get( ContextAttributeList.REF );
 		
-		// Build enter list
-		var enterListIterator = xml.elementsNamed( ContextNameList.ENTER );
-		var enterList : Array<CommandMappingVO> = [];
-		while( enterListIterator.hasNext() )
-		{
-			var enterListItem = enterListIterator.next();
-			var commandClass = enterListItem.get( ContextAttributeList.COMMAND_CLASS );
-			
-			try
-			{
-				XmlCompiler._importHelper.forceCompilation( commandClass );
-			}
-			catch ( e : String )
-			{
-				exceptionReporter.throwCommandClassNotFoundException( commandClass, enterListItem );
-			}
-
-			enterList.push( new CommandMappingVO( commandClass, enterListItem.get( ContextAttributeList.FIRE_ONCE ) == "true", enterListItem.get( ContextAttributeList.CONTEXT_OWNER ) ) );
-		}
-		
-		// Build exit list
-		var exitListIterator = xml.elementsNamed( ContextNameList.EXIT );
-		var exitList : Array<CommandMappingVO> = [];
-		while( exitListIterator.hasNext() )
-		{
-			var exitListItem = exitListIterator.next();
-			var commandClass = exitListItem.get( ContextAttributeList.COMMAND_CLASS );
-			
-			try
-			{
-				XmlCompiler._importHelper.forceCompilation( commandClass );
-			}
-			catch ( e : String )
-			{
-				exceptionReporter.throwCommandClassNotFoundException( commandClass, exitListItem );
-			}
-
-			XmlCompiler._importHelper.forceCompilation( exitListItem.get( ContextAttributeList.COMMAND_CLASS ) );
-			exitList.push( new CommandMappingVO( commandClass, exitListItem.get( ContextAttributeList.FIRE_ONCE ) == "true", exitListItem.get( ContextAttributeList.CONTEXT_OWNER ) ) );
-		}
+		var enterList 				= XmlCompiler._getCommandList( xml, ContextNameList.ENTER, exceptionReporter );
+		var exitList 				= XmlCompiler._getCommandList( xml, ContextNameList.EXIT, exceptionReporter );
 		
 		var stateTransitionVO 		= new StateTransitionVO( identifier, staticReference, instanceReference, enterList, exitList );
 		stateTransitionVO.ifList 	= XMLParserUtil.getIfList( xml );
 		stateTransitionVO.ifNotList = XMLParserUtil.getIfNotList( xml );
 		
 		XmlCompiler._assembler.configureStateTransition( applicationContext, stateTransitionVO );
+	}
+	
+	static public function _getCommandList( xml : Xml, elementName : String, exceptionReporter : XmlAssemblingExceptionReporter ) : Array<CommandMappingVO>
+	{
+		var iterator = xml.elementsNamed( elementName );
+		var list : Array<CommandMappingVO> = [];
+		while( iterator.hasNext() )
+		{
+			var item = iterator.next();
+			var commandClass = item.get( ContextAttributeList.COMMAND_CLASS );
+			
+			try
+			{
+				XmlCompiler._importHelper.forceCompilation( commandClass );
+			}
+			catch ( e : String )
+			{
+				exceptionReporter.throwMissingTypeException( commandClass, item, ContextAttributeList.COMMAND_CLASS );
+			}
+
+			list.push( new CommandMappingVO( commandClass, item.get( ContextAttributeList.FIRE_ONCE ) == "true", item.get( ContextAttributeList.CONTEXT_OWNER ) ) );
+		}
+		
+		return list;
 	}
 	
 	static function getApplicationContext( doc : Xml176Document, exceptionReporter : XmlAssemblingExceptionReporter ) : ExprOf<AbstractApplicationContext>
@@ -431,7 +417,7 @@ class XmlCompiler
 			}
 			catch ( error : Dynamic )
 			{
-				exceptionReporter.throwTypeNotFoundException( applicationContextClassName, xml );
+				exceptionReporter.throwMissingTypeException( applicationContextClassName, xml, ContextAttributeList.TYPE );
 			}
 		}
 		
