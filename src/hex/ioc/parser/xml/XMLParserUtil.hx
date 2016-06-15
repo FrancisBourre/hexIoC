@@ -17,7 +17,7 @@ class XMLParserUtil
 	{
 		
 	}
-	
+
 	public static function getArguments( ownerID : String, xml : Xml, type : String ) : Array<ConstructorVO>
 	{
 		var args : Array<ConstructorVO> = [];
@@ -27,7 +27,7 @@ class XMLParserUtil
 		{
 			while ( iterator.hasNext() )
 			{
-				args.push( _getConstructorVOFromXML( ownerID, iterator.next() ) );
+				args.push( XMLParserUtil._getConstructorVOFromXML( ownerID, iterator.next() ) );
 			}
 		}
 		else
@@ -42,12 +42,11 @@ class XMLParserUtil
 		return args;
 	}
 	
-	static function _getConstructorVOFromXML( ownerID : String, item : Xml ) : ConstructorVO
+	public static function _getConstructorVOFromXML( ownerID : String, item : Xml ) : ConstructorVO
 	{
 		var method 		= item.get( ContextAttributeList.METHOD );
 		var ref 		= item.get( ContextAttributeList.REF );
 		var staticRef 	= item.get( ContextAttributeList.STATIC_REF );
-		
 		
 		if ( method != null )
 		{
@@ -81,7 +80,6 @@ class XMLParserUtil
 		var ref 		= item.ref;
 		var staticRef 	= item.staticRef;
 		var value 		= item.value;
-		
 		
 		if ( method != null )
 		{
@@ -126,17 +124,20 @@ class XMLParserUtil
 
 		while ( iterator.hasNext() )
 		{
-			var item = iterator.next();
-			
-			var domainListenerVOArguments = new DomainListenerVOArguments();
-			domainListenerVOArguments.staticRef 						= item.get( ContextAttributeList.STATIC_REF );
-			domainListenerVOArguments.method 							= item.get( ContextAttributeList.METHOD );
-			domainListenerVOArguments.strategy 							= item.get( ContextAttributeList.STRATEGY );
-			domainListenerVOArguments.injectedInModule 					= item.get( ContextAttributeList.INJECTED_IN_MODULE ) == "true";
-			args.push( domainListenerVOArguments );
+			args.push( XMLParserUtil.getEventArgument( iterator.next() ) );
 		}
 
 		return args;
+	}
+	
+	public static function getEventArgument( item : Xml ) : DomainListenerVOArguments
+	{
+		var domainListenerVOArguments = new DomainListenerVOArguments();
+		domainListenerVOArguments.staticRef 						= item.get( ContextAttributeList.STATIC_REF );
+		domainListenerVOArguments.method 							= item.get( ContextAttributeList.METHOD );
+		domainListenerVOArguments.strategy 							= item.get( ContextAttributeList.STRATEGY );
+		domainListenerVOArguments.injectedInModule 					= item.get( ContextAttributeList.INJECTED_IN_MODULE ) == "true";
+		return domainListenerVOArguments;
 	}
 	
 	public static function getMapArguments( ownerID : String, xml : Xml ) : Array<Dynamic>

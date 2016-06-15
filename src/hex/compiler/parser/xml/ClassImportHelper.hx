@@ -2,6 +2,7 @@ package hex.compiler.parser.xml;
 
 import haxe.macro.Context;
 import hex.ioc.core.ContextTypeList;
+import hex.ioc.vo.ConstructorVO;
 
 /**
  * ...
@@ -52,7 +53,7 @@ class ClassImportHelper
 		}
 	}
 
-	public function getClassFullyQualifiedNameFromStaticRef( staticRef : String ) : String
+	static public function getClassFullyQualifiedNameFromStaticRef( staticRef : String ) : String
 	{
 		var a : Array<String> = staticRef.split( "." );
 		var type : String = a[ a.length - 1 ];
@@ -64,7 +65,7 @@ class ClassImportHelper
 	{
 		if ( staticRef != null )
 		{
-			this.forceCompilation( this.getClassFullyQualifiedNameFromStaticRef( staticRef ) );
+			this.forceCompilation( ClassImportHelper.getClassFullyQualifiedNameFromStaticRef( staticRef ) );
 			return true;
 		}
 		else

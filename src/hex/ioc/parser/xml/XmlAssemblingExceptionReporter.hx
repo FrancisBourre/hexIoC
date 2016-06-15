@@ -28,13 +28,6 @@ class XmlAssemblingExceptionReporter implements IAssemblingExceptionReporter
 		#end
 	}
 	
-	public function throwTypeNotFoundException( type : String, xml : Xml ) : Void 
-	{
-		#if macro
-		Context.error( "Parsing error with '" + xml.nodeName + "' node, '" + type + "' type not found.", this._positionTracker.makePositionFromAttribute( xml, ContextAttributeList.TYPE ) );
-		#end
-	}
-	
 	public function throwMissingListeningReferenceException( parentNode : Xml, listenNode : Xml ) : Void
 	{
 		#if macro
@@ -62,6 +55,50 @@ class XmlAssemblingExceptionReporter implements IAssemblingExceptionReporter
 		return assemblerVO;
 	}
 	
+	//
+	public function throwTypeNotFoundException( type : String, xml : Xml ) : Void 
+	{
+		#if macro
+		Context.error( "Parsing error with '" + xml.nodeName + "' node, '" + type + "' type not found.", this._positionTracker.makePositionFromAttribute( xml, ContextAttributeList.TYPE ) );
+		#end
+	}
+	
+	public function throwClassNotFoundException( type : String, xml : Xml ) : Void 
+	{
+		#if macro
+		Context.error( "Parsing error with '" + xml.nodeName + "' node, '" + type + "' type not found.", this._positionTracker.makePositionFromAttribute( xml, ContextAttributeList.VALUE ) );
+		#end
+	}
+	
+	public function throwStaticRefNotFoundException( type : String, xml : Xml ) : Void 
+	{
+		#if macro
+		Context.error( "Parsing error with '" + xml.nodeName + "' node, '" + type + "' type not found.", this._positionTracker.makePositionFromAttribute( xml, ContextAttributeList.STATIC_REF ) );
+		#end
+	}
+	
+	public function throwMappedTypeNotFoundException( type : String, xml : Xml ) : Void
+	{
+		#if macro
+		Context.error( "Parsing error with '" + xml.nodeName + "' node, '" + type + "' type not found.", this._positionTracker.makePositionFromAttribute( xml, ContextAttributeList.MAP_TYPE ) );
+		#end
+	}
+	
+	public function throwCommandClassNotFoundException( type : String, xml : Xml ) : Void
+	{
+		#if macro
+		Context.error( "Parsing error with '" + xml.nodeName + "' node, '" + type + "' type not found.", this._positionTracker.makePositionFromAttribute( xml, ContextAttributeList.COMMAND_CLASS ) );
+		#end
+	}
+	
+	public function throwStrategyNotFoundException( type : String, xml : Xml ) : Void
+	{
+		#if macro
+		Context.error( "Parsing error with '" + xml.nodeName + "' node, '" + type + "' type not found.", this._positionTracker.makePositionFromAttribute( xml, ContextAttributeList.STRATEGY ) );
+		#end
+	}
+	
+	//
 	private function _getXML( vo : AssemblerVO ) : Xml
 	{
 		return this._map.get( vo );

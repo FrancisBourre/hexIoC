@@ -19,7 +19,6 @@ import hex.ioc.vo.DomainListenerVOArguments;
 import hex.ioc.vo.MethodCallVO;
 import hex.ioc.vo.PropertyVO;
 import hex.ioc.vo.StateTransitionVO;
-import hex.util.ClassUtil;
 import hex.util.MacroUtil;
 
 using StringTools;
@@ -107,35 +106,98 @@ class XmlCompiler
 			}
 			else
 			{
-				args = XMLParserUtil.getArguments( identifier, xml, type );
-				for ( arg in args )
-				{
-					if ( !XmlCompiler._importHelper.includeStaticRef( arg.staticRef ) )
-					{
-						try { XmlCompiler._importHelper.includeClass( arg ); } catch ( e : String ) exceptionReporter.throwTypeNotFoundException( arg.value, arg );
-					}
-				}
-			}
+				args = [];
+				var iterator = xml.elementsNamed( ContextNameList.ARGUMENT );
 
-			try
-			{
-				if ( type != ContextTypeList.STATIC_VARIABLE )
+				if ( iterator.hasNext() )
 				{
-					XmlCompiler._importHelper.forceCompilation( type );
+					while ( iterator.hasNext() )
+					{
+						var node = iterator.next();
+						var arg = XMLParserUtil._getConstructorVOFromXML( identifier, node );
+						
+						if ( arg.staticRef != null )
+						{
+							var type = ClassImportHelper.getClassFullyQualifiedNameFromStaticRef( arg.staticRef );
+							try 
+							{
+								XmlCompiler._importHelper.forceCompilation( type );
+								
+							} catch ( e : String ) 
+							{
+								exceptionReporter.throwStaticRefNotFoundException( type.length > 0 ? type : arg.staticRef, node );
+							}
+						}
+						else
+						{
+							if ( arg.type == ContextTypeList.CLASS )
+							{
+								try 
+								{
+									XmlCompiler._importHelper.forceCompilation( arg.arguments[ 0 ] );
+									
+								} catch ( e : String ) 
+								{
+									exceptionReporter.throwClassNotFoundException( arg.arguments[ 0 ], node );
+								}
+							}
+						}
+						args.push( arg );
+					}
 				}
 				else
 				{
-					var t = ClassUtil.getClassNameFromStaticReference( staticRef );
+					var value : String = XMLAttributeUtil.getValue( xml );
+					if ( value != null ) 
+					{
+						var arg = new ConstructorVO( identifier, ContextTypeList.STRING, [ xml.get( ContextAttributeList.VALUE ) ] );
+						args.push( arg ); 
+					}
+				}
+			}
+			
+			if ( type != ContextTypeList.STATIC_VARIABLE )
+			{
+				try
+				{
+					XmlCompiler._importHelper.forceCompilation( type );
+				}
+				catch ( e : String )
+				{
+					exceptionReporter.throwTypeNotFoundException( type, xml );
+				}
+			}
+			else
+			{
+				var t = ClassImportHelper.getClassFullyQualifiedNameFromStaticRef( staticRef );
+				
+				try
+				{
 					XmlCompiler._importHelper.forceCompilation( t );
 				}
+				catch ( e : String )
+				{
+					exceptionReporter.throwStaticRefNotFoundException( t, xml );
+				}
+			}
+			
+			try
+			{
+				XmlCompiler._importHelper.forceCompilation( mapType );
 			}
 			catch ( e : String )
 			{
-				exceptionReporter.throwTypeNotFoundException( type, xml );
+				exceptionReporter.throwMappedTypeNotFoundException( mapType, xml );
 			}
 			
-			XmlCompiler._importHelper.forceCompilation( mapType );
-			XmlCompiler._importHelper.includeStaticRef( staticRef );
+			try
+			{
+				XmlCompiler._importHelper.includeStaticRef( staticRef );
+			}
+			catch ( e : String )
+			{
+				exceptionReporter.throwStaticRefNotFoundException( staticRef, xml );
+			}
 			
 			if ( type == ContextTypeList.CLASS )
 			{
@@ -155,7 +217,21 @@ class XmlCompiler
 			while ( propertyIterator.hasNext() )
 			{
 				var property = propertyIterator.next();
-				XmlCompiler._importHelper.includeStaticRef( property.get( ContextAttributeList.STATIC_REF ) );
+				var staticRef = property.get( ContextAttributeList.STATIC_REF );
+				
+				if ( staticRef != null )
+				{
+					var type = ClassImportHelper.getClassFullyQualifiedNameFromStaticRef( staticRef );
+
+					try
+					{
+						XmlCompiler._importHelper.forceCompilation( type );
+					}
+					catch ( e : String )
+					{
+						exceptionReporter.throwStaticRefNotFoundException( type, property );
+					}
+				}
 				
 				var propertyVO = new PropertyVO ( 	identifier, 
 													XMLAttributeUtil.getName( property ),
@@ -177,13 +253,42 @@ class XmlCompiler
 			{
 				var methodCallItem = methodCallIterator.next();
 
-				args = XMLParserUtil.getMethodCallArguments( identifier, methodCallItem );
-				for ( arg in args )
+				args = [];
+				var iterator = methodCallItem.elementsNamed( ContextNameList.ARGUMENT );
+
+				while ( iterator.hasNext() )
 				{
-					if ( !XmlCompiler._importHelper.includeStaticRef( arg.staticRef ) )
+					var node = iterator.next();
+					var arg = XMLParserUtil._getConstructorVOFromXML( identifier, node );
+					
+					if ( arg.staticRef != null )
 					{
-						XmlCompiler._importHelper.includeClass( arg );
+						var type = ClassImportHelper.getClassFullyQualifiedNameFromStaticRef( arg.staticRef );
+						try 
+						{
+							var type = ClassImportHelper.getClassFullyQualifiedNameFromStaticRef( staticRef );
+							XmlCompiler._importHelper.forceCompilation( type );
+							
+						} catch ( e : String ) 
+						{
+							exceptionReporter.throwStaticRefNotFoundException( type.length > 0 ? type : arg.staticRef, node );
+						}
 					}
+					else
+					{
+						if ( arg.type == ContextTypeList.CLASS )
+						{
+							try 
+							{
+								XmlCompiler._importHelper.forceCompilation( arg.arguments[ 0 ] );
+								
+							} catch ( e : String ) 
+							{
+								exceptionReporter.throwClassNotFoundException( arg.arguments[ 0 ], node );
+							}
+						}
+					}
+					args.push( arg );
 				}
 				
 				var methodCallVO 		= new MethodCallVO( identifier, methodCallItem.get( ContextAttributeList.NAME ), XMLParserUtil.getMethodCallArguments( identifier, methodCallItem ) );
@@ -202,13 +307,42 @@ class XmlCompiler
 
 				if ( channelName != null )
 				{
-					var listenerArgs : Array<DomainListenerVOArguments> = XMLParserUtil.getEventArguments( listener );
-					for ( listenerArg in listenerArgs )
+					var listenerArgs : Array<DomainListenerVOArguments> = [];
+					var iterator = listener.elementsNamed( ContextNameList.EVENT );
+
+					while ( iterator.hasNext() )
 					{
-						XmlCompiler._importHelper.includeStaticRef( listenerArg.staticRef );
-						XmlCompiler._importHelper.forceCompilation( listenerArg.strategy );
+						var node = iterator.next();
+						var listenerArg = XMLParserUtil.getEventArgument( node );
+						
+						//
+						var staticRef = listenerArg.staticRef;
+						if ( staticRef != null )
+						{
+							var type = ClassImportHelper.getClassFullyQualifiedNameFromStaticRef( staticRef );
+							
+							try
+							{
+								XmlCompiler._importHelper.forceCompilation( type );
+							}
+							catch ( e : String )
+							{
+								exceptionReporter.throwStaticRefNotFoundException( type, node );
+							}
+						}
+						
+						try
+						{
+							XmlCompiler._importHelper.forceCompilation( listenerArg.strategy );
+						}
+						catch ( e : String )
+						{
+							exceptionReporter.throwStrategyNotFoundException( listenerArg.strategy, node );
+						}
+
+						listenerArgs.push( listenerArg );
 					}
-					
+
 					var domainListenerVO 		= new DomainListenerVO( identifier, channelName, listenerArgs );
 					domainListenerVO.ifList 	= XMLParserUtil.getIfList( listener );
 					domainListenerVO.ifNotList 	= XMLParserUtil.getIfNotList( listener );
@@ -240,7 +374,18 @@ class XmlCompiler
 		while( enterListIterator.hasNext() )
 		{
 			var enterListItem = enterListIterator.next();
-			enterList.push( new CommandMappingVO( enterListItem.get( ContextAttributeList.COMMAND_CLASS ), enterListItem.get( ContextAttributeList.FIRE_ONCE ) == "true", enterListItem.get( ContextAttributeList.CONTEXT_OWNER ) ) );
+			var commandClass = enterListItem.get( ContextAttributeList.COMMAND_CLASS );
+			
+			try
+			{
+				XmlCompiler._importHelper.forceCompilation( commandClass );
+			}
+			catch ( e : String )
+			{
+				exceptionReporter.throwCommandClassNotFoundException( commandClass, enterListItem );
+			}
+
+			enterList.push( new CommandMappingVO( commandClass, enterListItem.get( ContextAttributeList.FIRE_ONCE ) == "true", enterListItem.get( ContextAttributeList.CONTEXT_OWNER ) ) );
 		}
 		
 		// Build exit list
@@ -249,7 +394,19 @@ class XmlCompiler
 		while( exitListIterator.hasNext() )
 		{
 			var exitListItem = exitListIterator.next();
-			exitList.push( new CommandMappingVO( exitListItem.get( ContextAttributeList.COMMAND_CLASS ), exitListItem.get( ContextAttributeList.FIRE_ONCE ) == "true", exitListItem.get( ContextAttributeList.CONTEXT_OWNER ) ) );
+			var commandClass = exitListItem.get( ContextAttributeList.COMMAND_CLASS );
+			
+			try
+			{
+				XmlCompiler._importHelper.forceCompilation( commandClass );
+			}
+			catch ( e : String )
+			{
+				exceptionReporter.throwCommandClassNotFoundException( commandClass, exitListItem );
+			}
+
+			XmlCompiler._importHelper.forceCompilation( exitListItem.get( ContextAttributeList.COMMAND_CLASS ) );
+			exitList.push( new CommandMappingVO( commandClass, exitListItem.get( ContextAttributeList.FIRE_ONCE ) == "true", exitListItem.get( ContextAttributeList.CONTEXT_OWNER ) ) );
 		}
 		
 		var stateTransitionVO 		= new StateTransitionVO( identifier, staticReference, instanceReference, enterList, exitList );
