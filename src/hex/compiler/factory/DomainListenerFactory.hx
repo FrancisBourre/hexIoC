@@ -1,6 +1,7 @@
 package hex.compiler.factory;
 
 import haxe.macro.Context;
+import haxe.macro.Expr;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
 import hex.domain.DomainUtil;
@@ -22,6 +23,30 @@ class DomainListenerFactory
 	}
 	
 	#if macro
+	static var _domainLocator : Map<String, String> = new Map();
+	
+	static function _getDomain( domainName : String, factoryVO : FactoryVO ) : String
+	{
+		if ( factoryVO.domainLocator.exists( domainName ) )
+		{
+			return factoryVO.domainLocator.get( domainName );
+		}
+		else
+		{
+			var DomainUtilClass = MacroUtil.getPack( Type.getClassName( DomainUtil )  );
+			var DomainClass 	= MacroUtil.getPack( Type.getClassName( Domain )  );
+			var domainVariable 	= "__domainName_" + domainName;
+			
+			factoryVO.expressions.push( macro @:mergeBlock 
+				{ 
+					var $domainVariable = $p { DomainUtilClass }.getDomain( $v{ domainName }, $p { DomainClass } ); 
+				} );
+			
+			factoryVO.domainLocator.set( domainName, domainVariable );
+			return domainVariable;
+		}
+	}
+	
 	static public function build( factoryVO : FactoryVO, domainListener : DomainListenerVO ) : Dynamic
 	{
 		var ApplicationDomainDispatcherClass = MacroUtil.getPack( Type.getClassName( ApplicationDomainDispatcher )  );
@@ -88,12 +113,11 @@ class DomainListenerFactory
 						}
 						else
 						{
-							//TODO optimize calls to DomainUtil
+							var domainVar = macro $i { DomainListenerFactory._getDomain( listenedDomainName, factoryVO ) };
 							factoryVO.expressions.push( macro @:mergeBlock 
 							{ 
 								$p { ApplicationDomainDispatcherClass } .getInstance()
-								.addHandler( $messageType, $listenerVar, $adapterExp, 
-								$p { DomainUtilClass }.getDomain( $v{ listenedDomainName }, $p { DomainClass } ) ); 
+								.addHandler( $messageType, $listenerVar, $adapterExp, $domainVar ); 
 							} );
 						}
 					}
@@ -110,9 +134,9 @@ class DomainListenerFactory
 						}
 						else
 						{
-							//TODO optimize calls to DomainUtil
+							var domainVar = macro $i { DomainListenerFactory._getDomain( listenedDomainName, factoryVO ) };
 							var messageType = MacroUtil.getStaticVariable( domainListenerArgument.staticRef );
-							factoryVO.expressions.push( macro @:mergeBlock { $p { ApplicationDomainDispatcherClass }.getInstance().addHandler( $messageType, $listenerVar, $listenerVar.$method, $p { DomainUtilClass }.getDomain( $v{ listenedDomainName }, $p { DomainClass } ) ); } );
+							factoryVO.expressions.push( macro @:mergeBlock { $p { ApplicationDomainDispatcherClass }.getInstance().addHandler( $messageType, $listenerVar, $listenerVar.$method, $domainVar ); } );
 						}
 					}
 				}
@@ -136,9 +160,9 @@ class DomainListenerFactory
 			var listenerID = domainListener.ownerID;
 			var listenedDomainName = domainListener.listenedDomainName;
 			var extVar = macro $i{ listenerID };
-			
-			//TODO optimize calls to DomainUtil
-			factoryVO.expressions.push( macro @:mergeBlock { $p { ApplicationDomainDispatcherClass }.getInstance().addListener( $extVar, $p { DomainUtilClass }.getDomain( $v{ listenedDomainName }, $p { DomainClass } ) ); } );
+
+			var domainVar = macro $i { DomainListenerFactory._getDomain( listenedDomainName, factoryVO ) };
+			factoryVO.expressions.push( macro @:mergeBlock { $p { ApplicationDomainDispatcherClass }.getInstance().addListener( $extVar, $domainVar ); } );
 
 			return true;
 		}

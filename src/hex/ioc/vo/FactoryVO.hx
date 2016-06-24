@@ -23,6 +23,7 @@ class FactoryVO
 	
 	#if macro
 	public var expressions 				: Array<Expr>;
+	public var domainLocator			: Map<String, String>;
 	public var observableLocator		: ObservableLocator;
 	#end
 
