@@ -165,10 +165,10 @@ class ObjectXMLParserTest
 		Assert.equals( 45, position.y, "" );
 	}
 	
-	@Test( "test building single instance with references" )
-	public function testBuildingSingleInstanceWithReferences() : Void
+	@Test( "test building single instance with primitives references" )
+	public function testBuildingSingleInstanceWithPrimitivesReferences() : Void
 	{
-		this.build(  XmlReader.readXmlFile( "context/singleInstanceWithReferences.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/singleInstanceWithPrimReferences.xml" ) );
 		
 		var x : Int = this._builderFactory.getCoreFactory().locate( "x" );
 		Assert.equals( 1, x, "" );
@@ -180,6 +180,31 @@ class ObjectXMLParserTest
 		Assert.isInstanceOf( position, Point, "" );
 		Assert.equals( 1, position.x, "" );
 		Assert.equals( 2, position.y, "" );
+	}
+	
+	@Test( "test building single instance with object references" )
+	public function testBuildingSingleInstanceWithObjectReferences() : Void
+	{
+		this.build(  XmlReader.readXmlFile( "context/singleInstanceWithObjectReferences.xml" ) );
+		
+		var chat : MockChatModule = this._builderFactory.getCoreFactory().locate( "chat" );
+		Assert.isInstanceOf( chat, MockChatModule, "" );
+		
+		var receiver : MockReceiverModule = this._builderFactory.getCoreFactory().locate( "receiver" );
+		Assert.isInstanceOf( receiver, MockReceiverModule, "" );
+		
+		var proxyChat : EventProxy = this._builderFactory.getCoreFactory().locate( "proxyChat" );
+		Assert.isInstanceOf( proxyChat, EventProxy, "" );
+		
+		var proxyReceiver : EventProxy = this._builderFactory.getCoreFactory().locate( "proxyReceiver" );
+		Assert.isInstanceOf( proxyReceiver, EventProxy, "" );
+
+		Assert.equals( chat, proxyChat.scope, "" );
+		Assert.equals( Reflect.field( chat, "onTranslation" ), proxyChat.callback, "" );
+		
+		
+		Assert.equals( receiver, proxyReceiver.scope, "" );
+		Assert.equals( Reflect.field( receiver, "onMessage" ), proxyReceiver.callback, "" );
 	}
 	
 	@Test( "test building multiple instances with references" )

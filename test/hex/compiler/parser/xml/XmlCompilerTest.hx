@@ -7,6 +7,7 @@ import hex.control.command.BasicCommand;
 import hex.di.Injector;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.event.Dispatcher;
+import hex.event.EventProxy;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.core.IContextFactory;
@@ -162,10 +163,10 @@ class XmlCompilerTest
 		Assert.equals( 45, position.y, "" );
 	}
 	
-	@Test( "test building single instance with references" )
-	public function testBuildingSingleInstanceWithReferences() : Void
+	@Test( "test building single instance with primitives references" )
+	public function testBuildingSingleInstanceWithPrimitivesReferences() : Void
 	{
-		this._applicationAssembler = XmlCompiler.readXmlFile( "context/singleInstanceWithReferences.xml" );
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/singleInstanceWithPrimReferences.xml" );
 		
 		var x : Int = this._getCoreFactory().locate( "x" );
 		Assert.equals( 1, x, "" );
@@ -177,6 +178,30 @@ class XmlCompilerTest
 		Assert.isInstanceOf( position, Point, "" );
 		Assert.equals( 1, position.x, "" );
 		Assert.equals( 2, position.y, "" );
+	}
+	
+	@Test( "test building single instance with object references" )
+	public function testBuildingSingleInstanceWithObjectReferences() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/singleInstanceWithObjectReferences.xml" );
+		
+		var chat : MockChatModule = this._getCoreFactory().locate( "chat" );
+		Assert.isInstanceOf( chat, MockChatModule, "" );
+		
+		var receiver : MockReceiverModule = this._getCoreFactory().locate( "receiver" );
+		Assert.isInstanceOf( receiver, MockReceiverModule, "" );
+		
+		var proxyChat : EventProxy = this._getCoreFactory().locate( "proxyChat" );
+		Assert.isInstanceOf( proxyChat, EventProxy, "" );
+		
+		var proxyReceiver : EventProxy = this._getCoreFactory().locate( "proxyReceiver" );
+		Assert.isInstanceOf( proxyReceiver, EventProxy, "" );
+
+		Assert.equals( chat, proxyChat.scope, "" );
+		Assert.equals( chat.onTranslation, proxyChat.callback, "" );
+		
+		Assert.equals( receiver, proxyReceiver.scope, "" );
+		Assert.equals( receiver.onMessage, proxyReceiver.callback, "" );
 	}
 	
 	@Test( "test building multiple instances with references" )
