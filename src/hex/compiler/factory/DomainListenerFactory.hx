@@ -7,6 +7,8 @@ import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
 import hex.domain.DomainUtil;
 import hex.event.ClassAdapter;
+import hex.event.EventProxy;
+import hex.event.IObservable;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.DomainListenerVOArguments;
 import hex.ioc.vo.FactoryVO;
@@ -25,7 +27,8 @@ class DomainListenerFactory
 	
 	#if macro
 	static var _domainLocator 		: Map<String, String> = new Map();
-	static var _eventProxyClassType : ClassType = MacroUtil.getClassType( "hex.event.EventProxy" );
+	static var _eventProxyClassType : ClassType = MacroUtil.getClassType( Type.getClassName( EventProxy ) );
+	static var _observableInterface : ClassType = MacroUtil.getClassType( Type.getClassName( IObservable ) );
 	
 	static function _getDomain( domainName : String, factoryVO : FactoryVO ) : String
 	{
@@ -69,7 +72,7 @@ class DomainListenerFactory
 				default:
 					return null;
 			}
-			
+
 			return MacroUtil.getClassType( className );
 		}
 		else
@@ -84,6 +87,12 @@ class DomainListenerFactory
 		return classType != null ? MacroUtil.isSameClass( classType, DomainListenerFactory._eventProxyClassType ) || MacroUtil.isSubClassOf( classType, DomainListenerFactory._eventProxyClassType ) : false;
 	}
 	
+	static function isObservable( e : Expr ) : Bool
+	{
+		var classType = DomainListenerFactory._getClassTypeFromExpr( e );
+		return classType != null ? MacroUtil.implementsInterface( classType, DomainListenerFactory._observableInterface ) : false;
+	}
+	
 	static public function build( factoryVO : FactoryVO, domainListener : DomainListenerVO ) : Dynamic
 	{
 		var ApplicationDomainDispatcherClass = MacroUtil.getPack( Type.getClassName( ApplicationDomainDispatcher )  );
@@ -96,9 +105,6 @@ class DomainListenerFactory
 		{
 			for ( domainListenerArgument in args )
 			{
-				//TODO implement EventProxy
-				//var method : String = Std.is( listener, EventProxy ) ? "handleCallback" : domainListenerArgument.method;
-				
 				var method = DomainListenerFactory.isEventProxy( factoryVO.coreFactory.locate( domainListener.ownerID ) ) ? "handleCallback" : domainListenerArgument.method;
 
 				if ( method != null || domainListenerArgument.strategy != null )
@@ -143,7 +149,7 @@ class DomainListenerFactory
 						
 						var adapterExp = macro { Reflect.makeVarArgs( function( rest : Array<Dynamic> ) : Void { ( $adapterVar.getCallbackAdapter() )( rest ); } ); };
 						
-						if ( factoryVO.observableLocator.isRegisteredWithKey( listenedDomainName ) )
+						if ( DomainListenerFactory.isObservable( factoryVO.coreFactory.locate( listenedDomainName ) ) )
 						{
 							var dispatcherVar = macro $i{ listenedDomainName };
 							factoryVO.expressions.push( macro @:mergeBlock { $dispatcherVar.addHandler( $messageType, $listenerVar, $adapterExp ); } );
@@ -160,9 +166,8 @@ class DomainListenerFactory
 					}
 					else
 					{
-						if ( factoryVO.observableLocator.isRegisteredWithKey( listenedDomainName ) )
+						if ( DomainListenerFactory.isObservable( factoryVO.coreFactory.locate( listenedDomainName ) ) )
 						{
-							//TODO remove ObservableLocator
 							var dispatcherVar = macro $i{ listenedDomainName };
 							factoryVO.expressions.push( macro @:mergeBlock 
 							{ 

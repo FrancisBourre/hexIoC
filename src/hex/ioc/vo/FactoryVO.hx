@@ -7,7 +7,6 @@ import haxe.macro.Expr;
 import hex.ioc.core.IContextFactory;
 import hex.ioc.core.ICoreFactory;
 import hex.ioc.locator.ModuleLocator;
-import hex.ioc.locator.ObservableLocator;
 
 /**
  * ...
@@ -24,7 +23,6 @@ class FactoryVO
 	#if macro
 	public var expressions 				: Array<Expr>;
 	public var domainLocator			: Map<String, String>;
-	public var observableLocator		: ObservableLocator;
 	#end
 
 	public function new() 

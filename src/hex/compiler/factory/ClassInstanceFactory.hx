@@ -65,12 +65,6 @@ class ClassInstanceFactory
 			{
 				var classType = MacroUtil.getClassType( constructorVO.type );
 				var moduleInterface = MacroUtil.getClassType( "hex.module.IModule" );
-				var observableInterface = MacroUtil.getClassType( "hex.event.IObservable" );
-				
-				if ( MacroUtil.implementsInterface( classType, observableInterface ) )
-				{
-					factoryVO.observableLocator.register( constructorVO.ID, true );
-				}
 				
 				if ( MacroUtil.implementsInterface( classType, moduleInterface ) )
 				{

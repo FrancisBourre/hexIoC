@@ -33,7 +33,6 @@ import hex.ioc.locator.ConstructorVOLocator;
 import hex.ioc.locator.DomainListenerVOLocator;
 import hex.ioc.locator.MethodCallVOLocator;
 import hex.ioc.locator.ModuleLocator;
-import hex.ioc.locator.ObservableLocator;
 import hex.ioc.locator.PropertyVOLocator;
 import hex.ioc.locator.StateTransitionVOLocator;
 import hex.ioc.vo.ConstructorVO;
@@ -71,7 +70,6 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 
 	//TODO remove
 	var _domainLocator 				: Map<String, String>;
-	var _observableLocator 			: ObservableLocator;
 	
 	public function new( expressions : Array<Expr>, applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null  )
 	{
@@ -460,7 +458,6 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		this._IDExpert.clear();
 		
 		this._domainLocator = null;
-		this._observableLocator.release();
 	}
 
 	function _init() : Void
@@ -474,7 +471,6 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		this._stateTransitionVOLocator 	= new StateTransitionVOLocator( this );
 		this._moduleLocator 			= new ModuleLocator( this );
 		this._domainLocator 			= new Map();
-		this._observableLocator			= new ObservableLocator( this );
 
 		#if macro
 		this._factoryMap.set( ContextTypeList.ARRAY, ArrayFactory.build );
@@ -531,7 +527,6 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		factoryVO.coreFactory 		= this._coreFactory;
 		factoryVO.moduleLocator 	= this._moduleLocator;
 		factoryVO.domainLocator 	= this._domainLocator;
-		factoryVO.observableLocator = this._observableLocator;
 		
 		return factoryVO;
 	}
