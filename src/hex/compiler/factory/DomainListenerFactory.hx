@@ -81,7 +81,7 @@ class DomainListenerFactory
 	static function isEventProxy( e : Expr ) : Bool
 	{
 		var classType = DomainListenerFactory._getClassTypeFromExpr( e );
-		return classType != null ? MacroUtil.isSameClass( classType, DomainListenerFactory._eventProxyClassType ) : false;
+		return classType != null ? MacroUtil.isSameClass( classType, DomainListenerFactory._eventProxyClassType ) || MacroUtil.isSubClassOf( classType, DomainListenerFactory._eventProxyClassType ) : false;
 	}
 	
 	static public function build( factoryVO : FactoryVO, domainListener : DomainListenerVO ) : Dynamic
