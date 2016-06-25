@@ -741,7 +741,7 @@ class XmlCompilerTest
 		Assert.equals( "BONJOUR:HTTP://GOOGLE.COM", receiver.message, "" );
 	}
 	
-	/*@Test( "Test MockObject with annotation" )
+	@Test( "Test MockObject with annotation" )
 	public function testMockObjectWithAnnotation() : Void
 	{
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/testMockObjectWithAnnotation.xml" );
@@ -756,7 +756,7 @@ class XmlCompilerTest
 		Assert.equals( 0xffffff, mockObjectWithMetaData.colorTest, "color should be the same" );
 		Assert.equals( "Bienvenue", mockObjectWithMetaData.languageTest, "text should be the same" );
 		Assert.isNull( mockObjectWithMetaData.propWithoutMetaData, "property should be null" );
-	}*/
+	}
 	
 	/*@Test( "test domain dispatch after module initialisation" )
 	public function testDomainDispatchAfterModuleInitialisation() : Void
