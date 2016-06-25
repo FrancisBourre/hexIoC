@@ -680,12 +680,6 @@ class XmlCompilerTest
 		Assert.equals( 4.5, ( myModuleB.getFloatValue() ), "" );
 	}
 	
-	function _onCompleteHandler() : Void
-	{
-		var receiver : MockReceiverModule = this._getCoreFactory().locate( "receiver" );
-		Assert.equals( "BONJOUR:HTTP://GOOGLE.COM", receiver.message, "" );
-	}
-	
 	@Async( "test EventTrigger" )
 	public function testEventTrigger() : Void
 	{
@@ -717,7 +711,37 @@ class XmlCompilerTest
 		return name == "welcome" ? "Bienvenue" : null;
 	}
 	
-	@Test( "Test MockObject with annotation" )
+	@Async( "test EventProxy" )
+	public function testEventProxy() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/eventProxy.xml" );
+
+		var eventProxy : EventProxy = this._getCoreFactory().locate( "eventProxy" );
+		Assert.isNotNull( eventProxy, "" );
+
+		var chat : MockChatModule = this._getCoreFactory().locate( "chat" );
+		Assert.isNotNull( chat, "" );
+
+		var receiver : MockReceiverModule = this._getCoreFactory().locate( "receiver" );
+		Assert.isNotNull( receiver, "" );
+
+		var eventProxy : EventProxy = this._getCoreFactory().locate( "eventProxy" );
+		Assert.isNotNull( eventProxy, "" );
+
+		var parser : MockMessageParserModule = this._getCoreFactory().locate( "parser" );
+		Assert.isNotNull( parser, "" );
+
+		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandler ), 500 );
+		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "bonjour" ] );
+	}
+	
+	function _onCompleteHandler() : Void
+	{
+		var receiver : MockReceiverModule = this._getCoreFactory().locate( "receiver" );
+		Assert.equals( "BONJOUR:HTTP://GOOGLE.COM", receiver.message, "" );
+	}
+	
+	/*@Test( "Test MockObject with annotation" )
 	public function testMockObjectWithAnnotation() : Void
 	{
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/testMockObjectWithAnnotation.xml" );
@@ -732,7 +756,7 @@ class XmlCompilerTest
 		Assert.equals( 0xffffff, mockObjectWithMetaData.colorTest, "color should be the same" );
 		Assert.equals( "Bienvenue", mockObjectWithMetaData.languageTest, "text should be the same" );
 		Assert.isNull( mockObjectWithMetaData.propWithoutMetaData, "property should be null" );
-	}
+	}*/
 	
 	/*@Test( "test domain dispatch after module initialisation" )
 	public function testDomainDispatchAfterModuleInitialisation() : Void

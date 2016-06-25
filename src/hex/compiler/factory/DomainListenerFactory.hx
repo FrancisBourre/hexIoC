@@ -2,6 +2,7 @@ package hex.compiler.factory;
 
 import haxe.macro.Context;
 import haxe.macro.Expr;
+import haxe.macro.Type.ClassType;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
 import hex.domain.DomainUtil;
@@ -23,7 +24,8 @@ class DomainListenerFactory
 	}
 	
 	#if macro
-	static var _domainLocator : Map<String, String> = new Map();
+	static var _domainLocator 		: Map<String, String> = new Map();
+	static var _eventProxyClassType : ClassType = MacroUtil.getClassType( "hex.event.EventProxy" );
 	
 	static function _getDomain( domainName : String, factoryVO : FactoryVO ) : String
 	{
@@ -47,6 +49,41 @@ class DomainListenerFactory
 		}
 	}
 	
+	static function _getClassTypeFromExpr( e : Expr ) : ClassType
+	{
+		var className : String = "";
+		
+		if ( e != null )
+		{
+			switch ( e.expr )
+			{
+				case EBlock( expr ):
+					
+					switch( expr[0].expr )
+					{
+						case ENew( t, params ):
+							className = t.pack.join( "." ) + "." + t.name;
+						default:
+							return null;
+					}
+				default:
+					return null;
+			}
+			
+			return MacroUtil.getClassType( className );
+		}
+		else
+		{
+			return null;
+		}
+	}
+	
+	static function isEventProxy( e : Expr ) : Bool
+	{
+		var classType = DomainListenerFactory._getClassTypeFromExpr( e );
+		return classType != null ? MacroUtil.isSameClass( classType, DomainListenerFactory._eventProxyClassType ) : false;
+	}
+	
 	static public function build( factoryVO : FactoryVO, domainListener : DomainListenerVO ) : Dynamic
 	{
 		var ApplicationDomainDispatcherClass = MacroUtil.getPack( Type.getClassName( ApplicationDomainDispatcher )  );
@@ -61,7 +98,8 @@ class DomainListenerFactory
 			{
 				//TODO implement EventProxy
 				//var method : String = Std.is( listener, EventProxy ) ? "handleCallback" : domainListenerArgument.method;
-				var method = domainListenerArgument.method;
+				
+				var method = DomainListenerFactory.isEventProxy( factoryVO.coreFactory.locate( domainListener.ownerID ) ) ? "handleCallback" : domainListenerArgument.method;
 
 				if ( method != null || domainListenerArgument.strategy != null )
 				{
@@ -73,7 +111,6 @@ class DomainListenerFactory
 
 					if ( strategyClassName != null )
 					{
-						
 						var StrategyClass = MacroUtil.getPack( strategyClassName );
 						var ClassAdapterClass = MacroUtil.getTypePath( Type.getClassName( ClassAdapter ) );
 						

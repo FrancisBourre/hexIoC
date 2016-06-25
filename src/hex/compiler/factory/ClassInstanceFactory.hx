@@ -106,7 +106,7 @@ class ClassInstanceFactory
 				factoryVO.expressions.push( macro @:mergeBlock { __applicationContextInjector.mapToValue( $p{ classToMap }, $instanceVar, $v { idVar } ); } );
 			}
 		}
-		
+
 		return e;
 	}
 	#end

@@ -510,8 +510,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		{
 			var extVar = macro $i{ id };
 			this._expressions.push( macro @:mergeBlock { coreFactory.register( $v{ id }, $extVar ); } );
-			
-			this._coreFactory.register( id, constructorVO.result );
+			this._coreFactory.register( id, result );
 		}
 
 		return result;
