@@ -18,6 +18,7 @@ class ArrayFactory
 	static public function build( factoryVO : FactoryVO ) : Dynamic
 	{
 		var constructorVO : ConstructorVO = factoryVO.constructorVO;
+		//var e =  macro @:pos( constructorVO.filePosition ) { $a { constructorVO.constructorArgs }; };
 		
 		if ( !constructorVO.isProperty )
 		{
@@ -25,7 +26,7 @@ class ArrayFactory
 			factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $a{ constructorVO.constructorArgs }; } );
 		}
 		
-		return macro { $a{ constructorVO.constructorArgs } };
+		return macro @:pos( constructorVO.filePosition ) { $a{ constructorVO.constructorArgs } };
 	}
 	#end
 }

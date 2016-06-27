@@ -39,7 +39,7 @@ class BoolFactory
 		}
 		else
 		{
-			Context.error( "BoolFactory.build(" + value + ") failed.", Context.currentPos() );
+			Context.error( "BoolFactory.build(" + value + ") failed.", constructorVO.filePosition );
 		}
 		
 		if ( !constructorVO.isProperty )
@@ -48,7 +48,7 @@ class BoolFactory
 			factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $v { constructorVO.result }; } );
 		}
 		
-		return macro { $v { constructorVO.result } };
+		return macro @:pos( constructorVO.filePosition ) { $v { constructorVO.result } };
 	}
 	#end
 }

@@ -73,7 +73,7 @@ class XMLParserUtil
 		}
 	}
 	
-	static function _getConstructorVO( ownerID : String, item : Dynamic ) : ConstructorVO
+	public static function _getConstructorVO( ownerID : String, item : Dynamic ) : ConstructorVO
 	{
 		var type 		= item.type;
 		var method 		= item.method;
@@ -155,14 +155,14 @@ class XMLParserUtil
 			{
 				var key 	= XMLParserUtil._getAttributes( keyList.next() );
 				var value 	= XMLParserUtil._getAttributes( valueList.next() );			
-				args.push( new MapVO( _getConstructorVO( ownerID, key ), _getConstructorVO( ownerID, value ), XMLAttributeUtil.getMapName( item ), XMLAttributeUtil.getAsSingleton( item ) ) );
+				args.push( new MapVO( XMLParserUtil._getConstructorVO( ownerID, key ), XMLParserUtil._getConstructorVO( ownerID, value ), XMLAttributeUtil.getMapName( item ), XMLAttributeUtil.getAsSingleton( item ) ) );
 			}
 		}
 
 		return args;
 	}
 
-	static function _getAttributes( xml : Xml ) : Dynamic
+	public static function _getAttributes( xml : Xml ) : Dynamic
 	{
 		var obj : Dynamic = {};
 		var iterator = xml.attributes();

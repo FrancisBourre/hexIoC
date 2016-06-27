@@ -28,7 +28,7 @@ class IntFactory
 		}
 		else
 		{
-			Context.error( "IntFactory.build(" + ( args != null && args.length > 0 ? args[0] : "" ) + ") failed.", Context.currentPos() );
+			Context.error( "IntFactory.build(" + ( args != null && args.length > 0 ? args[0] : "" ) + ") failed.", constructorVO.filePosition );
 		}
 
 		#if js
@@ -37,7 +37,7 @@ class IntFactory
 		if ( "" + number != args[0] )
 		#end
 		{
-			Context.error( "IntFactory.build(" + number + ") failed.", Context.currentPos() );
+			Context.error( "Value is not an Int", constructorVO.filePosition );
 		}
 		else
 		{
@@ -48,9 +48,9 @@ class IntFactory
 				var idVar = constructorVO.ID;
 				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $v { number }; } );
 			}
-		}
+		};
 		
-		return macro { $v { number } };
+		return macro @:pos( constructorVO.filePosition ) { $v { number } };
 	}
 	#end
 }

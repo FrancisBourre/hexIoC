@@ -25,7 +25,7 @@ class StaticVariableFactory
 		if ( !constructorVO.isProperty )
 		{
 			var idVar = constructorVO.ID;
-			factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
+			factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { var $idVar = $e; } );
 		}
 		
 		return e;

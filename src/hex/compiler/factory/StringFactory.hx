@@ -29,14 +29,14 @@ class StringFactory
 		}
 		else
 		{
-			factoryVO.constructorVO.exceptionReporter.throwValueException( "String instance cannot returns empty String.", constructorVO );
+			Context.error( "String instance cannot returns empty String.", constructorVO.filePosition );
 		}
 
 		if ( value == null )
 		{
 			value = "";
 			#if debug
-			Context.warning( "String instance cannot returns empty String.", Context.currentPos() );
+			Context.warning( "String instance cannot returns empty String.", constructorVO.filePosition );
 			#end
 		}
 
@@ -47,8 +47,8 @@ class StringFactory
 			var idVar = constructorVO.ID;
 			factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $v { value }; } );
 		}
-		
-		return macro { $v { value } };
+
+		return macro @:pos( constructorVO.filePosition ) { $v { value } };
 	}
 	#end
 }

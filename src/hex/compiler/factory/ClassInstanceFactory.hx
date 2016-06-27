@@ -1,4 +1,5 @@
 package hex.compiler.factory;
+import haxe.macro.Context;
 import haxe.macro.Expr;
 import hex.di.IDependencyInjector;
 import hex.domain.Domain;
@@ -36,8 +37,26 @@ class ClassInstanceFactory
 		else
 		{
 			var idVar = constructorVO.ID;
-			var tp = MacroUtil.getPack( constructorVO.type );
-			var typePath = MacroUtil.getTypePath( constructorVO.type );
+			var tp : Array<String>;
+			var typePath : TypePath;
+			
+			try 
+			{
+				tp = MacroUtil.getPack( constructorVO.type );
+			}
+			catch( e : Dynamic )
+			{
+				Context.error( e, constructorVO.filePosition );
+			}
+			
+			try
+			{
+				typePath = MacroUtil.getTypePath( constructorVO.type );
+			}
+			catch( e : Dynamic )
+			{
+				Context.error( e, constructorVO.filePosition );
+			}
 
 			//build instance
 			var singleton = constructorVO.singleton;
@@ -46,19 +65,19 @@ class ClassInstanceFactory
 			{
 				if ( singleton != null )
 				{
-					e = macro { $p { tp }.$singleton().$factory( $a{ constructorVO.constructorArgs } ); };
+					e = macro @:pos( constructorVO.filePosition ) { $p { tp }.$singleton().$factory( $a{ constructorVO.constructorArgs } ); };
 					factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
 				}
 				else
 				{
-					e = macro { $p { tp }.$factory( $a{ constructorVO.constructorArgs } ); };
+					e = macro @:pos( constructorVO.filePosition ) { $p { tp }.$factory( $a{ constructorVO.constructorArgs } ); };
 					factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
 				}
 			
 			}
 			else if ( singleton != null )
 			{
-				e = macro { $p { tp }.$singleton(); };
+				e = macro @:pos( constructorVO.filePosition ) { $p { tp }.$singleton(); };
 				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
 			}
 			else
@@ -81,7 +100,7 @@ class ClassInstanceFactory
 					factoryVO.moduleLocator.register( constructorVO.ID, new EmptyModule( constructorVO.ID ) );
 				}
 				
-				e = macro { new $typePath( $a{ constructorVO.constructorArgs } ); };
+				e = macro @:pos( constructorVO.filePosition ) { new $typePath( $a{ constructorVO.constructorArgs } ); };
 				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
 				
 				var annotationParsableInterface = MacroUtil.getClassType( "hex.core.IAnnotationParsable" );
@@ -89,7 +108,7 @@ class ClassInstanceFactory
 				{
 					var instanceVar = macro $i { idVar };
 					var annotationProviderVar = macro $i { "__annotationProvider" };
-					factoryVO.expressions.push( macro @:mergeBlock { $annotationProviderVar.parse( $instanceVar ); } );
+					factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { $annotationProviderVar.parse( $instanceVar ); } );
 				}
 			}
 
@@ -97,7 +116,7 @@ class ClassInstanceFactory
 			{
 				var instanceVar = macro $i { idVar };
 				var classToMap = MacroUtil.getPack( constructorVO.mapType );
-				factoryVO.expressions.push( macro @:mergeBlock { __applicationContextInjector.mapToValue( $p{ classToMap }, $instanceVar, $v { idVar } ); } );
+				factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { __applicationContextInjector.mapToValue( $p{ classToMap }, $instanceVar, $v { idVar } ); } );
 			}
 		}
 

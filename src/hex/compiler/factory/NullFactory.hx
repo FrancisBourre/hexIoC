@@ -27,7 +27,7 @@ class NullFactory
 		}
 		
 		
-		return macro { null; };
+		return macro @:pos( constructorVO.filePosition ) { null; };
 	}
 	#end
 }

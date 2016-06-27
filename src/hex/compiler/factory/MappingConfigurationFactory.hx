@@ -26,13 +26,13 @@ class MappingConfigurationFactory
 		
 		var idVar = constructorVO.ID;
 		var typePath = MacroUtil.getTypePath( Type.getClassName( MappingConfiguration ) );
-		var e = macro { new $typePath(); };
+		var e = macro @:pos( constructorVO.filePosition ) { new $typePath(); };
 		factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
 		
 		var extVar = macro $i{ idVar };
 		if ( args.length <= 0 )
 		{
-			Context.warning( "MappingConfigurationFactory.build(" + args + ") returns an empty ServiceConfig.", Context.currentPos() );
+			Context.warning( "MappingConfigurationFactory.build(" + args + ") returns an empty ServiceConfig.", constructorVO.filePosition );
 
 		} else
 		{
@@ -41,11 +41,11 @@ class MappingConfigurationFactory
 				if ( item.key != null )
 				{
 					var a = [ item.key, item.value, macro { $v { item.mapName } }, macro { $v { item.asSingleton } } ];
-					factoryVO.expressions.push( macro @:mergeBlock { $extVar.addMapping( $a{ a } ); } );
+					factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { $extVar.addMapping( $a{ a } ); } );
 					
 				} else
 				{
-					Context.warning( "MappingConfigurationFactory.build() adds item with a 'null' key for '"  + item.value +"' value.", Context.currentPos() );
+					Context.warning( "MappingConfigurationFactory.build() adds item with a 'null' key for '"  + item.value +"' value.", constructorVO.filePosition );
 				}
 			}
 		}

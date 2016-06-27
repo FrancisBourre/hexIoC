@@ -29,7 +29,7 @@ class UIntFactory
 		}
 		else
 		{
-			Context.error( "UIntFactory.build(" + ( args != null && args.length > 0 ? args[0] : "" ) + ") failed.", Context.currentPos() );
+			Context.error( "UIntFactory.build(" + ( args != null && args.length > 0 ? args[0] : "" ) + ") failed.", constructorVO.filePosition );
 		}
 		
 		#if js
@@ -38,7 +38,7 @@ class UIntFactory
 		if ( "" + number != args[0] && number >=0 )
 		#end
 		{
-			Context.error( "UIntFactory.build(" + number + ") failed.", Context.currentPos() );
+			Context.error( "UIntFactory.build(" + number + ") failed.", constructorVO.filePosition );
 		}
 		else
 		{
@@ -51,7 +51,7 @@ class UIntFactory
 			}
 		}
 		
-		return macro { $v { number } };
+		return macro @:pos( constructorVO.filePosition ) { $v { number } };
 	}
 	#end
 }

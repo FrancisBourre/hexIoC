@@ -26,13 +26,13 @@ class ServiceLocatorFactory
 		
 		var idVar = constructorVO.ID;
 		var typePath = MacroUtil.getTypePath( Type.getClassName( ServiceLocator ) );
-		var e = macro { new $typePath(); };
+		var e = macro @:pos( constructorVO.filePosition ) { new $typePath(); };
 		factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
 		
 		var extVar = macro $i{ idVar };
 		if ( args.length <= 0 )
 		{
-			Context.warning( "ServiceLocatorFactory.build(" + args + ") returns an empty ServiceConfig.", Context.currentPos() );
+			Context.warning( "ServiceLocatorFactory.build(" + args + ") returns an empty ServiceConfig.", constructorVO.filePosition );
 
 		} else
 		{
@@ -41,11 +41,11 @@ class ServiceLocatorFactory
 				if ( item.key != null )
 				{
 					var a = [ item.key, item.value, macro { $v { item.mapName } } ];
-					factoryVO.expressions.push( macro @:mergeBlock { $extVar.addService( $a{ a } ); } );
+					factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { $extVar.addService( $a{ a } ); } );
 					
 				} else
 				{
-					Context.warning( "ServiceLocatorFactory.build() adds item with a 'null' key for '"  + item.value +"' value.", Context.currentPos() );
+					Context.warning( "ServiceLocatorFactory.build() adds item with a 'null' key for '"  + item.value +"' value.", constructorVO.filePosition );
 				}
 			}
 		}

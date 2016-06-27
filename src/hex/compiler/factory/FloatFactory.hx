@@ -43,7 +43,7 @@ class FloatFactory
 			Context.error( "FloatFactory.build(" + number + ") failed.", Context.currentPos() );
 		}
 		
-		return macro { $v { number } };
+		return macro @:pos( constructorVO.filePosition ) { $v { number } };
 	}
 	#end
 }

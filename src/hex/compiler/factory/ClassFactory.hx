@@ -32,15 +32,18 @@ class ClassFactory
 			qualifiedClassName = "" + args[0];
 		}
 
-		try
+		var tp : Array<String>;
+
+		try 
 		{
-			var tp = MacroUtil.getPack( qualifiedClassName );
-			e = macro { $p { tp }; };
+			tp = MacroUtil.getPack( qualifiedClassName );
 		}
-		catch ( e : Dynamic )
+		catch( e : Dynamic )
 		{
-			Context.error( "'" + qualifiedClassName + "' is not available", Context.currentPos() );
+			Context.error( e, constructorVO.filePosition );
 		}
+		
+		e = macro @:pos( constructorVO.filePosition ) { $p { tp }; };
 		
 		if ( !constructorVO.isProperty )
 		{

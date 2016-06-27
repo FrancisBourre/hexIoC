@@ -16,6 +16,7 @@ import hex.ioc.vo.CommandMappingVO;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.DomainListenerVOArguments;
+import hex.ioc.vo.MapVO;
 import hex.ioc.vo.MethodCallVO;
 import hex.ioc.vo.PropertyVO;
 import hex.ioc.vo.StateTransitionVO;
@@ -57,12 +58,14 @@ class XmlCompiler
 
 		if ( type == ContextTypeList.XML )
 		{
-			factory = xml.get( ContextAttributeList.PARSER_CLASS );
-			args = [ new ConstructorVO( identifier, ContextTypeList.STRING, [ xml.firstElement().toString() ] ) ];
+			factory 			= xml.get( ContextAttributeList.PARSER_CLASS );
+			var arg 			= new ConstructorVO( identifier, ContextTypeList.STRING, [ xml.firstElement().toString() ] );
+			arg.filePosition 	= exceptionReporter._positionTracker.makePositionFromNode( xml.firstElement() );
 			
-			var constructorVO 		= new ConstructorVO( identifier, type, args, factory );
-			constructorVO.ifList 	= XMLParserUtil.getIfList( xml );
-			constructorVO.ifNotList = XMLParserUtil.getIfNotList( xml );
+			var constructorVO 			= new ConstructorVO( identifier, type, [ arg ], factory );
+			constructorVO.filePosition 	= exceptionReporter._positionTracker.makePositionFromNode( xml );
+			constructorVO.ifList 		= XMLParserUtil.getIfList( xml );
+			constructorVO.ifNotList 	= XMLParserUtil.getIfNotList( xml );
 
 			XmlCompiler._assembler.buildObject( applicationContext, constructorVO );
 			XmlCompiler._importHelper.forceCompilation( factory );
@@ -84,7 +87,7 @@ class XmlCompiler
 
 			if ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR || type == ContextTypeList.MAPPING_CONFIG )
 			{
-				args = XMLParserUtil.getMapArguments( identifier, xml );
+				args = XmlCompiler.getMapArguments( identifier, xml, exceptionReporter );
 				for ( arg in args )
 				{
 					if ( arg.getPropertyKey() != null )
@@ -115,6 +118,7 @@ class XmlCompiler
 					{
 						var node = iterator.next();
 						var arg = XMLParserUtil._getConstructorVOFromXML( identifier, node );
+						arg.filePosition = exceptionReporter._positionTracker.makePositionFromNode( node );
 						
 						if ( arg.staticRef != null )
 						{
@@ -204,9 +208,10 @@ class XmlCompiler
 				XmlCompiler._importHelper.forceCompilation( args[ 0 ].arguments[ 0 ] );
 			}
 			
-			var constructorVO 		= new ConstructorVO( identifier, type, args, factory, singleton, injectInto, null, mapType, staticRef );
-			constructorVO.ifList 	= ifList;
-			constructorVO.ifNotList = ifNotList;
+			var constructorVO 			= new ConstructorVO( identifier, type, args, factory, singleton, injectInto, null, mapType, staticRef );
+			constructorVO.ifList 		= ifList;
+			constructorVO.ifNotList 	= ifNotList;
+			constructorVO.filePosition 	= exceptionReporter._positionTracker.makePositionFromNode( xml );
 
 			exceptionReporter.register( constructorVO, xml );
 			constructorVO.exceptionReporter = exceptionReporter;
@@ -241,8 +246,9 @@ class XmlCompiler
 													XMLAttributeUtil.getMethod( property ),
 													XMLAttributeUtil.getStaticRef( property ) );
 				
-				propertyVO.ifList = XMLParserUtil.getIfList( xml );
-				propertyVO.ifNotList = XMLParserUtil.getIfNotList( xml );
+				propertyVO.filePosition = exceptionReporter._positionTracker.makePositionFromNode( property );
+				propertyVO.ifList 		= XMLParserUtil.getIfList( xml );
+				propertyVO.ifNotList 	= XMLParserUtil.getIfNotList( xml );
 				
 				XmlCompiler._assembler.buildProperty( applicationContext, propertyVO );
 			}
@@ -258,8 +264,9 @@ class XmlCompiler
 
 				while ( iterator.hasNext() )
 				{
-					var node = iterator.next();
-					var arg = XMLParserUtil._getConstructorVOFromXML( identifier, node );
+					var node 			= iterator.next();
+					var arg 			= XMLParserUtil._getConstructorVOFromXML( identifier, node );
+					arg.filePosition 	= exceptionReporter._positionTracker.makePositionFromNode( node );
 					
 					if ( arg.staticRef != null )
 					{
@@ -288,12 +295,14 @@ class XmlCompiler
 							}
 						}
 					}
+					
 					args.push( arg );
 				}
 				
-				var methodCallVO 		= new MethodCallVO( identifier, methodCallItem.get( ContextAttributeList.NAME ), XMLParserUtil.getMethodCallArguments( identifier, methodCallItem ) );
-				methodCallVO.ifList 	= XMLParserUtil.getIfList( methodCallItem );
-				methodCallVO.ifNotList 	= XMLParserUtil.getIfNotList( methodCallItem );
+				var methodCallVO 			= new MethodCallVO( identifier, methodCallItem.get( ContextAttributeList.NAME ), args );
+				methodCallVO.filePosition 	= exceptionReporter._positionTracker.makePositionFromNode( methodCallItem );
+				methodCallVO.ifList 		= XMLParserUtil.getIfList( methodCallItem );
+				methodCallVO.ifNotList 		= XMLParserUtil.getIfNotList( methodCallItem );
 				
 				XmlCompiler._assembler.buildMethodCall( applicationContext, methodCallVO );
 			}
@@ -314,6 +323,7 @@ class XmlCompiler
 					{
 						var node = iterator.next();
 						var listenerArg = XMLParserUtil.getEventArgument( node );
+	//					listenerArg.filePosition = exceptionReporter._positionTracker.makePositionFromNode( node );
 						
 						//
 						var staticRef = listenerArg.staticRef;
@@ -344,6 +354,7 @@ class XmlCompiler
 					}
 
 					var domainListenerVO 		= new DomainListenerVO( identifier, channelName, listenerArgs );
+					domainListenerVO.filePosition 	= exceptionReporter._positionTracker.makePositionFromNode( listener );
 					domainListenerVO.ifList 	= XMLParserUtil.getIfList( listener );
 					domainListenerVO.ifNotList 	= XMLParserUtil.getIfNotList( listener );
 					
@@ -355,6 +366,37 @@ class XmlCompiler
 				}
 			}
 		}
+	}
+	
+	static public function getMapArguments( ownerID : String, xml : Xml, exceptionReporter : XmlAssemblingExceptionReporter ) : Array<Dynamic>
+	{
+		var args : Array<Dynamic> = [];
+		var iterator = xml.elementsNamed( ContextNameList.ITEM );
+
+		while ( iterator.hasNext() )
+		{
+			var item = iterator.next();
+			var keyList 	= item.elementsNamed( ContextNameList.KEY );
+			var valueList 	= item.elementsNamed( ContextNameList.VALUE );
+			
+			if ( keyList.hasNext() )
+			{
+				var keyNode 	= keyList.next();
+				var valueNode 	= valueList.next();
+				var key 		= XMLParserUtil._getAttributes( keyNode );
+				var value 		= XMLParserUtil._getAttributes( valueNode );
+				var keyVO 		= XMLParserUtil._getConstructorVO( ownerID, key );
+
+				keyVO.filePosition = exceptionReporter._positionTracker.makePositionFromNode( keyNode );
+				var valueVO	= XMLParserUtil._getConstructorVO( ownerID, value );
+				valueVO.filePosition = exceptionReporter._positionTracker.makePositionFromNode( valueNode );
+				var mapVO = new MapVO( keyVO, valueVO, XMLAttributeUtil.getMapName( item ), XMLAttributeUtil.getAsSingleton( item ) );
+				mapVO.filePosition = exceptionReporter._positionTracker.makePositionFromNode( item );
+				args.push( mapVO );
+			}
+		}
+
+		return args;
 	}
 	
 	static function _parseStateNodes( applicationContext : AbstractApplicationContext, xml : Xml, exceptionReporter : XmlAssemblingExceptionReporter ) : Void
@@ -375,6 +417,7 @@ class XmlCompiler
 		stateTransitionVO.ifList 	= XMLParserUtil.getIfList( xml );
 		stateTransitionVO.ifNotList = XMLParserUtil.getIfNotList( xml );
 		
+		stateTransitionVO.filePosition 	= exceptionReporter._positionTracker.makePositionFromNode( xml );
 		XmlCompiler._assembler.configureStateTransition( applicationContext, stateTransitionVO );
 	}
 	
@@ -396,7 +439,9 @@ class XmlCompiler
 				exceptionReporter.throwMissingTypeException( commandClass, item, ContextAttributeList.COMMAND_CLASS );
 			}
 
-			list.push( new CommandMappingVO( commandClass, item.get( ContextAttributeList.FIRE_ONCE ) == "true", item.get( ContextAttributeList.CONTEXT_OWNER ) ) );
+			var commandMappingVO 			= new CommandMappingVO( commandClass, item.get( ContextAttributeList.FIRE_ONCE ) == "true", item.get( ContextAttributeList.CONTEXT_OWNER ) );
+			commandMappingVO.filePosition 	= exceptionReporter._positionTracker.makePositionFromNode( item );
+			list.push( commandMappingVO );
 		}
 		
 		return list;

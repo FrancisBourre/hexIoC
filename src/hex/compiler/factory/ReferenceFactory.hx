@@ -31,14 +31,8 @@ class ReferenceFactory
 			factoryVO.contextFactory.buildObject( key );
 		}
 		
-		//var result = factoryVO.coreFactory.locate( key );
-		
 		if ( constructorVO.ref.indexOf( "." ) != -1 )
 		{
-			/*var args : Array<String> = constructorVO.ref.split( "." );
-			args.shift();
-			constructorVO.result = factoryVO.coreFactory.fastEvalFromTarget( result, args.join( "." )  );*/
-			
 			if ( !constructorVO.isProperty )
 			{
 				var p = macro $p { constructorVO.ref.split(".") };
@@ -50,8 +44,6 @@ class ReferenceFactory
 		}
 		else 
 		{
-			//constructorVO.result = result;
-			
 			if ( !constructorVO.isProperty )
 			{
 				var idVar = constructorVO.ID;

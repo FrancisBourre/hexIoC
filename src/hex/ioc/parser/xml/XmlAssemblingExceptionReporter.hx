@@ -12,7 +12,7 @@ import hex.ioc.vo.AssemblerVO;
 class XmlAssemblingExceptionReporter implements IAssemblingExceptionReporter
 {
 	var _map : Map<AssemblerVO, Xml>;
-	var _positionTracker : XmlPositionTracker;
+	public var _positionTracker ( default, null ) : XmlPositionTracker;
 
 	public function new( positionTracker : XmlPositionTracker ) 
 	{
@@ -58,7 +58,7 @@ class XmlAssemblingExceptionReporter implements IAssemblingExceptionReporter
 	public function throwMissingTypeException( type : String, xml : Xml, attributeName : String ) : Void 
 	{
 		#if macro
-		Context.error( "Parsing error with '" + xml.nodeName + "' node, '" + type + "' type not found.", this._positionTracker.makePositionFromAttribute( xml, attributeName ) );
+		Context.error( "Type not found '" + type + "' ", this._positionTracker.makePositionFromAttribute( xml, attributeName ) );
 		#end
 	}
 	

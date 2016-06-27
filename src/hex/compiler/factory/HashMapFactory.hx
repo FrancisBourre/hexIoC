@@ -29,13 +29,13 @@ class HashMapFactory
 		var params = [ TPType( macro:Dynamic ), TPType( macro:Dynamic ) ];
 		var typePath = MacroUtil.getTypePath( Type.getClassName( HashMap ), params );
 		
-		var e = macro { new $typePath(); };
+		var e = macro @:pos( constructorVO.filePosition ) { new $typePath(); };
 		factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
 		
 		var extVar = macro $i{ idVar };
 		if ( args.length == 0 )
 		{
-			Context.warning( "HashMapFactory.build(" + args + ") returns an empty HashMap.", Context.currentPos() );
+			Context.warning( "HashMapFactory.build(" + args + ") returns an empty HashMap.", constructorVO.filePosition );
 
 		} else
 		{
@@ -44,18 +44,13 @@ class HashMapFactory
 				if ( item.key != null )
 				{
 					var a = [ item.key, item.value ];
-					factoryVO.expressions.push( macro @:mergeBlock { $extVar.put( $a{ a } ); } );
+					factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { $extVar.put( $a{ a } ); } );
 					
 				} else
 				{
-					Context.warning( "HashMapFactory.build() adds item with a 'null' key for '"  + item.value +"' value.", Context.currentPos() );
+					Context.warning( "HashMapFactory.build() adds item with a 'null' key for '"  + item.value +"' value.", constructorVO.filePosition );
 				}
 			}
-		}
-
-		if ( constructorVO.mapType != null )
-		{
-			factoryVO.contextFactory.getApplicationContext().getInjector().mapToValue( HashMap, constructorVO.result, constructorVO.ID );
 		}
 		
 		return e;

@@ -34,7 +34,7 @@ class XmlFactory
 					if ( !constructorVO.isProperty )
 					{
 						var idVar = constructorVO.ID;
-						factoryVO.expressions.push( macro @:mergeBlock { var $idVar = Xml.parse( $v { source } ); } );
+						factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { var $idVar = Xml.parse( $v { source } ); } );
 					}
 				}
 				else
@@ -44,10 +44,10 @@ class XmlFactory
 						var idVar = constructorVO.ID;
 						var typePath = MacroUtil.getTypePath( factory );
 						var parser = "factory_" + constructorVO.ID;
-						factoryVO.expressions.push( macro @:mergeBlock { var $parser = new $typePath(); } );
+						factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { var $parser = new $typePath(); } );
 						
 						var parserVar = macro $i{ parser };
-						factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $parserVar.parse( Xml.parse( $v { source } ) ); } );
+						factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { var $idVar = $parserVar.parse( Xml.parse( $v { source } ) ); } );
 					}
 				}
 			}

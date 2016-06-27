@@ -3,7 +3,8 @@
         <property name="size" ref="rectSize" />
         <method-call name="offsetPoint">
             <argument ref="rectPosition"/>
-        </method-call></rectangle>
+        </method-call>
+	</rectangle>
 
     <size id="rectSize" type="hex.structures.Point">
         <argument type="Int" value="30"/>

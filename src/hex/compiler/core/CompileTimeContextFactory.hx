@@ -184,7 +184,9 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		if ( property.method != null )
 		{
 			#if macro
-			value = this._build( new ConstructorVO( null, ContextTypeList.FUNCTION, [ property.method ], null, null, false, null, null, null ) );
+			var constructorVO = new ConstructorVO( null, ContextTypeList.FUNCTION, [ property.method ], null, null, false, null, null, null );
+			constructorVO.filePosition = property.filePosition;
+			value = this._build( constructorVO );
 			var extVar = macro $i{ id };
 			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $value; } );
 			#end
@@ -192,7 +194,9 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		} else if ( property.ref != null )
 		{
 			#if macro
-			value = this._build( new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, property.ref, null, null ) );
+			var constructorVO = new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, property.ref, null, null );
+			constructorVO.filePosition = property.filePosition;
+			value = this._build( constructorVO );
 			var extVar = macro $i{ id };
 			var refVar = macro $i{ property.ref };
 			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $refVar; } );
@@ -201,7 +205,9 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		} else if ( property.staticRef != null )
 		{
 			#if macro
-			value = this._build( new ConstructorVO( null, ContextTypeList.STATIC_VARIABLE, null, null, null, false, null, null,  property.staticRef ) );
+			var constructorVO = new ConstructorVO( null, ContextTypeList.STATIC_VARIABLE, null, null, null, false, null, null,  property.staticRef );
+			constructorVO.filePosition = property.filePosition;
+			value = this._build( constructorVO );
 			var extVar = macro $i{ id };
 			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $value; } );
 			#end
@@ -210,7 +216,9 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		{
 			#if macro
 			var type : String = property.type != null ? property.type : ContextTypeList.STRING;
-			value = this._build( new ConstructorVO( property.ownerID, type, [ property.value ], null, null, false, null, null, null ) );
+			var constructorVO = new ConstructorVO( property.ownerID, type, [ property.value ], null, null, false, null, null, null );
+			constructorVO.filePosition = property.filePosition;
+			value = this._build( constructorVO );
 			
 			var extVar = macro $i{ id };
 			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $value; } );

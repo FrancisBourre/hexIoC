@@ -1,4 +1,5 @@
 package hex.ioc.vo;
+import haxe.macro.Expr.Position;
 
 /**
  * ...
@@ -13,6 +14,10 @@ class MapVO
 	public var value 		: Dynamic;
 	public var mapName 		: String;
 	public var asSingleton 	: Bool = false;
+	
+	#if macro
+	public var filePosition : Position;
+	#end
 
 	public function new( key : ConstructorVO, value : ConstructorVO, ?mapName : String, asSingleton : Bool = false )
 	{

@@ -46,50 +46,50 @@ class StateTransitionFactory
 		var ContextOwnerWrapperClass 	= MacroUtil.getTypePath( Type.getClassName( ContextOwnerWrapper )  );
 		var CommandMappingClass 		= MacroUtil.getTypePath( Type.getClassName( CommandMapping )  );
 		
-		vo.expressions.push( macro @:mergeBlock { var stateUnmapper = $p { StateUnmapperClass } .register( state ); } );
+		vo.expressions.push( macro @:pos( vo.filePosition ) @:mergeBlock { var stateUnmapper = $p { StateUnmapperClass } .register( state ); } );
 
 		var enterList : Array<CommandMappingVO> = vo.enterList;
 		for ( enterVO in enterList )
 		{
 			var enterCommandClassName = MacroUtil.getPack( enterVO.commandClassName );
-			vo.expressions.push( macro @:mergeBlock { var enterMapping = new $CommandMappingClass( $p { enterCommandClassName } ); } );
+			vo.expressions.push( macro @:pos( enterVO.filePosition ) @:mergeBlock { var enterMapping = new $CommandMappingClass( $p { enterCommandClassName } ); } );
 			
 			if ( enterVO.contextOwner != null )
 			{
-				vo.expressions.push( macro @:mergeBlock { enterMapping.setContextOwner( new $ContextOwnerWrapperClass( coreFactory, $v{ enterVO.contextOwner } ) ); } );
+				vo.expressions.push( macro @:pos( enterVO.filePosition ) @:mergeBlock { enterMapping.setContextOwner( new $ContextOwnerWrapperClass( coreFactory, $v{ enterVO.contextOwner } ) ); } );
 			}
 			else
 			{
-				vo.expressions.push( macro @:mergeBlock { enterMapping.setContextOwner( applicationContext ); } );
+				vo.expressions.push( macro @:pos( enterVO.filePosition ) @:mergeBlock { enterMapping.setContextOwner( applicationContext ); } );
 			}
 			
 			if ( enterVO.fireOnce )
 			{
-				vo.expressions.push( macro @:mergeBlock { enterMapping.once(); } );
+				vo.expressions.push( macro @:pos( enterVO.filePosition ) @:mergeBlock { enterMapping.once(); } );
 			}
 			
-		vo.expressions.push( macro @:mergeBlock { state.addEnterCommandMapping( enterMapping ); } );
-		vo.expressions.push( macro @:mergeBlock { stateUnmapper.addEnterMapping( enterMapping ); } );
+			vo.expressions.push( macro @:mergeBlock { state.addEnterCommandMapping( enterMapping ); } );
+			vo.expressions.push( macro @:mergeBlock { stateUnmapper.addEnterMapping( enterMapping ); } );
 		}
 		
 		var exitList : Array<CommandMappingVO> = vo.exitList;
 		for ( exitVO in exitList )
 		{
 			var exitCommandClassName = MacroUtil.getPack( exitVO.commandClassName );
-			vo.expressions.push( macro @:mergeBlock { var exitMapping = new $CommandMappingClass( $p { exitCommandClassName } ); } );
+			vo.expressions.push( macro @:pos( exitVO.filePosition ) @:mergeBlock { var exitMapping = new $CommandMappingClass( $p { exitCommandClassName } ); } );
 			
 			if ( exitVO.contextOwner != null )
 			{
-				vo.expressions.push( macro @:mergeBlock { exitMapping.setContextOwner( new $ContextOwnerWrapperClass( coreFactory, $v{ exitVO.contextOwner } ) ); } );
+				vo.expressions.push( macro @:pos( exitVO.filePosition ) @:mergeBlock { exitMapping.setContextOwner( new $ContextOwnerWrapperClass( coreFactory, $v{ exitVO.contextOwner } ) ); } );
 			}
 			else
 			{
-				vo.expressions.push( macro @:mergeBlock { exitMapping.setContextOwner( __applicationContext ); } );
+				vo.expressions.push( macro @:pos( exitVO.filePosition ) @:mergeBlock { exitMapping.setContextOwner( __applicationContext ); } );
 			}
 			
 			if ( exitVO.fireOnce )
 			{
-				vo.expressions.push( macro @:mergeBlock { exitMapping.once(); } );
+				vo.expressions.push( macro @:pos( exitVO.filePosition ) @:mergeBlock { exitMapping.once(); } );
 			}
 			
 			vo.expressions.push( macro @:mergeBlock { state.addExitCommandMapping( exitMapping ); } );
