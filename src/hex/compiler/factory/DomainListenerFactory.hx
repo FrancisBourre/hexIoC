@@ -52,7 +52,7 @@ class DomainListenerFactory
 		}
 	}
 	
-	static function _getClassTypeFromExpr( e : Expr ) : ClassType
+	static function _getClassTypeFromNewBlockExpression( e : Expr ) : ClassType
 	{
 		var className : String = "";
 		
@@ -66,9 +66,11 @@ class DomainListenerFactory
 					{
 						case ENew( t, params ):
 							className = t.pack.join( "." ) + "." + t.name;
+							
 						default:
 							return null;
 					}
+					
 				default:
 					return null;
 			}
@@ -83,13 +85,13 @@ class DomainListenerFactory
 	
 	static function isEventProxy( e : Expr ) : Bool
 	{
-		var classType = DomainListenerFactory._getClassTypeFromExpr( e );
+		var classType = DomainListenerFactory._getClassTypeFromNewBlockExpression( e );
 		return classType != null ? MacroUtil.isSameClass( classType, DomainListenerFactory._eventProxyClassType ) || MacroUtil.isSubClassOf( classType, DomainListenerFactory._eventProxyClassType ) : false;
 	}
 	
 	static function isObservable( e : Expr ) : Bool
 	{
-		var classType = DomainListenerFactory._getClassTypeFromExpr( e );
+		var classType = DomainListenerFactory._getClassTypeFromNewBlockExpression( e );
 		return classType != null ? MacroUtil.implementsInterface( classType, DomainListenerFactory._observableInterface ) : false;
 	}
 	
