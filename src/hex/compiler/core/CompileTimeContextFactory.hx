@@ -307,7 +307,6 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 				}
 				else
 				{
-					var idArgs = cons.ID + "Args";
 					var args = [];
 					var arguments = cons.arguments;
 					var l : Int = arguments.length;

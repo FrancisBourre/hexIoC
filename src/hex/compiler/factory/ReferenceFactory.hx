@@ -1,5 +1,6 @@
 package hex.compiler.factory;
 
+import haxe.macro.Context;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.FactoryVO;
 
@@ -35,24 +36,25 @@ class ReferenceFactory
 		{
 			if ( !constructorVO.isProperty )
 			{
-				var p = macro $p { constructorVO.ref.split(".") };
+				var p = macro @:pos( constructorVO.filePosition ) $p { constructorVO.ref.split(".") };
 				var idVar = constructorVO.ID;
-				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $p; } );
+				factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { var $idVar = $p; } );
 			}
 			
-			return macro $p { constructorVO.ref.split(".") };
+			var e = macro @:pos( constructorVO.filePosition ) $p { constructorVO.ref.split(".") };
+			return e;
 		}
 		else 
 		{
 			if ( !constructorVO.isProperty )
 			{
 				var idVar = constructorVO.ID;
-				var extVar = macro $i{ key };
-				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $extVar; } );
+				var extVar = macro @:pos( constructorVO.filePosition ) $i{ key };
+				factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { var $idVar = $extVar; } );
 				
 			}
 			
-			return macro $i{ key };
+			return macro @:pos( constructorVO.filePosition ) $i{ key };
 		}
 	}
 	#end

@@ -211,7 +211,7 @@ class XmlCompiler
 			var constructorVO 			= new ConstructorVO( identifier, type, args, factory, singleton, injectInto, null, mapType, staticRef );
 			constructorVO.ifList 		= ifList;
 			constructorVO.ifNotList 	= ifNotList;
-			constructorVO.filePosition 	= exceptionReporter._positionTracker.makePositionFromNode( xml );
+			constructorVO.filePosition 	= constructorVO.ref == null ? exceptionReporter._positionTracker.makePositionFromNode( xml ) : exceptionReporter._positionTracker.makePositionFromAttribute( xml, ContextAttributeList.REF );
 
 			XmlCompiler._assembler.buildObject( applicationContext, constructorVO );
 
@@ -244,7 +244,7 @@ class XmlCompiler
 													XMLAttributeUtil.getMethod( property ),
 													XMLAttributeUtil.getStaticRef( property ) );
 				
-				propertyVO.filePosition = exceptionReporter._positionTracker.makePositionFromNode( property );
+				propertyVO.filePosition = propertyVO.ref == null ? exceptionReporter._positionTracker.makePositionFromNode( property ) : exceptionReporter._positionTracker.makePositionFromAttribute( property, ContextAttributeList.REF );
 				propertyVO.ifList 		= XMLParserUtil.getIfList( xml );
 				propertyVO.ifNotList 	= XMLParserUtil.getIfNotList( xml );
 				

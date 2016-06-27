@@ -83,7 +83,7 @@ class ClassInstanceFactory
 			else
 			{
 				var classType = MacroUtil.getClassType( constructorVO.type );
-				var moduleInterface = MacroUtil.getClassType( "hex.module.IModule" );
+				var moduleInterface = MacroUtil.getClassType( Type.getClassName( IModule ) );
 				
 				if ( MacroUtil.implementsInterface( classType, moduleInterface ) )
 				{
