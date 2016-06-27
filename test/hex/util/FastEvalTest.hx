@@ -97,7 +97,7 @@ private class MockCoreFactory implements ICoreFactory
 
     public function unregister( key : String ) : Bool
 	{
-		return null;
+		return false;
 	}
 
     public function add( map : Map<String, Dynamic> ) : Void
