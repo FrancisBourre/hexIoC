@@ -213,8 +213,6 @@ class XmlCompiler
 			constructorVO.ifNotList 	= ifNotList;
 			constructorVO.filePosition 	= exceptionReporter._positionTracker.makePositionFromNode( xml );
 
-			exceptionReporter.register( constructorVO, xml );
-			constructorVO.exceptionReporter = exceptionReporter;
 			XmlCompiler._assembler.buildObject( applicationContext, constructorVO );
 
 			// Build property.

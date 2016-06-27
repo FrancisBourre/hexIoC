@@ -41,13 +41,6 @@ class XmlAssemblingExceptionReporter implements IAssemblingExceptionReporter
 		#end
 	}
 	
-	public function throwValueException( message : String, vo : AssemblerVO ) : Void 
-	{
-		#if macro
-		Context.error( message, this._positionTracker.makePositionFromNode( this._getXML( vo )  ) );
-		#end
-	}
-	
 	public function register( assemblerVO : AssemblerVO, xml : Xml ) : AssemblerVO
 	{
 		this._map.set( assemblerVO, xml );

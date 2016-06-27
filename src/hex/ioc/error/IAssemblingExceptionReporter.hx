@@ -7,5 +7,5 @@ import hex.ioc.vo.AssemblerVO;
 
 interface IAssemblingExceptionReporter 
 {
-	function throwValueException( message : String, vo : AssemblerVO ) : Void;
+	
 }

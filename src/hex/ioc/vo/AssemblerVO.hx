@@ -1,7 +1,6 @@
 package hex.ioc.vo;
 
 import haxe.macro.Expr.Position;
-import hex.ioc.error.IAssemblingExceptionReporter;
 
 /**
  * ...
@@ -20,6 +19,4 @@ class AssemblerVO
 	
 	public var ifList 					: Array<String> = null;
 	public var ifNotList 				: Array<String> = null;
-	
-	public var exceptionReporter		: IAssemblingExceptionReporter;
 }
