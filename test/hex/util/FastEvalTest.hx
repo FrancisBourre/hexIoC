@@ -82,7 +82,7 @@ private class MockCoreFactory implements ICoreFactory
 
     public function isRegisteredWithKey( key : String ) : Bool
 	{
-		return null;
+		return false;
 	}
 
     public function locate( key : String ) : Dynamic
@@ -92,7 +92,7 @@ private class MockCoreFactory implements ICoreFactory
 
     public function register( key : String, element : Dynamic ) : Bool
 	{
-		return null;
+		return false;
 	}
 
     public function unregister( key : String ) : Bool
@@ -107,11 +107,11 @@ private class MockCoreFactory implements ICoreFactory
 
     public function addListener( listener : ILocatorListener<String, Dynamic> ) : Bool
 	{
-		return null;
+		return false;
 	}
 
     public function removeListener( listener : ILocatorListener<String, Dynamic> ) : Bool
 	{
-		return null;
+		return false;
 	}
 }
