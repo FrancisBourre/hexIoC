@@ -28,7 +28,7 @@ class FloatFactory
 			number = Std.parseFloat( args[ 0 ] );
 		}
 
-		if ( !Math.isNaN( number ) )
+		if ( !Math.isNaN( number ) && "" + number == args[0] )
 		{
 			constructorVO.result = number;
 			
