@@ -31,12 +31,8 @@ class UIntFactory
 		{
 			Context.error( "UIntFactory.build(" + ( args != null && args.length > 0 ? args[0] : "" ) + ") failed.", constructorVO.filePosition );
 		}
-		
-		#if js
-		if ( number == null || number < 0 )
-		#else
+
 		if ( "" + number != args[0] && number >=0 )
-		#end
 		{
 			Context.error( "Value is not a UInt", constructorVO.filePosition );
 		}

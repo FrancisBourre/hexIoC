@@ -31,11 +31,7 @@ class IntFactory
 			Context.error( "IntFactory.build(" + ( args != null && args.length > 0 ? args[0] : "" ) + ") failed.", constructorVO.filePosition );
 		}
 
-		#if js
-		if ( number == null )
-		#else
 		if ( "" + number != args[0] )
-		#end
 		{
 			Context.error( "Value is not an Int", constructorVO.filePosition );
 		}
