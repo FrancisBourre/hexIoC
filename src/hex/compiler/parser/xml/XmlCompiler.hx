@@ -464,11 +464,7 @@ class XmlCompiler
 			}
 		}
 		
-		var applicationContextName : String = xml.get( "name" );
-		if ( applicationContextName == null )
-		{
-			exceptionReporter.throwMissingApplicationContextNameException( xml );
-		}
+		var applicationContextName : String = XmlCompiler.getRootApplicationContextName( xml, exceptionReporter );
 		
 		var expr;
 		if ( applicationContextClass != null )
@@ -481,6 +477,20 @@ class XmlCompiler
 		}
 
 		return expr;
+	}
+	
+	static function getRootApplicationContextName( xml : Xml, exceptionReporter : XmlAssemblingExceptionReporter ) : String
+	{
+		var applicationContextName : String = xml.get( "name" );
+		if ( applicationContextName == null )
+		{
+			exceptionReporter.throwMissingApplicationContextNameException( xml );
+			return null;
+		}
+		else
+		{
+			return applicationContextName;
+		}
 	}
 	#end
 	
@@ -501,7 +511,7 @@ class XmlCompiler
 			
 			//
 			XmlCompiler._assembler 		= new CompileTimeApplicationAssembler();
-			var applicationContext 		= XmlCompiler._assembler.getApplicationContext( "name" );
+			var applicationContext 		= XmlCompiler._assembler.getApplicationContext( XmlCompiler.getRootApplicationContextName( doc.document.firstElement(), exceptionReporter ) );
 			
 			//States parsing
 			var iterator = doc.document.firstElement().elementsNamed( "state" );

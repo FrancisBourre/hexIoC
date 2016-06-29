@@ -13,10 +13,8 @@ class AssemblerVO
 		
 	}
 	
-	#if macro
-	public var				filePosition	: Position;
-	#end
-	
+
+	public var filePosition				: Position;
 	public var ifList 					: Array<String> = null;
 	public var ifNotList 				: Array<String> = null;
 }

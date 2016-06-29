@@ -1,5 +1,6 @@
 package hex.compiler.assembler;
 
+import haxe.macro.Context;
 import haxe.macro.Expr;
 import hex.compiler.core.CompileTimeContextFactory;
 import hex.error.IllegalArgumentException;
@@ -69,7 +70,7 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 	{
 		if ( this.allowsIfList( constructorVO.ifList ) && this.allowsIfNotList( constructorVO.ifNotList ) )
 		{
-			this._registerID( applicationContext, constructorVO.ID );
+			this._registerID( applicationContext, constructorVO.ID, constructorVO.filePosition );
 			this.getContextFactory( applicationContext ).registerConstructorVO( constructorVO );
 		}
 	}
@@ -127,7 +128,7 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 	{
 		if ( this.allowsIfList( stateTransitionVO.ifList ) && this.allowsIfNotList( stateTransitionVO.ifNotList ) )
 		{
-			this._registerID( applicationContext, stateTransitionVO.ID );
+			this._registerID( applicationContext, stateTransitionVO.ID, stateTransitionVO.filePosition );
 			this.getContextFactory( applicationContext ).registerStateTransitionVO( stateTransitionVO );
 		}
 	}
@@ -258,8 +259,21 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 		return true;
 	}
 	
-	function _registerID( applicationContext : AbstractApplicationContext, ID : String ) : Bool
+	function _registerID( applicationContext : AbstractApplicationContext, ID : String, filePosition : Position ) : Bool
 	{
-		return this.getContextFactory( applicationContext ).registerID( ID );
+		try
+		{
+			return this.getContextFactory( applicationContext ).registerID( ID );
+		}
+		catch ( e : IllegalArgumentException )
+		{
+			#if macro
+			Context.error( "Id '" + ID + "' is already registered in applicationContext named '" + applicationContext.getName() + "'", filePosition );
+			#else
+			throw( e );
+			#end
+		}
+		
+		return false;
 	}
 }
