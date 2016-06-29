@@ -34,14 +34,16 @@ class ReferenceFactory
 		
 		if ( constructorVO.ref.indexOf( "." ) != -1 )
 		{
+			var refs = constructorVO.ref.split(".");
 			if ( !constructorVO.isProperty )
 			{
-				var p = macro @:pos( constructorVO.filePosition ) $p { constructorVO.ref.split(".") };
+				var p = macro @:pos( constructorVO.filePosition ) $p { refs };
 				var idVar = constructorVO.ID;
 				factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { var $idVar = $p; } );
 			}
 			
-			var e = macro @:pos( constructorVO.filePosition ) $p { constructorVO.ref.split(".") };
+			var e = macro $p { refs };
+			e.pos = constructorVO.filePosition;
 			return e;
 		}
 		else 
