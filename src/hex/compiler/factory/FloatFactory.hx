@@ -40,7 +40,7 @@ class FloatFactory
 		}
 		else
 		{
-			Context.error( "FloatFactory.build(" + number + ") failed.", Context.currentPos() );
+			Context.error( "Value is not a Float", constructorVO.filePosition );
 		}
 		
 		return macro @:pos( constructorVO.filePosition ) { $v { number } };

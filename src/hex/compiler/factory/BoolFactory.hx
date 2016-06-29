@@ -39,7 +39,7 @@ class BoolFactory
 		}
 		else
 		{
-			Context.error( "BoolFactory.build(" + value + ") failed.", constructorVO.filePosition );
+			Context.error( "Value is not a Bool", constructorVO.filePosition );
 		}
 		
 		if ( !constructorVO.isProperty )

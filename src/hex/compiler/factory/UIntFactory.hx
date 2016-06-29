@@ -38,7 +38,7 @@ class UIntFactory
 		if ( "" + number != args[0] && number >=0 )
 		#end
 		{
-			Context.error( "UIntFactory.build(" + number + ") failed.", constructorVO.filePosition );
+			Context.error( "Value is not a UInt", constructorVO.filePosition );
 		}
 		else
 		{
