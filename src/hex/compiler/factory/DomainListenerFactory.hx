@@ -114,8 +114,15 @@ class DomainListenerFactory
 					var listenerID 			= domainListener.ownerID;
 					var listenerVar 		= macro $i{ listenerID };
 					var listenedDomainName 	= domainListener.listenedDomainName;
-					var messageType 		= MacroUtil.getStaticVariable( domainListenerArgument.staticRef );
+					var messageType 		= MacroUtil.getStaticVariable( domainListenerArgument.staticRef, domainListenerArgument.filePosition );
 					var strategyClassName 	= domainListenerArgument.strategy;
+					
+					if ( !factoryVO.coreFactory.isRegisteredWithKey( listenedDomainName ) )
+					{
+						Context.error( "Domain '" + listenedDomainName + "' not found in applicationContext named '" + 
+						factoryVO.contextFactory.getApplicationContext().getName() + "'", domainListener.filePosition );
+					}
+					var listenedDomain		= factoryVO.coreFactory.locate( listenedDomainName );
 
 					if ( strategyClassName != null )
 					{
@@ -151,7 +158,7 @@ class DomainListenerFactory
 						
 						var adapterExp = macro { Reflect.makeVarArgs( function( rest : Array<Dynamic> ) : Void { ( $adapterVar.getCallbackAdapter() )( rest ); } ); };
 						
-						if ( DomainListenerFactory.isObservable( factoryVO.coreFactory.locate( listenedDomainName ) ) )
+						if ( DomainListenerFactory.isObservable( listenedDomain ) )
 						{
 							var dispatcherVar = macro $i{ listenedDomainName };
 							factoryVO.expressions.push( macro @:mergeBlock { $dispatcherVar.addHandler( $messageType, $listenerVar, $adapterExp ); } );
@@ -168,9 +175,9 @@ class DomainListenerFactory
 					}
 					else
 					{
-						if ( DomainListenerFactory.isObservable( factoryVO.coreFactory.locate( listenedDomainName ) ) )
+						if ( DomainListenerFactory.isObservable( listenedDomain ) )
 						{
-							var dispatcherVar = macro $i{ listenedDomainName };
+							var dispatcherVar = macro @:pos( domainListenerArgument.filePosition ) $i{ listenedDomainName };
 							factoryVO.expressions.push( macro @:mergeBlock 
 							{ 
 								$dispatcherVar.addHandler( $messageType, $listenerVar, $listenerVar.$method ); 
@@ -179,8 +186,8 @@ class DomainListenerFactory
 						else
 						{
 							var domainVar = macro $i { DomainListenerFactory._getDomain( listenedDomainName, factoryVO ) };
-							var messageType = MacroUtil.getStaticVariable( domainListenerArgument.staticRef );
-							factoryVO.expressions.push( macro @:mergeBlock { $p { ApplicationDomainDispatcherClass }.getInstance().addHandler( $messageType, $listenerVar, $listenerVar.$method, $domainVar ); } );
+							var messageType = MacroUtil.getStaticVariable( domainListenerArgument.staticRef, domainListenerArgument.filePosition );
+							factoryVO.expressions.push( macro @:pos( domainListenerArgument.filePosition ) @:mergeBlock { $p { ApplicationDomainDispatcherClass } .getInstance().addHandler( $messageType, $listenerVar, $listenerVar.$method, $domainVar ); } );
 						}
 					}
 				}

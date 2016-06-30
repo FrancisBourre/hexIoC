@@ -26,7 +26,7 @@ class StateTransitionFactory
 		if ( vo.staticReference != null )
 		{
 			//state = ClassUtil.getStaticVariableReference( vo.staticReference );
-			var stateReference = MacroUtil.getStaticVariable( vo.staticReference );
+			var stateReference = MacroUtil.getStaticVariable( vo.staticReference, vo.filePosition );
 			vo.expressions.push( macro @:mergeBlock { var state = $stateReference; } );
 		}
 		else if ( vo.instanceReference != null )

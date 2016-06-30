@@ -20,7 +20,7 @@ class StaticVariableFactory
 	static public function build( factoryVO : FactoryVO ) : Dynamic
 	{
 		var constructorVO : ConstructorVO = factoryVO.constructorVO;
-		var e : Expr = MacroUtil.getStaticVariable( constructorVO.staticRef );
+		var e : Expr = MacroUtil.getStaticVariable( constructorVO.staticRef, constructorVO.filePosition );
 		
 		if ( !constructorVO.isProperty )
 		{

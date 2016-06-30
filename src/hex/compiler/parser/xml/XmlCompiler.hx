@@ -321,7 +321,7 @@ class XmlCompiler
 					{
 						var node = iterator.next();
 						var listenerArg = XMLParserUtil.getEventArgument( node );
-	//					listenerArg.filePosition = exceptionReporter._positionTracker.makePositionFromNode( node );
+						listenerArg.filePosition = exceptionReporter._positionTracker.makePositionFromNode( node );
 						
 						//
 						var staticRef = listenerArg.staticRef;
