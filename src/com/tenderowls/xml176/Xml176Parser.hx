@@ -133,11 +133,11 @@ class Xml176Parser
 				case S.PCDATA:
 					if ( c == '<'.code )
 					{
-						#if php
+						/*#if php
 						var child = Xml.createPCDataFromCustomParser( buf.toString() + str.substr( start, p - start ) );
-						#else
+						#else*/
 						var child = Xml.createPCData( buf.toString() + str.substr( start, p - start ) );
-						#end
+						//#end
 						buf = new StringBuf();
 						parent.addChild( child );
 						nsubs++;
