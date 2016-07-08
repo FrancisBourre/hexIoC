@@ -882,4 +882,15 @@ class ObjectXMLParserTest
 
 		Assert.equals( "bonjour", this._builderFactory.getCoreFactory().locate( "message" ), "message value should equal 'bonjour'" );
 	}
+
+	@Test( "test file preprocessor with include" )
+	public function testFilePreprocessorWithInclude() : Void
+	{
+		this.build(  XmlReader.readXmlFile( "context/preprocessorWithInclude.xml", [	"hello" 		=> "bonjour",
+																					"contextName" 	=> 'applicationContext',
+																					"context" 		=> 'name="${contextName}"',
+																					"node" 			=> '<msg id="message" value="${hello}"/>' ] ) );
+
+		Assert.equals( "bonjour", this._builderFactory.getCoreFactory().locate( "message" ), "message value should equal 'bonjour'" );
+	}
 }
