@@ -26,7 +26,7 @@ class CoreFactory implements ICoreFactory
 	var _annotationProvider 	: IAnnotationProvider;
 	var _dispatcher 			: IDispatcher<ILocatorListener<String, Dynamic>>;
 	var _map 					: Map<String, {}>;
-	var _classPaths 			: Map<String, Dynamic>;
+	var _classPaths 			: Map<String, ProxyFactoryMethodHelper>;
 	
 	static var _fastEvalMethod : Dynamic->String->ICoreFactory->Dynamic = FastEval.fromTarget;
 	
@@ -171,8 +171,8 @@ class CoreFactory implements ICoreFactory
 	
 	public function buildInstance( qualifiedClassName : String, ?args : Array<Dynamic>, ?factoryMethod : String, ?singletonAccess : String, ?instantiateUnmapped : Bool = false ) : Dynamic
 	{
-		var classReference 	: Class<Dynamic> 	= null;
-		var classFactory 	: Dynamic 			= null;
+		var classReference 	: Class<Dynamic> 			= null;
+		var classFactory 	: ProxyFactoryMethodHelper 	= null;
 
 		//TODO Optimize and make unit tests
 		if ( this._classPaths.exists( qualifiedClassName ) )
@@ -251,11 +251,16 @@ class CoreFactory implements ICoreFactory
 		}
 		else
 		{
+			if ( args == null )
+			{
+				args = [];
+			}
+			
 			if ( classReference != null )
 			{
 				try
 				{
-					obj = Type.createInstance( classReference, args != null ? args : [] );
+					obj = Type.createInstance( classReference, args );
 				}
 				catch ( e : Dynamic )
 				{
@@ -266,7 +271,8 @@ class CoreFactory implements ICoreFactory
 			{
 				try
 				{
-					obj = Reflect.callMethod( classFactory.scope, classFactory.factoryMethod, args != null ? args : [] );
+					trace( "args[ 0 ]:", args[ 0 ] );
+					obj = Reflect.callMethod( classFactory.scope, classFactory.factoryMethod, args );
 
 				}
 				catch ( e : Dynamic )
@@ -327,4 +333,10 @@ class CoreFactory implements ICoreFactory
 	{
 		CoreFactory._fastEvalMethod = method;
 	}
+}
+
+typedef ProxyFactoryMethodHelper =
+{
+	scope : Dynamic,
+	factoryMethod : Dynamic
 }
