@@ -26,7 +26,7 @@ class CoreFactory implements ICoreFactory
 	var _annotationProvider 	: IAnnotationProvider;
 	var _dispatcher 			: IDispatcher<ILocatorListener<String, Dynamic>>;
 	var _map 					: Map<String, {}>;
-	var _classPaths 			: Map<String, Function>;
+	var _classPaths 			: Map<String, Dynamic>;
 	
 	static var _fastEvalMethod : Dynamic->String->ICoreFactory->Dynamic = FastEval.fromTarget;
 	
@@ -266,7 +266,7 @@ class CoreFactory implements ICoreFactory
 			{
 				try
 				{
-					obj = classFactory( args != null ? args : [] );
+					obj = Reflect.callMethod( classFactory.scope, classFactory.factoryMethod, args != null ? args : [] );
 
 				}
 				catch ( e : Dynamic )
@@ -305,12 +305,7 @@ class CoreFactory implements ICoreFactory
 		//TODO secure with type parameter
 		if ( !this._classPaths.exists( classPath ) )
 		{
-			var f : Array<Dynamic>->Dynamic = function( args : Array<Dynamic> ) : Dynamic
-			{
-				return Reflect.callMethod( scope, factoryMethod, args );
-			}
-
-			this._classPaths.set( classPath, f );
+			this._classPaths.set( classPath, {scope:scope, factoryMethod:factoryMethod} );
 		}
 		else
 		{
