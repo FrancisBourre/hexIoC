@@ -114,4 +114,14 @@ private class MockCoreFactory implements ICoreFactory
 	{
 		return false;
 	}
+	
+	public function addProxyFactoryMethod( className : String, socpe : Dynamic, factoryMethod : Dynamic ) : Void
+	{
+		//
+	}
+	
+	public function hasProxyFactoryMethod( className : String ) : Bool
+	{
+		return false;
+	}
 }

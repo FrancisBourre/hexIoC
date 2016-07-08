@@ -24,7 +24,7 @@ class MockRectangle
 	public var size ( get, set ) : Point;
 	function get_size() : Point
 	{
-		return new Point( this.width, this.height );
+		return new Point( Std.int( this.width ), Std.int( this.height ) );
 	}
 	
 	function set_size( size : Point ) : Point

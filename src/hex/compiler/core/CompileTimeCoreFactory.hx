@@ -271,6 +271,16 @@ class CompileTimeCoreFactory implements ICoreFactory
 		return obj;
 	}
 	
+	public function addProxyFactoryMethod( className : String, socpe : Dynamic, factoryMethod : Dynamic ) : Void
+	{
+		//
+	}
+	
+	public function hasProxyFactoryMethod( className : String ) : Bool
+	{
+		return false;
+	}
+	
 	public function fastEvalFromTarget( target : Dynamic, toEval : String ) : Dynamic
 	{
 		return CompileTimeCoreFactory._fastEvalMethod( target, toEval, this );

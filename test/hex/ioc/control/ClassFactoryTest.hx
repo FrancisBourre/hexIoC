@@ -1,9 +1,9 @@
 package hex.ioc.control;
 
 import hex.error.IllegalArgumentException;
-import hex.ioc.vo.FactoryVO;
 import hex.ioc.vo.ConstructorVO;
-import hex.structures.Point;
+import hex.ioc.vo.FactoryVO;
+import hex.structures.Size;
 import hex.unittest.assertion.Assert;
 
 /**
@@ -16,9 +16,9 @@ class ClassFactoryTest
     public function testExecute() : Void
     {
 		var helper = new FactoryVO();
-		helper.constructorVO 			= new ConstructorVO( "test", "Class", ["hex.structures.Point"] );
+		helper.constructorVO 			= new ConstructorVO( "test", "Class", ["hex.structures.Size"] );
 		ClassFactory.build( helper );
-		Assert.equals( helper.constructorVO.result, Point, "constructorVO.result should be an instance of Point class" );
+		Assert.equals( helper.constructorVO.result, Size, "constructorVO.result should be an instance of 'Size' class" );
 	}
 	
 	@Test( "Test execute with invalid argument" )

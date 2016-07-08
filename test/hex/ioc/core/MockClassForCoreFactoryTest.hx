@@ -26,7 +26,7 @@ class MockClassForCoreFactoryTest
 		return MockClassForCoreFactoryTest._Instance;
 	}
 	
-	public function getPoint( x : Float, y : Float ) : Point
+	public function getPoint( x : Int, y : Int ) : Point
 	{
 		return new Point( x, y );
 	}

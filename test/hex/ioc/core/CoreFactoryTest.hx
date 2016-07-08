@@ -110,10 +110,10 @@ class CoreFactoryTest
 	@Test( "Test buildInstance with arguments" )
     public function testBuildInstanceWithArguments() : Void
     {
-		var p : Point = this._coreFactory.buildInstance( "hex.structures.Point", [2, 3] );
-		Assert.isNotNull( p, "'p' should not be null" );
-		Assert.equals( 2, p.x, "'p.x' should return 2" );
-		Assert.equals( 3, p.y, "'p.x' should return 3" );
+		var size : Size = this._coreFactory.buildInstance( "hex.structures.Size", [2, 3] );
+		Assert.isNotNull( size, "'size' should not be null" );
+		Assert.equals( 2, size.width, "'size.width' should return 2" );
+		Assert.equals( 3, size.height, "'size.height' should return 3" );
 	}
 	
 	@Test( "Test buildInstance with singleton access" )

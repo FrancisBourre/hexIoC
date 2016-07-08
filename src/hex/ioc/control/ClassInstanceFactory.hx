@@ -30,14 +30,19 @@ class ClassInstanceFactory
 		}
 		else
 		{
-			var classReference = ClassUtil.getClassReference( constructorVO.type );
-			
-			var isModule : Bool = ClassUtil.classExtendsOrImplements( classReference, IModule );
-			if ( isModule && constructorVO.ID != null && constructorVO.ID.length > 0 )
+			//TODO Allows proxy classes
+			if ( !factoryVO.coreFactory.hasProxyFactoryMethod( constructorVO.type ) )
 			{
-				DomainExpert.getInstance().registerDomain( DomainUtil.getDomain( constructorVO.ID, Domain ) );
-				AnnotationProvider.registerToDomain( factoryVO.contextFactory.getAnnotationProvider(), DomainUtil.getDomain( constructorVO.ID, Domain ) );
+				var classReference = ClassUtil.getClassReference( constructorVO.type );
+			
+				var isModule : Bool = ClassUtil.classExtendsOrImplements( classReference, IModule );
+				if ( isModule && constructorVO.ID != null && constructorVO.ID.length > 0 )
+				{
+					DomainExpert.getInstance().registerDomain( DomainUtil.getDomain( constructorVO.ID, Domain ) );
+					AnnotationProvider.registerToDomain( factoryVO.contextFactory.getAnnotationProvider(), DomainUtil.getDomain( constructorVO.ID, Domain ) );
+				}
 			}
+			
 			constructorVO.result = factoryVO.coreFactory.buildInstance( constructorVO.type, constructorVO.arguments, constructorVO.factory, constructorVO.singleton, constructorVO.injectInto );
 
 			if ( Std.is( constructorVO.result, IModule ) )

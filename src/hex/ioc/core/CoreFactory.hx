@@ -1,5 +1,6 @@
 package hex.ioc.core;
 
+import haxe.Constraints.Function;
 import hex.collection.ILocatorListener;
 import hex.collection.LocatorMessage;
 import hex.core.IAnnotationParsable;
@@ -25,6 +26,7 @@ class CoreFactory implements ICoreFactory
 	var _annotationProvider 	: IAnnotationProvider;
 	var _dispatcher 			: IDispatcher<ILocatorListener<String, Dynamic>>;
 	var _map 					: Map<String, {}>;
+	var _classPaths 			: Map<String, Function>;
 	
 	static var _fastEvalMethod : Dynamic->String->ICoreFactory->Dynamic = FastEval.fromTarget;
 	
@@ -34,6 +36,7 @@ class CoreFactory implements ICoreFactory
 		this._annotationProvider 	= annotationProvider;
 		this._dispatcher 			= new Dispatcher<ILocatorListener<String, Dynamic>>();
 		this._map 					= new Map();
+		this._classPaths 			= new Map();
 	}
 	
 	public function getAnnotationProvider() : IAnnotationProvider 
@@ -168,15 +171,24 @@ class CoreFactory implements ICoreFactory
 	
 	public function buildInstance( qualifiedClassName : String, ?args : Array<Dynamic>, ?factoryMethod : String, ?singletonAccess : String, ?instantiateUnmapped : Bool = false ) : Dynamic
 	{
-		var classReference 	: Class<Dynamic>;
+		var classReference 	: Class<Dynamic> 	= null;
+		var classFactory 	: Dynamic 			= null;
 
-		try
+		//TODO Optimize and make unit tests
+		if ( this._classPaths.exists( qualifiedClassName ) )
 		{
-			classReference = ClassUtil.getClassReference( qualifiedClassName );
+			classFactory = this._classPaths.get( qualifiedClassName );
 		}
-		catch ( e : IllegalArgumentException )
+		else
 		{
-			throw new IllegalArgumentException( "'" + qualifiedClassName + "' class is not available in current domain" );
+			try
+			{
+				classReference = ClassUtil.getClassReference( qualifiedClassName );
+			}
+			catch ( e : IllegalArgumentException )
+			{
+				throw new IllegalArgumentException( "'" + qualifiedClassName + "' class is not available in current domain" );
+			}
 		}
 
 		var obj : Dynamic = null;
@@ -239,13 +251,28 @@ class CoreFactory implements ICoreFactory
 		}
 		else
 		{
-			try
+			if ( classReference != null )
 			{
-				obj = Type.createInstance( classReference, args != null ? args : [] );
+				try
+				{
+					obj = Type.createInstance( classReference, args != null ? args : [] );
+				}
+				catch ( e : Dynamic )
+				{
+					throw new IllegalArgumentException( "Instantiation of class '" + qualifiedClassName + "' failed with arguments: " + args + " : " + e );
+				}
 			}
-			catch ( e : Dynamic )
+			else
 			{
-				throw new IllegalArgumentException( "Instantiation of class '" + qualifiedClassName + "' failed with arguments: " + args + " : " + e);
+				try
+				{
+					obj = classFactory( args != null ? args : [] );
+
+				}
+				catch ( e : Dynamic )
+				{
+					throw new IllegalArgumentException( "Instantiation of class '" + qualifiedClassName + "' failed with class factory and arguments: " + args + " : " + e );
+				}
 			}
 
 			if ( Std.is( obj, IAnnotationParsable ) )
@@ -264,12 +291,36 @@ class CoreFactory implements ICoreFactory
 	
 	public function clear() : Void
 	{
-		this._map = new Map();
+		this._map 			= new Map();
+		this._classPaths 	= new Map();
 	}
 	
 	public function getInjector() : IDependencyInjector
 	{
 		return this._injector;
+	}
+	
+	public function addProxyFactoryMethod( classPath : String, scope : Dynamic, factoryMethod : Dynamic ) : Void
+	{
+		//TODO secure with type parameter
+		if ( !this._classPaths.exists( classPath ) )
+		{
+			var f : Array<Dynamic>->Dynamic = function( args : Array<Dynamic> ) : Dynamic
+			{
+				return Reflect.callMethod( scope, factoryMethod, args );
+			}
+
+			this._classPaths.set( classPath, f );
+		}
+		else
+		{
+			throw new IllegalArgumentException( "registerClassPath(" + classPath + ", " + factoryMethod + ") fails, classPath is already registered." );
+		}
+	}
+	
+	public function hasProxyFactoryMethod( className : String ) : Bool
+	{
+		return this._classPaths.exists( className );
 	}
 	
 	public function fastEvalFromTarget( target : Dynamic, toEval : String ) : Dynamic
