@@ -27,7 +27,7 @@ class XmlReader
 		var identifier : String = xml.get( ContextAttributeList.ID );
 		if ( identifier == null )
 		{
-			Context.error( "XMLFileReader parsing error with '" + xml.nodeName + "' node, 'id' attribute not found.", positionTracker.makePositionFromNode( xml ) );
+			Context.error( "XmlReader parsing error with '" + xml.nodeName + "' node, 'id' attribute not found.", positionTracker.makePositionFromNode( xml ) );
 		}
 
 		var type 		: String;
@@ -151,7 +151,7 @@ class XmlReader
 		var identifier : String = xml.get( ContextAttributeList.ID );
 		if ( identifier == null )
 		{
-			Context.error( "XMLFileReader parsing error with '" + xml.nodeName + "' node, 'id' attribute not found.", positionTracker.makePositionFromNode( xml ) );
+			Context.error( "XmlReader parsing error with '" + xml.nodeName + "' node, 'id' attribute not found.", positionTracker.makePositionFromNode( xml ) );
 		}
 		
 		var staticReference 	: String = xml.get( ContextAttributeList.STATIC_REF );
