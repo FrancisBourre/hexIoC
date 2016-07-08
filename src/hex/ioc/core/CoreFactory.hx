@@ -271,7 +271,6 @@ class CoreFactory implements ICoreFactory
 			{
 				try
 				{
-					trace( "args[ 0 ]:", args[ 0 ] );
 					obj = Reflect.callMethod( classFactory.scope, classFactory.factoryMethod, args );
 
 				}
