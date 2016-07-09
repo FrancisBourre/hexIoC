@@ -9,6 +9,7 @@ import haxe.Timer;
 import hex.collection.HashMap;
 import hex.config.stateful.ServiceLocator;
 import hex.domain.ApplicationDomainDispatcher;
+import hex.error.Exception;
 import hex.event.Dispatcher;
 import hex.event.EventProxy;
 import hex.ioc.assembler.ApplicationAssembler;
@@ -891,6 +892,13 @@ class ObjectXMLParserTest
 																					"context" 		=> 'name="${contextName}"',
 																					"node" 			=> '<msg id="message" value="${hello}"/>' ] ) );
 
-		Assert.equals( "bonjour", this._builderFactory.getCoreFactory().locate( "message" ), "message value should equal 'bonjour'" );
+		try
+        {
+			Assert.equals( "bonjour", this._builderFactory.getCoreFactory().locate( "message" ), "message value should equal 'bonjour'" );
+		}
+		catch ( e : Exception )
+        {
+            Assert.fail( e.message, "Exception on this._builderFactory.getCoreFactory().locate( \"message\" ) call" );
+        }
 	}
 }
