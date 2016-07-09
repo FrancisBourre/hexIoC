@@ -110,7 +110,7 @@ class XmlContextReader
 		var xrdStack = new GenericStack<XMLRawData>();
 		
 		var xmlRawData = XmlContextReader.readFile( fileName, null, null, m );
-		xmlRawData = XmlContextReader.checkForInclude( xmlRawData, xrdStack );
+		xmlRawData = XmlContextReader.checkForInclude( xmlRawData, xrdStack, m );
 		
 		var xrdCollection : Array<XMLRawData> = [];
 		var i = 0;
