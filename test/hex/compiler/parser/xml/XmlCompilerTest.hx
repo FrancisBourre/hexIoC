@@ -784,4 +784,15 @@ class XmlCompilerTest
 		Assert.isInstanceOf( instance, MockClassWithInjectedProperty, "" );
 		Assert.equals( "hola mundo", instance.property, "" );
 	}*/
+	
+	@Test( "test file preprocessor" )
+	public function testFilePreprocessor() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/preprocessor.xml", [	"hello" 		=> "bonjour",
+																					"contextName" 	=> 'applicationContext',
+																					"context" 		=> 'name="${contextName}"',
+																					"node" 			=> '<msg id="message" value="${hello}"/>' ] );
+
+		Assert.equals( "bonjour", this._getCoreFactory().locate( "message" ), "message value should equal 'bonjour'" );
+	}
 }
