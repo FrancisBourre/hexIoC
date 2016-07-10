@@ -6,6 +6,7 @@ import hex.config.stateful.ServiceLocator;
 import hex.control.command.BasicCommand;
 import hex.di.Injector;
 import hex.domain.ApplicationDomainDispatcher;
+import hex.error.Exception;
 import hex.event.Dispatcher;
 import hex.event.EventProxy;
 import hex.ioc.assembler.AbstractApplicationContext;
@@ -758,20 +759,6 @@ class XmlCompilerTest
 		Assert.isNull( mockObjectWithMetaData.propWithoutMetaData, "property should be null" );
 	}
 	
-	/*@Test( "test domain dispatch after module initialisation" )
-	public function testDomainDispatchAfterModuleInitialisation() : Void
-	{
-		this.build(  XmlReader.readXmlFile( "context/domainDispatchAfterModuleInitialisation.xml" ) );
-
-		var sender : MockSenderModule = this._builderFactory.getCoreFactory().locate( "sender" );
-		Assert.isNotNull( sender, "" );
-
-		var receiver : MockReceiverModule = this._builderFactory.getCoreFactory().locate( "receiver" );
-		Assert.isNotNull( receiver, "" );
-
-		Assert.equals( "hello receiver", receiver.message, "" );
-	}*/
-	
 	/*@Test( "test 'inject-into' attribute" )
 	public function testInjectIntoAttribute() : Void
 	{
@@ -785,8 +772,8 @@ class XmlCompilerTest
 		Assert.equals( "hola mundo", instance.property, "" );
 	}*/
 	
-	@Test( "test file preprocessor" )
-	public function testFilePreprocessor() : Void
+	@Test( "test file preprocessor with Xml file" )
+	public function testFilePreprocessorWithXmlFile() : Void
 	{
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/preprocessor.xml", [	"hello" 		=> "bonjour",
 																					"contextName" 	=> 'applicationContext',
@@ -794,5 +781,23 @@ class XmlCompilerTest
 																					"node" 			=> '<msg id="message" value="${hello}"/>' ] );
 
 		Assert.equals( "bonjour", this._getCoreFactory().locate( "message" ), "message value should equal 'bonjour'" );
+	}
+	
+	@Test( "test file preprocessor with Xml file and include" )
+	public function testFilePreprocessorWithXmlFileAndInclude() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/preprocessorWithInclude.xml", [	"hello" 		=> "bonjour",
+																					"contextName" 	=> 'applicationContext',
+																					"context" 		=> 'name="${contextName}"',
+																					"node" 			=> '<msg id="message" value="${hello}"/>' ] );
+
+		try
+        {
+			Assert.equals( "bonjour", this._getCoreFactory().locate( "message" ), "message value should equal 'bonjour'" );
+		}
+		catch ( e : Exception )
+        {
+            Assert.fail( e.message, "Exception on this._builderFactory.getCoreFactory().locate( \"message\" ) call" );
+        }
 	}
 }

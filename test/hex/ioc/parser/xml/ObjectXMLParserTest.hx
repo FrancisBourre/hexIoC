@@ -850,8 +850,8 @@ class ObjectXMLParserTest
 		Assert.equals( "hello production", this._builderFactory.getCoreFactory().locate( "message" ), "message value should equal 'hello production'" );
 	}
 	
-	@Test( "test file preprocessor" )
-	public function testFilePreprocessor() : Void
+	@Test( "test file preprocessor with Xml" )
+	public function testFilePreprocessorWithXml() : Void
 	{
 		//$$ is used to escape haxe String interpolation.
 		var source : String = '
@@ -873,8 +873,8 @@ class ObjectXMLParserTest
 		Assert.equals( "bonjour", this._builderFactory.getCoreFactory().locate( "message" ), "message value should equal 'bonjour'" );
 	}
 
-	@Test( "test file preprocessor" )
-	public function testAnotherFilePreprocessor() : Void
+	@Test( "test file preprocessor with Xml file" )
+	public function testFilePreprocessorWithXmlFile() : Void
 	{
 		this.build(  XmlReader.readXmlFile( "context/preprocessor.xml", [	"hello" 		=> "bonjour",
 																					"contextName" 	=> 'applicationContext',
@@ -884,8 +884,8 @@ class ObjectXMLParserTest
 		Assert.equals( "bonjour", this._builderFactory.getCoreFactory().locate( "message" ), "message value should equal 'bonjour'" );
 	}
 
-	@Test( "test file preprocessor with include" )
-	public function testFilePreprocessorWithInclude() : Void
+	@Test( "test file preprocessor with Xml file and include" )
+	public function testFilePreprocessorWithXmlFileAndInclude() : Void
 	{
 		this.build(  XmlReader.readXmlFile( "context/preprocessorWithInclude.xml", [	"hello" 		=> "bonjour",
 																					"contextName" 	=> 'applicationContext',
