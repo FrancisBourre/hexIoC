@@ -276,6 +276,11 @@ class CompileTimeCoreFactory implements ICoreFactory
 		//
 	}
 	
+	public function removeProxyFactoryMethod( classPath : String ) : Bool
+	{
+		return false;
+	}
+	
 	public function hasProxyFactoryMethod( className : String ) : Bool
 	{
 		return false;

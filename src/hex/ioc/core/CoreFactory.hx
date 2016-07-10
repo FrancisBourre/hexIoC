@@ -318,6 +318,19 @@ class CoreFactory implements ICoreFactory
 		}
 	}
 	
+	public function removeProxyFactoryMethod( classPath : String ) : Bool
+	{
+		if ( this._classPaths.exists( classPath ) )
+		{
+			this._classPaths.remove( classPath );
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
 	public function hasProxyFactoryMethod( className : String ) : Bool
 	{
 		return this._classPaths.exists( className );

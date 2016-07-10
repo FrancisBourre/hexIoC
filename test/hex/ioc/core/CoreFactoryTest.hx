@@ -9,6 +9,7 @@ import hex.error.IllegalArgumentException;
 import hex.event.IEvent;
 import hex.metadata.IAnnotationProvider;
 import hex.structures.Point;
+import hex.structures.PointFactory;
 import hex.structures.Size;
 import hex.unittest.assertion.Assert;
 import hex.util.ClassUtil;
@@ -126,10 +127,10 @@ class CoreFactoryTest
 	@Test( "Test buildInstance with factory access" )
     public function testBuildInstanceWithFactoryAccess() : Void
     {
-		var size : Size = this._coreFactory.buildInstance( "hex.ioc.core.MockClassForCoreFactoryTest", [20, 30], "getSize", null );
+		var size : Size = this._coreFactory.buildInstance( "hex.ioc.core.MockClassForCoreFactoryTest", [ 20.0, 30.0 ], "getSize", null );
 		Assert.isNotNull( size, "'size' should not be null" );
-		Assert.equals( 20, size.width, "'size.width' should return 20" );
-		Assert.equals( 30, size.height, "'size.height' should return 30" );
+		Assert.equals( 20.0, size.width, "'size.width' should return 20.0" );
+		Assert.equals( 30.0, size.height, "'size.height' should return 30.0" );
 	}
 	
 	@Test( "Test buildInstance with factory and singleton access" )
@@ -144,8 +145,60 @@ class CoreFactoryTest
 	@Test( "Test buildInstance with injector" )
     public function testBuildInstanceWithInjector() : Void
     {
-		var instance : MockClassForCoreFactoryTest = this._coreFactory.buildInstance( "hex.ioc.core.MockClassForCoreFactoryTest", null, null, null, true );
+		var instance = this._coreFactory.buildInstance( "hex.ioc.core.MockClassForCoreFactoryTest", null, null, null, true );
 		Assert.isInstanceOf( instance, MockClassForCoreFactoryTest, "should be instance of 'MockClassForCoreFactoryTest'" );
+	}
+	
+	@Test( "Test proxy factory method" )
+    public function testProxyFactoryMethod() : Void
+    {
+		var factory = new SizeFactory();
+		Assert.isFalse( this._coreFactory.removeProxyFactoryMethod( "hex.structures.Point" ), "'removeProxyFactoryMethod' should return false" );
+		Assert.isFalse( this._coreFactory.hasProxyFactoryMethod( "hex.structures.Point" ), "'hasProxyFactoryMethod' should return false" );
+		
+		this._coreFactory.addProxyFactoryMethod( "hex.structures.Point", factory, factory.build );
+		Assert.isTrue( this._coreFactory.hasProxyFactoryMethod( "hex.structures.Point" ), "'hasProxyFactoryMethod' should return true after class name has been registered" );
+		
+		var size = this._coreFactory.buildInstance( "hex.structures.Point", [ 20.0, 30.0 ] );
+		Assert.isInstanceOf( size, Size, "should be instance of 'hex.structures.Size'" );
+		Assert.equals( 20.0, size.width, "'size.width' should return 20.0" );
+		Assert.equals( 30.0, size.height, "'size.height' should return 30.0" );
+		
+		Assert.isTrue( this._coreFactory.removeProxyFactoryMethod( "hex.structures.Point" ), "'removeProxyFactoryMethod' should return true" );
+		Assert.methodCallThrows( IllegalArgumentException,  this._coreFactory, this._coreFactory.buildInstance, [ 20, 30 ], "'buildInstance' should throw an exception because this class is not available" );
+	}
+	
+	@Test( "Test static proxy factory method" )
+    public function testStaticProxyFactoryMethod() : Void
+    {
+		Assert.isFalse( this._coreFactory.removeProxyFactoryMethod( "hex.structures.Size" ), "'removeProxyFactoryMethod' should return false" );
+		Assert.isFalse( this._coreFactory.hasProxyFactoryMethod( "hex.structures.Size" ), "'hasProxyFactoryMethod' should return false" );
+		
+		this._coreFactory.addProxyFactoryMethod( "hex.structures.Size", PointFactory, PointFactory.build );
+		Assert.isTrue( this._coreFactory.hasProxyFactoryMethod( "hex.structures.Size" ), "'hasProxyFactoryMethod' should return true after class name has been registered" );
+		
+		var p = this._coreFactory.buildInstance( "hex.structures.Size", [ 20, 30 ] );
+		Assert.equals( 20, p.x, "'size.x' should return 20" );
+		Assert.equals( 30, p.y, "'size.y' should return 30" );
+		
+		Assert.isTrue( this._coreFactory.removeProxyFactoryMethod( "hex.structures.Size" ), "'removeProxyFactoryMethod' should return true" );
+		var size = this._coreFactory.buildInstance( "hex.structures.Size", [ 20.0, 30.0 ] );
+		Assert.isInstanceOf( size, Size, "should be instance of 'hex.structures.Size'" );
+		Assert.equals( 20.0, size.width, "'size.width' should return 20.0" );
+		Assert.equals( 30.0, size.height, "'size.height' should return 30.0" );
+	}
+}
+
+private class SizeFactory
+{
+	public function new()
+	{
+		
+	}
+	
+	public function build( width : Float = 0, height : Float = 0 ) : Size
+	{
+		return new Size( width, height );
 	}
 }
 
@@ -220,6 +273,4 @@ private class MockAnnotationDataProvider implements IAnnotationProvider
 	{
 		
 	}
-	
-	
 }

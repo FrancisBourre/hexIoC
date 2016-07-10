@@ -16,5 +16,6 @@ interface ICoreFactory extends ILocator<String, Dynamic>
 	function buildInstance( qualifiedClassName : String, ?args : Array<Dynamic>, ?factoryMethod : String, ?singletonAccess : String, ?instantiateUnmapped : Bool = false ) : Dynamic;
 	function fastEvalFromTarget( target : Dynamic, toEval : String ) : Dynamic;
 	function addProxyFactoryMethod( classPath : String, scope : Dynamic, factoryMethod : Dynamic ) : Void;
+	function removeProxyFactoryMethod( classPath : String ) : Bool;
 	function hasProxyFactoryMethod( className : String ) : Bool;
 }
