@@ -4,6 +4,9 @@ import haxe.ds.GenericStack;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import hex.compiler.parser.preprocess.MacroPreprocessor;
+import hex.ioc.assembler.ConditionalVariablesChecker;
+import hex.ioc.core.ContextAttributeList;
+import hex.ioc.parser.xml.XMLParserUtil;
 
 /**
  * ...
@@ -20,7 +23,7 @@ class XmlContextReader
 	}
 	
 	#if macro
-	static function checkForInclude( xmlRawData : XMLRawData, xrdStack : GenericStack<XMLRawData>, ?preprocessingVariables : Expr )
+	static function checkForInclude( xmlRawData : XMLRawData, xrdStack : GenericStack<XMLRawData>, ?preprocessingVariables : Expr, ?conditionalVariablesChecker : ConditionalVariablesChecker )
 	{
 		xrdStack.add( xmlRawData );
 		
@@ -28,12 +31,37 @@ class XmlContextReader
 		{
 			var f = function( eReg: EReg ) : String
 			{
-				var fileName 	= XmlContextReader._includeMatcher.matched( 2 );
-				var xrd 		= XmlContextReader.readFile( fileName, xmlRawData, XmlContextReader._includeMatcher.matchedPos(), preprocessingVariables );
-				XmlContextReader.cleanHeader( xrd );
+				var xml 				= Xml.parse( "<root>" + XmlContextReader._includeMatcher.matched( 0 ) + "</root>" );
+				var element 			= xml.firstElement().firstChild();
 
-				xrd = checkForInclude( xrd, xrdStack, preprocessingVariables );
-				return xrd.data;
+				var ifList 				= XMLParserUtil.getIfList( element );
+				var ifNotList 			= XMLParserUtil.getIfNotList( element );
+				var includeIsAllowed 	= false;
+				
+				if ( conditionalVariablesChecker != null )
+				{
+					if ( conditionalVariablesChecker.allowsIfList( ifList ) && conditionalVariablesChecker.allowsIfNotList( ifNotList ) )
+					{
+						includeIsAllowed = true;
+					}
+				}
+				else
+				{
+					includeIsAllowed = true;
+				}
+				
+				if ( includeIsAllowed )
+				{
+					var fileName 	= XmlContextReader._includeMatcher.matched( 2 );
+					var xrd 		= XmlContextReader.readFile( fileName, xmlRawData, XmlContextReader._includeMatcher.matchedPos(), preprocessingVariables );
+					XmlContextReader.cleanHeader( xrd );
+					xrd = checkForInclude( xrd, xrdStack, preprocessingVariables, conditionalVariablesChecker );
+					return xrd.data;
+				}
+				else
+				{
+					return "";
+				}
 			}
 
 			xmlRawData.data = XmlContextReader._includeMatcher.map( xmlRawData.data, f );
@@ -105,12 +133,12 @@ class XmlContextReader
 		}
 	}
 	
-	public static function readXmlFile( fileName : String, ?preprocessingVariables : Expr ) : {xrd:XMLRawData, collection:Array<XMLRawData>}
+	public static function readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariablesChecker : ConditionalVariablesChecker ) : {xrd:XMLRawData, collection:Array<XMLRawData>}
 	{
 		var xrdStack = new GenericStack<XMLRawData>();
 		
 		var xmlRawData = XmlContextReader.readFile( fileName, null, null, preprocessingVariables );
-		xmlRawData = XmlContextReader.checkForInclude( xmlRawData, xrdStack, preprocessingVariables );
+		xmlRawData = XmlContextReader.checkForInclude( xmlRawData, xrdStack, preprocessingVariables, conditionalVariablesChecker );
 		
 		var xrdCollection : Array<XMLRawData> = [];
 		var i = 0;

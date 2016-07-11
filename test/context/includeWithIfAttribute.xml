@@ -1,0 +1,3 @@
+<root name="applicationContext">
+	<include if="production" file="context/ifAttribute.xml"/>
+</root>

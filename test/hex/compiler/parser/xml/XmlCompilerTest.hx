@@ -7,6 +7,7 @@ import hex.control.command.BasicCommand;
 import hex.di.Injector;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.error.Exception;
+import hex.error.NoSuchElementException;
 import hex.event.Dispatcher;
 import hex.event.EventProxy;
 import hex.ioc.assembler.AbstractApplicationContext;
@@ -39,7 +40,6 @@ import hex.ioc.parser.xml.mock.MockSenderModule;
 import hex.ioc.parser.xml.mock.MockServiceProvider;
 import hex.ioc.parser.xml.mock.MockStubStatefulService;
 import hex.ioc.parser.xml.mock.MockTranslationModule;
-import hex.metadata.MockObjectWithAnnotation;
 import hex.structures.Point;
 import hex.structures.Size;
 import hex.unittest.assertion.Assert;
@@ -775,10 +775,22 @@ class XmlCompilerTest
 	@Test( "test if attribute" )
 	public function testIfAttribute() : Void
 	{
-		//this._applicationAssembler.addConditionalProperty (  );
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/ifAttribute.xml", null, [ "production" => true, "debug" => false, "release" => false ] );
-		
 		Assert.equals( "hello production", this._getCoreFactory().locate( "message" ), "message value should equal 'hello production'" );
+	}
+	
+	@Test( "test include with if attribute" )
+	public function testIncludeWithIfAttribute() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/includeWithIfAttribute.xml", null, [ "production" => true, "debug" => false, "release" => false ] );
+		Assert.equals( "hello production", this._getCoreFactory().locate( "message" ), "message value should equal 'hello production'" );
+	}
+	
+	@Test( "test include fails with if attribute" )
+	public function testIncludeFailsWithIfAttribute() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/includeWithIfAttribute.xml", null, [ "production" => false, "debug" => true, "release" => true ] );
+		Assert.methodCallThrows( NoSuchElementException, this._getCoreFactory(), this._getCoreFactory().locate, [ "message" ], "message value should equal 'hello production'" );
 	}
 	
 	@Test( "test file preprocessor with Xml file" )

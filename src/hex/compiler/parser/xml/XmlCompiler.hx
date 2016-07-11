@@ -7,6 +7,7 @@ import hex.compiler.assembler.CompileTimeApplicationAssembler;
 import hex.compiler.parser.preprocess.MacroConditionalVariablesProcessor;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.ApplicationAssembler;
+import hex.ioc.assembler.ConditionalVariablesChecker;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.core.ContextTypeList;
@@ -497,7 +498,10 @@ class XmlCompiler
 	
 	macro public static function readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<ApplicationAssembler>
 	{
-		var r = XmlContextReader.readXmlFile( fileName, preprocessingVariables );
+		var conditionalVariablesMap = MacroConditionalVariablesProcessor.parse( conditionalVariables );
+		var conditionalVariablesChecker = new ConditionalVariablesChecker( conditionalVariablesMap );
+		
+		var r = XmlContextReader.readXmlFile( fileName, preprocessingVariables, conditionalVariablesChecker );
 		var xmlRawData = r.xrd;
 		var xrdCollection = r.collection;
 		var positionTracker : XmlPositionTracker;
@@ -512,7 +516,7 @@ class XmlCompiler
 			
 			//
 			XmlCompiler._assembler 		= new CompileTimeApplicationAssembler();
-			XmlCompiler._assembler.addConditionalProperty( MacroConditionalVariablesProcessor.parse( conditionalVariables ) );
+			XmlCompiler._assembler.addConditionalProperty( conditionalVariablesMap );
 			var applicationContext 		= XmlCompiler._assembler.getApplicationContext( XmlCompiler.getRootApplicationContextName( doc.document.firstElement(), exceptionReporter ) );
 			
 			//States parsing

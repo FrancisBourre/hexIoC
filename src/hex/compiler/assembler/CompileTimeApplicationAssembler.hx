@@ -5,14 +5,12 @@ import haxe.macro.Expr;
 import hex.compiler.core.CompileTimeContextFactory;
 import hex.error.IllegalArgumentException;
 import hex.ioc.assembler.AbstractApplicationContext;
+import hex.ioc.assembler.ConditionalVariablesChecker;
 import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.core.IContextFactory;
-import hex.ioc.error.BuildingException;
-import hex.ioc.vo.CommandMappingVO;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
-import hex.ioc.vo.DomainListenerVOArguments;
 import hex.ioc.vo.MethodCallVO;
 import hex.ioc.vo.PropertyVO;
 import hex.ioc.vo.StateTransitionVO;
@@ -23,19 +21,45 @@ import hex.ioc.vo.StateTransitionVO;
  */
 class CompileTimeApplicationAssembler implements IApplicationAssembler
 {
-	var _mApplicationContext 		= new Map<String, AbstractApplicationContext>();
-	var _mContextFactories 			= new Map<AbstractApplicationContext, IContextFactory>();
-	var _conditionalProperties 		= new Map<String, Bool>();
-	var _strictMode 				= true;
+	var _mApplicationContext 			= new Map<String, AbstractApplicationContext>();
+	var _mContextFactories 				= new Map<AbstractApplicationContext, IContextFactory>();
+	var _conditionalVariablesChecker 	: ConditionalVariablesChecker;
 	
 	var _mainExpr 					: Expr;
 	var _expressions 				: Array<Expr>;
 
 	public function new()
 	{
+		this._conditionalVariablesChecker = new ConditionalVariablesChecker();
+		
 		#if macro
 		this._expressions = [ macro { trace( "XmlCompiler starts compilation..." ); } ];
 		#end
+	}
+	
+	public function setStrictMode( b : Bool ) : Void
+	{
+		this._conditionalVariablesChecker.setStrictMode( b );
+	}
+	
+	public function isInStrictMode() : Bool
+	{
+		return this._conditionalVariablesChecker.isInStrictMode();
+	}
+	
+	public function addConditionalProperty( conditionalProperties : Map<String, Bool> ) : Void
+	{
+		this._conditionalVariablesChecker.addConditionalProperty( conditionalProperties );
+	}
+	
+	public function allowsIfList( ifList : Array<String> = null ) : Bool
+	{
+		return this._conditionalVariablesChecker.allowsIfList( ifList );
+	}
+	
+	public function allowsIfNotList( ifNotList : Array<String> = null ) : Bool
+	{
+		return this._conditionalVariablesChecker.allowsIfNotList( ifNotList );
 	}
 	
 	public function addExpression( expr : Expr ) : Void
@@ -178,85 +202,6 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 		}
 
 		return applicationContext;
-	}
-
-
-	public function setStrictMode( b : Bool ) : Void
-	{
-		this._strictMode = b;
-	}
-
-	public function isInStrictMode() : Bool
-	{
-		return this._strictMode;
-	}
-
-	public function addConditionalProperty( conditionalProperties : Map<String, Bool> ) : Void
-	{
-		var i = conditionalProperties.keys();
-		var key : String;
-		while ( i.hasNext() )
-		{
-			key = i.next();
-			if ( !this._conditionalProperties.exists( key ) )
-			{
-				this._conditionalProperties.set( key, conditionalProperties.get( key ) );
-			}
-			else
-			{
-				throw new IllegalArgumentException( "addConditionalcontext fails with key'" + key + "', this key was already assigned" );
-			}
-		}
-	}
-
-	public function allowsIfList( ifList : Array<String> = null ) : Bool
-	{
-		if ( ifList != null )
-		{
-			for ( ifItem in ifList )
-			{
-				if ( this._conditionalProperties.exists( ifItem ) )
-				{
-					if ( this._conditionalProperties.get( ifItem ) )
-					{
-						return true;
-					}
-				}
-				else if ( this._strictMode )
-				{
-					throw new BuildingException( "'" + ifItem + "' was not found in application assembler" );
-				}
-			}
-		}
-		else
-		{
-			return true;
-		}
-
-		return false;
-	}
-
-	public function allowsIfNotList( ifNotList : Array<String> = null ) : Bool
-	{
-		if ( ifNotList != null )
-		{
-			for ( ifNotItem in ifNotList )
-			{
-				if ( this._conditionalProperties.exists( ifNotItem ) )
-				{
-					if ( this._conditionalProperties.get( ifNotItem ) )
-					{
-						return false;
-					}
-				}
-				else if ( this._strictMode )
-				{
-					throw new BuildingException( "'" + ifNotItem + "' was not found in application assembler" );
-				}
-			}
-		}
-
-		return true;
 	}
 	
 	function _registerID( applicationContext : AbstractApplicationContext, ID : String, filePosition : Position ) : Bool

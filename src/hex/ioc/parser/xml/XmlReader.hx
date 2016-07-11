@@ -3,9 +3,11 @@ package hex.ioc.parser.xml;
 import com.tenderowls.xml176.Xml176Parser;
 import haxe.macro.Context;
 import haxe.macro.Expr;
+import hex.compiler.parser.preprocess.MacroConditionalVariablesProcessor;
 import hex.compiler.parser.xml.ClassImportHelper;
 import hex.compiler.parser.xml.XmlContextReader;
 import hex.compiler.parser.xml.XmlPositionTracker;
+import hex.ioc.assembler.ConditionalVariablesChecker;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.core.ContextTypeList;
@@ -177,9 +179,12 @@ class XmlReader
 	}
 	#end
 	
-	macro public static function readXmlFile( fileName : String, ?m : Expr ) : ExprOf<String>
+	macro public static function readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<String>
 	{
-		var r = XmlContextReader.readXmlFile( fileName, m );
+		var conditionalVariablesMap = MacroConditionalVariablesProcessor.parse( conditionalVariables );
+		var conditionalVariablesChecker = new ConditionalVariablesChecker( conditionalVariablesMap );
+		
+		var r = XmlContextReader.readXmlFile( fileName, preprocessingVariables, conditionalVariablesChecker );
 		var xmlRawData = r.xrd;
 		var xrdCollection = r.collection;
 

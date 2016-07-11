@@ -1,20 +1,14 @@
 package hex.ioc.assembler;
 
-import hex.error.IllegalArgumentException;
 import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.core.ContextFactory;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.core.IContextFactory;
-import hex.ioc.error.BuildingException;
-import hex.ioc.vo.CommandMappingVO;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
-import hex.ioc.vo.DomainListenerVOArguments;
-import hex.ioc.vo.MapVO;
 import hex.ioc.vo.MethodCallVO;
 import hex.ioc.vo.PropertyVO;
 import hex.ioc.vo.StateTransitionVO;
-import hex.util.ClassUtil;
 
 /**
  * ...
@@ -24,90 +18,36 @@ class ApplicationAssembler implements IApplicationAssembler
 {
 	public function new() 
 	{
-		
+		this._conditionalVariablesChecker = new ConditionalVariablesChecker();
 	}
 	
-	var _mApplicationContext 		= new Map<String, AbstractApplicationContext>();
-	var _mContextFactories 			= new Map<AbstractApplicationContext, IContextFactory>();
-	var _conditionalProperties 		= new Map<String, Bool>();
-	var _strictMode					: Bool = true;
-	
+	var _mApplicationContext 			= new Map<String, AbstractApplicationContext>();
+	var _mContextFactories 				= new Map<AbstractApplicationContext, IContextFactory>();
+	var _conditionalVariablesChecker 	: ConditionalVariablesChecker;
+
 	public function setStrictMode( b : Bool ) : Void
 	{
-		this._strictMode = b;
+		this._conditionalVariablesChecker.setStrictMode( b );
 	}
 	
 	public function isInStrictMode() : Bool
 	{
-		return this._strictMode;
+		return this._conditionalVariablesChecker.isInStrictMode();
 	}
 	
 	public function addConditionalProperty( conditionalProperties : Map<String, Bool> ) : Void
 	{
-		var i = conditionalProperties.keys();
-		var key : String;
-		while ( i.hasNext() )
-		{
-			key = i.next();
-			if ( !this._conditionalProperties.exists( key ) )
-			{
-				this._conditionalProperties.set( key, conditionalProperties.get( key ) );
-			}
-			else
-			{
-				throw new IllegalArgumentException( "addConditionalcontext fails with key'" + key + "', this key was already assigned" );
-			}
-		}
+		this._conditionalVariablesChecker.addConditionalProperty( conditionalProperties );
 	}
 	
 	public function allowsIfList( ifList : Array<String> = null ) : Bool
 	{
-		if ( ifList != null )
-		{
-			for ( ifItem in ifList )
-			{
-				if ( this._conditionalProperties.exists( ifItem ) )
-				{
-					if ( this._conditionalProperties.get( ifItem ) )
-					{
-						return true;
-					}
-				}
-				else if ( this._strictMode )
-				{
-					throw new BuildingException( "'" + ifItem + "' was not found in application assembler" );
-				}
-			}
-		}
-		else
-		{
-			return true;
-		}
-		
-		return false;
+		return this._conditionalVariablesChecker.allowsIfList( ifList );
 	}
 	
 	public function allowsIfNotList( ifNotList : Array<String> = null ) : Bool
 	{
-		if ( ifNotList != null )
-		{
-			for ( ifNotItem in ifNotList )
-			{
-				if ( this._conditionalProperties.exists( ifNotItem ) )
-				{
-					if ( this._conditionalProperties.get( ifNotItem ) )
-					{
-						return false;
-					}
-				}
-				else if ( this._strictMode )
-				{
-					throw new BuildingException( "'" + ifNotItem + "' was not found in application assembler" );
-				}
-			}
-		}
-		
-		return true;
+		return this._conditionalVariablesChecker.allowsIfNotList( ifNotList );
 	}
 
 	public function getContextFactory( applicationContext : AbstractApplicationContext ) : IContextFactory
