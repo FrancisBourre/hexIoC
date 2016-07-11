@@ -772,6 +772,15 @@ class XmlCompilerTest
 		Assert.equals( "hola mundo", instance.property, "" );
 	}*/
 	
+	@Test( "test if attribute" )
+	public function testIfAttribute() : Void
+	{
+		//this._applicationAssembler.addConditionalProperty (  );
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/ifAttribute.xml", null, [ "production" => true, "debug" => false, "release" => false ] );
+		
+		Assert.equals( "hello production", this._getCoreFactory().locate( "message" ), "message value should equal 'hello production'" );
+	}
+	
 	@Test( "test file preprocessor with Xml file" )
 	public function testFilePreprocessorWithXmlFile() : Void
 	{

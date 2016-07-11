@@ -3,7 +3,7 @@ package hex.compiler.parser.xml;
 import haxe.ds.GenericStack;
 import haxe.macro.Context;
 import haxe.macro.Expr;
-import hex.ioc.parser.preprocess.MacroPreprocessor;
+import hex.compiler.parser.preprocess.MacroPreprocessor;
 
 /**
  * ...
@@ -20,7 +20,7 @@ class XmlContextReader
 	}
 	
 	#if macro
-	static function checkForInclude( xmlRawData : XMLRawData, xrdStack : GenericStack<XMLRawData>, ?m : Expr )
+	static function checkForInclude( xmlRawData : XMLRawData, xrdStack : GenericStack<XMLRawData>, ?preprocessingVariables : Expr )
 	{
 		xrdStack.add( xmlRawData );
 		
@@ -29,10 +29,10 @@ class XmlContextReader
 			var f = function( eReg: EReg ) : String
 			{
 				var fileName 	= XmlContextReader._includeMatcher.matched( 2 );
-				var xrd 		= XmlContextReader.readFile( fileName, xmlRawData, XmlContextReader._includeMatcher.matchedPos(), m );
+				var xrd 		= XmlContextReader.readFile( fileName, xmlRawData, XmlContextReader._includeMatcher.matchedPos(), preprocessingVariables );
 				XmlContextReader.cleanHeader( xrd );
 
-				xrd = checkForInclude( xrd, xrdStack, m );
+				xrd = checkForInclude( xrd, xrdStack, preprocessingVariables );
 				return xrd.data;
 			}
 
@@ -52,7 +52,7 @@ class XmlContextReader
 		}
 	}
 
-	static function readFile( fileName : String, parent : XMLRawData = null, includePosition : { pos : Int, len : Int } = null, ?preProcessData : Expr ) : XMLRawData
+	static function readFile( fileName : String, parent : XMLRawData = null, includePosition : { pos : Int, len : Int } = null, ?preprocessingVariables : Expr ) : XMLRawData
 	{
 		try
 		{
@@ -64,7 +64,7 @@ class XmlContextReader
 			var data = sys.io.File.getContent( path );
 			
 			//preprocess
-			data = MacroPreprocessor.parse( data, preProcessData );
+			data = MacroPreprocessor.parse( data, preprocessingVariables );
 			
 			//instantiate XMLRawData result
 			var result = 	{ 	
@@ -105,12 +105,12 @@ class XmlContextReader
 		}
 	}
 	
-	public static function readXmlFile( fileName : String, ?m : Expr ) : {xrd:XMLRawData, collection:Array<XMLRawData>}
+	public static function readXmlFile( fileName : String, ?preprocessingVariables : Expr ) : {xrd:XMLRawData, collection:Array<XMLRawData>}
 	{
 		var xrdStack = new GenericStack<XMLRawData>();
 		
-		var xmlRawData = XmlContextReader.readFile( fileName, null, null, m );
-		xmlRawData = XmlContextReader.checkForInclude( xmlRawData, xrdStack, m );
+		var xmlRawData = XmlContextReader.readFile( fileName, null, null, preprocessingVariables );
+		xmlRawData = XmlContextReader.checkForInclude( xmlRawData, xrdStack, preprocessingVariables );
 		
 		var xrdCollection : Array<XMLRawData> = [];
 		var i = 0;

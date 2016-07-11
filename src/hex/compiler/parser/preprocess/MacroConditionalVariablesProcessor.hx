@@ -1,28 +1,27 @@
-package hex.ioc.parser.preprocess;
+package hex.compiler.parser.preprocess;
 
-import haxe.macro.Context;
 import haxe.macro.Expr;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class MacroPreprocessor
+class MacroConditionalVariablesProcessor
 {
-    function new()
-    {
-
-    }
-
-    #if macro
-    static public function parse( data : String, ?m : Expr  ) : String
+	function new() 
 	{
+		
+	}
+	
+	#if macro
+    static public function parse( m : Expr  )
+	{
+		var props = new Map<String, Bool>();
+		
 		if ( m != null )
 		{
-			var preprocessor = new Preprocessor();
-			var props = new Map<String, String>();
 			var key : String = null;
-			var value : String = null;
+			var value : Bool = null;
 
 			switch ( m.expr )
 			{
@@ -48,8 +47,12 @@ class MacroPreprocessor
 									case EConst( c ):
 										switch ( c )
 										{
-											case CString( s ):
-												value = s;
+											case CIdent( "true" ):
+												value = true;
+
+											case CIdent("false"):
+												value = false;
+												
 											default:
 										}
 									default:
@@ -60,17 +63,14 @@ class MacroPreprocessor
 						if ( key != null && value != null )
 						{
 							props.set( key, value );
-							preprocessor.addProperty( key, value );
 						}
 					}
-					
-					data = preprocessor.parse( data );
 
 				default:
 			}
 		}
 		
-		return data;
+		return props;
 	}
     #end
 }

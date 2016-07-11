@@ -4,7 +4,7 @@ import hex.di.Injector;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.core.IContextFactory;
 import hex.ioc.di.MappingConfiguration;
-import hex.ioc.parser.preprocess.Preprocessor;
+import hex.compiler.parser.preprocess.Preprocessor;
 import haxe.Timer;
 import hex.collection.HashMap;
 import hex.config.stateful.ServiceLocator;
