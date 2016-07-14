@@ -1,19 +1,19 @@
 package hex.ioc.parser.xml;
 
-import hex.di.Injector;
-import hex.error.NoSuchElementException;
-import hex.ioc.assembler.AbstractApplicationContext;
-import hex.ioc.core.IContextFactory;
-import hex.ioc.di.MappingConfiguration;
-import hex.compiler.parser.preprocess.Preprocessor;
 import haxe.Timer;
 import hex.collection.HashMap;
+import hex.compiler.parser.preprocess.Preprocessor;
 import hex.config.stateful.ServiceLocator;
+import hex.di.Injector;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.error.Exception;
+import hex.error.NoSuchElementException;
 import hex.event.Dispatcher;
 import hex.event.EventProxy;
+import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.ApplicationAssembler;
+import hex.ioc.core.IContextFactory;
+import hex.ioc.di.MappingConfiguration;
 import hex.ioc.parser.xml.mock.AnotherMockAmazonService;
 import hex.ioc.parser.xml.mock.AnotherMockModuleWithServiceCallback;
 import hex.ioc.parser.xml.mock.ClassWithConstantConstantArgument;
@@ -37,14 +37,13 @@ import hex.ioc.parser.xml.mock.MockReceiverModule;
 import hex.ioc.parser.xml.mock.MockRectangle;
 import hex.ioc.parser.xml.mock.MockSenderModule;
 import hex.ioc.parser.xml.mock.MockServiceProvider;
+import hex.ioc.parser.xml.mock.MockStubStatefulService;
 import hex.ioc.parser.xml.mock.MockTranslationModule;
-import hex.structures.PointFactory;
 import hex.structures.Point;
+import hex.structures.PointFactory;
 import hex.structures.Size;
 import hex.unittest.assertion.Assert;
 import hex.unittest.runner.MethodRunner;
-import hex.ioc.parser.xml.mock.MockStubStatefulService;
-
 
 /**
  * ...

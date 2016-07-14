@@ -1,10 +1,8 @@
 package hex.ioc.core;
 
-import haxe.Constraints.Function;
 import hex.collection.ILocatorListener;
 import hex.collection.LocatorMessage;
 import hex.core.IAnnotationParsable;
-import hex.di.IBasicInjector;
 import hex.di.IDependencyInjector;
 import hex.error.IllegalArgumentException;
 import hex.error.NoSuchElementException;
@@ -87,7 +85,7 @@ class CoreFactory implements ICoreFactory
 			}
         }
 		
-		throw new NoSuchElementException( "Can't find item with '" + key + "' key in " + Stringifier.stringify(this) );
+		throw new NoSuchElementException( "Can't find item with '" + key + "' key in " + Stringifier.stringify( this ) );
 	}
 	
 	public function isRegisteredWithKey( key : Dynamic ) : Bool 
@@ -110,7 +108,7 @@ class CoreFactory implements ICoreFactory
 		}
 		else
 		{
-			throw new IllegalArgumentException( "register(" + key + ", " + element + ") fails, key is already registered." );
+			throw new IllegalArgumentException( "register fails, key is already registered." );
 		}
 	}
 	
@@ -163,7 +161,7 @@ class CoreFactory implements ICoreFactory
 			}
 			catch ( e : IllegalArgumentException )
 			{
-				e.message = this + ".add() fails. " + e.message;
+				e.message = "add() fails. " + e.message;
 				throw( e );
 			}
         }
