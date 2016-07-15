@@ -33,7 +33,7 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 		this._conditionalVariablesChecker = new ConditionalVariablesChecker();
 		
 		#if macro
-		this._expressions = [ macro { trace( "XmlCompiler starts compilation..." ); } ];
+		this._expressions = [ macro {} ];
 		#end
 	}
 	

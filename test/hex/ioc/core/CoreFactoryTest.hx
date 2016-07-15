@@ -165,7 +165,7 @@ class CoreFactoryTest
 		Assert.equals( 30.0, size.height, "'size.height' should return 30.0" );
 		
 		Assert.isTrue( this._coreFactory.removeProxyFactoryMethod( "hex.structures.Point" ), "'removeProxyFactoryMethod' should return true" );
-		Assert.methodCallThrows( IllegalArgumentException,  this._coreFactory, this._coreFactory.buildInstance, [ "hex.structures.Point", 20, 30 ], "'buildInstance' should throw an exception because this class is not available" );
+		Assert.methodCallThrows( IllegalArgumentException,  this._coreFactory, this._coreFactory.buildInstance, [ "hex.structures.Point", [ 20, 30 ] ], "'buildInstance' should throw an exception because this class is not available" );
 	}
 	
 	@Test( "Test static proxy factory method" )
