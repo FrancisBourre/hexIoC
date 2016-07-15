@@ -96,7 +96,12 @@ class DomainListenerFactory
 	
 	static function _getStrategyCallback( annotationProvider : IAnnotationProvider, applicationContext : AbstractApplicationContext, listener : Dynamic, method : String, strategyClassName : String, injectedInModule : Bool = false ) : Dynamic
 	{
-		var callback : Dynamic 							= Reflect.field( listener, method );
+		var callback : Dynamic = null;
+		if ( method != null ) 
+		{
+			callback = Reflect.field( listener, method );
+		}
+		
 		var strategyClass : Class<IAdapterStrategy> 	= cast ClassUtil.getClassReference( strategyClassName );
 		
 		var adapter = new ClassAdapter();

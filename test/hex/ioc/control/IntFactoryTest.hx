@@ -58,7 +58,7 @@ class IntFactoryTest
     public function testExecuteWithNullArgument() : Void
     {
 		var helper = new FactoryVO();
-		helper.constructorVO 			= new ConstructorVO( "test", "Int", [null] );
+		helper.constructorVO 			= new ConstructorVO( "test", "Int", [ null ] );
 		Assert.methodCallThrows( IllegalArgumentException, IntFactory, IntFactory.build, [ helper ], "command execution should throw IllegalArgumentException" );
 	}
 }

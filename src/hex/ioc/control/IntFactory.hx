@@ -23,7 +23,7 @@ class IntFactory
 
 		if ( args != null && args.length > 0 ) 
 		{
-			number = Std.parseInt( Std.string( args[0] ) );
+			number = Std.parseInt( Std.string( args[ 0 ] ) );
 		}
 		else
 		{
@@ -33,7 +33,7 @@ class IntFactory
 		#if js
 		if ( number == null )
 		#else
-		if ( "" + number != args[0] )
+		if ( "" + number != args[ 0 ] )
 		#end
 		{
 			throw new IllegalArgumentException( "IntFactory.build(" + number + ") failed." );

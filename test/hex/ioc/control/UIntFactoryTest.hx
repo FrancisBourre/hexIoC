@@ -28,14 +28,6 @@ class UIntFactoryTest
 		Assert.methodCallThrows( IllegalArgumentException, UIntFactory, UIntFactory.build, [ helper ], "command execution should throw IllegalArgumentException" );
 	}
 	
-	@Test( "Test execute with invalid argument" )
-    public function testExecuteWithInvalidArgument() : Void
-    {
-		var helper = new FactoryVO();
-		helper.constructorVO 		= new ConstructorVO( "test", "UInt", ["a"] );
-		Assert.methodCallThrows( IllegalArgumentException, UIntFactory, UIntFactory.build, [ helper ], "command execution should throw IllegalArgumentException" );
-	}
-	
 	@Test( "Test execute with no argument array" )
     public function testExecuteWithNoArgumentArray() : Void
     {
@@ -52,11 +44,21 @@ class UIntFactoryTest
 		Assert.methodCallThrows( IllegalArgumentException, UIntFactory, UIntFactory.build, [ helper ], "command execution should throw IllegalArgumentException" );
 	}
 	
+	#if !neko
+	@Test( "Test execute with invalid argument" )
+    public function testExecuteWithInvalidArgument() : Void
+    {
+		var helper = new FactoryVO();
+		helper.constructorVO 		= new ConstructorVO( "test", "UInt", ["a"] );
+		Assert.methodCallThrows( IllegalArgumentException, UIntFactory, UIntFactory.build, [ helper ], "command execution should throw IllegalArgumentException" );
+	}
+	
 	@Test( "Test execute with null argument" )
     public function testExecuteWithNullArgument() : Void
     {
 		var helper = new FactoryVO();
-		helper.constructorVO 			= new ConstructorVO( "test", "UInt", [null] );
+		helper.constructorVO 			= new ConstructorVO( "test", "UInt", [ null ] );
 		Assert.methodCallThrows( IllegalArgumentException, UIntFactory, UIntFactory.build, [ helper ], "command execution should throw IllegalArgumentException" );
 	}
+	#end
 }
