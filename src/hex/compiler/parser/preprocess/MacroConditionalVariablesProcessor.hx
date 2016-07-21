@@ -1,5 +1,6 @@
 package hex.compiler.parser.preprocess;
 
+import haxe.macro.Context;
 import haxe.macro.Expr;
 
 /**
@@ -70,6 +71,32 @@ class MacroConditionalVariablesProcessor
 			}
 		}
 		
+		var defines : Map<String,String> = Context.getDefines();
+		for ( key in defines.keys() ) 
+		{
+			var value = defines.get( key );
+			if( "" + value == 'true' || "" + value == 'false' )
+			{
+				var b = value =='true' ? true : false;
+
+				if ( props.exists( key ) )
+				{
+					if ( props.get( key ) != b )
+					{
+						Context.error( "'" + key + "' key is defined twice with different values.", Context.currentPos() );
+					}
+					else
+					{
+						Context.error( "'" + key + "' key is defined twice.", Context.currentPos() );
+					}
+				}
+				else
+				{
+					props.set( key, b );
+				}
+			}
+    	}
+
 		return props;
 	}
     #end
