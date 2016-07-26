@@ -93,7 +93,6 @@ class MappingConfigurationTest
 		var mt = new MessageType( "test" );
 		var listener = new MockServiceListener();
 		dispatcher.addHandler( mt, listener, listener.onTest );
-		//var event = new ServiceEvent( "test", statefulService );
 		statefulService.dispatch( mt, [statefulService] );
 		
 		Assert.equals( statefulService, listener.lastDataReceived, "event should be received by sub-dispatcher listener" );
