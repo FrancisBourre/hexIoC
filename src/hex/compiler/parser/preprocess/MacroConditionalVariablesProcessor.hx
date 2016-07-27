@@ -81,10 +81,10 @@ class MacroConditionalVariablesProcessor
 		for ( key in defines.keys() ) 
 		{
 			var value = defines.get( key );
-			if( "" + value == 'true' || "" + value == 'false' )
+			if( "" + value == 'true' || "" + value == '1' || "" + value == 'false' || "" + value == '0' )
 			{
-				var b = value =='true' ? true : false;
-
+				var b = "" + value == 'true' || "" + value == '1' ? true : false;
+				
 				if ( props.exists( key ) )
 				{
 					if ( props.get( key ) != b )
