@@ -43,20 +43,26 @@ class MacroConditionalVariablesProcessor
 										}
 									default:
 								}
-								switch( e2.expr )
+								
+								value = switch( e2.expr )
 								{
 									case EConst( c ):
 										switch ( c )
 										{
-											case CIdent( "true" ):
-												value = true;
+											case CInt( i ):
+												Std.parseInt( i ) == 0 ? false : true;
 
+											case CIdent( "true" ):
+												true;
+											
 											case CIdent("false"):
-												value = false;
+												false;
 												
 											default:
+												null;
 										}
 									default:
+										null;
 								}
 							default:
 						}
