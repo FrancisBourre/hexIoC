@@ -26,28 +26,29 @@ class DomainListenerFactory
 	}
 	
 	#if macro
-	static var _domainLocator 		: Map<String, String> = new Map();
-	static var _eventProxyClassType : ClassType = MacroUtil.getClassType( Type.getClassName( EventProxy ) );
-	static var _observableInterface : ClassType = MacroUtil.getClassType( Type.getClassName( IObservable ) );
+	public static var domainLocator : Map<String, String>;
+	
+	static var _eventProxyClassType = MacroUtil.getClassType( Type.getClassName( EventProxy ) );
+	static var _observableInterface = MacroUtil.getClassType( Type.getClassName( IObservable ) );
+	static var _domainUtilClass 	= MacroUtil.getPack( Type.getClassName( DomainUtil )  );
+	static var _domainClass 		= MacroUtil.getPack( Type.getClassName( Domain )  );
 	
 	static function _getDomain( domainName : String, factoryVO : FactoryVO ) : String
 	{
-		if ( factoryVO.domainLocator.exists( domainName ) )
+		if ( domainLocator.exists( domainName ) )
 		{
-			return factoryVO.domainLocator.get( domainName );
+			return domainLocator.get( domainName );
 		}
 		else
 		{
-			var DomainUtilClass = MacroUtil.getPack( Type.getClassName( DomainUtil )  );
-			var DomainClass 	= MacroUtil.getPack( Type.getClassName( Domain )  );
-			var domainVariable 	= "__domainName_" + domainName;
+			var domainVariable = "__domainName_" + domainName;
 			
 			factoryVO.expressions.push( macro @:mergeBlock 
-				{ 
-					var $domainVariable = $p { DomainUtilClass }.getDomain( $v{ domainName }, $p { DomainClass } ); 
-				} );
+			{ 
+				var $domainVariable = $p { _domainUtilClass }.getDomain( $v{ domainName }, $p { _domainClass } ); 
+			} );
 			
-			factoryVO.domainLocator.set( domainName, domainVariable );
+			domainLocator.set( domainName, domainVariable );
 			return domainVariable;
 		}
 	}

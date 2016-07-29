@@ -22,7 +22,7 @@ class FactoryVO
 	
 	#if macro
 	public var expressions 				: Array<Expr>;
-	public var domainLocator			: Map<String, String>;
+	//public var domainLocator			: Map<String, String>;
 	#end
 
 	public function new() 

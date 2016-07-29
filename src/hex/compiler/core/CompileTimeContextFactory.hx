@@ -45,8 +45,6 @@ import hex.ioc.vo.StateTransitionVO;
 import hex.metadata.IAnnotationProvider;
 import hex.util.MacroUtil;
 
-
-
 /**
  * ...
  * @author Francis Bourre
@@ -67,9 +65,6 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	var _methodCallVOLocator 		: MethodCallVOLocator;
 	var _domainListenerVOLocator 	: DomainListenerVOLocator;
 	var _stateTransitionVOLocator 	: StateTransitionVOLocator;
-
-	//TODO remove
-	var _domainLocator 				: Map<String, String>;
 	
 	public function new( expressions : Array<Expr>, applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null  )
 	{
@@ -464,22 +459,25 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		this._factoryMap = new Map();
 		this._IDExpert.clear();
 		
-		this._domainLocator = null;
+		#if macro
+		DomainListenerFactory.domainLocator = null;
+		#end
 	}
 
 	function _init() : Void
 	{
-		this._factoryMap 				= new Map();
-		this._IDExpert 					= new IDExpert();
-		this._constructorVOLocator 		= new ConstructorVOLocator();
-		this._propertyVOLocator 		= new PropertyVOLocator();
-		this._methodCallVOLocator 		= new MethodCallVOLocator();
-		this._domainListenerVOLocator 	= new DomainListenerVOLocator();
-		this._stateTransitionVOLocator 	= new StateTransitionVOLocator( this );
-		this._moduleLocator 			= new ModuleLocator( this );
-		this._domainLocator 			= new Map();
-
+		this._factoryMap 						= new Map();
+		this._IDExpert 							= new IDExpert();
+		this._constructorVOLocator 				= new ConstructorVOLocator();
+		this._propertyVOLocator 				= new PropertyVOLocator();
+		this._methodCallVOLocator 				= new MethodCallVOLocator();
+		this._domainListenerVOLocator 			= new DomainListenerVOLocator();
+		this._stateTransitionVOLocator 			= new StateTransitionVOLocator( this );
+		this._moduleLocator 					= new ModuleLocator( this );
+		
 		#if macro
+		DomainListenerFactory.domainLocator = new Map();
+		
 		this._factoryMap.set( ContextTypeList.ARRAY, ArrayFactory.build );
 		this._factoryMap.set( ContextTypeList.BOOLEAN, BoolFactory.build );
 		this._factoryMap.set( ContextTypeList.INT, IntFactory.build );
@@ -533,8 +531,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		factoryVO.contextFactory 	= this;
 		factoryVO.coreFactory 		= this._coreFactory;
 		factoryVO.moduleLocator 	= this._moduleLocator;
-		factoryVO.domainLocator 	= this._domainLocator;
-		
+
 		return factoryVO;
 	}
 	#end
