@@ -1,10 +1,8 @@
 package hex.compiler.factory;
 
-import haxe.macro.Context;
 import haxe.macro.Expr;
-import hex.ioc.vo.FactoryVO;
-import hex.error.IllegalArgumentException;
 import hex.ioc.vo.ConstructorVO;
+import hex.ioc.vo.FactoryVO;
 import hex.util.MacroUtil;
 
 /**
@@ -32,17 +30,8 @@ class ClassFactory
 			qualifiedClassName = "" + args[0];
 		}
 
-		var tp : Array<String>;
-
-		try 
-		{
-			tp = MacroUtil.getPack( qualifiedClassName );
-		}
-		catch( e : Dynamic )
-		{
-			Context.error( e, constructorVO.filePosition );
-		}
-		
+		//TODO correct file position. seems there's a bug with file inclusion
+		var tp = MacroUtil.getPack( qualifiedClassName, constructorVO.filePosition );
 		e = macro @:pos( constructorVO.filePosition ) { $p { tp }; };
 		
 		if ( !constructorVO.isProperty )
