@@ -70,7 +70,7 @@ class XmlCompiler
 			constructorVO.ifNotList 	= XMLParserUtil.getIfNotList( xml );
 
 			XmlCompiler._assembler.buildObject( applicationContext, constructorVO );
-			XmlCompiler._importHelper.forceCompilation( factory );
+			//XmlCompiler._importHelper.forceCompilation( factory );
 		}
 		else
 		{
@@ -187,14 +187,14 @@ class XmlCompiler
 				}
 			}
 			
-			try
+			/*try
 			{
 				XmlCompiler._importHelper.forceCompilation( mapType );
 			}
 			catch ( e : String )
 			{
 				exceptionReporter.throwMissingTypeException( mapType, xml, ContextAttributeList.MAP_TYPE );
-			}
+			}*/
 			
 			try
 			{
@@ -205,10 +205,10 @@ class XmlCompiler
 				exceptionReporter.throwMissingTypeException( staticRef, xml, ContextAttributeList.STATIC_REF );
 			}
 			
-			if ( type == ContextTypeList.CLASS )
+			/*if ( type == ContextTypeList.CLASS )
 			{
 				XmlCompiler._importHelper.forceCompilation( args[ 0 ].arguments[ 0 ] );
-			}
+			}*/
 			
 			var constructorVO 			= new ConstructorVO( identifier, type, args, factory, singleton, injectInto, null, mapType, staticRef );
 			constructorVO.ifList 		= ifList;
@@ -341,14 +341,14 @@ class XmlCompiler
 							}
 						}
 						
-						try
+						/*try
 						{
 							XmlCompiler._importHelper.forceCompilation( listenerArg.strategy );
 						}
 						catch ( e : String )
 						{
 							exceptionReporter.throwMissingTypeException( listenerArg.strategy, node, ContextAttributeList.STRATEGY );
-						}
+						}*/
 
 						listenerArgs.push( listenerArg );
 					}

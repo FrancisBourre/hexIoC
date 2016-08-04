@@ -13,7 +13,6 @@ import hex.log.ILogger;
 import hex.module.IModule;
 import hex.util.MacroUtil;
 
-
 /**
  * ...
  * @author Francis Bourre
@@ -26,6 +25,10 @@ class ClassInstanceFactory
 	}
 
 	#if macro
+	static var _domainExpertClass 	= MacroUtil.getPack( Type.getClassName( DomainExpert )  );
+	static var _domainUtilClass 	= MacroUtil.getPack( Type.getClassName( DomainUtil )  );
+	static var _domainClass 		= MacroUtil.getPack( Type.getClassName( Domain )  );
+					
 	static public function build( factoryVO : FactoryVO ) : Dynamic
 	{
 		var constructorVO : ConstructorVO = factoryVO.constructorVO;
@@ -38,26 +41,8 @@ class ClassInstanceFactory
 		else
 		{
 			var idVar = constructorVO.ID;
-			var tp : Array<String>;
-			var typePath : TypePath;
-			
-			try 
-			{
-				tp = MacroUtil.getPack( constructorVO.type );
-			}
-			catch( e : Dynamic )
-			{
-				Context.error( e, constructorVO.filePosition );
-			}
-			
-			try
-			{
-				typePath = MacroUtil.getTypePath( constructorVO.type );
-			}
-			catch( e : Dynamic )
-			{
-				Context.error( e, constructorVO.filePosition );
-			}
+			var tp : Array<String> = MacroUtil.getPack( constructorVO.type, constructorVO.filePosition );
+			var typePath : TypePath = MacroUtil.getTypePath( constructorVO.type, constructorVO.filePosition );
 
 			//build instance
 			var singleton = constructorVO.singleton;
@@ -90,14 +75,10 @@ class ClassInstanceFactory
 				{
 					//TODO register to AnnotationProvider
 					//AnnotationProvider.registerToDomain( factoryVO.contextFactory.getAnnotationProvider(), DomainUtil.getDomain( constructorVO.ID, Domain ) );
-					
-					var DomainExpertClass = MacroUtil.getPack( Type.getClassName( DomainExpert )  );
-					var DomainUtilClass = MacroUtil.getPack( Type.getClassName( DomainUtil )  );
-					var DomainClass = MacroUtil.getPack( Type.getClassName( Domain )  );
-					
+
 					//TODO register for every instance (from singleton and/or factory)
 					//TODO optimize calls to DomainUtil
-					factoryVO.expressions.push( macro @:mergeBlock { $p { DomainExpertClass } .getInstance().registerDomain( $p { DomainUtilClass } .getDomain( $v { idVar }, $p { DomainClass } ) ); } );
+					factoryVO.expressions.push( macro @:mergeBlock { $p { _domainExpertClass } .getInstance().registerDomain( $p { _domainUtilClass } .getDomain( $v { idVar }, $p { _domainClass } ) ); } );
 					factoryVO.moduleLocator.register( constructorVO.ID, new EmptyModule( constructorVO.ID ) );
 				}
 				
@@ -116,7 +97,7 @@ class ClassInstanceFactory
 			if ( constructorVO.mapType != null )
 			{
 				var instanceVar = macro $i { idVar };
-				var classToMap = MacroUtil.getPack( constructorVO.mapType );
+				var classToMap = MacroUtil.getPack( constructorVO.mapType, constructorVO.filePosition );
 				factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { __applicationContextInjector.mapToValue( $p{ classToMap }, $instanceVar, $v { idVar } ); } );
 			}
 		}

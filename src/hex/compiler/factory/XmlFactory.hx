@@ -1,5 +1,6 @@
 package hex.compiler.factory;
 
+import haxe.macro.Context;
 import hex.ioc.vo.FactoryVO;
 import hex.ioc.error.ParsingException;
 import hex.ioc.vo.ConstructorVO;
@@ -42,7 +43,10 @@ class XmlFactory
 					if ( !constructorVO.isProperty )
 					{
 						var idVar = constructorVO.ID;
-						var typePath = MacroUtil.getTypePath( factory );
+						var typePath = null;
+						
+						typePath = MacroUtil.getTypePath( factory, constructorVO.filePosition );
+
 						var parser = "factory_" + constructorVO.ID;
 						factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { var $parser = new $typePath(); } );
 						

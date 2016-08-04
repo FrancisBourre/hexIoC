@@ -28,10 +28,14 @@ class DomainListenerFactory
 	#if macro
 	public static var domainLocator : Map<String, String>;
 	
-	static var _eventProxyClassType = MacroUtil.getClassType( Type.getClassName( EventProxy ) );
-	static var _observableInterface = MacroUtil.getClassType( Type.getClassName( IObservable ) );
-	static var _domainUtilClass 	= MacroUtil.getPack( Type.getClassName( DomainUtil )  );
-	static var _domainClass 		= MacroUtil.getPack( Type.getClassName( Domain )  );
+	static var _eventProxyClassType 				= MacroUtil.getClassType( Type.getClassName( EventProxy ) );
+	static var _observableInterface 				= MacroUtil.getClassType( Type.getClassName( IObservable ) );
+	
+	static var _applicationDomainDispatcherClass 	= MacroUtil.getPack( Type.getClassName( ApplicationDomainDispatcher )  );
+	static var _domainUtilClass 					= MacroUtil.getPack( Type.getClassName( DomainUtil )  );
+	static var _domainClass 						= MacroUtil.getPack( Type.getClassName( Domain )  );
+	
+	static var _classAdapterTypePath 				= MacroUtil.getTypePath( Type.getClassName( ClassAdapter ) );
 	
 	static function _getDomain( domainName : String, factoryVO : FactoryVO ) : String
 	{
@@ -98,10 +102,6 @@ class DomainListenerFactory
 	
 	static public function build( factoryVO : FactoryVO, domainListener : DomainListenerVO ) : Dynamic
 	{
-		var ApplicationDomainDispatcherClass = MacroUtil.getPack( Type.getClassName( ApplicationDomainDispatcher )  );
-		var DomainUtilClass = MacroUtil.getPack( Type.getClassName( DomainUtil )  );
-		var DomainClass = MacroUtil.getPack( Type.getClassName( Domain )  );
-		
 		var args : Array<DomainListenerVOArguments> = domainListener.arguments;
 
 		if ( args != null && args.length > 0 )
@@ -127,11 +127,10 @@ class DomainListenerFactory
 
 					if ( strategyClassName != null )
 					{
-						var StrategyClass = MacroUtil.getPack( strategyClassName );
-						var ClassAdapterClass = MacroUtil.getTypePath( Type.getClassName( ClassAdapter ) );
+						var StrategyClass = MacroUtil.getPack( strategyClassName, domainListenerArgument.filePosition );
 						
 						var adapterVarName = "__adapterFor__" + listenedDomainName + "__" + ( domainListenerArgument.staticRef.split( "." ).join( "_" ) );
-						factoryVO.expressions.push( macro @:mergeBlock { var $adapterVarName = new $ClassAdapterClass(); } );
+						factoryVO.expressions.push( macro @:mergeBlock { var $adapterVarName = new $_classAdapterTypePath(); } );
 						var adapterVar = macro $i { adapterVarName };
 						
 						if ( method != null )
@@ -169,7 +168,7 @@ class DomainListenerFactory
 							var domainVar = macro $i { DomainListenerFactory._getDomain( listenedDomainName, factoryVO ) };
 							factoryVO.expressions.push( macro @:mergeBlock 
 							{ 
-								$p { ApplicationDomainDispatcherClass } .getInstance()
+								$p { _applicationDomainDispatcherClass } .getInstance()
 								.addHandler( $messageType, $listenerVar, $adapterExp, $domainVar ); 
 							} );
 						}
@@ -188,7 +187,7 @@ class DomainListenerFactory
 						{
 							var domainVar = macro $i { DomainListenerFactory._getDomain( listenedDomainName, factoryVO ) };
 							var messageType = MacroUtil.getStaticVariable( domainListenerArgument.staticRef, domainListenerArgument.filePosition );
-							factoryVO.expressions.push( macro @:pos( domainListenerArgument.filePosition ) @:mergeBlock { $p { ApplicationDomainDispatcherClass } .getInstance().addHandler( $messageType, $listenerVar, $listenerVar.$method, $domainVar ); } );
+							factoryVO.expressions.push( macro @:pos( domainListenerArgument.filePosition ) @:mergeBlock { $p { _applicationDomainDispatcherClass } .getInstance().addHandler( $messageType, $listenerVar, $listenerVar.$method, $domainVar ); } );
 						}
 					}
 				}
@@ -214,7 +213,7 @@ class DomainListenerFactory
 			var extVar = macro $i{ listenerID };
 
 			var domainVar = macro $i { DomainListenerFactory._getDomain( listenedDomainName, factoryVO ) };
-			factoryVO.expressions.push( macro @:mergeBlock { $p { ApplicationDomainDispatcherClass }.getInstance().addListener( $extVar, $domainVar ); } );
+			factoryVO.expressions.push( macro @:mergeBlock { $p { _applicationDomainDispatcherClass }.getInstance().addListener( $extVar, $domainVar ); } );
 
 			return true;
 		}
