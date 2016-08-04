@@ -2,6 +2,7 @@ package hex.compiler.factory;
 
 import haxe.macro.Context;
 import haxe.macro.Expr;
+import hex.core.IAnnotationParsable;
 import hex.di.IDependencyInjector;
 import hex.domain.Domain;
 import hex.domain.DomainExpert;
@@ -25,9 +26,12 @@ class ClassInstanceFactory
 	}
 
 	#if macro
-	static var _domainExpertClass 	= MacroUtil.getPack( Type.getClassName( DomainExpert )  );
-	static var _domainUtilClass 	= MacroUtil.getPack( Type.getClassName( DomainUtil )  );
-	static var _domainClass 		= MacroUtil.getPack( Type.getClassName( Domain )  );
+	static var _domainExpertClass 			= MacroUtil.getPack( Type.getClassName( DomainExpert ) );
+	static var _domainUtilClass 			= MacroUtil.getPack( Type.getClassName( DomainUtil ) );
+	static var _domainClass 				= MacroUtil.getPack( Type.getClassName( Domain ) );
+	
+	static var _moduleInterface 			= MacroUtil.getClassType( Type.getClassName( IModule ) );
+	static var _annotationParsableInterface = MacroUtil.getClassType( Type.getClassName( IAnnotationParsable ) );
 					
 	static public function build( factoryVO : FactoryVO ) : Dynamic
 	{
@@ -68,10 +72,9 @@ class ClassInstanceFactory
 			}
 			else
 			{
-				var classType = MacroUtil.getClassType( constructorVO.type );
-				var moduleInterface = MacroUtil.getClassType( Type.getClassName( IModule ) );
+				var classType = MacroUtil.getClassType( constructorVO.type, constructorVO.filePosition );
 				
-				if ( MacroUtil.implementsInterface( classType, moduleInterface ) )
+				if ( MacroUtil.implementsInterface( classType, _moduleInterface ) )
 				{
 					//TODO register to AnnotationProvider
 					//AnnotationProvider.registerToDomain( factoryVO.contextFactory.getAnnotationProvider(), DomainUtil.getDomain( constructorVO.ID, Domain ) );
@@ -85,8 +88,8 @@ class ClassInstanceFactory
 				e = macro @:pos( constructorVO.filePosition ) { new $typePath( $a{ constructorVO.constructorArgs } ); };
 				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
 				
-				var annotationParsableInterface = MacroUtil.getClassType( "hex.core.IAnnotationParsable" );
-				if ( MacroUtil.implementsInterface( classType, annotationParsableInterface ) )
+				
+				if ( MacroUtil.implementsInterface( classType, _annotationParsableInterface ) )
 				{
 					var instanceVar = macro $i { idVar };
 					var annotationProviderVar = macro $i { "__annotationProvider" };
