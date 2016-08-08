@@ -51,18 +51,31 @@ class ClassInstanceFactory
 			//build instance
 			var singleton = constructorVO.singleton;
 			var factory = constructorVO.factory;
+			var staticRef = constructorVO.staticRef;
+			
 			if ( factory != null )
 			{
-				if ( singleton != null )
+				//TODO add unit-test
+				//TODO implement the same behavior @runtime
+				if ( staticRef != null )
 				{
-					e = macro @:pos( constructorVO.filePosition ) { $p { tp }.$singleton().$factory( $a{ constructorVO.constructorArgs } ); };
+					e = macro @:pos( constructorVO.filePosition ) { $p { tp } .$staticRef.$factory( $a { constructorVO.constructorArgs } ); };
 					factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
 				}
 				else
 				{
-					e = macro @:pos( constructorVO.filePosition ) { $p { tp }.$factory( $a{ constructorVO.constructorArgs } ); };
-					factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
+					if ( singleton != null )
+					{
+						e = macro @:pos( constructorVO.filePosition ) { $p { tp }.$singleton().$factory( $a{ constructorVO.constructorArgs } ); };
+						factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
+					}
+					else
+					{
+						e = macro @:pos( constructorVO.filePosition ) { $p { tp }.$factory( $a{ constructorVO.constructorArgs } ); };
+						factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
+					}
 				}
+				
 			
 			}
 			else if ( singleton != null )

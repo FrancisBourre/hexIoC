@@ -196,7 +196,7 @@ class XmlCompiler
 				exceptionReporter.throwMissingTypeException( mapType, xml, ContextAttributeList.MAP_TYPE );
 			}*/
 			
-			try
+	/*		try
 			{
 				XmlCompiler._importHelper.includeStaticRef( staticRef );
 			}
@@ -204,7 +204,7 @@ class XmlCompiler
 			{
 				exceptionReporter.throwMissingTypeException( staticRef, xml, ContextAttributeList.STATIC_REF );
 			}
-			
+	*/		
 			/*if ( type == ContextTypeList.CLASS )
 			{
 				XmlCompiler._importHelper.forceCompilation( args[ 0 ].arguments[ 0 ] );
