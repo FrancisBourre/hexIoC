@@ -1,0 +1,5 @@
+<root name="applicationContext">
+	<div id="div" type="hex.ioc.parser.xml.mock.MockBrowser" static-ref="document" factory="querySelector">
+		<argument value="#test"/>
+	</div>
+</root>

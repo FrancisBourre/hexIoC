@@ -29,6 +29,7 @@ import hex.ioc.parser.xml.mock.MockAmazonService;
 import hex.ioc.parser.xml.mock.MockBooleanVO;
 import hex.ioc.parser.xml.mock.MockCaller;
 import hex.ioc.parser.xml.mock.MockChatModule;
+import hex.ioc.parser.xml.mock.MockDocument;
 import hex.ioc.parser.xml.mock.MockFacebookService;
 import hex.ioc.parser.xml.mock.MockFruitVO;
 import hex.ioc.parser.xml.mock.MockIntVO;
@@ -638,6 +639,15 @@ class XmlCompilerTest
 		
 		Assert.equals( myModule, this._applicationAssembler.getApplicationContext( "applicationContext" ).getInjector().getInstance( IMockMappedModule, "myModule" ), "" );
 		Assert.equals( myModule, this._applicationAssembler.getApplicationContext( "applicationContext" ).getInjector().getInstance( IAnotherMockMappedModule, "myModule" ), "" );
+	}
+	
+	@Test( "test static-ref with factory" )
+	public function testStaticRefWithFactory() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/staticRefFactory.xml" );
+		var doc : MockDocument = this._getCoreFactory().locate( "div" );
+		Assert.isNotNull( doc, "" );
+		Assert.isInstanceOf( doc, MockDocument, "" );
 	}
 
 	@Test( "test module listening service" )
