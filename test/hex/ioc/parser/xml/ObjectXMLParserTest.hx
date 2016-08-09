@@ -27,6 +27,7 @@ import hex.ioc.parser.xml.mock.MockAmazonService;
 import hex.ioc.parser.xml.mock.MockBooleanVO;
 import hex.ioc.parser.xml.mock.MockChatModule;
 import hex.ioc.parser.xml.mock.MockClassWithInjectedProperty;
+import hex.ioc.parser.xml.mock.MockDocument;
 import hex.ioc.parser.xml.mock.MockFacebookService;
 import hex.ioc.parser.xml.mock.MockFruitVO;
 import hex.ioc.parser.xml.mock.MockIntVO;
@@ -855,6 +856,15 @@ class ObjectXMLParserTest
 		Assert.equals( myModule, this._applicationContext.getInjector().getInstance( IMockMappedModule, "myModule" ), "" );
 		Assert.equals( myModule, this._applicationContext.getInjector().getInstance( IAnotherMockMappedModule, "myModule" ), "" );
 	}
+	
+	/*@Ignore( "test static-ref with factory" )
+	public function testStaticRefWithFactory() : Void
+	{
+		this.build(  XmlReader.readXmlFile( "context/staticRefFactory.xml" ) );
+		var doc : MockDocument = this._builderFactory.getCoreFactory().locate( "div" );
+		Assert.isNotNull( doc, "" );
+		Assert.isInstanceOf( doc, MockDocument, "" );
+	}*/
 	
 	@Test( "test if attribute" )
 	public function testIfAttribute() : Void
