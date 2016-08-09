@@ -48,7 +48,7 @@ class ObjectXMLParser extends AbstractXMLParser
 		var factory 	: String;
 		var singleton 	: String;
 		var injectInto	: Bool;
-		var mapType		: String;
+		var mapType		: Array<String>;
 		var staticRef	: String;
 		var ifList		: Array<String>;
 		var ifNotList	: Array<String>;
@@ -73,7 +73,7 @@ class ObjectXMLParser extends AbstractXMLParser
 			factory 	= XMLAttributeUtil.getFactoryMethod( xml );
 			singleton 	= XMLAttributeUtil.getSingletonAccess( xml );
 			injectInto	= XMLAttributeUtil.getInjectInto( xml );
-			mapType 	= XMLAttributeUtil.getMapType( xml );
+			mapType 	= XMLParserUtil.getMapType( xml );
 			staticRef 	= XMLAttributeUtil.getStaticRef( xml );
 
 			if ( type == null )

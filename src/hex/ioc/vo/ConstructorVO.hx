@@ -16,7 +16,7 @@ class ConstructorVO extends AssemblerVO
 	public var              injectInto      : Bool;
 	public var              ref             : String;
 	public var              result          : Dynamic;
-	public var 				mapType			: String;
+	public var 				mapTypes		: Array<String>;
 	public var 				staticRef		: String;
 	
 	#if macro
@@ -31,7 +31,7 @@ class ConstructorVO extends AssemblerVO
 							?singleton 		: String,
 							?injectInto 	: Bool = false,
 							?ref 			: String,
-							?mapType 		: String,
+							?mapTypes 		: Array<String>,
 							?staticRef 		: String )
 	{
 		super();
@@ -43,7 +43,7 @@ class ConstructorVO extends AssemblerVO
 		this.singleton  = singleton;
 		this.injectInto = injectInto;
 		this.ref 		= ref;
-		this.mapType 	= mapType;
+		this.mapTypes 	= mapTypes;
 		this.staticRef 	= staticRef;
 	}
 
@@ -57,7 +57,7 @@ class ConstructorVO extends AssemblerVO
 				+ "singleton:"  		+ singleton 	+ ", "
 				+ "injectInto:"  		+ injectInto 	+ ", "
 				+ "ref:"  				+ ref 			+ ", "
-				+ "mapType:"  			+ mapType 		+ ", "
+				+ "mapTypes:"  			+ mapTypes 		+ ", "
 				+ "staticRef:"          + staticRef     + ")";
 	}
 }

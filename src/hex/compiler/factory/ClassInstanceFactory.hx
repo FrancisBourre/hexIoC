@@ -109,12 +109,17 @@ class ClassInstanceFactory
 					factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { $annotationProviderVar.parse( $instanceVar ); } );
 				}
 			}
-
-			if ( constructorVO.mapType != null )
+			
+			if ( constructorVO.mapTypes != null )
 			{
 				var instanceVar = macro $i { idVar };
-				var classToMap = MacroUtil.getPack( constructorVO.mapType, constructorVO.filePosition );
-				factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { __applicationContextInjector.mapToValue( $p{ classToMap }, $instanceVar, $v { idVar } ); } );
+				
+				var mapTypes = constructorVO.mapTypes;
+				for ( mapType in mapTypes )
+				{
+					var classToMap = MacroUtil.getPack( mapType, constructorVO.filePosition );
+					factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { __applicationContextInjector.mapToValue( $p{ classToMap }, $instanceVar, $v { idVar } ); } );
+				}
 			}
 		}
 

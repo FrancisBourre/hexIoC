@@ -46,7 +46,7 @@ class XmlCompiler
 
 		var type 		: String;
 		var args 		: Array<Dynamic>;
-		var mapType		: String;
+		var mapType		: Array<String>;
 		var staticRef	: String;
 		
 		var factory 	: String;
@@ -77,7 +77,7 @@ class XmlCompiler
 			factory 	= xml.get( ContextAttributeList.FACTORY );
 			singleton 	= xml.get( ContextAttributeList.SINGLETON_ACCESS );
 			injectInto	= xml.get( ContextAttributeList.INJECT_INTO ) == "true";
-			mapType 	= xml.get( ContextAttributeList.MAP_TYPE );
+			mapType 	= XMLParserUtil.getMapType( xml );
 			staticRef 	= xml.get( ContextAttributeList.STATIC_REF );
 			ifList 		= XMLParserUtil.getIfList( xml );
 			ifNotList 	= XMLParserUtil.getIfNotList( xml );

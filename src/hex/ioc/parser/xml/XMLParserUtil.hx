@@ -1,11 +1,14 @@
 package hex.ioc.parser.xml;
 
+import haxe.macro.ExprTools.ExprArrayTools;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVOArguments;
 import hex.ioc.vo.MapVO;
+
+using StringTools;
 
 /**
  * ...
@@ -47,6 +50,7 @@ class XMLParserUtil
 		var method 		= item.get( ContextAttributeList.METHOD );
 		var ref 		= item.get( ContextAttributeList.REF );
 		var staticRef 	= item.get( ContextAttributeList.STATIC_REF );
+		var factory 	= item.get( ContextAttributeList.FACTORY );
 		
 		if ( method != null )
 		{
@@ -56,7 +60,7 @@ class XMLParserUtil
 		{
 			return new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, item.get( ContextAttributeList.REF ) );
 
-		} else if ( staticRef != null )
+		} else if ( staticRef != null /*&& factory == null*/ )
 		{
 			return new ConstructorVO( null, ContextTypeList.STATIC_VARIABLE, null, null, null, false, null, null, item.get( ContextAttributeList.STATIC_REF ) );
 
@@ -80,7 +84,8 @@ class XMLParserUtil
 		var ref 		= item.ref;
 		var staticRef 	= item.staticRef;
 		var value 		= item.value;
-		
+		var factory 	= item.factory;
+
 		if ( method != null )
 		{
 			return new ConstructorVO( null, ContextTypeList.FUNCTION, [ method ] );
@@ -89,7 +94,7 @@ class XMLParserUtil
 		{
 			return new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, ref );
 
-		} else if ( staticRef != null )
+		} else if ( staticRef != null /*&& factory == null*/ )
 		{
 			return new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, null, null, staticRef );
 
@@ -178,13 +183,25 @@ class XMLParserUtil
 	
 	static public function getIfList( xml : Xml ) : Array<String>
 	{
-		var s : String = XMLAttributeUtil.getIf( xml );
+		var s = XMLAttributeUtil.getIf( xml );
 		return s != null ? s.split( "," ) : null;
 	}
 	
 	static public function getIfNotList( xml : Xml ) : Array<String>
 	{
-		var s : String = XMLAttributeUtil.getIfNot( xml );
+		var s = XMLAttributeUtil.getIfNot( xml );
 		return s != null ? s.split( "," ) : null;
+	}
+	
+	static public function getMapType( xml : Xml ) : Array<String>
+	{
+		var s = xml.get( ContextAttributeList.MAP_TYPE );
+		if ( s != null )
+		{
+			var a = s.split( "," );
+			return [ for ( e in a ) e.trim() ];
+		}
+		
+		return null;
 	}
 }

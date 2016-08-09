@@ -89,7 +89,16 @@ class XmlReader
 				Context.error( "XmlReader parsing error with '" + xml.nodeName + "' node, '" + type + "' type not found.", positionTracker.makePositionFromAttribute( xml, ContextAttributeList.TYPE ) );
 			}
 			
-			XmlReader._importHelper.forceCompilation( xml.get( ContextAttributeList.MAP_TYPE ) );
+			//map-type
+			var mapTypes = XMLParserUtil.getMapType( xml );
+			if ( mapTypes != null )
+			{
+				for ( mapType in mapTypes )
+				{
+					XmlReader._importHelper.forceCompilation( mapType );
+				}
+			}
+			
 			XmlReader._importHelper.includeStaticRef( xml.get( ContextAttributeList.STATIC_REF ) );
 			
 			if ( type == ContextTypeList.CLASS )

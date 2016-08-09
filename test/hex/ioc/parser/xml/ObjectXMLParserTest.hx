@@ -17,6 +17,7 @@ import hex.ioc.di.MappingConfiguration;
 import hex.ioc.parser.xml.mock.AnotherMockAmazonService;
 import hex.ioc.parser.xml.mock.AnotherMockModuleWithServiceCallback;
 import hex.ioc.parser.xml.mock.ClassWithConstantConstantArgument;
+import hex.ioc.parser.xml.mock.IAnotherMockMappedModule;
 import hex.ioc.parser.xml.mock.IMockAmazonService;
 import hex.ioc.parser.xml.mock.IMockDividerHelper;
 import hex.ioc.parser.xml.mock.IMockFacebookService;
@@ -839,6 +840,20 @@ class ObjectXMLParserTest
 		Assert.isInstanceOf( myModule, MockMappedModule, "" );
 		
 		Assert.equals( myModule, this._applicationContext.getInjector().getInstance( IMockMappedModule, "myModule" ), "" );
+	}
+	
+	@Test( "test multi map-type attributes" )
+	public function testMultiMapTypeAttributes() : Void
+	{
+		this.build(  XmlReader.readXmlFile( "context/multiMapTypeAttributes.xml" ) );
+
+		var myModule : MockMappedModule = this._builderFactory.getCoreFactory().locate( "myModule" );
+		Assert.isNotNull( myModule, "" );
+		Assert.isInstanceOf( myModule, MockMappedModule, "" );
+		Assert.isInstanceOf( myModule, IAnotherMockMappedModule, "" );
+		
+		Assert.equals( myModule, this._applicationContext.getInjector().getInstance( IMockMappedModule, "myModule" ), "" );
+		Assert.equals( myModule, this._applicationContext.getInjector().getInstance( IAnotherMockMappedModule, "myModule" ), "" );
 	}
 	
 	@Test( "test if attribute" )

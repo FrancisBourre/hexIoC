@@ -8,7 +8,7 @@ import hex.module.Module;
  * ...
  * @author Francis Bourre
  */
-class MockMappedModule extends Module implements IMockMappedModule
+class MockMappedModule extends Module implements IMockMappedModule implements IAnotherMockMappedModule
 {
 	public function new() 
 	{
@@ -16,6 +16,11 @@ class MockMappedModule extends Module implements IMockMappedModule
 	}
 	
 	public function doSomething() : Void 
+	{
+		
+	}
+	
+	public function doSomethingElse() : Void
 	{
 		
 	}

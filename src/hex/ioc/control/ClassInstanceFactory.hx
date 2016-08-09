@@ -50,10 +50,14 @@ class ClassInstanceFactory
 				factoryVO.moduleLocator.register( constructorVO.ID, constructorVO.result );
 			}
 
-			if ( constructorVO.mapType != null )
+			if ( constructorVO.mapTypes != null )
 			{
-				var classToMap : Class<Dynamic> = Type.resolveClass( constructorVO.mapType );
-				factoryVO.contextFactory.getApplicationContext().getInjector().mapToValue( classToMap, constructorVO.result, constructorVO.ID );
+				var mapTypes = constructorVO.mapTypes;
+				for ( mapType in mapTypes )
+				{
+					var classToMap : Class<Dynamic> = Type.resolveClass( mapType );
+					factoryVO.contextFactory.getApplicationContext().getInjector().mapToValue( classToMap, constructorVO.result, constructorVO.ID );
+				}
 			}
 		}
 	}

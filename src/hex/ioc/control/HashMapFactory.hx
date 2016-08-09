@@ -1,8 +1,8 @@
 package hex.ioc.control;
 
-import hex.ioc.vo.FactoryVO;
 import hex.collection.HashMap;
 import hex.ioc.vo.ConstructorVO;
+import hex.ioc.vo.FactoryVO;
 import hex.ioc.vo.MapVO;
 import hex.log.Logger;
 
@@ -46,10 +46,5 @@ class HashMapFactory
 		}
 
 		constructorVO.result = map;
-
-		if ( constructorVO.mapType != null )
-		{
-			factoryVO.contextFactory.getApplicationContext().getInjector().mapToValue( HashMap, constructorVO.result, constructorVO.ID );
-		}
 	}
 }
