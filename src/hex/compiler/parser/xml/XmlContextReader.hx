@@ -16,6 +16,7 @@ class XmlContextReader
 {
 	static var _includeMatcher 	: EReg = ~/<include.*?file=("|')([^"']+)\1.*?(?:(?:\/>)|(?:>[\W\w\t\r\n]*?<\/include *>))/g;
 	static var _headerMatcher 	: EReg = ~/((?:<\?xml[^>]+>\s*)?<([a-zA-Z0-9-_:]+)[^>]*>[\r\n]?)([\s\S]*)<\/\2\s*>/;
+	static var _cleanupMatcher 	: EReg = ~/<!--[\s\S]*?-->/g;
 	
 	function new() 
 	{
@@ -27,6 +28,7 @@ class XmlContextReader
 	{
 		xrdStack.add( xmlRawData );
 		
+		xmlRawData.data = XmlContextReader._cleanupMatcher.replace(xmlRawData.data, "");
 		if ( XmlContextReader._includeMatcher.match( xmlRawData.data ) )
 		{
 			var f = function( eReg: EReg ) : String
