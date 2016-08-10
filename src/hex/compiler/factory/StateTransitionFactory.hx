@@ -25,16 +25,11 @@ class StateTransitionFactory
 	{
 		if ( vo.staticReference != null )
 		{
-			//state = ClassUtil.getStaticVariableReference( vo.staticReference );
 			var stateReference = MacroUtil.getStaticVariable( vo.staticReference, vo.filePosition );
 			vo.expressions.push( macro @:mergeBlock { var state = $stateReference; } );
 		}
 		else if ( vo.instanceReference != null )
 		{
-			//TODO solve this bug
-			//var exp = Context.parseInlineString( vo.instanceReference, Context.currentPos() );
-			//vo.expressions.push( macro @:mergeBlock { var state = $exp; } );
-			
 			vo.expressions.push( macro @:mergeBlock { var state = coreFactory.locate( $v{ vo.instanceReference } ); } );
 		}
 		else 

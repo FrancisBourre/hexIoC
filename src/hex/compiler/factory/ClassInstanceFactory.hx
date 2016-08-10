@@ -55,8 +55,7 @@ class ClassInstanceFactory
 			
 			if ( factory != null )
 			{
-				//TODO add unit-test
-				//TODO implement the same behavior @runtime
+				//TODO implement the same behavior @runtime issue#1
 				if ( staticRef != null )
 				{
 					e = macro @:pos( constructorVO.filePosition ) { $p { tp } .$staticRef.$factory( $a { constructorVO.constructorArgs } ); };
