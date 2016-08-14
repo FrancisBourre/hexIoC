@@ -1,6 +1,8 @@
+#if macro
 package hex.compiler.parser.xml;
 
 import com.tenderowls.xml176.Xml176Parser.Xml176Document;
+
 import haxe.macro.Context;
 import haxe.macro.Expr.Position;
 
@@ -19,7 +21,6 @@ class XmlPositionTracker
 		this._data		= data;
 	}
 	
-	#if macro
 	function _makePosition( pos : { from: Int, ?to: Int } ) : Position
 	{
 		var element = this._findEntry( pos );
@@ -65,5 +66,5 @@ class XmlPositionTracker
 	{
 		return this._makePosition( this._document.getAttrPosition( xml, attributeName ) );
 	}
-	#end
 }
+#end

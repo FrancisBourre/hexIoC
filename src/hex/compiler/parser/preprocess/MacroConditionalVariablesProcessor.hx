@@ -1,3 +1,4 @@
+#if macro
 package hex.compiler.parser.preprocess;
 
 import haxe.macro.Context;
@@ -14,7 +15,6 @@ class MacroConditionalVariablesProcessor
 		
 	}
 	
-	#if macro
     static public function parse( m : Expr  )
 	{
 		var props = new Map<String, Bool>();
@@ -105,5 +105,5 @@ class MacroConditionalVariablesProcessor
 
 		return props;
 	}
-    #end
 }
+#end

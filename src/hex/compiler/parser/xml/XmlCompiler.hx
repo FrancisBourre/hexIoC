@@ -1,12 +1,15 @@
 package hex.compiler.parser.xml;
 
+import haxe.macro.Expr;
+import hex.ioc.assembler.ApplicationAssembler;
+
+#if macro
 import com.tenderowls.xml176.Xml176Parser;
 import haxe.macro.Context;
-import haxe.macro.Expr;
+
 import hex.compiler.assembler.CompileTimeApplicationAssembler;
 import hex.compiler.parser.preprocess.MacroConditionalVariablesProcessor;
 import hex.ioc.assembler.AbstractApplicationContext;
-import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.assembler.ConditionalVariablesChecker;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
@@ -25,6 +28,7 @@ import hex.ioc.vo.StateTransitionVO;
 import hex.util.MacroUtil;
 
 using StringTools;
+#end
 
 /**
  * ...
@@ -32,10 +36,10 @@ using StringTools;
  */
 class XmlCompiler
 {
+	#if macro
 	static var _importHelper	: ClassImportHelper;
 	static var _assembler 		: CompileTimeApplicationAssembler;
-	
-	#if macro
+
 	static function _parseNode( applicationContext : AbstractApplicationContext, xml : Xml, exceptionReporter : XmlAssemblingExceptionReporter ) : Void
 	{
 		var identifier : String = xml.get( ContextAttributeList.ID );
@@ -186,30 +190,7 @@ class XmlCompiler
 					exceptionReporter.throwMissingTypeException( t, xml, ContextAttributeList.STATIC_REF );
 				}
 			}
-			
-			/*try
-			{
-				XmlCompiler._importHelper.forceCompilation( mapType );
-			}
-			catch ( e : String )
-			{
-				exceptionReporter.throwMissingTypeException( mapType, xml, ContextAttributeList.MAP_TYPE );
-			}*/
-			
-	/*		try
-			{
-				XmlCompiler._importHelper.includeStaticRef( staticRef );
-			}
-			catch ( e : String )
-			{
-				exceptionReporter.throwMissingTypeException( staticRef, xml, ContextAttributeList.STATIC_REF );
-			}
-	*/		
-			/*if ( type == ContextTypeList.CLASS )
-			{
-				XmlCompiler._importHelper.forceCompilation( args[ 0 ].arguments[ 0 ] );
-			}*/
-			
+
 			var constructorVO 			= new ConstructorVO( identifier, type, args, factory, singleton, injectInto, null, mapType, staticRef );
 			constructorVO.ifList 		= ifList;
 			constructorVO.ifNotList 	= ifNotList;
@@ -494,9 +475,8 @@ class XmlCompiler
 			return applicationContextName;
 		}
 	}
-	#end
 	
-	macro public static function readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<ApplicationAssembler>
+	static function _readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<ApplicationAssembler>
 	{
 		var conditionalVariablesMap = MacroConditionalVariablesProcessor.parse( conditionalVariables );
 		var conditionalVariablesChecker = new ConditionalVariablesChecker( conditionalVariablesMap );
@@ -569,5 +549,11 @@ class XmlCompiler
 		//return program
 		assembler.addExpression( macro { applicationAssembler; } );
 		return assembler.getMainExpression();
+	}
+	#end
+	
+	macro public static function readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<ApplicationAssembler>
+	{
+		return _readXmlFile( fileName, preprocessingVariables, conditionalVariables );
 	}
 }

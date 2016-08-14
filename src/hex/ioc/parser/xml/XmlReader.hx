@@ -1,8 +1,10 @@
 package hex.ioc.parser.xml;
 
-import com.tenderowls.xml176.Xml176Parser;
-import haxe.macro.Context;
 import haxe.macro.Expr;
+
+#if macro
+import haxe.macro.Context;
+import com.tenderowls.xml176.Xml176Parser;
 import hex.compiler.parser.preprocess.MacroConditionalVariablesProcessor;
 import hex.compiler.parser.xml.ClassImportHelper;
 import hex.compiler.parser.xml.XmlContextReader;
@@ -12,8 +14,10 @@ import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.vo.DomainListenerVOArguments;
-
 using StringTools;
+#end
+
+
 
 /**
  * ...
@@ -21,9 +25,9 @@ using StringTools;
  */
 class XmlReader
 {
+	#if macro
 	static var _importHelper : ClassImportHelper;
 	
-	#if macro
 	static function _parseNode( xml : Xml, positionTracker : XmlPositionTracker ) : Void
 	{
 		var identifier : String = xml.get( ContextAttributeList.ID );
@@ -186,9 +190,8 @@ class XmlReader
 			XmlReader._importHelper.forceCompilation( exitListItem.get( ContextAttributeList.COMMAND_CLASS ) );
 		}
 	}
-	#end
 	
-	macro public static function readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<String>
+	static function _readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<String>
 	{
 		var conditionalVariablesMap = MacroConditionalVariablesProcessor.parse( conditionalVariables );
 		var conditionalVariablesChecker = new ConditionalVariablesChecker( conditionalVariablesMap );
@@ -226,5 +229,11 @@ class XmlReader
 		}
 
 		return macro $v{ xmlRawData.data };
+	}
+	#end
+	
+	macro public static function readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<String>
+	{
+		return _readXmlFile( fileName, preprocessingVariables, conditionalVariables );
 	}
 }

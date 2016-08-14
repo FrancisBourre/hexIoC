@@ -1,3 +1,4 @@
+#if macro
 package hex.compiler.assembler;
 
 import haxe.macro.Context;
@@ -31,10 +32,7 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 	public function new()
 	{
 		this._conditionalVariablesChecker = new ConditionalVariablesChecker();
-		
-		#if macro
 		this._expressions = [ macro {} ];
-		#end
 	}
 	
 	public function setStrictMode( b : Bool ) : Void
@@ -212,13 +210,10 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 		}
 		catch ( e : IllegalArgumentException )
 		{
-			#if macro
 			Context.error( "Id '" + ID + "' is already registered in applicationContext named '" + applicationContext.getName() + "'", filePosition );
-			#else
-			throw( e );
-			#end
 		}
 		
 		return false;
 	}
 }
+#end

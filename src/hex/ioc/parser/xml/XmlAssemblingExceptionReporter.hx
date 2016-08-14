@@ -1,3 +1,4 @@
+#if macro
 package hex.ioc.parser.xml;
 
 import haxe.macro.Context;
@@ -22,23 +23,17 @@ class XmlAssemblingExceptionReporter implements IAssemblingExceptionReporter
 	
 	public function throwMissingIDException( xml : Xml ) : Void 
 	{
-		#if macro
 		Context.error( "Parsing error with '" + xml.nodeName + "' node, 'id' attribute not found.", this._positionTracker.makePositionFromNode( xml) );
-		#end
 	}
 	
 	public function throwMissingListeningReferenceException( parentNode : Xml, listenNode : Xml ) : Void
 	{
-		#if macro
 		Context.error( "Parsing error with '" + parentNode.nodeName + "' node, 'ref' attribute is mandatory in a 'listen' node.", this._positionTracker.makePositionFromNode( listenNode ) );
-		#end
 	}
 	
 	public function throwMissingApplicationContextNameException( xml : Xml ) : Void
 	{
-		#if macro
 		Context.error( "Fails to retrieve applicationContext name. You should add 'name' attribute to the root of your xml context", this._positionTracker.makePositionFromNode( xml  ) );
-		#end
 	}
 	
 	public function register( assemblerVO : AssemblerVO, xml : Xml ) : AssemblerVO
@@ -50,9 +45,7 @@ class XmlAssemblingExceptionReporter implements IAssemblingExceptionReporter
 	//
 	public function throwMissingTypeException( type : String, xml : Xml, attributeName : String ) : Void 
 	{
-		#if macro
 		Context.error( "Type not found '" + type + "' ", this._positionTracker.makePositionFromAttribute( xml, attributeName ) );
-		#end
 	}
 	
 	//
@@ -61,3 +54,4 @@ class XmlAssemblingExceptionReporter implements IAssemblingExceptionReporter
 		return this._map.get( vo );
 	}
 }
+#end

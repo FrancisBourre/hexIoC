@@ -19,6 +19,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#if macro
 package com.tenderowls.xml176;
 
 using StringTools;
@@ -443,3 +444,4 @@ class Xml176Parser
 }
 
 typedef Pos = { from: Int, ?to: Int }
+#end
