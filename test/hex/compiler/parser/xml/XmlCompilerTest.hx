@@ -800,21 +800,21 @@ class XmlCompilerTest
 	@Test( "test if attribute" )
 	public function testIfAttribute() : Void
 	{
-		this._applicationAssembler = XmlCompiler.readXmlFile( "context/ifAttribute.xml", null, [ "production" => true, "debug" => false, "release" => false ] );
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/ifAttribute.xml", null, [ "production" => true, "test" => false, "release" => false ] );
 		Assert.equals( "hello production", this._getCoreFactory().locate( "message" ), "message value should equal 'hello production'" );
 	}
 	
 	@Test( "test include with if attribute" )
 	public function testIncludeWithIfAttribute() : Void
 	{
-		this._applicationAssembler = XmlCompiler.readXmlFile( "context/includeWithIfAttribute.xml", null, [ "production" => true, "debug" => false, "release" => false ] );
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/includeWithIfAttribute.xml", null, [ "production" => true, "test" => false, "release" => false ] );
 		Assert.equals( "hello production", this._getCoreFactory().locate( "message" ), "message value should equal 'hello production'" );
 	}
 	
 	@Test( "test include fails with if attribute" )
 	public function testIncludeFailsWithIfAttribute() : Void
 	{
-		this._applicationAssembler = XmlCompiler.readXmlFile( "context/includeWithIfAttribute.xml", null, [ "production" => false, "debug" => true, "release" => true ] );
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/includeWithIfAttribute.xml", null, [ "production" => false, "test" => true, "release" => true ] );
 		Assert.methodCallThrows( NoSuchElementException, this._getCoreFactory(), this._getCoreFactory().locate, [ "message" ], "message value should equal 'hello production'" );
 	}
 	
