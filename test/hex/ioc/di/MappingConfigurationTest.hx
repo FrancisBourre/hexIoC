@@ -94,7 +94,7 @@ class MappingConfigurationTest
 		var injector = new MockInjectorForInjectInto();
 		this._mappingConfiguration.configure( injector, null, null );
 		
-		Assert.equals( statefulService, injector.target, "injector should map the service type" );
+		Assert.isNull( injector.target, "injector should map the service type" );
 	}
 	
 	@Test( "Test configure with stateless service named" )

@@ -77,7 +77,7 @@ class MappingConfiguration extends Locator<String, Helper> implements IStatefulC
 		}
 	}
 	
-	public function addMapping( type : Class<Dynamic>, value : Dynamic, ?mapName : String = "", ?asSingleton : Bool = false, ?injectInto : Bool = true ) : Bool
+	public function addMapping( type : Class<Dynamic>, value : Dynamic, ?mapName : String = "", ?asSingleton : Bool = false, ?injectInto : Bool = false ) : Bool
 	{
 		return this._registerMapping( type, new Helper( value, mapName, asSingleton, injectInto ), mapName );
 	}
@@ -111,7 +111,7 @@ private class Helper
 	public var isSingleton	: Bool;
 	public var injectInto	: Bool;
 
-	public function new( value : Dynamic, mapName : String, ?isSingleton : Bool = false, injectInto : Bool = true  )
+	public function new( value : Dynamic, mapName : String, ?isSingleton : Bool, injectInto : Bool )
 	{
 		this.value 			= value;
 		this.mapName 		= mapName;
