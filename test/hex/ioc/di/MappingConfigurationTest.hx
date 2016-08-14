@@ -64,6 +64,39 @@ class MappingConfigurationTest
 		Assert.equals( "", injector.name, "injector should map the service name" );
 	}
 	
+	@Test( "Test configure with injectInto set to true" )
+    public function testConfigureWithInjectIntoSetToTrue() : Void
+    {
+		var statefulService = new MockStatefulService();
+		this._mappingConfiguration.addMapping( IStatefulService, statefulService, false, true );
+		var injector = new MockInjectorForInjectInto();
+		this._mappingConfiguration.configure( injector, null, null );
+		
+		Assert.equals( statefulService, injector.target, "injector should map the service type" );
+	}
+	
+	@Test( "Test configure with injectInto set to false" )
+    public function testConfigureWithInjectIntoSetToFalse() : Void
+    {
+		var statefulService = new MockStatefulService();
+		this._mappingConfiguration.addMapping( IStatefulService, statefulService, false, false );
+		var injector = new MockInjectorForInjectInto();
+		this._mappingConfiguration.configure( injector, null, null );
+		
+		Assert.isNull( injector.target, "injector should map the service type" );
+	}
+	
+	@Test( "Test configure with injectInto default behavior" )
+    public function testConfigureWithInjectIntoDefaultBehavior() : Void
+    {
+		var statefulService = new MockStatefulService();
+		this._mappingConfiguration.addMapping( IStatefulService, statefulService );
+		var injector = new MockInjectorForInjectInto();
+		this._mappingConfiguration.configure( injector, null, null );
+		
+		Assert.equals( statefulService, injector.target, "injector should map the service type" );
+	}
+	
 	@Test( "Test configure with stateless service named" )
     public function testConfigureWithSingletonNamed() : Void
     {
@@ -176,6 +209,16 @@ private class MockInjectorForMapToValueTest extends MockDependencyInjector
 		this.clazz 	= clazz;
 		this.value 	= value;
 		this.name 	= name;
+	}
+}
+
+private class MockInjectorForInjectInto extends MockDependencyInjector
+{
+	public var target : Dynamic;
+	
+	override public function injectInto( target : Dynamic ) : Void
+	{
+		this.target = target;
 	}
 }
 

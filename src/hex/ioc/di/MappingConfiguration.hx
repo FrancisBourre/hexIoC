@@ -65,6 +65,11 @@ class MappingConfiguration extends Locator<String, Helper> implements IStatefulC
 					}
 				}
 
+				if ( helper.injectInto )
+				{
+					injector.injectInto( mapped );
+				}
+				
 				injector.mapToValue( classKey, mapped, helper.mapName );
 			}
 			
@@ -72,9 +77,9 @@ class MappingConfiguration extends Locator<String, Helper> implements IStatefulC
 		}
 	}
 	
-	public function addMapping( type : Class<Dynamic>, value : Dynamic, ?mapName : String = "", ?asSingleton : Bool = false ) : Bool
+	public function addMapping( type : Class<Dynamic>, value : Dynamic, ?mapName : String = "", ?asSingleton : Bool = false, ?injectInto : Bool = true ) : Bool
 	{
-		return this._registerMapping( type, new Helper( value, mapName, asSingleton ), mapName );
+		return this._registerMapping( type, new Helper( value, mapName, asSingleton, injectInto ), mapName );
 	}
 	
 	public function getMapping() : HashMap<Class<Dynamic>, Dynamic>
@@ -104,16 +109,18 @@ private class Helper
 	public var value		: Dynamic;
 	public var mapName		: String;
 	public var isSingleton	: Bool;
+	public var injectInto	: Bool;
 
-	public function new( value : Dynamic, mapName : String, ?isSingleton : Bool = false  )
+	public function new( value : Dynamic, mapName : String, ?isSingleton : Bool = false, injectInto : Bool = true  )
 	{
 		this.value 			= value;
 		this.mapName 		= mapName;
 		this.isSingleton 	= isSingleton;
+		this.injectInto 	= injectInto;
 	}
 	
 	public function toString() : String
 	{
-		return 'Helper( value:$value, mapName:$mapName, isSingleton:$isSingleton )';
+		return 'Helper( value:$value, mapName:$mapName, isSingleton:$isSingleton, injectInto:$injectInto )';
 	}
 }
