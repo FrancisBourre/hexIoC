@@ -40,7 +40,7 @@ class MappingConfigurationFactory
 			{
 				if ( item.key != null )
 				{
-					var a = [ item.key, item.value, macro { $v { item.mapName } }, macro { $v { item.asSingleton } } ];
+					var a = [ item.key, item.value, macro { $v { item.mapName } }, macro { $v { item.asSingleton } }, macro { $v { item.injectInto } } ];
 					factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { $extVar.addMapping( $a{ a } ); } );
 					
 				} else

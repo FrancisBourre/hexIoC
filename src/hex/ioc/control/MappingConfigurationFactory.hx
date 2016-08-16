@@ -33,7 +33,7 @@ class MappingConfigurationFactory
 			{
 				if ( item.key != null )
 				{
-					config.addMapping( item.key, item.value, item.mapName, item.asSingleton );
+					config.addMapping( item.key, item.value, item.mapName, item.asSingleton, item.injectInto );
 
 				} else
 				{

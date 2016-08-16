@@ -94,6 +94,7 @@ class XmlCompiler
 			if ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR || type == ContextTypeList.MAPPING_CONFIG )
 			{
 				args = XmlCompiler.getMapArguments( identifier, xml, exceptionReporter );
+
 				for ( arg in args )
 				{
 					if ( arg.getPropertyKey() != null )
@@ -371,7 +372,7 @@ class XmlCompiler
 				keyVO.filePosition = exceptionReporter._positionTracker.makePositionFromNode( keyNode );
 				var valueVO	= XMLParserUtil._getConstructorVO( ownerID, value );
 				valueVO.filePosition = exceptionReporter._positionTracker.makePositionFromNode( valueNode );
-				var mapVO = new MapVO( keyVO, valueVO, XMLAttributeUtil.getMapName( item ), XMLAttributeUtil.getAsSingleton( item ) );
+				var mapVO = new MapVO( keyVO, valueVO, XMLAttributeUtil.getMapName( item ), XMLAttributeUtil.getAsSingleton( item ), XMLAttributeUtil.getInjectInto( item ) );
 				mapVO.filePosition = exceptionReporter._positionTracker.makePositionFromNode( item );
 				args.push( mapVO );
 			}
