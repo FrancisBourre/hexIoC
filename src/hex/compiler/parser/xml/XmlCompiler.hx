@@ -429,9 +429,9 @@ class XmlCompiler
 		return list;
 	}
 	
-	static function getApplicationContext( doc : Xml176Document, exceptionReporter : XmlAssemblingExceptionReporter ) : ExprOf<AbstractApplicationContext>
+	static function getApplicationContext( document : Xml, exceptionReporter : XmlAssemblingExceptionReporter ) : ExprOf<AbstractApplicationContext>
 	{
-		var xml = doc.document.firstElement();
+		var xml = document.firstElement();
 		
 		var applicationContextClass = null;
 		var applicationContextClassName : String = xml.get( ContextAttributeList.TYPE );
@@ -479,47 +479,33 @@ class XmlCompiler
 	
 	static function _readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<ApplicationAssembler>
 	{
-		var conditionalVariablesMap = MacroConditionalVariablesProcessor.parse( conditionalVariables );
+		var conditionalVariablesMap 	= MacroConditionalVariablesProcessor.parse( conditionalVariables );
 		var conditionalVariablesChecker = new ConditionalVariablesChecker( conditionalVariablesMap );
 		
-		var r = XmlContextReader.readXmlFile( fileName, preprocessingVariables, conditionalVariablesChecker );
-		var xmlRawData = r.xrd;
-		var xrdCollection = r.collection;
-		var positionTracker : XmlPositionTracker;
-		var exceptionReporter : XmlAssemblingExceptionReporter;
-		var doc;
+		var doc 						= XmlDSLParser.parse( fileName, preprocessingVariables, conditionalVariablesChecker );
+		var document 					= doc.xml;
+		var exceptionReporter 			= new XmlAssemblingExceptionReporter( new PositionTracker() );
+		XmlCompiler._importHelper 		= new ClassImportHelper();
 		
-		try
+		//
+		XmlCompiler._assembler 		= new CompileTimeApplicationAssembler();
+		XmlCompiler._assembler.addConditionalProperty( conditionalVariablesMap );
+		var applicationContext 		= XmlCompiler._assembler.getApplicationContext( XmlCompiler.getRootApplicationContextName( document.firstElement(), exceptionReporter ) );
+		
+		//States parsing
+		var iterator = document.firstElement().elementsNamed( "state" );
+		while ( iterator.hasNext() )
 		{
-			doc = Xml176Parser.parse( xmlRawData.data, xmlRawData.path );
-			exceptionReporter = new XmlAssemblingExceptionReporter( new XmlPositionTracker( doc, xrdCollection ) );
-			XmlCompiler._importHelper = new ClassImportHelper();
-			
-			//
-			XmlCompiler._assembler 		= new CompileTimeApplicationAssembler();
-			XmlCompiler._assembler.addConditionalProperty( conditionalVariablesMap );
-			var applicationContext 		= XmlCompiler._assembler.getApplicationContext( XmlCompiler.getRootApplicationContextName( doc.document.firstElement(), exceptionReporter ) );
-			
-			//States parsing
-			var iterator = doc.document.firstElement().elementsNamed( "state" );
-			while ( iterator.hasNext() )
-			{
-				var node = iterator.next();
-				XmlCompiler._parseStateNodes( applicationContext, node, exceptionReporter );
-				doc.document.firstElement().removeChild( node );
-			}
-			
-			//DSL parsing
-			iterator = doc.document.firstElement().elements();
-			while ( iterator.hasNext() )
-			{
-				XmlCompiler._parseNode( applicationContext, iterator.next(), exceptionReporter );
-			}
-
+			var node = iterator.next();
+			XmlCompiler._parseStateNodes( applicationContext, node, exceptionReporter );
+			document.firstElement().removeChild( node );
 		}
-		catch ( error : haxe.macro.Error )
+		
+		//DSL parsing
+		iterator = document.firstElement().elements();
+		while ( iterator.hasNext() )
 		{
-			Context.error( 'Xml parsing failed @$fileName $error', Context.currentPos() );
+			XmlCompiler._parseNode( applicationContext, iterator.next(), exceptionReporter );
 		}
 		
 		var assembler = XmlCompiler._assembler;
@@ -529,7 +515,7 @@ class XmlCompiler
 		assembler.addExpression( macro @:mergeBlock { var applicationAssembler = new $applicationAssemblerTypePath(); } );
 		
 		//Create runtime applicationContext
-		assembler.addExpression( getApplicationContext( doc, exceptionReporter ) );
+		assembler.addExpression( getApplicationContext( document, exceptionReporter ) );
 		
 		//Dispatch CONTEXT_PARSED message
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.CONTEXT_PARSED" );

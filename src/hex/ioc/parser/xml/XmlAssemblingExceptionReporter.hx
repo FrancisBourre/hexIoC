@@ -2,7 +2,7 @@
 package hex.ioc.parser.xml;
 
 import haxe.macro.Context;
-import hex.compiler.parser.xml.XmlPositionTracker;
+import hex.compiler.parser.xml.IXmlPositionTracker;
 import hex.ioc.error.IAssemblingExceptionReporter;
 import hex.ioc.vo.AssemblerVO;
 
@@ -13,9 +13,9 @@ import hex.ioc.vo.AssemblerVO;
 class XmlAssemblingExceptionReporter implements IAssemblingExceptionReporter
 {
 	var _map : Map<AssemblerVO, Xml>;
-	public var _positionTracker ( default, null ) : XmlPositionTracker;
+	public var _positionTracker ( default, null ) : IXmlPositionTracker;
 
-	public function new( positionTracker : XmlPositionTracker ) 
+	public function new( positionTracker : IXmlPositionTracker ) 
 	{
 		this._map = new Map();
 		this._positionTracker = positionTracker;

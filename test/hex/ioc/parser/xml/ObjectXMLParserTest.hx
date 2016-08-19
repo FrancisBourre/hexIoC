@@ -870,7 +870,7 @@ class ObjectXMLParserTest
 	public function testIfAttribute() : Void
 	{
 		this._applicationAssembler.addConditionalProperty ( ["production" => true, "test" => false, "release" => false] );
-		this.build(  XmlReader.readXmlFile( "context/ifAttribute.xml" ) );
+		this.build(  XmlReader.readXmlFile( "context/ifAttribute.xml", nuul, ["production" => true, "test" => false, "release" => false] ) );
 		
 		Assert.equals( "hello production", this._builderFactory.getCoreFactory().locate( "message" ), "message value should equal 'hello production'" );
 	}

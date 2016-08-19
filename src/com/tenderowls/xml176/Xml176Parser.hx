@@ -21,6 +21,8 @@
  */
 #if macro
 package com.tenderowls.xml176;
+import hex.compiler.parser.xml.DSLPosition;
+import haxe.macro.Context;
 
 using StringTools;
 
@@ -48,48 +50,25 @@ extern private class S
 	public static inline var ESCAPE			= 18;
 }
 
-class Xml176Document 
-{
-    public var document( default,null ) : Xml;
-    public var rawData( default,null ) 	: String;
-    public var path( default,null ) 	: String;
-
-    var ePosInfos : Map<Xml, Pos>;
-    var aPosInfos : Map<Xml, Map<String, Pos>>;
-
-    public function new( doc : Xml, rawData : String, ePosInfos : Map<Xml, Pos>, aPosInfos : Map<Xml, Map<String, Pos>>, path : String ) 
-	{
-        this.document 	= doc;
-        this.ePosInfos 	= ePosInfos;
-        this.aPosInfos 	= aPosInfos;
-        this.path 		= path;
-    }
-
-    public function getNodePosition( node : Xml ) : Pos 
-	{
-        return ePosInfos.get( node );
-    }
-
-    public function getAttrPosition( node : Xml, attr : String ) : Pos 
-	{
-        return aPosInfos.get( node ).get( attr );
-    }
-}
-
 class Xml176Parser
 {
-	static public function parse( str : String, path : String )
+	public static var nodeMap : Map<Xml, DSLPosition>;
+	public static var attrMap : Map<Xml, Map<String, DSLPosition>>;
+	
+	static public function init() : Void
 	{
-		var xmlDoc = Xml.createDocument();
-        var ePosInfos = new Map<Xml, Pos>();
-        var aPosInfos = new Map<Xml, Map<String, Pos>>();
-
-		doParse( str, 0, ePosInfos, aPosInfos, xmlDoc );
-
-		return new Xml176Document( xmlDoc, str, ePosInfos, aPosInfos, path );
+		Xml176Parser.nodeMap = new Map<Xml, DSLPosition>();
+		Xml176Parser.attrMap = new Map<Xml, Map<String, DSLPosition>>();
 	}
 	
-	static function doParse( str : String, p : Int = 0, ePosInfos : Map<Xml, Pos>, aPosInfos : Map<Xml, Map<String, Pos>>, ?parent : Xml ) : Int
+	static public function parse( str : String, file : String ) : Xml
+	{
+		var xmlDoc = Xml.createDocument();
+		doParse( str, 0, Xml176Parser.nodeMap, Xml176Parser.attrMap, file, xmlDoc );
+		return xmlDoc;
+	}
+	
+	static function doParse( str : String, p : Int = 0, ePosInfos : Map<Xml, DSLPosition>, aPosInfos : Map<Xml, Map<String, DSLPosition>>, file : String, ?parent : Xml ) : Int
 	{
 		var xml : Xml 		= null;
         var xmlPos : Pos 	= { from: 0 };
@@ -224,7 +203,7 @@ class Xml176Parser
 							throw( "Expected node name" );
 						}
 						xml = Xml.createElement( str.substr( start, p - start ) );
-                        ePosInfos.set( xml, {from:start, to: p} );
+                        ePosInfos.set( xml, {from:start, to: p, file:file} );
 						parent.addChild( xml );
 						state = S.IGNORE_SPACES;
 						next = S.BODY;
@@ -294,17 +273,17 @@ class Xml176Parser
                         var pi = aPosInfos.get( xml );
                         if ( pi == null ) 
 						{
-                            pi = new Map<String, Pos>();
+                            pi = new Map<String, DSLPosition>();
                             aPosInfos.set( xml, pi );
                         }
 						
-                        pi.set( aname, {from:start-aname.length-1, to: start-1} );
+                        pi.set( aname, {from:start-aname.length-1, to: start-1, file:file} );//Set attribute DSLPosition
 						state = S.IGNORE_SPACES;
 						next = S.BODY;
 					}
 					
 				case S.CHILDS:
-					p = doParse( str, p, ePosInfos, aPosInfos, xml );
+					p = doParse( str, p, ePosInfos, aPosInfos, file, xml );
 					start = p;
 					state = S.BEGIN;
 					

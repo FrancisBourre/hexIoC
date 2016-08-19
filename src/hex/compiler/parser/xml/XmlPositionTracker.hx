@@ -10,7 +10,7 @@ import haxe.macro.Expr.Position;
  * ...
  * @author Francis Bourre
  */
-class XmlPositionTracker
+class XmlPositionTracker implements IXmlPositionTracker
 {
 	var _document 	: Xml176Document;
 	var _data		: Array<XMLRawData>;
@@ -59,12 +59,18 @@ class XmlPositionTracker
 	
 	public function makePositionFromNode( xml : Xml ) : Position
 	{
-		return this._makePosition( this._document.getNodePosition( xml ) );
+		//return this._makePosition( this._document.getNodePosition( xml ) );
+		
+		var dslPosition = Xml176Document.nodeMap.get( xml );
+		return Context.makePosition( { min: dslPosition.from, max: dslPosition.to, file: dslPosition.file } );
 	}
 	
 	public function makePositionFromAttribute( xml : Xml, attributeName : String ) : Position
 	{
-		return this._makePosition( this._document.getAttrPosition( xml, attributeName ) );
+		//return this._makePosition( this._document.getAttrPosition( xml, attributeName ) );
+		
+		var dslPosition = Xml176Document.attrMap.get( xml ).get( attributeName );
+		return Context.makePosition( { min: dslPosition.from, max: dslPosition.to, file: dslPosition.file } );
 	}
 }
 #end

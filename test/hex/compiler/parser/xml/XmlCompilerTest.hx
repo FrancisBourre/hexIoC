@@ -784,19 +784,6 @@ class XmlCompilerTest
 		Assert.isNull( mockObjectWithMetaData.propWithoutMetaData, "property should be null" );
 	}
 	
-	/*@Test( "test 'inject-into' attribute" )
-	public function testInjectIntoAttribute() : Void
-	{
-		var injector = this._applicationContext.getInjector();
-		injector.mapToValue( String, 'hola mundo' );
-
-		this.build(  XmlReader.readXmlFile( "context/injectIntoAttribute.xml" ) );
-
-		var instance : MockClassWithInjectedProperty = this._builderFactory.getCoreFactory().locate( "instance" );
-		Assert.isInstanceOf( instance, MockClassWithInjectedProperty, "" );
-		Assert.equals( "hola mundo", instance.property, "" );
-	}*/
-	
 	@Test( "test if attribute" )
 	public function testIfAttribute() : Void
 	{
@@ -815,7 +802,7 @@ class XmlCompilerTest
 	public function testIncludeFailsWithIfAttribute() : Void
 	{
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/includeWithIfAttribute.xml", null, [ "production" => false, "test" => true, "release" => true ] );
-		Assert.methodCallThrows( NoSuchElementException, this._getCoreFactory(), this._getCoreFactory().locate, [ "message" ], "message value should equal 'hello production'" );
+		Assert.methodCallThrows( NoSuchElementException, this._getCoreFactory(), this._getCoreFactory().locate, [ "message" ], "'NoSuchElementException' should be thrown" );
 	}
 	
 	@Test( "test file preprocessor with Xml file" )

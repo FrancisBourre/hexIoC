@@ -1,23 +1,22 @@
 package hex.ioc.parser.xml;
 
-import haxe.macro.Expr;
-
 #if macro
 import haxe.macro.Context;
-import com.tenderowls.xml176.Xml176Parser;
 import hex.compiler.parser.preprocess.MacroConditionalVariablesProcessor;
 import hex.compiler.parser.xml.ClassImportHelper;
 import hex.compiler.parser.xml.XmlContextReader;
-import hex.compiler.parser.xml.XmlPositionTracker;
 import hex.ioc.assembler.ConditionalVariablesChecker;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.vo.DomainListenerVOArguments;
+import haxe.macro.Expr;
+import hex.compiler.parser.xml.IXmlPositionTracker;
+import hex.compiler.parser.xml.PositionTracker;
+import hex.compiler.parser.xml.XmlDSLParser;
+
 using StringTools;
 #end
-
-
 
 /**
  * ...
@@ -28,7 +27,7 @@ class XmlReader
 	#if macro
 	static var _importHelper : ClassImportHelper;
 	
-	static function _parseNode( xml : Xml, positionTracker : XmlPositionTracker ) : Void
+	static function _parseNode( xml : Xml, positionTracker : IXmlPositionTracker ) : Void
 	{
 		var identifier : String = xml.get( ContextAttributeList.ID );
 		if ( identifier == null )
@@ -161,7 +160,7 @@ class XmlReader
 		}
 	}
 	
-	static function _parseStateNodes( xml : Xml, positionTracker : XmlPositionTracker ) : Void
+	static function _parseStateNodes( xml : Xml, positionTracker : IXmlPositionTracker ) : Void
 	{
 		var identifier : String = xml.get( ContextAttributeList.ID );
 		if ( identifier == null )
@@ -193,30 +192,29 @@ class XmlReader
 	
 	static function _readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<String>
 	{
-		var conditionalVariablesMap = MacroConditionalVariablesProcessor.parse( conditionalVariables );
+		var conditionalVariablesMap 	= MacroConditionalVariablesProcessor.parse( conditionalVariables );
 		var conditionalVariablesChecker = new ConditionalVariablesChecker( conditionalVariablesMap );
-		
-		var r = XmlContextReader.readXmlFile( fileName, preprocessingVariables, conditionalVariablesChecker );
-		var xmlRawData = r.xrd;
-		var xrdCollection = r.collection;
+
+		var doc = XmlDSLParser.parse( fileName, preprocessingVariables, conditionalVariablesChecker );
+		var document = doc.xml;
 
 		try
 		{
-			var doc = Xml176Parser.parse( xmlRawData.data, xmlRawData.path );
-			var positionTracker = new XmlPositionTracker( doc, xrdCollection );
+			//var document : Xml = XmlDSLParser.parse( xmlRawData.data, xmlRawData.path );
+			var positionTracker = new PositionTracker();
 			XmlReader._importHelper = new ClassImportHelper();
 
 			//States parsing
-			var iterator = doc.document.firstElement().elementsNamed( "state" );
+			var iterator = document.firstElement().elementsNamed( "state" );
 			while ( iterator.hasNext() )
 			{
 				var node = iterator.next();
 				XmlReader._parseStateNodes( node, positionTracker );
-				doc.document.firstElement().removeChild( node );
+				document.firstElement().removeChild( node );
 			}
 			
 			//DSL parsing
-			var iterator = doc.document.firstElement().elements();
+			var iterator = document.firstElement().elements();
 			while ( iterator.hasNext() )
 			{
 				XmlReader._parseNode( iterator.next(), positionTracker );
@@ -228,7 +226,8 @@ class XmlReader
 			Context.error( 'Xml parsing failed @$fileName $error', Context.currentPos() );
 		}
 
-		return macro $v{ xmlRawData.data };
+		//var raw = haxe.xml.Printer.print( document, false );
+		return macro $v{ doc.data };
 	}
 	#end
 	
