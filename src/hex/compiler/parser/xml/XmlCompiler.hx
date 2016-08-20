@@ -482,8 +482,7 @@ class XmlCompiler
 		var conditionalVariablesMap 	= MacroConditionalVariablesProcessor.parse( conditionalVariables );
 		var conditionalVariablesChecker = new ConditionalVariablesChecker( conditionalVariablesMap );
 		
-		var doc 						= XmlDSLParser.parse( fileName, preprocessingVariables, conditionalVariablesChecker );
-		var document 					= doc.xml;
+		var document 					= XmlDSLParser.parse( fileName, preprocessingVariables, conditionalVariablesChecker );
 		var exceptionReporter 			= new XmlAssemblingExceptionReporter( new PositionTracker() );
 		XmlCompiler._importHelper 		= new ClassImportHelper();
 		

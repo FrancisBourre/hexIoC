@@ -4,7 +4,6 @@ package hex.ioc.parser.xml;
 import haxe.macro.Context;
 import hex.compiler.parser.preprocess.MacroConditionalVariablesProcessor;
 import hex.compiler.parser.xml.ClassImportHelper;
-import hex.compiler.parser.xml.XmlContextReader;
 import hex.ioc.assembler.ConditionalVariablesChecker;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
@@ -195,39 +194,29 @@ class XmlReader
 		var conditionalVariablesMap 	= MacroConditionalVariablesProcessor.parse( conditionalVariables );
 		var conditionalVariablesChecker = new ConditionalVariablesChecker( conditionalVariablesMap );
 
-		var doc = XmlDSLParser.parse( fileName, preprocessingVariables, conditionalVariablesChecker );
-		var document = doc.xml;
+		var document = XmlDSLParser.parse( fileName, preprocessingVariables, conditionalVariablesChecker );
+		var data = document.toString();
 
-		try
+		var positionTracker 	= new PositionTracker();
+		XmlReader._importHelper = new ClassImportHelper();
+
+		//States parsing
+		var iterator = document.firstElement().elementsNamed( "state" );
+		while ( iterator.hasNext() )
 		{
-			//var document : Xml = XmlDSLParser.parse( xmlRawData.data, xmlRawData.path );
-			var positionTracker = new PositionTracker();
-			XmlReader._importHelper = new ClassImportHelper();
-
-			//States parsing
-			var iterator = document.firstElement().elementsNamed( "state" );
-			while ( iterator.hasNext() )
-			{
-				var node = iterator.next();
-				XmlReader._parseStateNodes( node, positionTracker );
-				document.firstElement().removeChild( node );
-			}
-			
-			//DSL parsing
-			var iterator = document.firstElement().elements();
-			while ( iterator.hasNext() )
-			{
-				XmlReader._parseNode( iterator.next(), positionTracker );
-			}
-
+			var node = iterator.next();
+			XmlReader._parseStateNodes( node, positionTracker );
+			document.firstElement().removeChild( node );
 		}
-		catch ( error : haxe.macro.Error )
+		
+		//DSL parsing
+		var iterator = document.firstElement().elements();
+		while ( iterator.hasNext() )
 		{
-			Context.error( 'Xml parsing failed @$fileName $error', Context.currentPos() );
+			XmlReader._parseNode( iterator.next(), positionTracker );
 		}
-
-		//var raw = haxe.xml.Printer.print( document, false );
-		return macro $v{ doc.data };
+		
+		return macro $v{ data };
 	}
 	#end
 	

@@ -1,12 +1,13 @@
 package hex.compiler.parser.xml;
-import hex.compiler.parser.preprocess.MacroPreprocessor;
-import hex.ioc.core.ContextAttributeList;
-import hex.ioc.parser.xml.XMLParserUtil;
 
 #if macro
 import com.tenderowls.xml176.Xml176Parser;
 import hex.ioc.assembler.ConditionalVariablesChecker;
 import haxe.macro.Expr;
+import hex.compiler.parser.preprocess.MacroPreprocessor;
+import hex.ioc.core.ContextAttributeList;
+import hex.ioc.parser.xml.XMLParserUtil;
+import haxe.macro.Context;
 
 /**
  * ...
@@ -14,29 +15,20 @@ import haxe.macro.Expr;
  */
 class XmlDSLParser
 {
-	static public function _parse( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariablesChecker : ConditionalVariablesChecker ) : { xml: Xml, data: String }
+	static public function parse( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariablesChecker : ConditionalVariablesChecker ) : Xml
 	{
 		Xml176Parser.init();
-		var r = XmlDSLReader.readXmlFile( fileName, preprocessingVariables, conditionalVariablesChecker );
-		return { xml: Xml176Parser.parse( r.data, r.path ), data: r.data };
-	}
-	
-	static public function parse( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariablesChecker : ConditionalVariablesChecker ) : { xml: Xml, data: String }
-	{
-		Xml176Parser.init();
-		
 		var xml = Xml.parse( '<root/>' );
-		XmlDSLParser.processFile( xml, fileName, true, preprocessingVariables, conditionalVariablesChecker );
-
-		return { xml: xml, data: xml.toString() };
+		XmlDSLParser._processFile( xml, fileName, true, preprocessingVariables, conditionalVariablesChecker );
+		return xml;
 	}
 	
-	static public function processFile( finalXML: Xml, fileName: String, isRoot : Bool, ?preprocessingVariables: Expr, ?conditionalVariablesChecker: ConditionalVariablesChecker )
+	static function _processFile( finalXML: Xml, fileName: String, isRoot : Bool, ?preprocessingVariables: Expr, ?conditionalVariablesChecker: ConditionalVariablesChecker )
 	{
 		var finalRootXML = finalXML.firstElement();
 	
 		//read file
-		var dsl = XmlDSLReader.readFile( fileName );
+		var dsl = XmlDSLParser._readFile( fileName );
 		
 		//preprocess
 		dsl.data = MacroPreprocessor.parse( dsl.data, preprocessingVariables );
@@ -48,7 +40,6 @@ class XmlDSLParser
 		{
 			for ( att in rootXml.attributes() ) 
 			{
-				//trace( rootXml.get( att ) );
 				finalRootXML.set( att, rootXml.get( att ) );
 			}
 		}
@@ -65,14 +56,13 @@ class XmlDSLParser
 			{
 				finalRootXML.addChild( node );
 			}
-			//rootXml.removeChild( node );
 		}
 		
 		//parse include collection
 		for ( include in includeList )
 		{
 			var fileName = include.get( ContextAttributeList.FILE );
-			XmlDSLParser.processFile( finalXML, fileName, false, preprocessingVariables, conditionalVariablesChecker );
+			XmlDSLParser._processFile( finalXML, fileName, false, preprocessingVariables, conditionalVariablesChecker );
 		}
 	}
 	
@@ -113,6 +103,32 @@ class XmlDSLParser
 		else 
 		{
 			return true;
+		}
+	}
+	
+	static function _readFile( fileName : String, ?preprocessingVariables : Expr ) : XmlDSLData
+	{
+		try
+		{
+			//resolve
+			var path = Context.resolvePath( fileName );
+			Context.registerModuleDependency( Context.getLocalModule(), path );
+			
+			//read data
+			var data = sys.io.File.getContent( path );
+			
+			//instantiate XmlDSLData result
+			var result = 	{ 	
+								data: 				data,
+								length: 			data.length, 
+								path: 				path,
+							};
+			
+			return result;
+		}
+		catch ( error : Dynamic )
+		{
+			return Context.error( 'File loading failed @$fileName $error', Context.currentPos() );
 		}
 	}
 }
