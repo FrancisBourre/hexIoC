@@ -4,7 +4,7 @@ import haxe.macro.Expr;
 import hex.ioc.assembler.ApplicationAssembler;
 
 #if macro
-import com.tenderowls.xml176.Xml176Parser;
+import hex.compiler.parser.xml.XmlParser;
 import haxe.macro.Context;
 
 import hex.compiler.assembler.CompileTimeApplicationAssembler;
@@ -482,8 +482,11 @@ class XmlCompiler
 		var conditionalVariablesMap 	= MacroConditionalVariablesProcessor.parse( conditionalVariables );
 		var conditionalVariablesChecker = new ConditionalVariablesChecker( conditionalVariablesMap );
 		
-		var document 					= XmlDSLParser.parse( fileName, preprocessingVariables, conditionalVariablesChecker );
-		var exceptionReporter 			= new XmlAssemblingExceptionReporter( new PositionTracker() );
+		var positionTracker				= new PositionTracker() ;
+		var parser						= new XmlDSLParser( positionTracker );
+		var document 					= parser.parse( fileName, preprocessingVariables, conditionalVariablesChecker );
+		var exceptionReporter 			= new XmlAssemblingExceptionReporter( positionTracker );
+		
 		XmlCompiler._importHelper 		= new ClassImportHelper();
 		
 		//

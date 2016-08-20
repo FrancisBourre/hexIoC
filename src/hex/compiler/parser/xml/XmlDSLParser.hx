@@ -1,7 +1,7 @@
 package hex.compiler.parser.xml;
 
 #if macro
-import com.tenderowls.xml176.Xml176Parser;
+import hex.compiler.parser.xml.XmlParser;
 import hex.ioc.assembler.ConditionalVariablesChecker;
 import haxe.macro.Expr;
 import hex.compiler.parser.preprocess.MacroPreprocessor;
@@ -15,26 +15,33 @@ import haxe.macro.Context;
  */
 class XmlDSLParser
 {
-	static public function parse( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariablesChecker : ConditionalVariablesChecker ) : Xml
+	var _positionTracker : IXmlPositionTracker;
+	
+	public function new( positionTracker: IXmlPositionTracker )
 	{
-		Xml176Parser.init();
+		this._positionTracker = positionTracker;
+	}
+	
+	public function parse( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariablesChecker : ConditionalVariablesChecker ) : Xml
+	{
+		//XmlParser.init();
 		var xml = Xml.parse( '<root/>' );
-		XmlDSLParser._processFile( xml, fileName, true, preprocessingVariables, conditionalVariablesChecker );
+		this._processFile( xml, fileName, true, preprocessingVariables, conditionalVariablesChecker );
 		return xml;
 	}
 	
-	static function _processFile( finalXML: Xml, fileName: String, isRoot : Bool, ?preprocessingVariables: Expr, ?conditionalVariablesChecker: ConditionalVariablesChecker )
+	function _processFile( finalXML: Xml, fileName: String, isRoot : Bool, ?preprocessingVariables: Expr, ?conditionalVariablesChecker: ConditionalVariablesChecker )
 	{
 		var finalRootXML = finalXML.firstElement();
 	
 		//read file
-		var dsl = XmlDSLParser._readFile( fileName );
+		var dsl = this._readFile( fileName );
 		
 		//preprocess
 		dsl.data = MacroPreprocessor.parse( dsl.data, preprocessingVariables );
 		
 		//xml building
-		var rootXml = Xml176Parser.parse( dsl.data, dsl.path ).firstElement();
+		var rootXml = XmlParser.parse( dsl.data, dsl.path, this._positionTracker ).firstElement();
 		
 		if ( isRoot )
 		{
@@ -45,14 +52,14 @@ class XmlDSLParser
 		}
 		
 		//collect include nodes
-		var includeList : Array<Xml> = XmlDSLParser._getIncludeList( rootXml, conditionalVariablesChecker );
+		var includeList : Array<Xml> = this._getIncludeList( rootXml, conditionalVariablesChecker );
 		
 		//parse/remove comditionals
 		var iterator = rootXml.elements();
 		while ( iterator.hasNext() )
 		{
 			var node : Xml = iterator.next();
-			if ( XmlDSLParser._isIncludeAllowed( node, conditionalVariablesChecker ) )
+			if ( this._isIncludeAllowed( node, conditionalVariablesChecker ) )
 			{
 				finalRootXML.addChild( node );
 			}
@@ -62,18 +69,18 @@ class XmlDSLParser
 		for ( include in includeList )
 		{
 			var fileName = include.get( ContextAttributeList.FILE );
-			XmlDSLParser._processFile( finalXML, fileName, false, preprocessingVariables, conditionalVariablesChecker );
+			this._processFile( finalXML, fileName, false, preprocessingVariables, conditionalVariablesChecker );
 		}
 	}
 	
-	static function _getIncludeList( root : Xml, ?conditionalVariablesChecker: ConditionalVariablesChecker ) : Array<Xml>
+	function _getIncludeList( root : Xml, ?conditionalVariablesChecker: ConditionalVariablesChecker ) : Array<Xml>
 	{
 		var includeList : Array<Xml> = [];
 		var includes = root.elementsNamed( "include" );
 		while ( includes.hasNext() )
 		{
 			var node : Xml = includes.next();
-			if ( XmlDSLParser._isIncludeAllowed( node, conditionalVariablesChecker ) )
+			if ( this._isIncludeAllowed( node, conditionalVariablesChecker ) )
 			{
 				includeList.push( node );
 			}
@@ -84,7 +91,7 @@ class XmlDSLParser
 		return includeList;
 	}
 	
-	static function _isIncludeAllowed( node : Xml, ?conditionalVariablesChecker : ConditionalVariablesChecker ) : Bool
+	function _isIncludeAllowed( node : Xml, ?conditionalVariablesChecker : ConditionalVariablesChecker ) : Bool
 	{
 		if ( conditionalVariablesChecker != null )
 		{
@@ -106,7 +113,7 @@ class XmlDSLParser
 		}
 	}
 	
-	static function _readFile( fileName : String, ?preprocessingVariables : Expr ) : XmlDSLData
+	function _readFile( fileName : String, ?preprocessingVariables : Expr ) : XmlDSLData
 	{
 		try
 		{

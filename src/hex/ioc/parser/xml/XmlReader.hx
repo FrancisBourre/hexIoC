@@ -193,12 +193,13 @@ class XmlReader
 	{
 		var conditionalVariablesMap 	= MacroConditionalVariablesProcessor.parse( conditionalVariables );
 		var conditionalVariablesChecker = new ConditionalVariablesChecker( conditionalVariablesMap );
-
-		var document = XmlDSLParser.parse( fileName, preprocessingVariables, conditionalVariablesChecker );
-		var data = document.toString();
-
-		var positionTracker 	= new PositionTracker();
-		XmlReader._importHelper = new ClassImportHelper();
+		
+		var positionTracker				= new PositionTracker() ;
+		var parser						= new XmlDSLParser( positionTracker );
+		var document 					= parser.parse( fileName, preprocessingVariables, conditionalVariablesChecker );
+		var data 						= document.toString();
+		
+		XmlReader._importHelper 		= new ClassImportHelper();
 
 		//States parsing
 		var iterator = document.firstElement().elementsNamed( "state" );
