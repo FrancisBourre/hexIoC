@@ -54,6 +54,7 @@ import hex.util.ClassUtil;
  * ...
  * @author Francis Bourre
  */
+@:keepSub
 class ContextFactory implements IContextFactory implements ILocatorListener<String, Dynamic>
 {
 	var _annotationProvider			: IAnnotationProvider;
