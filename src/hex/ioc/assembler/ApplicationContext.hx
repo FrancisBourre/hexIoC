@@ -1,8 +1,5 @@
 package hex.ioc.assembler;
 
-import hex.domain.ApplicationDomainDispatcher;
-import hex.domain.Domain;
-import hex.domain.DomainUtil;
 import hex.event.IDispatcher;
 import hex.event.MessageType;
 import hex.ioc.core.ICoreFactory;

@@ -4,7 +4,6 @@ import hex.control.Request;
 import hex.control.command.BasicCommand;
 import hex.di.IInjectorContainer;
 import hex.ioc.assembler.AbstractApplicationContext;
-import hex.ioc.assembler.ApplicationContext;
 
 /**
  * ...
