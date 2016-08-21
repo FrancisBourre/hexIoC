@@ -16,6 +16,8 @@ class StatefulStateMachineConfigTest
 	@Test( "test statemachine configuration" )
 	public function testStateMachineConfiguration() : Void
 	{
+		//there's a bug with haxe version < 3.3 with recursive toJSon call
+		#if (haxe_ver >= "3.3")
 		var assembler = XmlReader.readXmlFile( "context/statefulStateMachineConfigTest.xml" );
 		var factory	= assembler.getApplicationContext( "applicationContext" ).getCoreFactory();
 
@@ -30,5 +32,6 @@ class StatefulStateMachineConfigTest
 		Assert.isNotNull( myModule, "module should not be null" );
 
 		Assert.isTrue( myModule.commandWasCalled, "command should be called" );
+		#end
 	}
 }
