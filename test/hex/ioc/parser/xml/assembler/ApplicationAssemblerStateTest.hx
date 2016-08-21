@@ -15,15 +15,8 @@ import hex.unittest.assertion.Assert;
  */
 class ApplicationAssemblerStateTest
 {
-	var _contextParser 				: ApplicationXMLParser;
 	var _builderFactory 			: IContextFactory;
 	var _applicationAssembler 		: ApplicationAssembler;
-		
-	@Before
-	public function setUp() : Void
-	{
-		this._applicationAssembler 	= new ApplicationAssembler();
-	}
 
 	@After
 	public function tearDown() : Void
@@ -36,25 +29,18 @@ class ApplicationAssemblerStateTest
 		MockStateCommandWithModule.callCount 			= 0;
 		MockStateCommandWithModule.lastInjectedModule 	= null;
 	}
-		
-	function build( xml : String ) : Void
-	{
-		this._contextParser = new ApplicationXMLParser();
-		this._contextParser.parse( this._applicationAssembler, Xml.parse( xml ) );
-		this._applicationAssembler.buildEverything();
-	}
 	
 	@Test( "test building state transitions" )
 	public function testBuildingStateTransitions() : Void
 	{
-		this.build( XmlReader.readXmlFile( "context/testBuildingStateTransitions.xml" ) );
+		this._applicationAssembler = XmlReader.readXmlFile( "context/testBuildingStateTransitions.xml" );
 		this._builderFactory = this._applicationAssembler.getContextFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
 	}
 	
 	@Test( "test extending state transitions" )
 	public function testExtendingStateTransitions() : Void
 	{
-		this.build( XmlReader.readXmlFile( "context/testExtendingStateTransitions.xml" ) );
+		this._applicationAssembler = XmlReader.readXmlFile( "context/testExtendingStateTransitions.xml" );
 		
 		var builderFactory : IContextFactory = this._applicationAssembler.getContextFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
 		var coreFactory = builderFactory.getCoreFactory();

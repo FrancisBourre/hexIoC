@@ -3,7 +3,6 @@ package hex.ioc.parser.xml.state;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.core.IContextFactory;
-import hex.ioc.parser.xml.ApplicationXMLParser;
 import hex.ioc.parser.xml.state.mock.MockModuleWorkingWithStates;
 import hex.ioc.parser.xml.state.mock.MockStateEnum;
 import hex.state.State;
@@ -17,16 +16,8 @@ import hex.unittest.assertion.Assert;
  */
 class StatefulStateMachineConfigTest
 {
-	var _contextParser 				: ApplicationXMLParser;
 	var _builderFactory 			: IContextFactory;
 	var _applicationAssembler 		: ApplicationAssembler;
-		
-	@Before
-	public function setUp() : Void
-	{
-		this._applicationAssembler 	= new ApplicationAssembler();
-		this._builderFactory 		= this._applicationAssembler.getContextFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
-	}
 
 	@After
 	public function tearDown() : Void
@@ -35,17 +26,11 @@ class StatefulStateMachineConfigTest
 		this._applicationAssembler.release();
 	}
 	
-	function build( xml : String ) : Void
-	{
-		this._contextParser = new ApplicationXMLParser();
-		this._contextParser.parse( this._applicationAssembler, Xml.parse( xml ) );
-		this._applicationAssembler.buildEverything();
-	}
-	
 	@Test( "test statemachine configuration" )
 	public function testStateMachineConfiguration() : Void
 	{
-		this.build( XmlReader.readXmlFile( "context/statefulStateMachineConfigTest.xml" ) );
+		this._applicationAssembler 	= XmlReader.readXmlFile( "context/statefulStateMachineConfigTest.xml" );
+		this._builderFactory 		= this._applicationAssembler.getContextFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
 
 		var initialState : State = this._builderFactory.getCoreFactory().locate( "initialState" );
 		Assert.isNotNull( initialState, "state should not be null" );

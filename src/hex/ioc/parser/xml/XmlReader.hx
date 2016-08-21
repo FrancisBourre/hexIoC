@@ -1,5 +1,8 @@
 package hex.ioc.parser.xml;
 
+import hex.ioc.assembler.ApplicationAssembler;
+import hex.util.MacroUtil;
+
 #if macro
 import haxe.macro.Context;
 import hex.compiler.parser.preprocess.MacroConditionalVariablesProcessor;
@@ -221,8 +224,32 @@ class XmlReader
 	}
 	#end
 	
-	macro public static function readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<String>
+	macro public static function getXmlFileContent( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<String>
 	{
-		return _readXmlFile( fileName, preprocessingVariables, conditionalVariables );
+		return XmlReader._readXmlFile( fileName, preprocessingVariables, conditionalVariables );
+	}
+	
+	macro public static function getXml( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<Xml>
+	{
+		var tp = MacroUtil.getPack( Type.getClassName( Xml ) );
+		var data = XmlReader._readXmlFile( fileName, preprocessingVariables, conditionalVariables );
+		return macro @:pos( Context.currentPos() ){ $p { tp }.parse( $data ); }
+	}
+	
+	macro public static function readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<ApplicationAssembler>
+	{
+		var xmlPack = MacroUtil.getPack( Type.getClassName( Xml ) );
+		var applicationAssemblerTypePath = MacroUtil.getTypePath( Type.getClassName( ApplicationAssembler ) );
+		var applicationXMLParserTypePath = MacroUtil.getTypePath( Type.getClassName( ApplicationXMLParser ) );
+		var data = XmlReader._readXmlFile( fileName, preprocessingVariables, conditionalVariables );
+		
+		return macro @:pos( Context.currentPos() )
+		{ 
+			var applicationAssembler = new $applicationAssemblerTypePath(); 
+			var applicationXmlParser = new $applicationXMLParserTypePath();
+			applicationXmlParser.parse( applicationAssembler, $p { xmlPack }.parse( $data ) );
+			applicationAssembler.buildEverything();
+			applicationAssembler; 
+		}
 	}
 }

@@ -14,14 +14,14 @@ Inversion of Control system with DSL and modularity based on global and micro co
 * [hexState](https://github.com/DoclerLabs/hexState)
 * [hexService](https://github.com/DoclerLabs/hexService)
 
-
-## Full example for parsing/building application context
+## Parsing/building application context at compile-time
 ```haxe
-var applicationAssembler = new ApplicationAssembler();
-var xml = Xml.parse( XmlReader.readXmlFile( "example.xml" ) );
-var parser = new ApplicationXMLParser();
-parser.parse( applicationAssembler, xml );
-applicationAssembler.buildEverything();
+var applicationAssembler = XmlCompiler.readXmlFile( "example.xml" );
+```
+
+## Parsing/building application context at runtime
+```haxe
+var applicationAssembler = XmlReader.readXmlFile( "example.xml" );
 ```
 
 ## Simple example
@@ -368,11 +368,11 @@ preprocessor.addProperty( "node", '<msg id="message" value="$${hello}"/>' );
 
 ## Read xml at compile time with preprocessing
 ```haxe
-var xml = Xml.parse( XmlReader.readXmlFile( "../context/preprocessor.xml", 
+var assembler = XmlCompiler.readXmlFile( "../context/preprocessor.xml", 
 [	
 	"hello" 		=> "bonjour",
 	"contextName" 	=> 'applicationContext',
 	"context" 		=> 'name="${contextName}"',
 	"node" 			=> '<msg id="message" value="${hello}"/>' 
-] ) );
+] );
 ```

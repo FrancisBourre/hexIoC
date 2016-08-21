@@ -13,14 +13,7 @@ import hex.unittest.assertion.Assert;
  */
 class ApplicationContextBuildingTest
 {
-	var _contextParser 				: ApplicationXMLParser;
 	var _applicationAssembler 		: ApplicationAssembler;
-		
-	@Before
-	public function setUp() : Void
-	{
-		this._applicationAssembler 	= new ApplicationAssembler();
-	}
 
 	@After
 	public function tearDown() : Void
@@ -28,18 +21,11 @@ class ApplicationContextBuildingTest
 		ApplicationDomainDispatcher.getInstance().clear();
 		this._applicationAssembler.release();
 	}
-		
-	function build( xml : String ) : Void
-	{
-		this._contextParser = new ApplicationXMLParser();
-		this._contextParser.parse( this._applicationAssembler, Xml.parse( xml ) );
-		this._applicationAssembler.buildEverything();
-	}
 	
 	@Test( "test applicationContext building" )
 	public function testApplicationContextBuilding() : Void
 	{
-		this.build( XmlReader.readXmlFile( "context/applicationContextBuildingTest.xml" ) );
+		this._applicationAssembler = XmlReader.readXmlFile( "context/applicationContextBuildingTest.xml" );
 		
 		var builderFactory : IContextFactory = this._applicationAssembler.getContextFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
 		
