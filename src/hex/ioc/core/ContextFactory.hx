@@ -97,10 +97,11 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		{
 			//ApplicationContext instantiation
 			this._applicationContext = new ApplicationContext( this._contextDispatcher, this._coreFactory, applicationContextName );
+			//this._applicationContext = new LightApplicationContext( this._coreFactory, applicationContextName );
 		}
 		
 		//register applicationContext
-		injector.mapToValue( ApplicationContext, this._applicationContext );
+		injector.mapToValue( AbstractApplicationContext, this._applicationContext );
 		this._coreFactory.register( applicationContextName, this._applicationContext );
 		
 		

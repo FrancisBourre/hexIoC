@@ -3,6 +3,7 @@ package hex.ioc.parser.xml.assembler.mock;
 import hex.control.Request;
 import hex.control.command.BasicCommand;
 import hex.di.IInjectorContainer;
+import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.ApplicationContext;
 
 /**
@@ -12,10 +13,10 @@ import hex.ioc.assembler.ApplicationContext;
 class MockStateCommand extends BasicCommand implements IInjectorContainer
 {
 	static public var callCount : Int = 0;
-	static public var lastInjecteContext : ApplicationContext;
+	static public var lastInjecteContext : AbstractApplicationContext;
 	
 	@Inject
-	public var context : ApplicationContext;
+	public var context : AbstractApplicationContext;
 	
 	public function execute( ?request : Request ) : Void 
 	{
