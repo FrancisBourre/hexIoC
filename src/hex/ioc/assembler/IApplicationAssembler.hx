@@ -1,7 +1,6 @@
 package hex.ioc.assembler;
 
 import hex.ioc.core.IContextFactory;
-import hex.ioc.vo.CommandMappingVO;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.MethodCallVO;
