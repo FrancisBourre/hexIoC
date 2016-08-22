@@ -421,8 +421,12 @@ class XmlCompiler
 				exceptionReporter.throwMissingTypeException( commandClass, item, ContextAttributeList.COMMAND_CLASS );
 			}
 
-			var commandMappingVO 			= new CommandMappingVO( commandClass, item.get( ContextAttributeList.FIRE_ONCE ) == "true", item.get( ContextAttributeList.CONTEXT_OWNER ) );
-			commandMappingVO.filePosition 	= exceptionReporter._positionTracker.makePositionFromNode( item );
+			var commandMappingVO = 	{ 	commandClassName: commandClass, 
+										fireOnce: item.get( ContextAttributeList.FIRE_ONCE ) == "true", 
+										contextOwner: item.get( ContextAttributeList.CONTEXT_OWNER ),
+										filePosition: exceptionReporter._positionTracker.makePositionFromNode( item )
+									};
+
 			list.push( commandMappingVO );
 		}
 		
