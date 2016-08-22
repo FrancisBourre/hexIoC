@@ -18,12 +18,12 @@ class ApplicationAssembler implements IApplicationAssembler
 {
 	public function new() 
 	{
-		this._conditionalVariablesChecker = new ConditionalVariablesChecker();
+		
 	}
 	
 	var _mApplicationContext 			= new Map<String, AbstractApplicationContext>();
 	var _mContextFactories 				= new Map<AbstractApplicationContext, IContextFactory>();
-	var _conditionalVariablesChecker 	: ConditionalVariablesChecker;
+	var _conditionalVariablesChecker 	= new ConditionalVariablesChecker();
 
 	public function setStrictMode( b : Bool ) : Void
 	{
@@ -59,8 +59,10 @@ class ApplicationAssembler implements IApplicationAssembler
 	{
 		var itFactory = this._mContextFactories.iterator();
 		while ( itFactory.hasNext() ) itFactory.next().release();
+		
 		this._mApplicationContext = new Map();
 		this._mContextFactories = new Map();
+		this._conditionalVariablesChecker = new ConditionalVariablesChecker();
 	}
 
 	public function buildProperty( applicationContext : AbstractApplicationContext, propertyVO : PropertyVO ) : Void
@@ -141,28 +143,15 @@ class ApplicationAssembler implements IApplicationAssembler
 	public function buildEverything() : Void
 	{
 		var itFactory = this._mContextFactories.iterator();
-		var builderFactories 	: Array<IContextFactory> = [];
-		while ( itFactory.hasNext() ) builderFactories.push( itFactory.next() );
+		var contextFactories = [ while ( itFactory.hasNext() ) itFactory.next() ];
 		
-		var itFactory = this._mContextFactories.iterator();
-		while ( itFactory.hasNext() ) itFactory.next().buildAllStateTransitions();
-		
-		var applicationContexts : Array<AbstractApplicationContext> = [];
-		var itContext = this._mApplicationContext.iterator();
-		while ( itContext.hasNext() ) applicationContexts.push( itContext.next() );
-		
-		itFactory = this._mContextFactories.iterator();
-		while ( itFactory.hasNext() ) itFactory.next().dispatchAssemblingStart();
-
-		var len : Int = builderFactories.length;
-		var i 	: Int;
-		for ( i in 0...len ) builderFactories[ i ].buildAllObjects();
-		for ( i in 0...len ) builderFactories[ i ].assignAllDomainListeners();
-		for ( i in 0...len ) builderFactories[ i ].callAllMethods();
-		for ( i in 0...len ) builderFactories[ i ].callModuleInitialisation();
-		
-		itFactory = this._mContextFactories.iterator();
-		while ( itFactory.hasNext() ) itFactory.next().dispatchAssemblingEnd();
+		contextFactories.map( function( factory ) { factory.buildAllStateTransitions(); } );
+		contextFactories.map( function( factory ) { factory.dispatchAssemblingStart(); } );
+		contextFactories.map( function( factory ) { factory.buildAllObjects(); } );
+		contextFactories.map( function( factory ) { factory.assignAllDomainListeners(); } );
+		contextFactories.map( function( factory ) { factory.callAllMethods(); } );
+		contextFactories.map( function( factory ) { factory.callModuleInitialisation(); } );
+		contextFactories.map( function( factory ) { factory.dispatchAssemblingEnd(); } );
 	}
 
 	public function getApplicationContext( applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null ) : AbstractApplicationContext
@@ -185,7 +174,7 @@ class ApplicationAssembler implements IApplicationAssembler
 		return applicationContext;
 	}
 	
-	function _registerID( applicationContext : AbstractApplicationContext, ID : String ) : Bool
+	inline function _registerID( applicationContext : AbstractApplicationContext, ID : String ) : Bool
 	{
 		return this.getContextFactory( applicationContext ).registerID( ID );
 	}

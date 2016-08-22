@@ -22,9 +22,4 @@ interface IApplicationAssembler
 	function buildDomainListener( applicationContext : AbstractApplicationContext, domainListenerVO : DomainListenerVO ) : Void;
 	function configureStateTransition( applicationContext : AbstractApplicationContext, stateTransitionVO : StateTransitionVO ) : Void;
 	function getApplicationContext( applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null ) : AbstractApplicationContext;
-	function setStrictMode( b : Bool ) : Void;
-	function isInStrictMode() : Bool;
-	function addConditionalProperty( conditionalProperties : Map<String, Bool> ) : Void;
-	function allowsIfList( ifList : Array<String> = null ) : Bool;
-	function allowsIfNotList( ifNotList : Array<String> = null ) : Bool;
 }

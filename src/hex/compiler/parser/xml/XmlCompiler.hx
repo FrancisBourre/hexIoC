@@ -494,9 +494,8 @@ class XmlCompiler
 		XmlCompiler._importHelper 		= new ClassImportHelper();
 		
 		//
-		XmlCompiler._assembler 		= new CompileTimeApplicationAssembler();
-		XmlCompiler._assembler.addConditionalProperty( conditionalVariablesMap );
-		var applicationContext 		= XmlCompiler._assembler.getApplicationContext( XmlCompiler.getRootApplicationContextName( document.firstElement(), exceptionReporter ) );
+		XmlCompiler._assembler 			= new CompileTimeApplicationAssembler();
+		var applicationContext 			= XmlCompiler._assembler.getApplicationContext( XmlCompiler.getRootApplicationContextName( document.firstElement(), exceptionReporter ) );
 		
 		//States parsing
 		var iterator = document.firstElement().elementsNamed( "state" );
