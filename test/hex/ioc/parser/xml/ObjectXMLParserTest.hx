@@ -874,9 +874,7 @@ class ObjectXMLParserTest
 	@Test( "test if attribute" )
 	public function testIfAttribute() : Void
 	{
-		this._applicationAssembler.addConditionalProperty ( ["production" => true, "test" => false, "release" => false] );
 		this.build(  XmlReader.getXml( "context/ifAttribute.xml", nuul, ["production" => true, "test" => false, "release" => false] ) );
-		
 		Assert.equals( "hello production", this._builderFactory.getCoreFactory().locate( "message" ), "message value should equal 'hello production'" );
 	}
 	
@@ -884,8 +882,6 @@ class ObjectXMLParserTest
 	public function testIncludeWithIfAttribute() : Void
 	{
 		var variables = [ "production" => true, "test" => false, "release" => false ];
-		this._applicationAssembler.addConditionalProperty ( variables );
-		
 		this.build( XmlReader.getXml( "context/includeWithIfAttribute.xml", null, [ "production" => true, "test" => false, "release" => false ] ) );
 		Assert.equals( "hello production", this._builderFactory.getCoreFactory().locate( "message" ), "message value should equal 'hello production'" );
 	}
@@ -894,8 +890,6 @@ class ObjectXMLParserTest
 	public function testIncludeFailsWithIfAttribute() : Void
 	{
 		var variables = [ "production" => false, "test" => true, "release" => true ];
-		this._applicationAssembler.addConditionalProperty ( variables );
-		
 		this.build( XmlReader.getXml( "context/includeWithIfAttribute.xml", null,  [ "production" => false, "test" => true, "release" => true ] ) );
 		Assert.methodCallThrows( NoSuchElementException, this._builderFactory.getCoreFactory(), this._builderFactory.getCoreFactory().locate, [ "message" ], "message value should equal 'hello production'" );
 	}

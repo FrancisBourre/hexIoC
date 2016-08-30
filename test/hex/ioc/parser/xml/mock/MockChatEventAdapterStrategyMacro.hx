@@ -1,7 +1,7 @@
 package hex.ioc.parser.xml.mock;
 
-import hex.control.async.AsyncCommand;
 import hex.control.async.AsyncHandler;
+import hex.control.async.IAsyncCommand;
 import hex.control.payload.ExecutionPayload;
 import hex.event.MacroAdapterStrategy;
 
@@ -30,7 +30,7 @@ class MockChatEventAdapterStrategyMacro extends MacroAdapterStrategy
 		this.add( MockChatEventAdapterStrategyCommand ).withPayloads( [new ExecutionPayload(this._message + ":" + url, String)] ).withCompleteHandlers( new AsyncHandler( this, this._end ) );
 	}
 
-	function _end( async : AsyncCommand ) : Void
+	function _end( async : IAsyncCommand ) : Void
 	{
 		var cmd : MockChatEventAdapterStrategyCommand = cast async;
 		this._result = cmd.getResult();

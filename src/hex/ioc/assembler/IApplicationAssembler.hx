@@ -1,7 +1,6 @@
 package hex.ioc.assembler;
 
 import hex.ioc.core.IContextFactory;
-import hex.ioc.vo.CommandMappingVO;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.MethodCallVO;
@@ -22,9 +21,4 @@ interface IApplicationAssembler
 	function buildDomainListener( applicationContext : AbstractApplicationContext, domainListenerVO : DomainListenerVO ) : Void;
 	function configureStateTransition( applicationContext : AbstractApplicationContext, stateTransitionVO : StateTransitionVO ) : Void;
 	function getApplicationContext( applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null ) : AbstractApplicationContext;
-	function setStrictMode( b : Bool ) : Void;
-	function isInStrictMode() : Bool;
-	function addConditionalProperty( conditionalProperties : Map<String, Bool> ) : Void;
-	function allowsIfList( ifList : Array<String> = null ) : Bool;
-	function allowsIfNotList( ifNotList : Array<String> = null ) : Bool;
 }

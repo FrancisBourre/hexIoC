@@ -9,7 +9,9 @@ import hex.unittest.assertion.Assert;
  */
 class ApplicationAssemblerTest
 {
-	@Test( "Test addConditionalProperty behavior" )
+	//TODO move this tests to XmlDSLParser class
+	
+	/*@Test( "Test addConditionalProperty behavior" )
 	public function testAddConditionalProperty( ) : Void
 	{
 		var assembler : ApplicationAssembler = new ApplicationAssembler();
@@ -23,9 +25,9 @@ class ApplicationAssemblerTest
 		Assert.isTrue( assembler.allowsIfNotList( ["debug"] ), "" );
 		Assert.isFalse( assembler.allowsIfNotList( ["debug", "production"] ), "" );
 		Assert.isFalse( assembler.allowsIfNotList( ["production", "debug"] ), "" );
-	}
+	}*/
 	
-	@Test( "Test strict mode" )
+	/*@Test( "Test strict mode" )
 	public function testStrictMode( ) : Void
 	{
 		var assembler : ApplicationAssembler = new ApplicationAssembler();
@@ -33,5 +35,5 @@ class ApplicationAssemblerTest
 		assembler.addConditionalProperty( ["production" => true] );
 		Assert.methodCallThrows( BuildingException, assembler, assembler.allowsIfList, [["debug"]], "" );
 		Assert.methodCallThrows( BuildingException, assembler, assembler.allowsIfNotList, [["debug"]], "" );
-	}
+	}*/
 }

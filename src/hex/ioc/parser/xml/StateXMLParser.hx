@@ -33,8 +33,8 @@ class StateXMLParser extends AbstractXMLParser
 	
 	function _parseNode( xml : Xml ) : Void
 	{
-		var applicationContext : AbstractApplicationContext 		= this.getApplicationContext();
-		var applicationAssembler : IApplicationAssembler 	= this.getApplicationAssembler();
+		var applicationContext = this.getApplicationContext();
+		var applicationAssembler = this.getApplicationAssembler();
 
 		var identifier : String = XMLAttributeUtil.getID( xml );
 		if ( identifier == null )
@@ -42,31 +42,31 @@ class StateXMLParser extends AbstractXMLParser
 			throw new ParsingException( this + " encounters parsing error with '" + xml.nodeName + "' node. You must set an id attribute." );
 		}
 		
-		var staticReference 	: String = XMLAttributeUtil.getStaticRef( xml );
-		var instanceReference 	: String = XMLAttributeUtil.getRef( xml );
-		
-		// Build enter list
-		var enterListIterator = xml.elementsNamed( ContextNameList.ENTER );
-		var enterList : Array<CommandMappingVO> = [];
-		while( enterListIterator.hasNext() )
-		{
-			var enterListItem = enterListIterator.next();
-			enterList.push( new CommandMappingVO( XMLAttributeUtil.getCommandClass( enterListItem ), XMLAttributeUtil.getFireOnce( enterListItem ), XMLAttributeUtil.getContextOwner( enterListItem ) ) );
-		}
-		
-		// Build exit list
-		var exitListIterator = xml.elementsNamed( ContextNameList.EXIT );
-		var exitList : Array<CommandMappingVO> = [];
-		while( exitListIterator.hasNext() )
-		{
-			var exitListItem = exitListIterator.next();
-			exitList.push( new CommandMappingVO( XMLAttributeUtil.getCommandClass( exitListItem ), XMLAttributeUtil.getFireOnce( exitListItem ), XMLAttributeUtil.getContextOwner( exitListItem ) ) );
-		}
+		var staticReference 		= XMLAttributeUtil.getStaticRef( xml );
+		var instanceReference 		= XMLAttributeUtil.getRef( xml );
+		var enterList 				= this._buildList( xml, ContextNameList.ENTER );
+		var exitList 				= this._buildList( xml, ContextNameList.EXIT );
 		
 		var stateTransitionVO 		= new StateTransitionVO( identifier, staticReference, instanceReference, enterList, exitList );
 		stateTransitionVO.ifList 	= XMLParserUtil.getIfList( xml );
 		stateTransitionVO.ifNotList = XMLParserUtil.getIfNotList( xml );
 		
 		applicationAssembler.configureStateTransition( applicationContext, stateTransitionVO );
+	}
+	
+	function _buildList( xml : Xml, nodeName : String ) : Array<CommandMappingVO>
+	{
+		var it = xml.elementsNamed( nodeName );
+		var list : Array<CommandMappingVO> = [];
+		while( it.hasNext() )
+		{
+			var item = it.next();
+			list.push( { 
+							commandClassName: XMLAttributeUtil.getCommandClass( item ), 
+							fireOnce: XMLAttributeUtil.getFireOnce( item ), 
+							contextOwner: XMLAttributeUtil.getContextOwner( item ) 
+						} );
+		}
+		return list;
 	}
 }

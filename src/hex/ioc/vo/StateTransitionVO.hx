@@ -1,9 +1,5 @@
 package hex.ioc.vo;
 
-#if macro
-import haxe.macro.Expr;
-#end
-
 /**
  * ...
  * @author Francis Bourre
@@ -17,7 +13,7 @@ class StateTransitionVO extends AssemblerVO
 	public var exitList					: Array<CommandMappingVO>;
 	
 	#if macro
-	public var expressions 				: Array<Expr>;
+	public var expressions 				: Array<haxe.macro.Expr>;
 	#end
 
 	public function new( ID : String, staticReference : String, instanceReference : String, enterList : Array<CommandMappingVO>, exitList : Array<CommandMappingVO> ) 
