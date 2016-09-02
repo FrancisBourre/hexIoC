@@ -6,6 +6,8 @@ import hex.compiler.parser.preprocess.Preprocessor;
 import hex.config.stateful.ServiceLocator;
 import hex.di.Injector;
 import hex.domain.ApplicationDomainDispatcher;
+import hex.domain.Domain;
+import hex.domain.DomainUtil;
 import hex.error.Exception;
 import hex.error.NoSuchElementException;
 import hex.event.Dispatcher;
@@ -22,6 +24,7 @@ import hex.ioc.parser.xml.mock.IAnotherMockMappedModule;
 import hex.ioc.parser.xml.mock.IMockAmazonService;
 import hex.ioc.parser.xml.mock.IMockDividerHelper;
 import hex.ioc.parser.xml.mock.IMockFacebookService;
+import hex.ioc.parser.xml.mock.IMockInjectee;
 import hex.ioc.parser.xml.mock.IMockMappedModule;
 import hex.ioc.parser.xml.mock.IMockStubStatefulService;
 import hex.ioc.parser.xml.mock.MockAmazonService;
@@ -31,6 +34,7 @@ import hex.ioc.parser.xml.mock.MockClassWithInjectedProperty;
 import hex.ioc.parser.xml.mock.MockDocument;
 import hex.ioc.parser.xml.mock.MockFacebookService;
 import hex.ioc.parser.xml.mock.MockFruitVO;
+import hex.ioc.parser.xml.mock.MockInjectee;
 import hex.ioc.parser.xml.mock.MockIntVO;
 import hex.ioc.parser.xml.mock.MockMappedModule;
 import hex.ioc.parser.xml.mock.MockMessageParserModule;
@@ -635,6 +639,29 @@ class ObjectXMLParserTest
 		var copyOfAmazon1 = injector.getInstance( IMockAmazonService, "amazon1" );
 		Assert.isInstanceOf( copyOfAmazon1,  AnotherMockAmazonService, "" );
 		Assert.notEquals( amazon1, copyOfAmazon1, "" );
+	}
+	
+	@Test( "test building mapping configuration with inject-into" )
+	public function testBuildingMappingConfigurationWithInjectInto() : Void
+	{
+		this.build( XmlReader.getXml( "context/mappingConfigurationWithInjectInto.xml" ) );
+
+		var config = this._builderFactory.getCoreFactory().locate( "config" );
+		Assert.isInstanceOf( config, MappingConfiguration, "" );
+
+		var injector = new Injector();
+		var domain = DomainUtil.getDomain( 'testBuildingMappingConfigurationWithInjectInto', Domain );
+		injector.mapToValue( Domain, domain );
+		
+		config.configure( injector, new Dispatcher(), null );
+
+		var mock0 = injector.getInstance( IMockInjectee, "mock0" );
+		Assert.isInstanceOf( mock0,  MockInjectee, "" );
+		Assert.equals( domain, mock0.domain, "" );
+		
+		var mock1 = injector.getInstance( IMockInjectee, "mock1" );
+		Assert.isInstanceOf( mock1, MockInjectee, "" );
+		Assert.equals( domain, mock1.domain, "" );
 	}
 	
 	@Test( "test building serviceLocator" )
