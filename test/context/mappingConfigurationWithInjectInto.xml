@@ -1,0 +1,10 @@
+<root name="applicationContext">
+
+	<mock id="instance" type="hex.ioc.parser.xml.mock.MockInjectee"/>
+	
+    <config id="config" type="hex.ioc.di.MappingConfiguration">
+        <item map-name="mock0" inject-into="true"> <key type="Class" value="hex.ioc.parser.xml.mock.IMockInjectee"/> <value type="Class" value="hex.ioc.parser.xml.mock.MockInjectee"/></item>
+        <item map-name="mock1" inject-into="true"> <key type="Class" value="hex.ioc.parser.xml.mock.IMockInjectee"/> <value ref="instance"/></item>
+    </config>
+
+</root>
