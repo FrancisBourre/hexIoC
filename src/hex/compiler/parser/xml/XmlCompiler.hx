@@ -1,6 +1,7 @@
 package hex.compiler.parser.xml;
 
 import haxe.macro.Expr;
+import hex.error.NullPointerException;
 import hex.ioc.assembler.ApplicationAssembler;
 
 #if macro
@@ -433,8 +434,9 @@ class XmlCompiler
 		return list;
 	}
 	
-	static function getApplicationContext( document : Xml, exceptionReporter : XmlAssemblingExceptionReporter ) : ExprOf<AbstractApplicationContext>
+	static function getApplicationContext( document : Xml, exceptionReporter : XmlAssemblingExceptionReporter, assemblerID : String ) : ExprOf<AbstractApplicationContext>
 	{
+		var assemblerVar = macro $i{assemblerID};
 		var xml = document.firstElement();
 		
 		var applicationContextClass = null;
@@ -457,11 +459,11 @@ class XmlCompiler
 		var expr;
 		if ( applicationContextClass != null )
 		{
-			expr = macro @:mergeBlock { var applicationContext = applicationAssembler.getApplicationContext( $v { applicationContextName }, $p { applicationContextClass } ); };
+			expr = macro @:mergeBlock { var applicationContext = $assemblerVar.getApplicationContext( $v { applicationContextName }, $p { applicationContextClass } ); };
 		}
 		else
 		{
-			expr = macro @:mergeBlock { var applicationContext = applicationAssembler.getApplicationContext( $v { applicationContextName } ); };
+			expr = macro @:mergeBlock { var applicationContext = $assemblerVar.getApplicationContext( $v { applicationContextName } ); };
 		}
 
 		return expr;
@@ -481,7 +483,7 @@ class XmlCompiler
 		}
 	}
 	
-	static function _readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<ApplicationAssembler>
+	static function _readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr, ?applicationAssemblerVarName : String ) : ExprOf<ApplicationAssembler>
 	{
 		var conditionalVariablesMap 	= MacroConditionalVariablesProcessor.parse( conditionalVariables );
 		var conditionalVariablesChecker = new ConditionalVariablesChecker( conditionalVariablesMap );
@@ -514,13 +516,21 @@ class XmlCompiler
 		}
 		
 		var assembler = XmlCompiler._assembler;
+		
+		//var applicationAssemblerVar = assemblerID == null ? macro $i{"applicationAssembler"} : macro $i{assemblerID};
+		//var applicationAssemblerVar = "applicationAssembler";
 
 		//Create runtime applicationAssembler
 		var applicationAssemblerTypePath = MacroUtil.getTypePath( Type.getClassName( ApplicationAssembler ) );
-		assembler.addExpression( macro @:mergeBlock { var applicationAssembler = new $applicationAssemblerTypePath(); } );
+		
+		if ( applicationAssemblerVarName == null )
+		{
+			applicationAssemblerVarName = 'applicationAssembler';
+			assembler.addExpression( macro @:mergeBlock { var $applicationAssemblerVarName = new $applicationAssemblerTypePath(); } );
+		}
 		
 		//Create runtime applicationContext
-		assembler.addExpression( getApplicationContext( document, exceptionReporter ) );
+		assembler.addExpression( getApplicationContext( document, exceptionReporter, applicationAssemblerVarName ) );
 		
 		//Dispatch CONTEXT_PARSED message
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.CONTEXT_PARSED" );
@@ -539,7 +549,7 @@ class XmlCompiler
 		XmlCompiler._assembler.buildEverything();
 		
 		//return program
-		assembler.addExpression( macro { applicationAssembler; } );
+		assembler.addExpression( macro { $i{applicationAssemblerVarName}; } );
 		return assembler.getMainExpression();
 	}
 	#end
@@ -547,5 +557,20 @@ class XmlCompiler
 	macro public static function readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<ApplicationAssembler>
 	{
 		return _readXmlFile( fileName, preprocessingVariables, conditionalVariables );
+	}
+	
+	macro public static function readXmlFileWithAssembler( assembler : Expr, fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<ApplicationAssembler>
+	{
+		switch( assembler.expr )
+		{
+			case EConst( CIdent( assemblerID ) ):
+				return _readXmlFile( fileName, preprocessingVariables, conditionalVariables, assemblerID );
+				
+			case _:
+				throw new NullPointerException( 'assembler variable should not be null' );
+				
+		}
+		
+		return null;
 	}
 }
