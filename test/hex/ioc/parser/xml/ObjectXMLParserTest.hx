@@ -84,14 +84,12 @@ class ObjectXMLParserTest
 		this._contextParser = new ApplicationXMLParser();
 		//this._contextParser.parse( applicationContext != null ? applicationContext : this._applicationContext, this._applicationAssembler, xml );
 		this._contextParser.parse( this._applicationAssembler, xml );
-		this._applicationAssembler.buildEverything();
 	}
 	
 	function build( xml : Xml ) : Void
 	{
 		this._contextParser = new ApplicationXMLParser();
 		this._contextParser.parse( this._applicationAssembler, xml );
-		this._applicationAssembler.buildEverything();
 	}
 
 	function getCoreFactory( assembler : ApplicationAssembler ) : ICoreFactory
