@@ -248,7 +248,6 @@ class XmlReader
 			var applicationAssembler = new $applicationAssemblerTypePath(); 
 			var applicationXmlParser = new $applicationXMLParserTypePath();
 			applicationXmlParser.parse( applicationAssembler, $p { xmlPack }.parse( $data ) );
-			applicationAssembler.buildEverything();
 			applicationAssembler; 
 		}
 	}

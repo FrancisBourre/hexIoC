@@ -22,8 +22,19 @@ class ApplicationXMLParser
 		}
 		else
 		{
-			this._parserCollection = new XMLParserCollection();
+			this._parserCollection = new XMLParserCollection( true );
 		}
+	}
+	
+	inline static public function parseString( assembler : IApplicationAssembler, s : String ) : Void
+	{
+		ApplicationXMLParser.parseXml( assembler, Xml.parse( s ) );
+	}
+	
+	inline static public function parseXml( assembler : IApplicationAssembler, xml : Xml ) : Void
+	{
+		var applicationXMLParser = new ApplicationXMLParser();
+		applicationXMLParser.parse( assembler, xml );
 	}
 
 	public function setApplicationAssembler( applicationAssembler : IApplicationAssembler ) : Void

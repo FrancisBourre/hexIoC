@@ -8,8 +8,11 @@ import hex.ioc.parser.AbstractParserCollection;
  */
 class XMLParserCollection extends AbstractParserCollection
 {
-	public function new() 
+	private var _isAutoBuild : Bool = false;
+	
+	public function new( isAutoBuild : Bool = false ) 
 	{
+		this._isAutoBuild = isAutoBuild;
 		super();
 	}
 	
@@ -18,5 +21,10 @@ class XMLParserCollection extends AbstractParserCollection
 		this._parserCommandCollection.push( new ApplicationContextXMLParser() );
 		this._parserCommandCollection.push( new StateXMLParser() );
 		this._parserCommandCollection.push( new ObjectXMLParser() );
+
+		if ( this._isAutoBuild )
+		{
+			this._parserCommandCollection.push( new AutoBuildLauncher() );
+		}
 	}
 }
