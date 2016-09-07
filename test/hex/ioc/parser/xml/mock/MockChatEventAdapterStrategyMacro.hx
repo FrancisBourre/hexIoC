@@ -26,7 +26,7 @@ class MockChatEventAdapterStrategyMacro extends MacroAdapterStrategy
 
 	override function _prepare() : Void
 	{
-		this.add( MockChatEventAdapterStrategyCommand ).withPayloads( [new ExecutionPayload(this._message + ":" + url, String)] ).withCompleteHandler( this._end );
+		this.add( MockChatEventAdapterStrategyCommand ).withPayload( [new ExecutionPayload(this._message + ":" + url, String)] ).withCompleteHandler( this._end );
 	}
 
 	function _end( async : IAsyncCommand ) : Void
