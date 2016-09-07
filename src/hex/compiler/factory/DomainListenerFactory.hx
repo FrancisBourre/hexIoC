@@ -161,7 +161,7 @@ class DomainListenerFactory
 						if ( DomainListenerFactory.isObservable( listenedDomain ) )
 						{
 							var dispatcherVar = macro $i{ listenedDomainName };
-							factoryVO.expressions.push( macro @:mergeBlock { $dispatcherVar.addHandler( $messageType, $listenerVar, $adapterExp ); } );
+							factoryVO.expressions.push( macro @:mergeBlock { $dispatcherVar.addHandler( $messageType, $adapterExp ); } );
 						}
 						else
 						{
@@ -180,7 +180,7 @@ class DomainListenerFactory
 							var dispatcherVar = macro @:pos( domainListenerArgument.filePosition ) $i{ listenedDomainName };
 							factoryVO.expressions.push( macro @:mergeBlock 
 							{ 
-								$dispatcherVar.addHandler( $messageType, $listenerVar, $listenerVar.$method ); 
+								$dispatcherVar.addHandler( $messageType, $listenerVar.$method ); 
 							} );
 						}
 						else

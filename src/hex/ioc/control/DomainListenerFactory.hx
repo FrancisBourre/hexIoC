@@ -67,7 +67,11 @@ class DomainListenerFactory
 					}
 					else
 					{
-						observable.addHandler( messageType, listener, callback );
+						var f : Array<Dynamic>->Void = function( rest : Array<Dynamic> ) : Void
+						{
+							Reflect.callMethod( listener, callback, rest );
+						}
+						observable.addHandler( messageType, Reflect.makeVarArgs( f ) );
 					}
 				}
 				else
