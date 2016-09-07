@@ -80,6 +80,31 @@ class XmlCompilerTest
 		return this._applicationAssembler.getApplicationContext( "applicationContext" ).getCoreFactory();
 	}
 	
+	@Test( "test building String with assembler" )
+	public function testBuildingStringWithAssembler() : Void
+	{
+		var assembler = new ApplicationAssembler();
+		assembler.getContextFactory( assembler.getApplicationContext( "applicationContext" ) ).getCoreFactory().register( "s2", "bonjour" );
+		
+		this._applicationAssembler = XmlCompiler.readXmlFileWithAssembler( assembler, "context/testBuildingString.xml" );
+
+		Assert.equals( "hello", this._getCoreFactory().locate( "s" ), "" );
+		Assert.equals( "bonjour", this._getCoreFactory().locate( "s2" ), "" );
+		Assert.equals( assembler, this._applicationAssembler, "" );
+	}
+	
+	@Test( "test building String instances with the same assembler at compile time and runtime" )
+	public function testBuildingStringsMixingCompileTimeAndRuntime() : Void
+	{
+		var assembler = new ApplicationAssembler();
+		ApplicationXMLParser.parseString( assembler, '<root name="applicationContext"><test id="s2" value="hola"/></root>' );
+		this._applicationAssembler = XmlCompiler.readXmlFileWithAssembler( assembler, "context/testBuildingString.xml" );
+
+		Assert.equals( "hello", this._getCoreFactory().locate( "s" ), "" );
+		Assert.equals( "hola", this._getCoreFactory().locate( "s2" ), "" );
+		Assert.equals( assembler, this._applicationAssembler, "" );
+	}
+	
 	@Test( "test building String" )
 	public function testBuildingString() : Void
 	{
