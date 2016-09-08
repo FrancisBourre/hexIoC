@@ -2,9 +2,10 @@ package hex.util;
 
 import hex.collection.ILocatorListener;
 import hex.di.IDependencyInjector;
+import hex.event.MessageType;
 import hex.ioc.core.ICoreFactory;
-import hex.ioc.parser.xml.mock.MockChatModule;
 import hex.metadata.IAnnotationProvider;
+import hex.structures.Size;
 import hex.unittest.assertion.Assert;
 
 /**
@@ -27,13 +28,13 @@ class FastEvalTest
 		this._coreFactory = null;
 	}
 	
-	/*@Test( "test eval method" )
+	@Test( "test eval method" )
 	public function testEvalMethod() : Void
 	{
-		var chat = new MockChatModule();
-		var f = FastEval.fromTarget( chat, "onTranslation", this._coreFactory );
-		Assert.equals( f, chat.onTranslation, "methods should be the same" );
-	}*/
+		var size = new Size( 10, 20 );
+		var width = FastEval.fromTarget( size, "width", this._coreFactory );
+		Assert.equals( size.width, width, "values should be the same" );
+	}
 }
 
 
@@ -103,6 +104,16 @@ private class MockCoreFactory implements ICoreFactory
     public function add( map : Map<String, Dynamic> ) : Void
 	{
 		//
+	}
+	
+	public function addHandler( messageType : MessageType, callback : Dynamic ) : Bool
+	{
+		return false;
+	}
+	
+	public function removeHandler( messageType : MessageType, callback : Dynamic ) : Bool
+	{
+		return false;
 	}
 
     public function addListener( listener : ILocatorListener<String, Dynamic> ) : Bool
