@@ -339,9 +339,17 @@ var applicationAssembler = XmlReader.readXmlFile( "example.xml" );
 	<msg id="message" value="hello production" if="production"/>
 </root>
 ```
+Define conditional value in hxml
 ```haxe
-applicationAssembler.addConditionalProperty ( ["production" => true, "debug" => false, "release" => false] );
+-D production=1
+-D debug=0
+-D release=0
 ```
+or directly in code
+```haxe
+hex.compiler.parser.xml.XmlCompiler.readXmlFile( "configuration/context.xml", null, ["production" => true, "debug" => false, "release" => false] );
+```
+*Remarques: 0 and 1 are auto-convert in Boolean*
 
 ## Preprocessing
 ```xml
