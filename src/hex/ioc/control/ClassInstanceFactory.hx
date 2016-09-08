@@ -39,7 +39,7 @@ class ClassInstanceFactory
 				if ( isModule && constructorVO.ID != null && constructorVO.ID.length > 0 )
 				{
 					DomainExpert.getInstance().registerDomain( DomainUtil.getDomain( constructorVO.ID, Domain ) );
-					AnnotationProvider.registerToDomain( factoryVO.contextFactory.getAnnotationProvider(), DomainUtil.getDomain( constructorVO.ID, Domain ) );
+					//AnnotationProvider.registerToDomain( factoryVO.contextFactory.getAnnotationProvider(), DomainUtil.getDomain( constructorVO.ID, Domain ) );
 				}
 			}
 			
