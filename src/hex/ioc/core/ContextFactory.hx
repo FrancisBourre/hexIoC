@@ -46,6 +46,8 @@ import hex.ioc.vo.MapVO;
 import hex.ioc.vo.MethodCallVO;
 import hex.ioc.vo.PropertyVO;
 import hex.ioc.vo.StateTransitionVO;
+import hex.log.DomainLogger;
+import hex.log.ILogger;
 import hex.metadata.AnnotationProvider;
 import hex.metadata.IAnnotationProvider;
 import hex.util.ClassUtil;
@@ -81,6 +83,9 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		injector.mapToValue( IBasicInjector, injector );
 		injector.mapToValue( IDependencyInjector, injector );
 		injector.mapToType( IMacroExecutor, MacroExecutor );
+		
+		var logger = new DomainLogger( domain );
+		injector.mapToValue( ILogger, logger );
 		
 		//build annotation provider
 		this._annotationProvider = AnnotationProvider.getAnnotationProvider( DomainUtil.getDomain( applicationContextName, Domain ) );
