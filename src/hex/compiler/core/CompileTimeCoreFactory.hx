@@ -8,8 +8,8 @@ import hex.core.IAnnotationParsable;
 import hex.di.IDependencyInjector;
 import hex.error.IllegalArgumentException;
 import hex.error.NoSuchElementException;
-import hex.event.Dispatcher;
-import hex.event.IDispatcher;
+import hex.event.ClosureDispatcher;
+import hex.event.MessageType;
 import hex.ioc.core.ICoreFactory;
 import hex.log.Stringifier;
 import hex.metadata.IAnnotationProvider;
@@ -23,7 +23,7 @@ import hex.util.ClassUtil;
 class CompileTimeCoreFactory implements ICoreFactory
 {
 	var _expressions 			: Array<Expr>;
-	var _dispatcher 			: IDispatcher<ILocatorListener<String, Dynamic>>;
+	var _dispatcher 			: ClosureDispatcher;
 	var _map 					: Map<String, {}>;
 
 	static var _fastEvalMethod : Dynamic->String->ICoreFactory->Dynamic = CompileTimeFastEval.fromTarget;
@@ -31,7 +31,7 @@ class CompileTimeCoreFactory implements ICoreFactory
 	public function new( expressions : Array<Expr> ) 
 	{
 		this._expressions 			= expressions;
-		this._dispatcher 			= new Dispatcher<ILocatorListener<String, Dynamic>>();
+		this._dispatcher 			= new ClosureDispatcher();
 		this._map 					= new Map();
 	}
 	
@@ -165,15 +165,27 @@ class CompileTimeCoreFactory implements ICoreFactory
         }
 	}
 	
+	public function addHandler( messageType : MessageType, callback : Dynamic ) : Bool
+	{
+		return this._dispatcher.addHandler( messageType, callback );
+	}
+	
+	public function removeHandler( messageType : MessageType, callback : Dynamic ) : Bool
+	{
+		return this._dispatcher.removeHandler( messageType, callback );
+	}
+	
 	public function addListener( listener : ILocatorListener<String, Dynamic> ) : Bool
-	{
-		return this._dispatcher.addListener( listener );
-	}
+    {
+		var b = this._dispatcher.addHandler( LocatorMessage.REGISTER, listener.onRegister );
+		return this._dispatcher.addHandler( LocatorMessage.UNREGISTER, listener.onUnregister ) || b;
+    }
 
-	public function removeListener( listener : ILocatorListener<String, Dynamic> ) : Bool
-	{
-		return this._dispatcher.removeListener( listener );
-	}
+    public function removeListener( listener : ILocatorListener<String, Dynamic> ) : Bool
+    {
+		var b = this._dispatcher.removeHandler( LocatorMessage.REGISTER, listener.onRegister );
+		return this._dispatcher.removeHandler( LocatorMessage.UNREGISTER, listener.onUnregister ) || b;
+    }
 	
 	public function buildInstance( qualifiedClassName : String, ?args : Array<Dynamic>, ?factoryMethod : String, ?singletonAccess : String, ?instantiateUnmapped : Bool = false ) : Dynamic
 	{
