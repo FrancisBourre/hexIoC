@@ -135,7 +135,7 @@ class DomainListenerFactory
 						
 						if ( method != null )
 						{
-							factoryVO.expressions.push( macro @:mergeBlock { $adapterVar.setCallBackMethod( $listenerVar, $listenerVar.$method ); } );
+							factoryVO.expressions.push( macro @:mergeBlock @:pos( domainListenerArgument.filePosition ) { $adapterVar.setCallBackMethod( $listenerVar, $listenerVar.$method ); } );
 						}
 
 						factoryVO.expressions.push( macro @:mergeBlock { $adapterVar.setAdapterClass( $p { StrategyClass } ); } );
