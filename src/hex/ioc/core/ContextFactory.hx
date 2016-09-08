@@ -83,7 +83,7 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		injector.mapToType( IMacroExecutor, MacroExecutor );
 		
 		//build annotation provider
-		this._annotationProvider = new AnnotationProvider();
+		this._annotationProvider = AnnotationProvider.getAnnotationProvider( DomainUtil.getDomain( applicationContextName, Domain ) );
 		this._annotationProvider.registerInjector( injector );
 		
 		//build coreFactory
@@ -97,7 +97,6 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		{
 			//ApplicationContext instantiation
 			this._applicationContext = new ApplicationContext( this._contextDispatcher, this._coreFactory, applicationContextName );
-			//this._applicationContext = new LightApplicationContext( this._coreFactory, applicationContextName );
 		}
 		
 		//register applicationContext
