@@ -90,15 +90,17 @@ class ClassInstanceFactory
 				
 				if ( MacroUtil.implementsInterface( classType, _moduleInterface ) )
 				{
-					//TODO register to AnnotationProvider
-					//AnnotationProvider.registerToDomain( factoryVO.contextFactory.getAnnotationProvider(), DomainUtil.getDomain( constructorVO.ID, Domain ) );
-
 					//TODO register for every instance (from singleton and/or factory)
-					//TODO optimize calls to DomainUtil
-					//DomainExpert.getInstance().registerDomain( moduleDomain );
 					factoryVO.expressions.push( macro @:mergeBlock { $p { _domainExpertClass } .getInstance().registerDomain( $p { _domainUtilClass } .getDomain( $v { idVar }, $p { _domainClass } ) ); } );
+					
 					//AnnotationProvider.registerToParentDomain( moduleDomain, factoryVO.contextFactory.getApplicationContext().getDomain() );
-				//	factoryVO.expressions.push( macro @:mergeBlock { $p { _annotationProviderClass } .registerToParentDomain( $p { _domainUtilClass } .getDomain( $v { idVar }, $p { _domainClass } ), ); } );
+					var applicationContextName = factoryVO.contextFactory.getApplicationContext().getName();
+
+					factoryVO.expressions.push( macro @:mergeBlock { 	$p{ _annotationProviderClass } .registerToParentDomain( 
+																			$p{ _domainUtilClass } .getDomain( $v{ idVar }, $p{ _domainClass } ),
+																				$p{ _domainUtilClass } .getDomain( $v{ applicationContextName }, $p{ _domainClass } )
+																																); 
+																	} );
 					factoryVO.moduleLocator.register( constructorVO.ID, new EmptyModule( constructorVO.ID ) );
 				}
 				
