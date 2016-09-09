@@ -11,6 +11,7 @@ import hex.event.MessageType;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.FactoryVO;
 import hex.log.ILogger;
+import hex.metadata.AnnotationProvider;
 import hex.module.IModule;
 import hex.util.MacroUtil;
 
@@ -26,6 +27,7 @@ class ClassInstanceFactory
 	}
 
 	#if macro
+	static var _annotationProviderClass 	= MacroUtil.getPack( Type.getClassName( AnnotationProvider ) );
 	static var _domainExpertClass 			= MacroUtil.getPack( Type.getClassName( DomainExpert ) );
 	static var _domainUtilClass 			= MacroUtil.getPack( Type.getClassName( DomainUtil ) );
 	static var _domainClass 				= MacroUtil.getPack( Type.getClassName( Domain ) );
@@ -93,7 +95,10 @@ class ClassInstanceFactory
 
 					//TODO register for every instance (from singleton and/or factory)
 					//TODO optimize calls to DomainUtil
+					//DomainExpert.getInstance().registerDomain( moduleDomain );
 					factoryVO.expressions.push( macro @:mergeBlock { $p { _domainExpertClass } .getInstance().registerDomain( $p { _domainUtilClass } .getDomain( $v { idVar }, $p { _domainClass } ) ); } );
+					//AnnotationProvider.registerToParentDomain( moduleDomain, factoryVO.contextFactory.getApplicationContext().getDomain() );
+				//	factoryVO.expressions.push( macro @:mergeBlock { $p { _annotationProviderClass } .registerToParentDomain( $p { _domainUtilClass } .getDomain( $v { idVar }, $p { _domainClass } ), ); } );
 					factoryVO.moduleLocator.register( constructorVO.ID, new EmptyModule( constructorVO.ID ) );
 				}
 				

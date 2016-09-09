@@ -38,8 +38,9 @@ class ClassInstanceFactory
 				var isModule : Bool = ClassUtil.classExtendsOrImplements( classReference, IModule );
 				if ( isModule && constructorVO.ID != null && constructorVO.ID.length > 0 )
 				{
-					DomainExpert.getInstance().registerDomain( DomainUtil.getDomain( constructorVO.ID, Domain ) );
-					//AnnotationProvider.registerToDomain( factoryVO.contextFactory.getAnnotationProvider(), DomainUtil.getDomain( constructorVO.ID, Domain ) );
+					var moduleDomain = DomainUtil.getDomain( constructorVO.ID, Domain );
+					DomainExpert.getInstance().registerDomain( moduleDomain );
+					AnnotationProvider.registerToParentDomain( moduleDomain, factoryVO.contextFactory.getApplicationContext().getDomain() );
 				}
 			}
 			
