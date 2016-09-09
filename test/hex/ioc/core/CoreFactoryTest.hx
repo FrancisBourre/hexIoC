@@ -249,7 +249,7 @@ private class MockAnnotationDataProvider implements IAnnotationProvider
 		
 	}
 	
-	public function registerMetaData( metaDataName : String, scope : Dynamic, providerMethod : String->Dynamic ) : Void
+	public function registerMetaData( metaDataName : String, providerMethod : String->Dynamic ) : Void
 	{
 		
 	}

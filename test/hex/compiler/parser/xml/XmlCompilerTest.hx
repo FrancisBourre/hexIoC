@@ -826,8 +826,8 @@ class XmlCompilerTest
 		
 		var annotationProvider = this._applicationAssembler.getContextFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) ).getAnnotationProvider();
 
-		annotationProvider.registerMetaData( "color", this, this.getColorByName );
-		annotationProvider.registerMetaData( "language", this, this.getText );
+		annotationProvider.registerMetaData( "color", this.getColorByName );
+		annotationProvider.registerMetaData( "language", this.getText );
 		
 		var mockObjectWithMetaData = this._getCoreFactory().locate( "mockObjectWithAnnotation" );
 		
