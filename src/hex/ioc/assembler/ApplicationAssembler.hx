@@ -8,6 +8,7 @@ import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.MethodCallVO;
 import hex.ioc.vo.PropertyVO;
 import hex.ioc.vo.StateTransitionVO;
+import hex.metadata.AnnotationProvider;
 
 /**
  * ...
@@ -35,6 +36,7 @@ class ApplicationAssembler implements IApplicationAssembler
 		
 		this._mApplicationContext = new Map();
 		this._mContextFactories = new Map();
+		AnnotationProvider.release();
 	}
 
 	public function buildProperty( applicationContext : AbstractApplicationContext, propertyVO : PropertyVO ) : Void
