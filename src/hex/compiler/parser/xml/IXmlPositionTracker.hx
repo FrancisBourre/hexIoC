@@ -1,4 +1,4 @@
-#if macro
+#if (macro || doc_gen)
 package hex.compiler.parser.xml;
 
 import haxe.macro.Expr.Position;

@@ -1,6 +1,6 @@
-#if macro
 package hex.ioc.parser.xml;
 
+#if macro
 import haxe.macro.Context;
 import hex.compiler.parser.xml.IXmlPositionTracker;
 import hex.ioc.error.IAssemblingExceptionReporter;

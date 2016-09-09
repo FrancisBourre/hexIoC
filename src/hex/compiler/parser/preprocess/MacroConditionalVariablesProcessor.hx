@@ -1,6 +1,6 @@
-#if macro
 package hex.compiler.parser.preprocess;
 
+#if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
 

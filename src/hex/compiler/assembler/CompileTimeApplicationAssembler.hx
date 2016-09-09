@@ -1,6 +1,6 @@
-#if macro
 package hex.compiler.assembler;
 
+#if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import hex.compiler.core.CompileTimeContextFactory;
