@@ -60,7 +60,7 @@ private class MockCoreFactory implements ICoreFactory
 		//
 	}
 	
-	public function buildInstance( qualifiedClassName : String, ?args : Array<Dynamic>, ?factoryMethod : String, ?singletonAccess : String, ?instantiateUnmapped : Bool = false ) : Dynamic
+	public function buildInstance( qualifiedClassName : String, ?args : Array<Dynamic>, ?factoryMethod : String, ?singletonAccess : String, ?staticRef : String, ?instantiateUnmapped : Bool = false ) : Dynamic
 	{
 		return null;
 	}
