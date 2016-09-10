@@ -4,6 +4,7 @@ import hex.collection.ILocatorListener;
 import hex.di.IDependencyInjector;
 import hex.event.MessageType;
 import hex.ioc.core.ICoreFactory;
+import hex.ioc.vo.ConstructorVODef;
 import hex.metadata.IAnnotationProvider;
 import hex.structures.Size;
 import hex.unittest.assertion.Assert;
@@ -60,7 +61,7 @@ private class MockCoreFactory implements ICoreFactory
 		//
 	}
 	
-	public function buildInstance( qualifiedClassName : String, ?args : Array<Dynamic>, ?factoryMethod : String, ?singletonAccess : String, ?staticRef : String, ?instantiateUnmapped : Bool = false ) : Dynamic
+	public function buildInstance( constructorVO : ConstructorVODef ) : Dynamic
 	{
 		return null;
 	}

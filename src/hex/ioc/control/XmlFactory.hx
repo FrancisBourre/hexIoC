@@ -2,6 +2,7 @@ package hex.ioc.control;
 
 import hex.data.IParser;
 import hex.ioc.error.ParsingException;
+import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.FactoryVO;
 
 /**
@@ -39,7 +40,7 @@ class XmlFactory
 				{
 					try
 					{
-						var parser : IParser<Dynamic> = factoryVO.coreFactory.buildInstance( factory );
+						var parser : IParser<Dynamic> = factoryVO.coreFactory.buildInstance( new ConstructorVO( null, factory ) );
 						constructorVO.result = parser.parse( Xml.parse( source ) );
 					}
 					catch ( error : Dynamic )
