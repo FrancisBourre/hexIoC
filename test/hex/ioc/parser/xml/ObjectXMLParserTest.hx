@@ -887,14 +887,14 @@ class ObjectXMLParserTest
 		Assert.equals( myModule, this._applicationContext.getInjector().getInstance( IAnotherMockMappedModule, "myModule" ), "" );
 	}
 	
-	/*@Ignore( "test static-ref with factory" )
+	@Test( "test static-ref with factory" )
 	public function testStaticRefWithFactory() : Void
 	{
 		this.build(  XmlReader.getXml( "context/staticRefFactory.xml" ) );
 		var doc : MockDocument = this._builderFactory.getCoreFactory().locate( "div" );
 		Assert.isNotNull( doc, "" );
 		Assert.isInstanceOf( doc, MockDocument, "" );
-	}*/
+	}
 	
 	@Test( "test if attribute" )
 	public function testIfAttribute() : Void

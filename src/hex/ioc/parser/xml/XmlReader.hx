@@ -103,8 +103,11 @@ class XmlReader
 					XmlReader._importHelper.forceCompilation( mapType );
 				}
 			}
-			
-			XmlReader._importHelper.includeStaticRef( xml.get( ContextAttributeList.STATIC_REF ) );
+	
+			if ( xml.get( ContextAttributeList.FACTORY ) == null ) 
+			{
+				XmlReader._importHelper.includeStaticRef( xml.get( ContextAttributeList.STATIC_REF ) );
+			}
 			
 			if ( type == ContextTypeList.CLASS )
 			{

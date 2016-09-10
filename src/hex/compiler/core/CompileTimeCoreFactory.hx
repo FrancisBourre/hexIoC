@@ -187,7 +187,7 @@ class CompileTimeCoreFactory implements ICoreFactory
 		return this._dispatcher.removeHandler( LocatorMessage.UNREGISTER, listener.onUnregister ) || b;
     }
 	
-	public function buildInstance( qualifiedClassName : String, ?args : Array<Dynamic>, ?factoryMethod : String, ?singletonAccess : String, ?instantiateUnmapped : Bool = false ) : Dynamic
+	public function buildInstance( qualifiedClassName : String, ?args : Array<Dynamic>, ?factoryMethod : String, ?singletonAccess : String, ?staticRef : String, ?instantiateUnmapped : Bool = false ) : Dynamic
 	{
 		var classReference 	: Class<Dynamic>;
 

@@ -142,6 +142,15 @@ class CoreFactoryTest
 		Assert.equals( 3, p.y, "'p.x' should return 3" );
 	}
 	
+	@Test( "Test buildInstance with factory and singleton access" )
+    public function testBuildInstanceWithFactoryAndStaticRef() : Void
+    {
+		var p : Point = this._coreFactory.buildInstance( "hex.ioc.core.MockClassForCoreFactoryTest", [2, 3], "getPoint", null, "instance" );
+		Assert.isNotNull( p, "'p' should not be null" );
+		Assert.equals( 2, p.x, "'p.x' should return 2" );
+		Assert.equals( 3, p.y, "'p.x' should return 3" );
+	}
+	
 	@Test( "Test buildInstance with injector" )
     public function testBuildInstanceWithInjector() : Void
     {

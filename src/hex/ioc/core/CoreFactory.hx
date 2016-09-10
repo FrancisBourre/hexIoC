@@ -179,12 +179,11 @@ class CoreFactory implements ICoreFactory
         }
 	}
 	
-	public function buildInstance( qualifiedClassName : String, ?args : Array<Dynamic>, ?factoryMethod : String, ?singletonAccess : String, ?instantiateUnmapped : Bool = false ) : Dynamic
+	public function buildInstance( qualifiedClassName : String, ?args : Array<Dynamic>, ?factoryMethod : String, ?singletonAccess : String, ?staticRef : String, ?instantiateUnmapped : Bool = false ) : Dynamic
 	{
 		var classReference 	: Class<Dynamic> 			= null;
 		var classFactory 	: ProxyFactoryMethodHelper 	= null;
 
-		//TODO Optimize and make unit tests
 		if ( this._classPaths.exists( qualifiedClassName ) )
 		{
 			classFactory = this._classPaths.get( qualifiedClassName );
@@ -209,47 +208,71 @@ class CoreFactory implements ICoreFactory
 		}
 		else if ( factoryMethod != null )
 		{
-			if ( singletonAccess != null )
+			if ( staticRef != null )
 			{
-				var inst : Dynamic = null;
-
-				var singletonCall : Dynamic = Reflect.field( classReference, singletonAccess );
-				if ( singletonCall != null )
+				var staticReference = Reflect.field( classReference, staticRef );
+				
+				if ( staticReference != null )
 				{
-					inst = singletonCall();
-				}
-				else
-				{
-					throw new IllegalArgumentException( qualifiedClassName + "." + singletonAccess + "()' singleton access failed." );
-				}
-
-				var methodReference : Dynamic = Reflect.field( inst, factoryMethod );
-				if ( methodReference != null )
-				{
-					obj = Reflect.callMethod( inst, methodReference, args );
+					var methodReference = Reflect.field( staticReference, factoryMethod );
+					if ( methodReference != null )
+					{
+						obj = Reflect.callMethod( staticReference, methodReference, args );
+					}
+					else
+					{
+						throw new IllegalArgumentException( qualifiedClassName + "." + staticReference + "." + factoryMethod + "()' factory method call failed." );
+					}
 				}
 				else 
 				{
-					throw new IllegalArgumentException( qualifiedClassName + "." + singletonAccess + "()." + factoryMethod + "()' factory method call failed." );
+					throw new IllegalArgumentException( qualifiedClassName + "." + staticReference + "' is not available." );
 				}
 			}
 			else
 			{
-				var methodReference : Dynamic = Reflect.field( classReference, factoryMethod );
-				
-				if ( methodReference != null )
+				if ( singletonAccess != null )
 				{
-					obj = Reflect.callMethod( classReference, methodReference, args );
+					var inst : Dynamic = null;
+
+					var singletonCall = Reflect.field( classReference, singletonAccess );
+					if ( singletonCall != null )
+					{
+						inst = singletonCall();
+					}
+					else
+					{
+						throw new IllegalArgumentException( qualifiedClassName + "." + singletonAccess + "()' singleton access failed." );
+					}
+
+					var methodReference : Dynamic = Reflect.field( inst, factoryMethod );
+					if ( methodReference != null )
+					{
+						obj = Reflect.callMethod( inst, methodReference, args );
+					}
+					else 
+					{
+						throw new IllegalArgumentException( qualifiedClassName + "." + singletonAccess + "()." + factoryMethod + "()' factory method call failed." );
+					}
 				}
-				else 
+				else
 				{
-					throw new IllegalArgumentException( qualifiedClassName + "." + factoryMethod + "()' factory method call failed." );
+					var methodReference : Dynamic = Reflect.field( classReference, factoryMethod );
+					
+					if ( methodReference != null )
+					{
+						obj = Reflect.callMethod( classReference, methodReference, args );
+					}
+					else 
+					{
+						throw new IllegalArgumentException( qualifiedClassName + "." + factoryMethod + "()' factory method call failed." );
+					}
 				}
 			}
-
+			
 		} else if ( singletonAccess != null )
 		{
-			var singletonCall : Dynamic = Reflect.field( classReference, singletonAccess );
+			var singletonCall = Reflect.field( classReference, singletonAccess );
 			if ( singletonCall != null )
 			{
 				obj = singletonCall();

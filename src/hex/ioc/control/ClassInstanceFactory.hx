@@ -44,7 +44,7 @@ class ClassInstanceFactory
 				}
 			}
 			
-			constructorVO.result = factoryVO.coreFactory.buildInstance( constructorVO.type, constructorVO.arguments, constructorVO.factory, constructorVO.singleton, constructorVO.injectInto );
+			constructorVO.result = factoryVO.coreFactory.buildInstance( constructorVO.type, constructorVO.arguments, constructorVO.factory, constructorVO.singleton, constructorVO.staticRef, constructorVO.injectInto );
 
 			if ( Std.is( constructorVO.result, IModule ) )
 			{
