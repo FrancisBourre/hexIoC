@@ -54,6 +54,11 @@ class XMLAttributeUtil
 		return xml.get( ContextAttributeList.INJECT_INTO ) == "true";
 	}
 
+	static public function getInjectorCreation( xml : Xml ) : Bool
+	{
+		return xml.get( ContextAttributeList.INJECTOR_CREATION ) == "true";
+	}
+	
 	static public function getMethod( xml : Xml ) : String
 	{
 		return xml.get( ContextAttributeList.METHOD );

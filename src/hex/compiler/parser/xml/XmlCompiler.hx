@@ -49,16 +49,17 @@ class XmlCompiler
 			exceptionReporter.throwMissingIDException( xml );
 		}
 
-		var type 		: String;
-		var args 		: Array<Dynamic>;
-		var mapType		: Array<String>;
-		var staticRef	: String;
+		var type 				: String;
+		var args 				: Array<Dynamic>;
+		var mapType				: Array<String>;
+		var staticRef			: String;
 		
-		var factory 	: String;
-		var singleton 	: String;
-		var injectInto	: Bool;
-		var ifList		: Array<String>;
-		var ifNotList	: Array<String>;
+		var factory 			: String;
+		var singleton 			: String;
+		var injectInto			: Bool;
+		var injectorCreation	: Bool;
+		var ifList				: Array<String>;
+		var ifNotList			: Array<String>;
 
 		// Build object.
 		type = xml.get( ContextAttributeList.TYPE );
@@ -79,13 +80,14 @@ class XmlCompiler
 		}
 		else
 		{
-			factory 	= xml.get( ContextAttributeList.FACTORY );
-			singleton 	= xml.get( ContextAttributeList.SINGLETON_ACCESS );
-			injectInto	= xml.get( ContextAttributeList.INJECT_INTO ) == "true";
-			mapType 	= XMLParserUtil.getMapType( xml );
-			staticRef 	= xml.get( ContextAttributeList.STATIC_REF );
-			ifList 		= XMLParserUtil.getIfList( xml );
-			ifNotList 	= XMLParserUtil.getIfNotList( xml );
+			factory 			= xml.get( ContextAttributeList.FACTORY );
+			singleton 			= xml.get( ContextAttributeList.SINGLETON_ACCESS );
+			injectInto			= xml.get( ContextAttributeList.INJECT_INTO ) == "true";
+			mapType 			= XMLParserUtil.getMapType( xml );
+			staticRef 			= xml.get( ContextAttributeList.STATIC_REF );
+			injectorCreation 	= xml.get( ContextAttributeList.INJECTOR_CREATION ) == "true";
+			ifList 				= XMLParserUtil.getIfList( xml );
+			ifNotList 			= XMLParserUtil.getIfNotList( xml );
 		
 			if ( type == null )
 			{
@@ -193,7 +195,7 @@ class XmlCompiler
 				}
 			}
 
-			var constructorVO 			= new ConstructorVO( identifier, type, args, factory, singleton, injectInto, null, mapType, staticRef );
+			var constructorVO 			= new ConstructorVO( identifier, type, args, factory, singleton, injectInto, null, mapType, staticRef, injectorCreation );
 			constructorVO.ifList 		= ifList;
 			constructorVO.ifNotList 	= ifNotList;
 			constructorVO.filePosition 	= constructorVO.ref == null ? exceptionReporter._positionTracker.makePositionFromNode( xml ) : exceptionReporter._positionTracker.makePositionFromAttribute( xml, ContextAttributeList.REF );

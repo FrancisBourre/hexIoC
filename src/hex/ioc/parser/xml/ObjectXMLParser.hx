@@ -43,15 +43,16 @@ class ObjectXMLParser extends AbstractXMLParser
 			throw new ParsingException( this + " encounters parsing error with '" + xml.nodeName + "' node. You must set an id attribute." );
 		}
 
-		var type 		: String;
-		var args 		: Array<Dynamic>;
-		var factory 	: String;
-		var singleton 	: String;
-		var injectInto	: Bool;
-		var mapType		: Array<String>;
-		var staticRef	: String;
-		var ifList		: Array<String>;
-		var ifNotList	: Array<String>;
+		var type 				: String;
+		var args 				: Array<Dynamic>;
+		var factory 			: String;
+		var singleton 			: String;
+		var injectInto			: Bool;
+		var injectorCreation	: Bool;
+		var mapType				: Array<String>;
+		var staticRef			: String;
+		var ifList				: Array<String>;
+		var ifNotList			: Array<String>;
 
 		// Build object.
 		type = XMLAttributeUtil.getType( xml );
@@ -69,19 +70,20 @@ class ObjectXMLParser extends AbstractXMLParser
 		}
 		else
 		{
-			args 		= ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR || type == ContextTypeList.MAPPING_CONFIG ) ? XMLParserUtil.getMapArguments( identifier, xml ) : XMLParserUtil.getArguments( identifier, xml, type );
-			factory 	= XMLAttributeUtil.getFactoryMethod( xml );
-			singleton 	= XMLAttributeUtil.getSingletonAccess( xml );
-			injectInto	= XMLAttributeUtil.getInjectInto( xml );
-			mapType 	= XMLParserUtil.getMapType( xml );
-			staticRef 	= XMLAttributeUtil.getStaticRef( xml );
+			args 				= ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR || type == ContextTypeList.MAPPING_CONFIG ) ? XMLParserUtil.getMapArguments( identifier, xml ) : XMLParserUtil.getArguments( identifier, xml, type );
+			factory 			= XMLAttributeUtil.getFactoryMethod( xml );
+			singleton 			= XMLAttributeUtil.getSingletonAccess( xml );
+			injectInto			= XMLAttributeUtil.getInjectInto( xml );
+			injectorCreation	= XMLAttributeUtil.getInjectorCreation( xml );
+			mapType 			= XMLParserUtil.getMapType( xml );
+			staticRef 			= XMLAttributeUtil.getStaticRef( xml );
 
 			if ( type == null )
 			{
 				type = staticRef != null ? ContextTypeList.STATIC_VARIABLE : ContextTypeList.STRING;
 			}
 			
-			var constructorVO 		= new ConstructorVO( identifier, type, args, factory, singleton, injectInto, null, mapType, staticRef );
+			var constructorVO 		= new ConstructorVO( identifier, type, args, factory, singleton, injectInto, null, mapType, staticRef, injectorCreation );
 			constructorVO.ifList 	= XMLParserUtil.getIfList( xml );
 			constructorVO.ifNotList = XMLParserUtil.getIfNotList( xml );
 
