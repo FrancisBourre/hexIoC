@@ -5,10 +5,11 @@ package hex.ioc.vo;
  */
 typedef ConstructorVODef =
 {
-	var type            : String;
-	var arguments       : Array<Dynamic>;
-	var factory         : String;
-	var singleton       : String;
-	var staticRef		: String;
-	var injectInto      : Bool;
+	var type            	: String;
+	var arguments       	: Array<Dynamic>;
+	var factory         	: String;
+	var singleton       	: String;
+	var staticRef			: String;
+	var injectInto      	: Bool;
+	var injectorCreation 	: Bool;
 }

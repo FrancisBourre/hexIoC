@@ -55,8 +55,14 @@ class ClassInstanceFactory
 			var singleton = constructorVO.singleton;
 			var factory = constructorVO.factory;
 			var staticRef = constructorVO.staticRef;
+			var classType = MacroUtil.getClassType( constructorVO.type, constructorVO.filePosition );
 			
-			if ( factory != null )
+			if ( constructorVO.injectorCreation && MacroUtil.implementsInterface( classType, _injectorContainerInterface ) )
+			{
+				e = macro @:pos( constructorVO.filePosition ) { __applicationContextInjector.instantiateUnmapped( $p { tp } ); };
+				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
+			}
+			else if ( factory != null )
 			{
 				//TODO implement the same behavior @runtime issue#1
 				if ( staticRef != null )
@@ -87,8 +93,6 @@ class ClassInstanceFactory
 			}
 			else
 			{
-				var classType = MacroUtil.getClassType( constructorVO.type, constructorVO.filePosition );
-				
 				if ( MacroUtil.implementsInterface( classType, _moduleInterface ) )
 				{
 					//TODO register for every instance (from singleton and/or factory)
@@ -113,12 +117,6 @@ class ClassInstanceFactory
 					var instanceVar = macro $i { idVar };
 					var annotationProviderVar = macro $i { "__annotationProvider" };
 					factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { $annotationProviderVar.parse( $instanceVar ); } );
-				}
-				
-				if ( constructorVO.injectInto && MacroUtil.implementsInterface( classType, _injectorContainerInterface ) )
-				{
-					var instanceVar = macro $i { idVar };
-					factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { __applicationContextInjector.injectInto( $instanceVar ); } );
 				}
 			}
 			

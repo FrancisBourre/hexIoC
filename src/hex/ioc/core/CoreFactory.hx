@@ -181,14 +181,13 @@ class CoreFactory implements ICoreFactory
 	}
 	
 	public function buildInstance( constructorVO : ConstructorVODef ) : Dynamic
-	//public function buildInstance( qualifiedClassName : String, ?args : Array<Dynamic>, ?factoryMethod : String, ?singletonAccess : String, ?staticRef : String, ?instantiateUnmapped : Bool = false ) : Dynamic
 	{
 		var qualifiedClassName 	= constructorVO.type;
 		var args 				= constructorVO.arguments;
 		var factoryMethod 		= constructorVO.factory;
 		var singletonAccess 	= constructorVO.singleton;
 		var staticRef 			= constructorVO.staticRef;
-		var instantiateUnmapped = constructorVO.injectInto;
+		var injectorCreation 	= constructorVO.injectorCreation;
 		
 		var classReference 	: Class<Dynamic> 			= null;
 		var classFactory 	: ProxyFactoryMethodHelper 	= null;
@@ -211,7 +210,7 @@ class CoreFactory implements ICoreFactory
 
 		var obj : Dynamic = null;
 		
-		if ( instantiateUnmapped )
+		if ( injectorCreation )
 		{
 			obj = this._injector.instantiateUnmapped( classReference );
 		}
