@@ -39,6 +39,7 @@ import hex.ioc.parser.xml.mock.MockInjectee;
 import hex.ioc.parser.xml.mock.MockIntVO;
 import hex.ioc.parser.xml.mock.MockMappedModule;
 import hex.ioc.parser.xml.mock.MockMessageParserModule;
+import hex.ioc.parser.xml.mock.MockModuleWithAnnotationProviding;
 import hex.ioc.parser.xml.mock.MockModuleWithServiceCallback;
 import hex.ioc.parser.xml.mock.MockReceiverModule;
 import hex.ioc.parser.xml.mock.MockRectangle;
@@ -789,6 +790,11 @@ class XmlCompilerTest
 		return name == "welcome" ? "Bienvenue" : null;
 	}
 	
+	function getAnotherText( name : String ) : String
+	{
+		return "anotherText";
+	}
+	
 	@Async( "test EventProxy" )
 	public function testEventProxy() : Void
 	{
@@ -834,6 +840,43 @@ class XmlCompilerTest
 		Assert.equals( 0xffffff, mockObjectWithMetaData.colorTest, "color should be the same" );
 		Assert.equals( "Bienvenue", mockObjectWithMetaData.languageTest, "text should be the same" );
 		Assert.isNull( mockObjectWithMetaData.propWithoutMetaData, "property should be null" );
+	}
+	
+	@Test( "Test AnnotationProvider with inheritance" )
+	public function testAnnotationProviderWithInheritance() : Void
+	{
+		var assembler = new ApplicationAssembler();
+		this._applicationAssembler = assembler;
+		
+		XmlCompiler.readXmlFileWithAssembler( assembler, "context/testMockObjectWithAnnotation.xml" );
+		
+		var annotationProvider = this._applicationAssembler.getContextFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) ).getAnnotationProvider();
+		annotationProvider.registerMetaData( "color", this.getColorByName );
+		annotationProvider.registerMetaData( "language", this.getText );
+		
+		XmlCompiler.readXmlFileWithAssembler( assembler, "context/testAnnotationProviderWithInheritance.xml" );
+		
+		var mockObjectWithMetaData = this._getCoreFactory().locate( "mockObjectWithAnnotation" );
+		
+		Assert.equals( 0xffffff, mockObjectWithMetaData.colorTest, "color should be the same" );
+		Assert.equals( "Bienvenue", mockObjectWithMetaData.languageTest, "text should be the same" );
+		Assert.isNull( mockObjectWithMetaData.propWithoutMetaData, "property should be null" );
+		
+		//
+		var module : MockModuleWithAnnotationProviding = this._getCoreFactory().locate( "module" );
+		var provider = module.getAnnotationProvider();
+		module.buildComponents();
+
+		Assert.equals( 0xffffff, module.mockObjectWithMetaData.colorTest, "color should be the same" );
+		Assert.equals( "Bienvenue", module.mockObjectWithMetaData.languageTest, "text should be the same" );
+		Assert.isNull( module.anotherMockObjectWithMetaData.languageTest, "property should be null when class is not implementing IAnnotationParsable" );
+		
+		provider.registerMetaData( "language", this.getAnotherText );
+		module.buildComponents();
+		
+		Assert.equals( 0xffffff, module.mockObjectWithMetaData.colorTest, "color should be the same" );
+		Assert.equals( "anotherText", module.mockObjectWithMetaData.languageTest, "text should be the same" );
+		Assert.isNull( module.anotherMockObjectWithMetaData.languageTest, "property should be null when class is not implementing IAnnotationParsable" );
 	}
 	
 	@Test( "test if attribute" )

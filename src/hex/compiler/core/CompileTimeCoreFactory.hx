@@ -11,6 +11,7 @@ import hex.error.NoSuchElementException;
 import hex.event.ClosureDispatcher;
 import hex.event.MessageType;
 import hex.ioc.core.ICoreFactory;
+import hex.ioc.vo.ConstructorVODef;
 import hex.log.Stringifier;
 import hex.metadata.IAnnotationProvider;
 import hex.service.IService;
@@ -187,8 +188,15 @@ class CompileTimeCoreFactory implements ICoreFactory
 		return this._dispatcher.removeHandler( LocatorMessage.UNREGISTER, listener.onUnregister ) || b;
     }
 	
-	public function buildInstance( qualifiedClassName : String, ?args : Array<Dynamic>, ?factoryMethod : String, ?singletonAccess : String, ?instantiateUnmapped : Bool = false ) : Dynamic
+	public function buildInstance( constructorVO : ConstructorVODef ) : Dynamic
 	{
+		var qualifiedClassName 	= constructorVO.type;
+		var args 				= constructorVO.arguments;
+		var factoryMethod 		= constructorVO.factory;
+		var singletonAccess 	= constructorVO.singleton;
+		var staticRef 			= constructorVO.staticRef;
+		var instantiateUnmapped = constructorVO.injectInto;
+		
 		var classReference 	: Class<Dynamic>;
 
 		try

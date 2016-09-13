@@ -7,6 +7,7 @@ import hex.di.annotation.IAnnotationDataProvider;
 import hex.di.annotation.InjectorClassVO;
 import hex.error.IllegalArgumentException;
 import hex.event.IEvent;
+import hex.ioc.vo.ConstructorVO;
 import hex.metadata.IAnnotationProvider;
 import hex.structures.Point;
 import hex.structures.PointFactory;
@@ -111,7 +112,7 @@ class CoreFactoryTest
 	@Test( "Test buildInstance with arguments" )
     public function testBuildInstanceWithArguments() : Void
     {
-		var size : Size = this._coreFactory.buildInstance( "hex.structures.Size", [2, 3] );
+		var size : Size = this._coreFactory.buildInstance( new ConstructorVO( null, "hex.structures.Size", [2, 3] ) );
 		Assert.isNotNull( size, "'size' should not be null" );
 		Assert.equals( 2, size.width, "'size.width' should return 2" );
 		Assert.equals( 3, size.height, "'size.height' should return 3" );
@@ -120,14 +121,14 @@ class CoreFactoryTest
 	@Test( "Test buildInstance with singleton access" )
     public function testBuildInstanceWithSingletonAccess() : Void
     {
-		var instance : MockClassForCoreFactoryTest = this._coreFactory.buildInstance( "hex.ioc.core.MockClassForCoreFactoryTest", null, null, "getInstance" );
+		var instance : MockClassForCoreFactoryTest = this._coreFactory.buildInstance( new ConstructorVO( null, "hex.ioc.core.MockClassForCoreFactoryTest", null, null, "getInstance" ) );
 		Assert.isInstanceOf( instance, MockClassForCoreFactoryTest, "should be instance of 'MockClassForCoreFactoryTest'" );
 	}
 	
 	@Test( "Test buildInstance with factory access" )
     public function testBuildInstanceWithFactoryAccess() : Void
     {
-		var size : Size = this._coreFactory.buildInstance( "hex.ioc.core.MockClassForCoreFactoryTest", [ 20.0, 30.0 ], "getSize", null );
+		var size : Size = this._coreFactory.buildInstance( new ConstructorVO( null, "hex.ioc.core.MockClassForCoreFactoryTest", [ 20.0, 30.0 ], "getSize", null ) );
 		Assert.isNotNull( size, "'size' should not be null" );
 		Assert.equals( 20.0, size.width, "'size.width' should return 20.0" );
 		Assert.equals( 30.0, size.height, "'size.height' should return 30.0" );
@@ -136,7 +137,16 @@ class CoreFactoryTest
 	@Test( "Test buildInstance with factory and singleton access" )
     public function testBuildInstanceWithFactoryAndSingletonAccess() : Void
     {
-		var p : Point = this._coreFactory.buildInstance( "hex.ioc.core.MockClassForCoreFactoryTest", [2, 3], "getPoint", "getInstance" );
+		var p : Point = this._coreFactory.buildInstance( new ConstructorVO( null, "hex.ioc.core.MockClassForCoreFactoryTest", [2, 3], "getPoint", "getInstance" ) );
+		Assert.isNotNull( p, "'p' should not be null" );
+		Assert.equals( 2, p.x, "'p.x' should return 2" );
+		Assert.equals( 3, p.y, "'p.x' should return 3" );
+	}
+	
+	@Test( "Test buildInstance with factory and singleton access" )
+    public function testBuildInstanceWithFactoryAndStaticRef() : Void
+    {
+		var p : Point = this._coreFactory.buildInstance( new ConstructorVO( null, "hex.ioc.core.MockClassForCoreFactoryTest", [2, 3], "getPoint", null, null, null, null, "instance" ) );
 		Assert.isNotNull( p, "'p' should not be null" );
 		Assert.equals( 2, p.x, "'p.x' should return 2" );
 		Assert.equals( 3, p.y, "'p.x' should return 3" );
@@ -145,7 +155,7 @@ class CoreFactoryTest
 	@Test( "Test buildInstance with injector" )
     public function testBuildInstanceWithInjector() : Void
     {
-		var instance = this._coreFactory.buildInstance( "hex.ioc.core.MockClassForCoreFactoryTest", null, null, null, true );
+		var instance = this._coreFactory.buildInstance( new ConstructorVO( null, "hex.ioc.core.MockClassForCoreFactoryTest", null, null, null, true ) );
 		Assert.isInstanceOf( instance, MockClassForCoreFactoryTest, "should be instance of 'MockClassForCoreFactoryTest'" );
 	}
 	
@@ -159,13 +169,13 @@ class CoreFactoryTest
 		this._coreFactory.addProxyFactoryMethod( "hex.structures.Point", factory, factory.build );
 		Assert.isTrue( this._coreFactory.hasProxyFactoryMethod( "hex.structures.Point" ), "'hasProxyFactoryMethod' should return true after class name has been registered" );
 		
-		var size = this._coreFactory.buildInstance( "hex.structures.Point", [ 20.0, 30.0 ] );
+		var size = this._coreFactory.buildInstance( new ConstructorVO( null, "hex.structures.Point", [ 20.0, 30.0 ] ) );
 		Assert.isInstanceOf( size, Size, "should be instance of 'hex.structures.Size'" );
 		Assert.equals( 20.0, size.width, "'size.width' should return 20.0" );
 		Assert.equals( 30.0, size.height, "'size.height' should return 30.0" );
 		
 		Assert.isTrue( this._coreFactory.removeProxyFactoryMethod( "hex.structures.Point" ), "'removeProxyFactoryMethod' should return true" );
-		Assert.methodCallThrows( IllegalArgumentException,  this._coreFactory, this._coreFactory.buildInstance, [ "hex.structures.Point", [ 20, 30 ] ], "'buildInstance' should throw an exception because this class is not available" );
+		Assert.methodCallThrows( IllegalArgumentException,  this._coreFactory, this._coreFactory.buildInstance, [ new ConstructorVO( null, "hex.structures.Point", [ 20, 30 ] ) ], "'buildInstance' should throw an exception because this class is not available" );
 	}
 	
 	@Test( "Test static proxy factory method" )
@@ -177,12 +187,12 @@ class CoreFactoryTest
 		this._coreFactory.addProxyFactoryMethod( "hex.structures.Size", PointFactory, PointFactory.build );
 		Assert.isTrue( this._coreFactory.hasProxyFactoryMethod( "hex.structures.Size" ), "'hasProxyFactoryMethod' should return true after class name has been registered" );
 		
-		var p = this._coreFactory.buildInstance( "hex.structures.Size", [ 20, 30 ] );
+		var p = this._coreFactory.buildInstance( new ConstructorVO( null, "hex.structures.Size", [ 20, 30 ] ) );
 		Assert.equals( 20, p.x, "'size.x' should return 20" );
 		Assert.equals( 30, p.y, "'size.y' should return 30" );
 		
 		Assert.isTrue( this._coreFactory.removeProxyFactoryMethod( "hex.structures.Size" ), "'removeProxyFactoryMethod' should return true" );
-		var size = this._coreFactory.buildInstance( "hex.structures.Size", [ 20.0, 30.0 ] );
+		var size = this._coreFactory.buildInstance( new ConstructorVO( null, "hex.structures.Size", [ 20.0, 30.0 ] ) );
 		Assert.isInstanceOf( size, Size, "should be instance of 'hex.structures.Size'" );
 		Assert.equals( 20.0, size.width, "'size.width' should return 20.0" );
 		Assert.equals( 30.0, size.height, "'size.height' should return 30.0" );
