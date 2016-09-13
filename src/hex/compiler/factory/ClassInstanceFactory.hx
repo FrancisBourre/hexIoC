@@ -1,9 +1,9 @@
 package hex.compiler.factory;
 
-import haxe.macro.Context;
 import haxe.macro.Expr;
 import hex.core.IAnnotationParsable;
 import hex.di.IDependencyInjector;
+import hex.di.IInjectorContainer;
 import hex.domain.Domain;
 import hex.domain.DomainExpert;
 import hex.domain.DomainUtil;
@@ -34,6 +34,7 @@ class ClassInstanceFactory
 	
 	static var _moduleInterface 			= MacroUtil.getClassType( Type.getClassName( IModule ) );
 	static var _annotationParsableInterface = MacroUtil.getClassType( Type.getClassName( IAnnotationParsable ) );
+	static var _injectorContainerInterface = MacroUtil.getClassType( Type.getClassName( IInjectorContainer ) );
 					
 	static public function build( factoryVO : FactoryVO ) : Dynamic
 	{
@@ -93,7 +94,6 @@ class ClassInstanceFactory
 					//TODO register for every instance (from singleton and/or factory)
 					factoryVO.expressions.push( macro @:mergeBlock { $p { _domainExpertClass } .getInstance().registerDomain( $p { _domainUtilClass } .getDomain( $v { idVar }, $p { _domainClass } ) ); } );
 					
-					//AnnotationProvider.registerToParentDomain( moduleDomain, factoryVO.contextFactory.getApplicationContext().getDomain() );
 					var applicationContextName = factoryVO.contextFactory.getApplicationContext().getName();
 
 					factoryVO.expressions.push( macro @:mergeBlock { 	$p{ _annotationProviderClass } .registerToParentDomain( 
@@ -113,6 +113,12 @@ class ClassInstanceFactory
 					var instanceVar = macro $i { idVar };
 					var annotationProviderVar = macro $i { "__annotationProvider" };
 					factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { $annotationProviderVar.parse( $instanceVar ); } );
+				}
+				
+				if ( constructorVO.injectInto && MacroUtil.implementsInterface( classType, _injectorContainerInterface ) )
+				{
+					var instanceVar = macro $i { idVar };
+					factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { __applicationContextInjector.injectInto( $instanceVar ); } );
 				}
 			}
 			
