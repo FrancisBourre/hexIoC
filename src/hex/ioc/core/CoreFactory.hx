@@ -12,6 +12,7 @@ import hex.ioc.vo.ConstructorVODef;
 import hex.log.Stringifier;
 import hex.metadata.IAnnotationProvider;
 import hex.service.IService;
+import hex.util.ArrayUtil;
 import hex.util.ClassUtil;
 import hex.util.FastEval;
 
@@ -222,7 +223,11 @@ class CoreFactory implements ICoreFactory
 				
 				if ( staticReference != null )
 				{
+					#if flash
+					obj = Reflect.callMethod( Reflect.field( classReference, staticRef ), Reflect.field( Reflect.field( classReference, staticRef ), factoryMethod ), args );
+					#else
 					var methodReference = Reflect.field( staticReference, factoryMethod );
+					
 					if ( methodReference != null )
 					{
 						obj = Reflect.callMethod( staticReference, methodReference, args );
@@ -231,6 +236,7 @@ class CoreFactory implements ICoreFactory
 					{
 						throw new IllegalArgumentException( qualifiedClassName + "." + staticReference + "." + factoryMethod + "()' factory method call failed." );
 					}
+					#end
 				}
 				else 
 				{
