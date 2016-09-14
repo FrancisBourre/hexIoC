@@ -2,14 +2,13 @@ package hex.ioc.parser.xml.assembler.mock;
 
 import hex.control.Request;
 import hex.control.command.BasicCommand;
-import hex.di.IInjectorContainer;
 import hex.ioc.assembler.AbstractApplicationContext;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class MockStateCommand extends BasicCommand implements IInjectorContainer
+class MockStateCommand extends BasicCommand
 {
 	static public var callCount : Int = 0;
 	static public var lastInjecteContext : AbstractApplicationContext;
