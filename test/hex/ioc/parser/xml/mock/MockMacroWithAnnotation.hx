@@ -17,6 +17,7 @@ class MockMacroWithAnnotation extends Macro implements IAnnotationParsable
     override function _prepare() : Void
     {
         this.add( MockCommandWithAnnotation );
+        this.add( MockAsyncCommandWithAnnotation );
 		MockMacroWithAnnotation.lastResult = this.languageTest;
     }
 }

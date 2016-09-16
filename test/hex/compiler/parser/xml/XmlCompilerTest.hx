@@ -34,6 +34,7 @@ import hex.ioc.parser.xml.mock.MockCaller;
 import hex.ioc.parser.xml.mock.MockChatModule;
 import hex.ioc.parser.xml.mock.MockClassWithInjectedProperty;
 import hex.ioc.parser.xml.mock.MockCommandWithAnnotation;
+import hex.ioc.parser.xml.mock.MockAsyncCommandWithAnnotation;
 import hex.ioc.parser.xml.mock.MockDocument;
 import hex.ioc.parser.xml.mock.MockFacebookService;
 import hex.ioc.parser.xml.mock.MockFruitVO;
@@ -903,6 +904,7 @@ class XmlCompilerTest
 	{
 		MockMacroWithAnnotation.lastResult = null;
 		MockCommandWithAnnotation.lastResult = null;
+		MockAsyncCommandWithAnnotation.lastResult = null;
 		
 		var applicationAssembler = new ApplicationAssembler();
         var applicationContext = applicationAssembler.getApplicationContext( "applicationContext" );
@@ -917,6 +919,7 @@ class XmlCompilerTest
 
 		Assert.equals( "value", MockMacroWithAnnotation.lastResult, "text should be the same" );
 		Assert.equals( "value", MockCommandWithAnnotation.lastResult, "text should be the same" );
+		Assert.equals( "value", MockAsyncCommandWithAnnotation.lastResult, "text should be the same" );
 	}
 
 	function _getValue( key : String ) return "value";
