@@ -9,7 +9,7 @@ import hex.di.IInjectorContainer;
  * ...
  * @author Francis Bourre
  */
-class MockChatEventAdapterStrategyCommand extends AsyncCommand implements IInjectorContainer
+class MockChatEventAdapterStrategyCommand extends AsyncCommand
 {
 	public function new() 
 	{
