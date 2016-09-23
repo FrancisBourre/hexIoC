@@ -33,11 +33,14 @@ import hex.ioc.parser.xml.mock.MockBooleanVO;
 import hex.ioc.parser.xml.mock.MockCaller;
 import hex.ioc.parser.xml.mock.MockChatModule;
 import hex.ioc.parser.xml.mock.MockClassWithInjectedProperty;
+import hex.ioc.parser.xml.mock.MockCommandWithAnnotation;
+import hex.ioc.parser.xml.mock.MockAsyncCommandWithAnnotation;
 import hex.ioc.parser.xml.mock.MockDocument;
 import hex.ioc.parser.xml.mock.MockFacebookService;
 import hex.ioc.parser.xml.mock.MockFruitVO;
 import hex.ioc.parser.xml.mock.MockInjectee;
 import hex.ioc.parser.xml.mock.MockIntVO;
+import hex.ioc.parser.xml.mock.MockMacroWithAnnotation;
 import hex.ioc.parser.xml.mock.MockMappedModule;
 import hex.ioc.parser.xml.mock.MockMessageParserModule;
 import hex.ioc.parser.xml.mock.MockModuleWithAnnotationProviding;
@@ -48,6 +51,7 @@ import hex.ioc.parser.xml.mock.MockSenderModule;
 import hex.ioc.parser.xml.mock.MockServiceProvider;
 import hex.ioc.parser.xml.mock.MockStubStatefulService;
 import hex.ioc.parser.xml.mock.MockTranslationModule;
+import hex.metadata.AnnotationProvider;
 import hex.structures.Point;
 import hex.structures.Size;
 import hex.unittest.assertion.Assert;
@@ -894,6 +898,32 @@ class XmlCompilerTest
 		Assert.equals( "anotherText", module.mockObjectWithMetaData.languageTest, "text should be the same" );
 		Assert.isNull( module.anotherMockObjectWithMetaData.languageTest, "property should be null when class is not implementing IAnnotationParsable" );
 	}
+	
+	@Test( "Test Macro with annotation" )
+	public function testMacroWithAnnotation() : Void
+	{
+		MockMacroWithAnnotation.lastResult = null;
+		MockCommandWithAnnotation.lastResult = null;
+		MockAsyncCommandWithAnnotation.lastResult = null;
+		
+		var applicationAssembler = new ApplicationAssembler();
+        var applicationContext = applicationAssembler.getApplicationContext( "applicationContext" );
+        var injector = applicationContext.getInjector();
+        
+        var annotationProvider = AnnotationProvider.getAnnotationProvider( applicationContext.getDomain() );
+        annotationProvider.registerMetaData( "Value", this._getValue );
+		
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/macroWithAnnotation.xml" );
+		
+		var annotationProvider = this._applicationAssembler.getContextFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) ).getAnnotationProvider();
+
+		Assert.equals( "value", MockMacroWithAnnotation.lastResult, "text should be the same" );
+		Assert.equals( "value", MockCommandWithAnnotation.lastResult, "text should be the same" );
+		Assert.equals( "value", MockAsyncCommandWithAnnotation.lastResult, "text should be the same" );
+	}
+
+	function _getValue( key : String ) return "value";
+		
 	
 	@Test( "test if attribute" )
 	public function testIfAttribute() : Void
