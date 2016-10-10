@@ -376,6 +376,21 @@ class XmlCompilerTest
 		Assert.isTrue( instance.postConstructWasCalled, "" );
 	}
 	
+	@Test( "test 'inject-into' attribute" )
+	public function testInjectIntoAttribute() : Void
+	{
+		var assembler = new ApplicationAssembler();
+		var injector = assembler.getContextFactory( assembler.getApplicationContext( "applicationContext" ) ).getCoreFactory().getInjector();
+		injector.mapToValue( String, 'hola mundo' );
+
+		this._applicationAssembler = XmlCompiler.readXmlFileWithAssembler( assembler, "context/injectIntoAttribute.xml" );
+
+		var instance : MockClassWithInjectedProperty = this._getCoreFactory().locate( "instance" );
+		Assert.isInstanceOf( instance, MockClassWithInjectedProperty, "" );
+		Assert.equals( "hola mundo", instance.property, "" );
+		Assert.isTrue( instance.postConstructWasCalled, "" );
+	}
+	
 	@Test( "test building XML with parser class" )
 	public function testBuildingXMLWithParserClass() : Void
 	{
