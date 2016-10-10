@@ -189,6 +189,7 @@ class CoreFactory implements ICoreFactory
 		var singletonAccess 	= constructorVO.singleton;
 		var staticRef 			= constructorVO.staticRef;
 		var injectorCreation 	= constructorVO.injectorCreation;
+		var injectInto 			= constructorVO.injectInto;
 		
 		var classReference 	: Class<Dynamic> 			= null;
 		var classFactory 	: ProxyFactoryMethodHelper 	= null;
@@ -325,6 +326,11 @@ class CoreFactory implements ICoreFactory
 				{
 					throw new IllegalArgumentException( "Instantiation of class '" + qualifiedClassName + "' failed with class factory and arguments: " + args + " : " + e );
 				}
+			}
+			
+			if ( injectInto )
+			{
+				this._injector.injectInto( obj );
 			}
 
 			if ( Std.is( obj, IAnnotationParsable ) )

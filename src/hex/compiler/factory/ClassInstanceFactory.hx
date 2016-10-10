@@ -100,23 +100,41 @@ class ClassInstanceFactory
 					
 					var applicationContextName = factoryVO.contextFactory.getApplicationContext().getName();
 
-					factoryVO.expressions.push( macro @:mergeBlock { 	$p{ _annotationProviderClass } .registerToParentDomain( 
-																			$p{ _domainUtilClass } .getDomain( $v{ idVar }, $p{ _domainClass } ),
-																				$p{ _domainUtilClass } .getDomain( $v{ applicationContextName }, $p{ _domainClass } )
-																																); 
-																	} );
+					factoryVO.expressions.push
+					( 
+						macro @:mergeBlock 	{ 	$p { _annotationProviderClass } .registerToParentDomain
+												( 
+													$p{ _domainUtilClass } .getDomain( $v{ idVar }, $p{ _domainClass } ),
+													$p{ _domainUtilClass } .getDomain( $v{ applicationContextName }, $p{ _domainClass } )
+												); 
+											} 
+					);
+					
 					factoryVO.moduleLocator.register( constructorVO.ID, new EmptyModule( constructorVO.ID ) );
 				}
 				
 				e = macro @:pos( constructorVO.filePosition ) { new $typePath( $a{ constructorVO.constructorArgs } ); };
 				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
 				
+				if ( constructorVO.injectInto && MacroUtil.implementsInterface( classType, _injectorContainerInterface ) )
+				{
+					var instanceVar = macro $i { idVar };
+					
+					//TODO throws an error if interface is not implemented
+					e = macro @:pos( constructorVO.filePosition ) { __applicationContextInjector.injectInto( $instanceVar ); };
+					factoryVO.expressions.push( macro @:mergeBlock { $e; } );
+					
+				}
 				
 				if ( MacroUtil.implementsInterface( classType, _annotationParsableInterface ) )
 				{
 					var instanceVar = macro $i { idVar };
 					var annotationProviderVar = macro $i { "__annotationProvider" };
-					factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { $annotationProviderVar.parse( $instanceVar ); } );
+					factoryVO.expressions.push
+					( 
+						macro @:pos( constructorVO.filePosition ) 
+							@:mergeBlock { $annotationProviderVar.parse( $instanceVar ); } 
+					);
 				}
 			}
 			
@@ -128,7 +146,11 @@ class ClassInstanceFactory
 				for ( mapType in mapTypes )
 				{
 					var classToMap = MacroUtil.getPack( mapType, constructorVO.filePosition );
-					factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { __applicationContextInjector.mapToValue( $p{ classToMap }, $instanceVar, $v { idVar } ); } );
+					factoryVO.expressions.push
+					( 
+						macro @:pos( constructorVO.filePosition ) 
+							@:mergeBlock { __applicationContextInjector.mapToValue( $p { classToMap }, $instanceVar, $v { idVar } ); } 
+					);
 				}
 			}
 		}

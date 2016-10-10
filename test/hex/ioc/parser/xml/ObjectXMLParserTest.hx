@@ -343,6 +343,20 @@ class ObjectXMLParserTest
 		Assert.isTrue( instance.postConstructWasCalled, "" );
 	}
 	
+	@Test( "test 'inject-into' attribute" )
+	public function testInjectIntoAttribute() : Void
+	{
+		var injector = this._applicationContext.getInjector();
+		injector.mapToValue( String, 'hola mundo' );
+
+		this.build(  XmlReader.getXml( "context/injectIntoAttribute.xml" ) );
+
+		var instance : MockClassWithInjectedProperty = this._builderFactory.getCoreFactory().locate( "instance" );
+		Assert.isInstanceOf( instance, MockClassWithInjectedProperty, "" );
+		Assert.equals( "hola mundo", instance.property, "" );
+		Assert.isTrue( instance.postConstructWasCalled, "" );
+	}
+	
 	@Test( "test building XML with parser class" )
 	public function testBuildingXMLWithParserClass() : Void
 	{
