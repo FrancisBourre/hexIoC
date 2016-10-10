@@ -1,0 +1,3 @@
+<root name="applicationContext">
+    <instance id="instance" type="hex.ioc.parser.xml.mock.MockClassWithInjectedProperty" inject-into="true"/>
+</root>
