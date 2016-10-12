@@ -43,6 +43,16 @@ class HashMapFactory
 					trace( "HashMapFactory.build() adds item with a 'null' key for '"  + item.value +"' value." );
 				}
 			}
+			
+			if ( constructorVO.mapTypes != null )
+			{
+				var mapTypes = constructorVO.mapTypes;
+				for ( mapType in mapTypes )
+				{
+					var classToMap : Class<Dynamic> = Type.resolveClass( mapType );
+					factoryVO.contextFactory.getApplicationContext().getInjector().mapToValue( classToMap, map, constructorVO.ID );
+				}
+			}
 		}
 
 		constructorVO.result = map;

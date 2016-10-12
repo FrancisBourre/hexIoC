@@ -51,6 +51,20 @@ class HashMapFactory
 					Context.warning( "HashMapFactory.build() adds item with a 'null' key for '"  + item.value +"' value.", constructorVO.filePosition );
 				}
 			}
+			
+			if ( constructorVO.mapTypes != null )
+			{
+				var mapTypes = constructorVO.mapTypes;
+				for ( mapType in mapTypes )
+				{
+					var classToMap = MacroUtil.getPack( mapType, constructorVO.filePosition );
+					factoryVO.expressions.push
+					( 
+						macro @:pos( constructorVO.filePosition ) 
+							@:mergeBlock { __applicationContextInjector.mapToValue( $p { classToMap }, $extVar, $v { idVar } ); } 
+					);
+				}
+			}
 		}
 		
 		return e;
