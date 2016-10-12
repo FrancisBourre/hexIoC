@@ -419,6 +419,24 @@ class ObjectXMLParserTest
 		Assert.equals( "banana", banana.toString(), "" );
 	}
 	
+	@Test( "test building HashMap with map-type" )
+	public function testBuildingHashMapWithMapType() : Void
+	{
+		this.build( XmlReader.getXml( "context/hashmapWithMapType.xml" ) );
+
+		var fruits : HashMap<Dynamic, MockFruitVO> = this._builderFactory.getCoreFactory().locate( "fruits" );
+		Assert.isNotNull( fruits, "" );
+
+		var orange 	: MockFruitVO = fruits.get( '0' );
+		var apple 	: MockFruitVO = fruits.get( '1' );
+
+		Assert.equals( "orange", orange.toString(), "" );
+		Assert.equals( "apple", apple.toString(), "" );
+		
+		var map = this._builderFactory.getCoreFactory().getInjector().getInstance( HashMap, "fruits" );
+		Assert.equals( fruits, map );
+	}
+	
 	@Test( "test building two modules listening each other" )
 	public function testBuildingTwoModulesListeningEachOther() : Void
 	{
