@@ -453,6 +453,24 @@ class XmlCompilerTest
 		Assert.equals( "banana", banana.toString(), "" );
 	}
 	
+	@Test( "test building HashMap with map-type" )
+	public function testBuildingHashMapWithMapType() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/hashmapWithMapType.xml" );
+
+		var fruits : HashMap<Dynamic, MockFruitVO> = this._getCoreFactory().locate( "fruits" );
+		Assert.isNotNull( fruits, "" );
+
+		var orange 	: MockFruitVO = fruits.get( '0' );
+		var apple 	: MockFruitVO = fruits.get( '1' );
+
+		Assert.equals( "orange", orange.toString(), "" );
+		Assert.equals( "apple", apple.toString(), "" );
+		
+		var map = this._getCoreFactory().getInjector().getInstance( HashMap, "fruits" );
+		Assert.equals( fruits, map );
+	}
+	
 	@Test( "test building two modules listening each other" )
 	public function testBuildingTwoModulesListeningEachOther() : Void
 	{
