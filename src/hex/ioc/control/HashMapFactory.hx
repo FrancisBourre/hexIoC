@@ -27,7 +27,7 @@ class HashMapFactory
 		if ( args.length == 0 )
 		{
 			#if debug
-			Logger.WARN( "HashMapFactory.build(" + args + ") returns an empty HashMap." );
+			Logger.warn( "HashMapFactory.build(" + args + ") returns an empty HashMap." );
 			#end
 
 		} else

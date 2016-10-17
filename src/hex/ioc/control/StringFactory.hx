@@ -36,7 +36,7 @@ class StringFactory
 		{
 			value = "";
 			#if debug
-			Logger.WARN( "StringFactory.build(" + value + ") returns empty String." );
+			Logger.warn( "StringFactory.build(" + value + ") returns empty String." );
 			#end
 		}
 
