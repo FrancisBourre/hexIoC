@@ -14,6 +14,11 @@ Inversion of Control system with DSL and modularity based on global and micro co
 * [hexState](https://github.com/DoclerLabs/hexState)
 * [hexService](https://github.com/DoclerLabs/hexService)
 
+## More examples
+If you need to understand the core IoC principles with live demos, the files below are a good introduction. They showcase all the features of the DSL:
+* [All DSL functional tests (context files)](https://github.com/DoclerLabs/hexIoC/tree/master/test/context)
+* [All DSL functional tests (haxe code)](https://github.com/DoclerLabs/hexIoC/blob/master/test/hex/compiler/parser/xml/XmlCompilerTest.hx)
+
 ## Parsing/building application context at compile-time
 ```haxe
 var applicationAssembler = XmlCompiler.readXmlFile( "example.xml" );
@@ -253,27 +258,19 @@ var applicationAssembler = XmlReader.readXmlFile( "example.xml" );
 
 ## State machine configuration
 ```xml
-<root name="applicationContext">
-	<initialState id="initialState" static-ref="hex.ioc.parser.xml.state.mock.MockStateEnum.INITIAL_STATE">
-		<method-call name="addTransition">
-			<argument static-ref="hex.ioc.parser.xml.state.mock.MockStateMessage.TRIGGER_NEXT_STATE"/>
-			<argument static-ref="hex.ioc.parser.xml.state.mock.MockStateEnum.NEXT_STATE"/>
-		</method-call>
+<root name="applicationContext" type="hex.ioc.parser.xml.assembler.mock.MockApplicationContext">
 
-		<method-call name="addExitCommand">
-			<argument type="Class" value="hex.ioc.parser.xml.state.mock.MockExitStateCommand"/>
-			<argument ref="myModule"/>
-		</method-call>
+	<state id="customState" ref="applicationContext.state.CUSTOM_STATE">
+		<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommandWithModule" context-owner="anotherModule"/>
+	</state>
+	
+	<state id="anotherState" ref="applicationContext.state.ANOTHER_STATE">
+		<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand" fire-once="true"/>
+	</state>
+	
+	<module id="module" type="hex.ioc.parser.xml.assembler.mock.MockModule" map-type="hex.module.IModule"/>
+	<module id="anotherModule" type="hex.ioc.parser.xml.assembler.mock.MockModule" map-type="hex.module.IModule"/>
 
-	</initialState>
-
-	<stateConfig id="stateConfig" type="hex.state.config.stateful.StatefulStateMachineConfig">
-		<argument ref="initialState"/>
-	</stateConfig>
-
-	<module id="myModule" type="hex.ioc.parser.xml.state.mock.MockModuleWorkingWithStates">
-		<argument ref="stateConfig"/>
-	</module>
 </root>
 ```
 
