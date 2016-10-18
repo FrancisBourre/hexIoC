@@ -166,10 +166,13 @@ var applicationAssembler = XmlReader.readXmlFile( "example.xml" );
 </root>
 ```
 
-## Building an HashMap
+## Building an 
+
+
+Map
 ```xml
 <root name="applicationContext">
-	<collection id="fruits" type="hex.core.HashMap">
+	<collection id="fruits" type="hex.collection.HashMap">
 		<item> <key value="0"/> <value ref="fruit0"/></item>
 		<item> <key type="Int" value="1"/> <value ref="fruit1"/></item>
 		<item> <key ref="stubKey"/> <value ref="fruit2"/></item>
