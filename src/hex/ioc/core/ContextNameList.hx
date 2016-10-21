@@ -19,6 +19,7 @@ class ContextNameList
 	static public inline var EVENT 								: String = "event";
 	static public inline var ENTER 								: String = "enter";
 	static public inline var EXIT 								: String = "exit";
+	static public inline var TRANSITION 						: String = "transition";
 	
 	static public var ROOT 										: String = "root";
 

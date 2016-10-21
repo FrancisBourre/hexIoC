@@ -3,6 +3,7 @@ package hex.compiler.parser.xml;
 import haxe.macro.Expr;
 import hex.error.NullPointerException;
 import hex.ioc.assembler.ApplicationAssembler;
+import hex.ioc.vo.TransitionVO;
 
 #if macro
 import hex.compiler.parser.xml.XmlParser;
@@ -397,8 +398,9 @@ class XmlCompiler
 		
 		var enterList 				= XmlCompiler._getCommandList( xml, ContextNameList.ENTER, exceptionReporter );
 		var exitList 				= XmlCompiler._getCommandList( xml, ContextNameList.EXIT, exceptionReporter );
+		var transitionList 			= XmlCompiler._getTransitionList( xml, ContextNameList.TRANSITION, exceptionReporter );
 		
-		var stateTransitionVO 		= new StateTransitionVO( identifier, staticReference, instanceReference, enterList, exitList );
+		var stateTransitionVO 		= new StateTransitionVO( identifier, staticReference, instanceReference, enterList, exitList, transitionList );
 		stateTransitionVO.ifList 	= XMLParserUtil.getIfList( xml );
 		stateTransitionVO.ifNotList = XMLParserUtil.getIfNotList( xml );
 		
@@ -414,6 +416,7 @@ class XmlCompiler
 		{
 			var item = iterator.next();
 			var commandClass = item.get( ContextAttributeList.COMMAND_CLASS );
+			var methodRef = item.get( ContextAttributeList.METHOD );
 			
 			try
 			{
@@ -427,10 +430,29 @@ class XmlCompiler
 			var commandMappingVO = 	{ 	commandClassName: commandClass, 
 										fireOnce: item.get( ContextAttributeList.FIRE_ONCE ) == "true", 
 										contextOwner: item.get( ContextAttributeList.CONTEXT_OWNER ),
+										methodRef: methodRef,
 										filePosition: exceptionReporter._positionTracker.makePositionFromNode( item )
 									};
 
 			list.push( commandMappingVO );
+		}
+		
+		return list;
+	}
+	
+	static public function _getTransitionList( xml : Xml, elementName : String, exceptionReporter : XmlAssemblingExceptionReporter ) : Array<TransitionVO>
+	{
+		var iterator = xml.elementsNamed( elementName );
+		var list : Array<TransitionVO> = [];
+		
+		while( iterator.hasNext() )
+		{
+			var item = iterator.next();
+
+			list.push( 	{ 	
+							messageReference: 	item.get( ContextAttributeList.MESSAGE ), 
+							stateReference: 	item.get( ContextAttributeList.STATE )
+						} );
 		}
 		
 		return list;

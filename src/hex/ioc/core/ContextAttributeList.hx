@@ -32,6 +32,8 @@ class ContextAttributeList
 	public static inline var IF 					: String = "if";
 	public static inline var IF_NOT 				: String = "if-not";
 	public static inline var FILE 					: String = "file";
+	public static inline var MESSAGE 				: String = "message";
+	public static inline var STATE 					: String = "state";
 	
 	function new() 
 	{

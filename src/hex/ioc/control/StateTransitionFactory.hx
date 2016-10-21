@@ -19,7 +19,6 @@ import hex.util.ClassUtil;
  */
 class StateTransitionFactory
 {
-
 	function new()
 	{
 
@@ -29,7 +28,7 @@ class StateTransitionFactory
 	{
 		var coreFactory : ICoreFactory = contextFactory.getCoreFactory();
 		
-		var state : State = null;
+		var state : State;
 		if ( vo.staticReference != null )
 		{
 			state = ClassUtil.getStaticVariableReference( vo.staticReference );
@@ -40,7 +39,9 @@ class StateTransitionFactory
 		}
 		else 
 		{
-			throw new BuildingException( "StateTransitionFactory.build failed with value object '" + vo + "'" );
+			//throw new BuildingException( "StateTransitionFactory.build failed with value object '" + vo + "'" );
+			state = new State( vo.ID );
+			coreFactory.register( vo.ID, state );
 		}
 		
 		var stateUnmapper = StateUnmapper.register( state );
@@ -53,43 +54,57 @@ class StateTransitionFactory
 		var enterList : Array<CommandMappingVO> = vo.enterList;
 		for ( enterVO in enterList )
 		{
-			var enterCommandClass : Class<ICommand> = cast ClassUtil.getClassReference( enterVO.commandClassName );
-			var enterMapping = new CommandMapping( enterCommandClass );
-			
-			var enterContextOwner : IContextOwner = null;
-			if ( enterVO.contextOwner != null )
+			if ( enterVO.methodRef != null )
 			{
-				enterContextOwner = new ContextOwnerWrapper( coreFactory, enterVO.contextOwner );
+				
 			}
-			
-			enterMapping.setContextOwner( enterContextOwner != null ? enterContextOwner : contextFactory.getApplicationContext() );
-			if ( enterVO.fireOnce )
+			else
 			{
-				enterMapping.once();
+				var enterCommandClass : Class<ICommand> = cast ClassUtil.getClassReference( enterVO.commandClassName );
+				var enterMapping = new CommandMapping( enterCommandClass );
+				
+				var enterContextOwner : IContextOwner = null;
+				if ( enterVO.contextOwner != null )
+				{
+					enterContextOwner = new ContextOwnerWrapper( coreFactory, enterVO.contextOwner );
+				}
+				
+				enterMapping.setContextOwner( enterContextOwner != null ? enterContextOwner : contextFactory.getApplicationContext() );
+				if ( enterVO.fireOnce )
+				{
+					enterMapping.once();
+				}
+				state.addEnterCommandMapping( enterMapping );
+				stateUnmapper.addEnterMapping( enterMapping  );
 			}
-			state.addEnterCommandMapping( enterMapping );
-			stateUnmapper.addEnterMapping( enterMapping  );
 		}
 		
 		var exitList : Array<CommandMappingVO> = vo.exitList;
 		for ( exitVO in exitList )
 		{
-			var exitCommandClass : Class<ICommand> = cast ClassUtil.getClassReference( exitVO.commandClassName );
-			var exitMapping = new CommandMapping( exitCommandClass );
-			
-			var exitContextOwner : IContextOwner = null;
-			if ( exitVO.contextOwner != null )
+			if ( exitVO.methodRef != null )
 			{
-				exitContextOwner = new ContextOwnerWrapper( coreFactory, exitVO.contextOwner );
+				
 			}
-			
-			exitMapping.setContextOwner( exitContextOwner != null ? exitContextOwner : contextFactory.getApplicationContext() );
-			if ( exitVO.fireOnce )
+			else
 			{
-				exitMapping.once();
+				var exitCommandClass : Class<ICommand> = cast ClassUtil.getClassReference( exitVO.commandClassName );
+				var exitMapping = new CommandMapping( exitCommandClass );
+				
+				var exitContextOwner : IContextOwner = null;
+				if ( exitVO.contextOwner != null )
+				{
+					exitContextOwner = new ContextOwnerWrapper( coreFactory, exitVO.contextOwner );
+				}
+				
+				exitMapping.setContextOwner( exitContextOwner != null ? exitContextOwner : contextFactory.getApplicationContext() );
+				if ( exitVO.fireOnce )
+				{
+					exitMapping.once();
+				}
+				state.addExitCommandMapping( exitMapping );
+				stateUnmapper.addExitMapping( exitMapping  );
 			}
-			state.addExitCommandMapping( exitMapping );
-			stateUnmapper.addExitMapping( exitMapping  );
 		}
 	}
 }

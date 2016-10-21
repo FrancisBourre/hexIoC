@@ -2,10 +2,12 @@ package hex.ioc.parser.xml;
 
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.IApplicationAssembler;
+import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.error.ParsingException;
 import hex.ioc.vo.CommandMappingVO;
 import hex.ioc.vo.StateTransitionVO;
+import hex.ioc.vo.TransitionVO;
 
 /**
  * ...
@@ -46,8 +48,9 @@ class StateXMLParser extends AbstractXMLParser
 		var instanceReference 		= XMLAttributeUtil.getRef( xml );
 		var enterList 				= this._buildList( xml, ContextNameList.ENTER );
 		var exitList 				= this._buildList( xml, ContextNameList.EXIT );
+		var transitionList 			= this._getTransitionList( xml, ContextNameList.TRANSITION );
 		
-		var stateTransitionVO 		= new StateTransitionVO( identifier, staticReference, instanceReference, enterList, exitList );
+		var stateTransitionVO 		= new StateTransitionVO( identifier, staticReference, instanceReference, enterList, exitList, transitionList );
 		stateTransitionVO.ifList 	= XMLParserUtil.getIfList( xml );
 		stateTransitionVO.ifNotList = XMLParserUtil.getIfNotList( xml );
 		
@@ -58,15 +61,34 @@ class StateXMLParser extends AbstractXMLParser
 	{
 		var it = xml.elementsNamed( nodeName );
 		var list : Array<CommandMappingVO> = [];
+		
 		while( it.hasNext() )
 		{
 			var item = it.next();
 			list.push( { 
 							commandClassName: XMLAttributeUtil.getCommandClass( item ), 
 							fireOnce: XMLAttributeUtil.getFireOnce( item ), 
-							contextOwner: XMLAttributeUtil.getContextOwner( item ) 
+							contextOwner: XMLAttributeUtil.getContextOwner( item ),
+							methodRef: XMLAttributeUtil.getMethod( item )
 						} );
 		}
+		
+		return list;
+	}
+	
+	function _getTransitionList( xml : Xml, nodeName : String ) : Array<TransitionVO>
+	{
+		var it = xml.elementsNamed( nodeName );
+		var list : Array<TransitionVO> = [];
+		while( it.hasNext() )
+		{
+			var item = it.next();
+			list.push( { 
+							messageReference: 	item.get( ContextAttributeList.MESSAGE ), 
+							stateReference: 	item.get( ContextAttributeList.STATE )
+						} );
+		}
+		
 		return list;
 	}
 }
