@@ -110,14 +110,13 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 		#end
 		
-		var AbstractApplicationContextClass = MacroUtil.getPack( Type.getClassName( AbstractApplicationContext ) );
+		/*var AbstractApplicationContextClass = MacroUtil.getPack( Type.getClassName( AbstractApplicationContext ) );
 		var ApplicationContextClass = MacroUtil.getPack( Type.getClassName( ApplicationContext ) );
 		this._expressions.push( macro @:mergeBlock
 		{ 
 			applicationContext.getInjector().mapToValue( $p { AbstractApplicationContextClass }, applicationContext );
 			applicationContext.getInjector().mapToValue( $p { ApplicationContextClass }, applicationContext );
-
-		} );
+		} );*/
 	}
 	
 	public function dispatchAssemblingEnd() : Void
