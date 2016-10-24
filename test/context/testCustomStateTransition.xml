@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<root name="applicationContext">
+	
+	<message id="messageID" type="hex.event.MessageType">
+		<argument value="messageName"/>
+	</message>
+	
+	<message id="anotherMessageID" type="hex.event.MessageType">
+		<argument value="anotherMessageName"/>
+	</message>
+	
+	<state id="customState">
+		<enter method="module.callback"/>
+		<transition>
+				<message ref="messageID"/>
+				<state ref="anotherCustomState"/>
+		</transition>
+	</state>
+	
+	<state id="anotherCustomState">
+		<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand"/>
+		<transition>
+				<message ref="anotherMessageID"/>
+				<state ref="customState"/>
+		</transition>
+	</state>
+	
+	<module id="module" type="hex.ioc.parser.xml.assembler.mock.MockModule" map-type="hex.module.IModule"/>
+	
+</root>

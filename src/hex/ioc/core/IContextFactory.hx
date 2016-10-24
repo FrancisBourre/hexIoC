@@ -6,6 +6,7 @@ import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.MethodCallVO;
 import hex.ioc.vo.PropertyVO;
 import hex.ioc.vo.StateTransitionVO;
+import hex.ioc.vo.TransitionVO;
 import hex.metadata.IAnnotationProvider;
 
 /**
@@ -17,7 +18,7 @@ interface IContextFactory
 	
 	function registerStateTransitionVO( stateTransitionVO : StateTransitionVO ) : Void;
 	
-	function buildStateTransition( key : String ) : Void;
+	function buildStateTransition( key : String ) : Array<TransitionVO>;
 	
 	function buildAllStateTransitions() : Void;
 	

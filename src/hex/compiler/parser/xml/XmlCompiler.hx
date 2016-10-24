@@ -3,6 +3,7 @@ package hex.compiler.parser.xml;
 import haxe.macro.Expr;
 import hex.error.NullPointerException;
 import hex.ioc.assembler.ApplicationAssembler;
+import hex.ioc.vo.TransitionVO;
 
 #if macro
 import hex.compiler.parser.xml.XmlParser;
@@ -397,8 +398,9 @@ class XmlCompiler
 		
 		var enterList 				= XmlCompiler._getCommandList( xml, ContextNameList.ENTER, exceptionReporter );
 		var exitList 				= XmlCompiler._getCommandList( xml, ContextNameList.EXIT, exceptionReporter );
+		var transitionList 			= XmlCompiler._getTransitionList( xml, exceptionReporter );
 		
-		var stateTransitionVO 		= new StateTransitionVO( identifier, staticReference, instanceReference, enterList, exitList );
+		var stateTransitionVO 		= new StateTransitionVO( identifier, staticReference, instanceReference, enterList, exitList, transitionList );
 		stateTransitionVO.ifList 	= XMLParserUtil.getIfList( xml );
 		stateTransitionVO.ifNotList = XMLParserUtil.getIfNotList( xml );
 		
@@ -414,7 +416,7 @@ class XmlCompiler
 		{
 			var item = iterator.next();
 			var commandClass = item.get( ContextAttributeList.COMMAND_CLASS );
-			
+			var methodRef = item.get( ContextAttributeList.METHOD );
 			try
 			{
 				XmlCompiler._importHelper.forceCompilation( commandClass );
@@ -427,10 +429,36 @@ class XmlCompiler
 			var commandMappingVO = 	{ 	commandClassName: commandClass, 
 										fireOnce: item.get( ContextAttributeList.FIRE_ONCE ) == "true", 
 										contextOwner: item.get( ContextAttributeList.CONTEXT_OWNER ),
+										methodRef: methodRef,
 										filePosition: exceptionReporter._positionTracker.makePositionFromNode( item )
 									};
 
 			list.push( commandMappingVO );
+		}
+		
+		return list;
+	}
+	
+	static public function _getTransitionList( xml : Xml, exceptionReporter : XmlAssemblingExceptionReporter ) : Array<TransitionVO>
+	{
+		var iterator = xml.elementsNamed( ContextNameList.TRANSITION );
+		var list : Array<TransitionVO> = [];
+		
+		while( iterator.hasNext() )
+		{
+			var transition = iterator.next();
+			var message = transition.elementsNamed( ContextNameList.MESSAGE ).next();
+			var state = transition.elementsNamed( ContextNameList.STATE ).next();
+
+			var vo = new TransitionVO();
+			vo.messageReference = message.get( ContextAttributeList.REF ) != null ?
+													message.get( ContextAttributeList.REF ):
+														message.get( ContextAttributeList.STATIC_REF );
+														
+			vo.stateReference = state.get( ContextAttributeList.REF ) != null ?
+													state.get( ContextAttributeList.REF ):
+														state.get( ContextAttributeList.STATIC_REF );
+			list.push( vo );
 		}
 		
 		return list;
@@ -518,9 +546,6 @@ class XmlCompiler
 		}
 		
 		var assembler = XmlCompiler._assembler;
-		
-		//var applicationAssemblerVar = assemblerID == null ? macro $i{"applicationAssembler"} : macro $i{assemblerID};
-		//var applicationAssemblerVar = "applicationAssembler";
 
 		//Create runtime applicationAssembler
 		var applicationAssemblerTypePath = MacroUtil.getTypePath( Type.getClassName( ApplicationAssembler ) );
