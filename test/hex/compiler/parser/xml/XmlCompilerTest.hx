@@ -117,10 +117,6 @@ class XmlCompilerTest
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/testBuildingString.xml" );
 		var s : String = this._getCoreFactory().locate( "s" );
 		Assert.equals( "hello", s, "" );
-		
-		this._applicationContext = this._applicationAssembler.getApplicationContext( "applicationContext" );
-		Assert.equals( this._applicationContext, this._applicationContext.getInjector().getInstance( AbstractApplicationContext ) );
-		
 	}
 	
 	@Test( "test building Int" )
