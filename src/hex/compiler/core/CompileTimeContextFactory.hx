@@ -25,6 +25,7 @@ import hex.core.HashCodeFactory;
 import hex.event.IDispatcher;
 import hex.event.IEvent;
 import hex.ioc.assembler.AbstractApplicationContext;
+import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.core.IContextFactory;
 import hex.ioc.core.ICoreFactory;
@@ -42,6 +43,7 @@ import hex.ioc.vo.MapVO;
 import hex.ioc.vo.MethodCallVO;
 import hex.ioc.vo.PropertyVO;
 import hex.ioc.vo.StateTransitionVO;
+import hex.ioc.vo.TransitionVO;
 import hex.metadata.IAnnotationProvider;
 import hex.util.MacroUtil;
 
@@ -65,6 +67,8 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	var _methodCallVOLocator 		: MethodCallVOLocator;
 	var _domainListenerVOLocator 	: DomainListenerVOLocator;
 	var _stateTransitionVOLocator 	: StateTransitionVOLocator;
+	
+	var _transitions				: Array<TransitionVO>;
 	
 	public function new( expressions : Array<Expr>, applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null  )
 	{
@@ -95,10 +99,6 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		{
 			this._applicationContext = new AbstractApplicationContext( this._coreFactory, applicationContextName );
 		}
-		
-		//register applicationContext
-		/*injector.mapToValue( ApplicationContext, this._applicationContext );*/
-		//this._coreFactory.register( applicationContextName, this._applicationContext );
 
 		this._init();
 	}
@@ -109,6 +109,15 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.ASSEMBLING_START" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 		#end
+		
+		var AbstractApplicationContextClass = MacroUtil.getPack( Type.getClassName( AbstractApplicationContext ) );
+		var ApplicationContextClass = MacroUtil.getPack( Type.getClassName( ApplicationContext ) );
+		this._expressions.push( macro @:mergeBlock
+		{ 
+			applicationContext.getInjector().mapToValue( $p { AbstractApplicationContextClass }, applicationContext );
+			applicationContext.getInjector().mapToValue( $p { ApplicationContextClass }, applicationContext );
+
+		} );
 	}
 	
 	public function dispatchAssemblingEnd() : Void
@@ -129,27 +138,31 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		this._stateTransitionVOLocator.register( stateTransitionVO.ID, stateTransitionVO );
 	}
 	
-	public function buildStateTransition( key : String ) : Void
+	public function buildStateTransition( key : String ) : Array<TransitionVO>
 	{
 		#if macro
+		var transitions : Array<TransitionVO> = null;
 		if ( this._stateTransitionVOLocator.isRegisteredWithKey( key ) )
 		{
 			var stateTransitionVO = this._stateTransitionVOLocator.locate( key );
 			stateTransitionVO.expressions = this._expressions;
-			StateTransitionFactory.build( stateTransitionVO, this );
+			transitions = StateTransitionFactory.build( stateTransitionVO, this );
 			this._stateTransitionVOLocator.unregister( key );
 		}
+		return transitions;
 		#end
 	}
 	
 	public function buildAllStateTransitions() : Void
 	{
+		this._transitions = [];
 		var keys : Array<String> = this._stateTransitionVOLocator.keys();
+		
 		for ( key in keys )
 		{
-			this.buildStateTransition( key );
+			this._transitions = this._transitions.concat( this.buildStateTransition( key ) );
 		}
-		
+
 		#if macro
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.STATE_TRANSITIONS_BUILT" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
@@ -331,6 +344,8 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.OBJECTS_BUILT" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 		#end
+		
+		StateTransitionFactory.flush( this._expressions, this._transitions );
 	}
 	
 	public function registerDomainListenerVO( domainListenerVO : DomainListenerVO ) : Void

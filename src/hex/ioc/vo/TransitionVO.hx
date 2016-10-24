@@ -1,15 +1,23 @@
 package hex.ioc.vo;
 
+import hex.state.State;
+
 /**
  * ...
  * @author Francis Bourre
  */
-typedef TransitionVO = 
+class TransitionVO
 {
-	public var messageReference			: String;
-	public var stateReference			: String;
+	public function new()
+	{
+		
+	}
+	
+	public var stateVarName			: String;
+	public var messageReference		: String;
+	public var stateReference		: String;
 	
 	#if macro
-	@:optional var filePosition		: haxe.macro.Expr.Position;
+	public var filePosition			: haxe.macro.Expr.Position;
 	#end
 }

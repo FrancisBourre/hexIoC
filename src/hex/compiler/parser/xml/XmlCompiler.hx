@@ -398,7 +398,7 @@ class XmlCompiler
 		
 		var enterList 				= XmlCompiler._getCommandList( xml, ContextNameList.ENTER, exceptionReporter );
 		var exitList 				= XmlCompiler._getCommandList( xml, ContextNameList.EXIT, exceptionReporter );
-		var transitionList 			= XmlCompiler._getTransitionList( xml, ContextNameList.TRANSITION, exceptionReporter );
+		var transitionList 			= XmlCompiler._getTransitionList( xml, exceptionReporter );
 		
 		var stateTransitionVO 		= new StateTransitionVO( identifier, staticReference, instanceReference, enterList, exitList, transitionList );
 		stateTransitionVO.ifList 	= XMLParserUtil.getIfList( xml );
@@ -417,7 +417,6 @@ class XmlCompiler
 			var item = iterator.next();
 			var commandClass = item.get( ContextAttributeList.COMMAND_CLASS );
 			var methodRef = item.get( ContextAttributeList.METHOD );
-			
 			try
 			{
 				XmlCompiler._importHelper.forceCompilation( commandClass );
@@ -440,19 +439,26 @@ class XmlCompiler
 		return list;
 	}
 	
-	static public function _getTransitionList( xml : Xml, elementName : String, exceptionReporter : XmlAssemblingExceptionReporter ) : Array<TransitionVO>
+	static public function _getTransitionList( xml : Xml, exceptionReporter : XmlAssemblingExceptionReporter ) : Array<TransitionVO>
 	{
-		var iterator = xml.elementsNamed( elementName );
+		var iterator = xml.elementsNamed( ContextNameList.TRANSITION );
 		var list : Array<TransitionVO> = [];
 		
 		while( iterator.hasNext() )
 		{
-			var item = iterator.next();
+			var transition = iterator.next();
+			var message = transition.elementsNamed( ContextNameList.MESSAGE ).next();
+			var state = transition.elementsNamed( ContextNameList.STATE ).next();
 
-			list.push( 	{ 	
-							messageReference: 	item.get( ContextAttributeList.MESSAGE ), 
-							stateReference: 	item.get( ContextAttributeList.STATE )
-						} );
+			var vo = new TransitionVO();
+			vo.messageReference = message.get( ContextAttributeList.REF ) != null ?
+													message.get( ContextAttributeList.REF ):
+														message.get( ContextAttributeList.STATIC_REF );
+														
+			vo.stateReference = state.get( ContextAttributeList.REF ) != null ?
+													state.get( ContextAttributeList.REF ):
+														state.get( ContextAttributeList.STATIC_REF );
+			list.push( vo );
 		}
 		
 		return list;
@@ -540,9 +546,6 @@ class XmlCompiler
 		}
 		
 		var assembler = XmlCompiler._assembler;
-		
-		//var applicationAssemblerVar = assemblerID == null ? macro $i{"applicationAssembler"} : macro $i{assemblerID};
-		//var applicationAssemblerVar = "applicationAssembler";
 
 		//Create runtime applicationAssembler
 		var applicationAssemblerTypePath = MacroUtil.getTypePath( Type.getClassName( ApplicationAssembler ) );

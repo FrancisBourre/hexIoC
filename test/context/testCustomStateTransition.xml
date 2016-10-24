@@ -11,15 +11,20 @@
 	
 	<state id="customState">
 		<enter method="module.callback"/>
-		<transition message="messageID" state="anotherCustomState" />
+		<transition>
+				<message ref="messageID"/>
+				<state ref="anotherCustomState"/>
+		</transition>
 	</state>
 	
 	<state id="anotherCustomState">
 		<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand"/>
-		<transition message="anotherMessageID" state="customState" />
+		<transition>
+				<message ref="anotherMessageID"/>
+				<state ref="customState"/>
+		</transition>
 	</state>
 	
 	<module id="module" type="hex.ioc.parser.xml.assembler.mock.MockModule" map-type="hex.module.IModule"/>
-	<module id="anotherModule" type="hex.ioc.parser.xml.assembler.mock.MockModule" map-type="hex.module.IModule"/>
 	
 </root>

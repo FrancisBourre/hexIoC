@@ -9,6 +9,7 @@ import hex.ioc.di.ContextOwnerWrapper;
 import hex.ioc.error.BuildingException;
 import hex.ioc.vo.CommandMappingVO;
 import hex.ioc.vo.StateTransitionVO;
+import hex.ioc.vo.TransitionVO;
 import hex.state.State;
 import hex.state.StateUnmapper;
 import hex.util.ClassUtil;
@@ -24,7 +25,7 @@ class StateTransitionFactory
 
 	}
 	
-	static public function build( vo : StateTransitionVO, contextFactory : IContextFactory ) : Void
+	static public function build( vo : StateTransitionVO, contextFactory : IContextFactory ) : Array<TransitionVO>
 	{
 		var coreFactory : ICoreFactory = contextFactory.getCoreFactory();
 		
@@ -39,7 +40,6 @@ class StateTransitionFactory
 		}
 		else 
 		{
-			//throw new BuildingException( "StateTransitionFactory.build failed with value object '" + vo + "'" );
 			state = new State( vo.ID );
 			coreFactory.register( vo.ID, state );
 		}
@@ -56,7 +56,20 @@ class StateTransitionFactory
 		{
 			if ( enterVO.methodRef != null )
 			{
+				if ( enterVO.fireOnce )
+				{
+					throw new BuildingException( "transition's method callback cannot be fired once" );
+				}
 				
+				var refs 		= enterVO.methodRef.split( "." );
+				var ref 		= refs.shift();
+				var methodName 	= refs.shift();
+				
+				state.addEnterHandler( function ( s : State )
+				{ 
+					var target = coreFactory.locate( ref );
+					Reflect.callMethod( target, Reflect.field( target, methodName ), [ s ] ); 
+				} );
 			}
 			else
 			{
@@ -84,7 +97,20 @@ class StateTransitionFactory
 		{
 			if ( exitVO.methodRef != null )
 			{
+				if ( exitVO.fireOnce )
+				{
+					throw new BuildingException( "transition's method callback cannot be fired once" );
+				}
 				
+				var refs 		= exitVO.methodRef.split( "." );
+				var ref 		= refs.shift();
+				var methodName 	= refs.shift();
+				
+				state.addExitHandler( function ( s : State )
+				{ 
+					var target = coreFactory.locate( ref );
+					Reflect.callMethod( target, Reflect.field( target, methodName ), [ s ] ); 
+				} );
 			}
 			else
 			{
@@ -105,6 +131,27 @@ class StateTransitionFactory
 				state.addExitCommandMapping( exitMapping );
 				stateUnmapper.addExitMapping( exitMapping  );
 			}
+		}
+		
+		var transitions : Array<TransitionVO> = vo.transitionList;
+		for ( transition in transitions )
+		{
+			transition.stateVarName = vo.ID;
+		}
+		
+		return transitions;
+	}
+	
+	static public function flush( coreFactory : ICoreFactory, transitions : Array<TransitionVO> ) : Void
+	{
+		for ( transition in transitions )
+		{
+			var state : State = coreFactory.locate( transition.stateVarName );
+			state.addTransition
+			( 
+				coreFactory.locate( transition.messageReference ), 
+				coreFactory.locate( transition.stateReference ) 
+			); 
 		}
 	}
 }

@@ -78,15 +78,23 @@ class StateXMLParser extends AbstractXMLParser
 	
 	function _getTransitionList( xml : Xml, nodeName : String ) : Array<TransitionVO>
 	{
-		var it = xml.elementsNamed( nodeName );
+		var iterator = xml.elementsNamed( nodeName );
 		var list : Array<TransitionVO> = [];
-		while( it.hasNext() )
+		while( iterator.hasNext() )
 		{
-			var item = it.next();
-			list.push( { 
-							messageReference: 	item.get( ContextAttributeList.MESSAGE ), 
-							stateReference: 	item.get( ContextAttributeList.STATE )
-						} );
+			var transition = iterator.next();
+			var message = transition.elementsNamed( ContextNameList.MESSAGE ).next();
+			var state = transition.elementsNamed( ContextNameList.STATE ).next();
+			
+			var vo = new TransitionVO();
+			vo.messageReference = message.get( ContextAttributeList.REF ) != null ?
+													message.get( ContextAttributeList.REF ):
+														message.get( ContextAttributeList.STATIC_REF );
+														
+			vo.stateReference = state.get( ContextAttributeList.REF ) != null ?
+													state.get( ContextAttributeList.REF ):
+														state.get( ContextAttributeList.STATIC_REF );
+			list.push( vo );
 		}
 		
 		return list;

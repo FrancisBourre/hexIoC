@@ -46,6 +46,7 @@ import hex.ioc.vo.MapVO;
 import hex.ioc.vo.MethodCallVO;
 import hex.ioc.vo.PropertyVO;
 import hex.ioc.vo.StateTransitionVO;
+import hex.ioc.vo.TransitionVO;
 import hex.log.DomainLogger;
 import hex.log.ILogger;
 import hex.metadata.AnnotationProvider;
@@ -71,6 +72,8 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 	var _methodCallVOLocator 		: MethodCallVOLocator;
 	var _domainListenerVOLocator 	: DomainListenerVOLocator;
 	var _stateTransitionVOLocator 	: StateTransitionVOLocator;
+	
+	var _transitions				: Array<TransitionVO>;
 
 	public function new( applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null  )
 	{
@@ -133,21 +136,27 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		this._stateTransitionVOLocator.register( stateTransitionVO.ID, stateTransitionVO );
 	}
 	
-	public function buildStateTransition( key : String ) : Void
+	public function buildStateTransition( key : String ) : Array<TransitionVO>
 	{
+		var transitions : Array<TransitionVO> = null;
+		
 		if ( this._stateTransitionVOLocator.isRegisteredWithKey( key ) )
 		{
-			StateTransitionFactory.build( this._stateTransitionVOLocator.locate( key ), this );
+			transitions = StateTransitionFactory.build( this._stateTransitionVOLocator.locate( key ), this );
 			this._stateTransitionVOLocator.unregister( key );
 		}
+		
+		return transitions;
 	}
 	
 	public function buildAllStateTransitions() : Void
 	{
+		this._transitions = [];
 		var keys : Array<String> = this._stateTransitionVOLocator.keys();
+		
 		for ( key in keys )
 		{
-			this.buildStateTransition( key );
+			this._transitions = this._transitions.concat( this.buildStateTransition( key ) );
 		}
 		
 		this._contextDispatcher.dispatch( ApplicationAssemblerMessage.STATE_TRANSITIONS_BUILT );
@@ -273,6 +282,8 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		}
 		
 		this._contextDispatcher.dispatch( ApplicationAssemblerMessage.OBJECTS_BUILT );
+		
+		StateTransitionFactory.flush( this._coreFactory, this._transitions );
 	}
 	
 	public function registerDomainListenerVO( domainListenerVO : DomainListenerVO ) : Void

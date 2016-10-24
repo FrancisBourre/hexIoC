@@ -2,6 +2,7 @@ package hex.compiler.parser.xml.assembler;
 
 import hex.domain.ApplicationDomainDispatcher;
 import hex.event.MessageType;
+import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.core.IContextFactory;
@@ -56,6 +57,9 @@ class ApplicationAssemblerStateTest
 	@Test( "test extending state transitions" )
 	public function testExtendingStateTransitions() : Void
 	{
+		MockStateCommand.callCount = 0;
+		MockStateCommand.lastInjecteContext = null;
+		
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/testExtendingStateTransitions.xml" );
 		
 		var builderFactory : IContextFactory = this._applicationAssembler.getContextFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
@@ -95,15 +99,18 @@ class ApplicationAssemblerStateTest
 	@Test( "test custom state transition" )
 	public function testCustomStateTransition() : Void
 	{
+		MockStateCommand.callCount = 0;
+		MockStateCommand.lastInjecteContext = null;
+		
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/testCustomStateTransition.xml" );
 		
-		var builderFactory : IContextFactory = this._applicationAssembler.getContextFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
+		var context : ApplicationContext = cast this._applicationAssembler.getApplicationContext( "applicationContext" );
+		
+		var builderFactory : IContextFactory = this._applicationAssembler.getContextFactory( context );
 
 		var coreFactory = builderFactory.getCoreFactory();
 		var module : MockModule = coreFactory.locate( "module" );
-		var anotherModule : MockModule = coreFactory.locate( "anotherModule" );
 		Assert.isNotNull( module, "'module' shouldn't be null" );
-		Assert.isNotNull( anotherModule, "'anotherModule' shouldn't be null" );
 		
 		var messageType : MessageType = coreFactory.locate( "messageID" );
 		var anotherMessageType : MessageType = coreFactory.locate( "anotherMessageID" );
@@ -114,5 +121,23 @@ class ApplicationAssemblerStateTest
 		var anotherCustomState : State = coreFactory.locate( "anotherCustomState" );
 		Assert.equals( 'customState', customState.getName(), "name property should be 'customState'" );
 		Assert.equals( 'anotherCustomState', anotherCustomState.getName(), "name property should be 'anotherCustomState'" );
+		
+		var trigger = new MessageType( "test" );
+		context.state.ASSEMBLING_END.addTransition( trigger, customState );
+	
+		context.dispatch( trigger );
+		Assert.equals( 0, MockStateCommand.callCount, "'MockStateCommand' should not have been called yet" );
+		Assert.equals( 1, module.callbackCount, "module callback should be triggered once" );
+		Assert.equals( customState, module.stateCallback, "states should be the same" );
+		
+		module.callbackCount = 0;
+		context.dispatch( messageType );
+		Assert.equals( 1, MockStateCommand.callCount, "'MockStateCommand' should have been called once" );
+		Assert.equals( 0, module.callbackCount, "module callback should not be triggered" );
+		
+		MockStateCommand.callCount = 0;
+		context.dispatch( anotherMessageType );
+		Assert.equals( 1, module.callbackCount, "module callback should be triggered once again" );
+		Assert.equals( 0, MockStateCommand.callCount, "'MockStateCommand' should not have been called this time" );
 	}
 }
