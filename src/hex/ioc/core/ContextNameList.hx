@@ -8,19 +8,22 @@ import hex.error.PrivateConstructorException;
  */
 class ContextNameList
 {
-	static public inline var PROPERTY 							: String = "property";
-	static public inline var ARGUMENT 							: String = "argument";
-	static public inline var METHOD_CALL 						: String = "method-call";
-	static public inline var LISTEN 							: String = "listen";
-	static public inline var ITEM 								: String = "item";
-	static public inline var KEY 								: String = "key";
-	static public inline var VALUE 								: String = "value";
-	static public inline var MAP_NAME 							: String = "map-name";
-	static public inline var EVENT 								: String = "event";
-	static public inline var ENTER 								: String = "enter";
-	static public inline var EXIT 								: String = "exit";
+	static public inline var PROPERTY 		: String = "property";
+	static public inline var ARGUMENT 		: String = "argument";
+	static public inline var METHOD_CALL 	: String = "method-call";
+	static public inline var LISTEN 		: String = "listen";
+	static public inline var ITEM 			: String = "item";
+	static public inline var KEY 			: String = "key";
+	static public inline var VALUE 			: String = "value";
+	static public inline var MAP_NAME 		: String = "map-name";
+	static public inline var EVENT 			: String = "event";
+	static public inline var ENTER 			: String = "enter";
+	static public inline var EXIT 			: String = "exit";
+	static public inline var TRANSITION 	: String = "transition";
+	static public inline var MESSAGE 		: String = "message";
+	static public inline var STATE 			: String = "state";
 	
-	static public var ROOT 										: String = "root";
+	static public var ROOT 					: String = "root";
 
 	function new() 
 	{

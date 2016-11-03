@@ -6,9 +6,11 @@ package hex.ioc.vo;
  */
 typedef CommandMappingVO = 
 {
-	var commandClassName : String;
-	var fireOnce 		: Bool;
-	var contextOwner 	: String;
+	var methodRef 			: String;
+	
+	var commandClassName 	: String;
+	var fireOnce 			: Bool;
+	var contextOwner 		: String;
 	
 	#if macro
 	@:optional var filePosition		: haxe.macro.Expr.Position;
