@@ -3,8 +3,6 @@ package hex.ioc.core;
 import hex.MockDependencyInjector;
 import hex.collection.ILocatorListener;
 import hex.di.IDependencyInjector;
-import hex.di.annotation.IAnnotationDataProvider;
-import hex.di.annotation.InjectorClassVO;
 import hex.error.IllegalArgumentException;
 import hex.event.IEvent;
 import hex.ioc.vo.ConstructorVO;
@@ -13,7 +11,6 @@ import hex.structures.Point;
 import hex.structures.PointFactory;
 import hex.structures.Size;
 import hex.unittest.assertion.Assert;
-import hex.util.ClassUtil;
 
 /**
  * ...
