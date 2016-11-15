@@ -1,0 +1,5 @@
+<root name="applicationContext">
+    <bean id="test" type="hex.ioc.parser.xml.mock.MockSizeHandler">
+        <argument ref="size"/>
+    </bean>
+</root>

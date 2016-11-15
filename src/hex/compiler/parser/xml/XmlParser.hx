@@ -125,12 +125,14 @@ class XmlParser
 	 * 
 	 * @throws haxe.xml.XmlParserException
 	 */
+	#if macro
 	static public function parse( str: String, strict = false, file : String, positionTracker : IXmlPositionTracker ) : Xml
 	{
 		var doc = Xml.createDocument();
 		_doParse( str, strict, 0, positionTracker.nodeMap, positionTracker.attributeMap, file, doc );
 		return doc;
 	}
+	#end
 
 	static function _doParse( 	
 								str: 			String, 

@@ -464,9 +464,8 @@ class XmlCompiler
 		return list;
 	}
 	
-	static function getApplicationContext( document : Xml, exceptionReporter : XmlAssemblingExceptionReporter, assemblerID : String ) : ExprOf<AbstractApplicationContext>
+	static function getApplicationContext( document : Xml, exceptionReporter : XmlAssemblingExceptionReporter, assemblerExpr : Expr ) : ExprOf<AbstractApplicationContext>
 	{
-		var assemblerVar = macro $i{assemblerID};
 		var xml = document.firstElement();
 		
 		var applicationContextClass = null;
@@ -489,11 +488,11 @@ class XmlCompiler
 		var expr;
 		if ( applicationContextClass != null )
 		{
-			expr = macro @:mergeBlock { var applicationContext = $assemblerVar.getApplicationContext( $v { applicationContextName }, $p { applicationContextClass } ); };
+			expr = macro @:mergeBlock { var applicationContext = $assemblerExpr.getApplicationContext( $v { applicationContextName }, $p { applicationContextClass } ); };
 		}
 		else
 		{
-			expr = macro @:mergeBlock { var applicationContext = $assemblerVar.getApplicationContext( $v { applicationContextName } ); };
+			expr = macro @:mergeBlock { var applicationContext = $assemblerExpr.getApplicationContext( $v { applicationContextName } ); };
 		}
 
 		return expr;
@@ -513,7 +512,7 @@ class XmlCompiler
 		}
 	}
 	
-	static function _readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr, ?applicationAssemblerVarName : String ) : ExprOf<ApplicationAssembler>
+	static function _readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr, ?applicationAssemblerExpr : Expr ) : ExprOf<ApplicationAssembler>
 	{
 		var conditionalVariablesMap 	= MacroConditionalVariablesProcessor.parse( conditionalVariables );
 		var conditionalVariablesChecker = new ConditionalVariablesChecker( conditionalVariablesMap );
@@ -550,14 +549,17 @@ class XmlCompiler
 		//Create runtime applicationAssembler
 		var applicationAssemblerTypePath = MacroUtil.getTypePath( Type.getClassName( ApplicationAssembler ) );
 		
-		if ( applicationAssemblerVarName == null )
+		var applicationAssemblerVarName : String = "";
+		
+		if ( applicationAssemblerExpr == null )
 		{
 			applicationAssemblerVarName = 'applicationAssembler';
 			assembler.addExpression( macro @:mergeBlock { var $applicationAssemblerVarName = new $applicationAssemblerTypePath(); } );
+			applicationAssemblerExpr = macro $i { applicationAssemblerVarName };
 		}
 		
 		//Create runtime applicationContext
-		assembler.addExpression( getApplicationContext( document, exceptionReporter, applicationAssemblerVarName ) );
+		assembler.addExpression( getApplicationContext( document, exceptionReporter, applicationAssemblerExpr ) );
 		
 		//Dispatch CONTEXT_PARSED message
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.CONTEXT_PARSED" );
@@ -576,7 +578,7 @@ class XmlCompiler
 		XmlCompiler._assembler.buildEverything();
 		
 		//return program
-		assembler.addExpression( macro { $i{applicationAssemblerVarName}; } );
+		assembler.addExpression( applicationAssemblerExpr );
 		return assembler.getMainExpression();
 	}
 	#end
@@ -586,18 +588,8 @@ class XmlCompiler
 		return _readXmlFile( fileName, preprocessingVariables, conditionalVariables );
 	}
 	
-	macro public static function readXmlFileWithAssembler( assembler : Expr, fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<ApplicationAssembler>
+	macro public static function readXmlFileWithAssembler( assemblerExpr : Expr, fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<ApplicationAssembler>
 	{
-		switch( assembler.expr )
-		{
-			case EConst( CIdent( assemblerID ) ):
-				return _readXmlFile( fileName, preprocessingVariables, conditionalVariables, assemblerID );
-				
-			case _:
-				throw new NullPointerException( 'assembler variable should not be null' );
-				
-		}
-		
-		return null;
+		return _readXmlFile( fileName, preprocessingVariables, conditionalVariables, assemblerExpr );
 	}
 }

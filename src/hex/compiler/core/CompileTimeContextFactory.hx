@@ -144,8 +144,8 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	
 	public function buildStateTransition( key : String ) : Array<TransitionVO>
 	{
-		#if macro
 		var transitions : Array<TransitionVO> = null;
+		#if macro
 		if ( this._stateTransitionVOLocator.isRegisteredWithKey( key ) )
 		{
 			var stateTransitionVO = this._stateTransitionVOLocator.locate( key );
@@ -153,8 +153,8 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 			transitions = StateTransitionFactory.build( stateTransitionVO, this );
 			this._stateTransitionVOLocator.unregister( key );
 		}
-		return transitions;
 		#end
+		return transitions;
 	}
 	
 	public function buildAllStateTransitions() : Void
@@ -347,9 +347,9 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		#if macro
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.OBJECTS_BUILT" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
-		#end
 		
 		StateTransitionFactory.flush( this._expressions, this._transitions );
+		#end
 	}
 	
 	public function registerDomainListenerVO( domainListenerVO : DomainListenerVO ) : Void
