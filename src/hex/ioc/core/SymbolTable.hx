@@ -6,7 +6,7 @@ import hex.error.IllegalArgumentException;
  * ...
  * @author Francis Bourre
  */
-class IDExpert
+class SymbolTable
 {
 	var _map : Map<String, Bool>;
 

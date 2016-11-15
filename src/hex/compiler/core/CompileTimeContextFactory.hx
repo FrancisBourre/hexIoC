@@ -29,7 +29,7 @@ import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.core.IContextFactory;
 import hex.ioc.core.ICoreFactory;
-import hex.ioc.core.IDExpert;
+import hex.ioc.core.SymbolTable;
 import hex.ioc.locator.ConstructorVOLocator;
 import hex.ioc.locator.DomainListenerVOLocator;
 import hex.ioc.locator.MethodCallVOLocator;
@@ -61,7 +61,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	var _applicationContext 		: AbstractApplicationContext;
 	var _factoryMap 				: Map<String, FactoryVO->Dynamic>;
 	var _coreFactory 				: CompileTimeCoreFactory;
-	var _IDExpert 					: IDExpert;
+	var _symbolTable 				: SymbolTable;
 	var _constructorVOLocator 		: ConstructorVOLocator;
 	var _propertyVOLocator 			: PropertyVOLocator;
 	var _methodCallVOLocator 		: MethodCallVOLocator;
@@ -129,7 +129,12 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	
 	public function registerID( id : String ) : Bool
 	{
-		return this._IDExpert.register( id );
+		return this._symbolTable.register( id );
+	}
+	
+	public function getSymbolTable() : SymbolTable
+	{
+		return this._symbolTable;
 	}
 	
 	public function registerStateTransitionVO( stateTransitionVO : StateTransitionVO ) : Void
@@ -471,7 +476,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		this._stateTransitionVOLocator.release();
 		this._moduleLocator.release();
 		this._factoryMap = new Map();
-		this._IDExpert.clear();
+		this._symbolTable.clear();
 		
 		#if macro
 		DomainListenerFactory.domainLocator = null;
@@ -481,7 +486,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	function _init() : Void
 	{
 		this._factoryMap 						= new Map();
-		this._IDExpert 							= new IDExpert();
+		this._symbolTable 							= new SymbolTable();
 		this._constructorVOLocator 				= new ConstructorVOLocator();
 		this._propertyVOLocator 				= new PropertyVOLocator();
 		this._methodCallVOLocator 				= new MethodCallVOLocator();

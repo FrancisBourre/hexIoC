@@ -27,5 +27,15 @@ class ArrayFactory
 		}
 
 		constructorVO.result = array;
+		
+		if ( constructorVO.mapTypes != null )
+		{
+			var mapTypes = constructorVO.mapTypes;
+			for ( mapType in mapTypes )
+			{
+				factoryVO.contextFactory.getApplicationContext().getInjector()
+					.mapClassNameToValue( mapType, constructorVO.result, constructorVO.ID );
+			}
+		}
 	}
 }

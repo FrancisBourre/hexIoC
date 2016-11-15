@@ -100,7 +100,7 @@ class XmlReader
 			{
 				for ( mapType in mapTypes )
 				{
-					XmlReader._importHelper.forceCompilation( mapType );
+					XmlReader._importHelper.forceCompilation( mapType.split( '<' )[ 0 ] );
 				}
 			}
 	

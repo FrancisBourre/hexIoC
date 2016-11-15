@@ -57,11 +57,15 @@ class HashMapFactory
 				var mapTypes = constructorVO.mapTypes;
 				for ( mapType in mapTypes )
 				{
-					var classToMap = MacroUtil.getPack( mapType, constructorVO.filePosition );
+					//Check if class exists
+					MacroUtil.getPack( mapType.split( '<' )[ 0 ], constructorVO.filePosition );
+					
+					//Map it
 					factoryVO.expressions.push
 					( 
 						macro @:pos( constructorVO.filePosition ) 
-							@:mergeBlock { __applicationContextInjector.mapToValue( $p { classToMap }, $extVar, $v { idVar } ); } 
+							@:mergeBlock { __applicationContextInjector
+								.mapClassNameToValue( $v { mapType }, $extVar, $v { idVar } ); } 
 					);
 				}
 			}

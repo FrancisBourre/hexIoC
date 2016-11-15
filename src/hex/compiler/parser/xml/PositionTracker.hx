@@ -1,7 +1,6 @@
 package hex.compiler.parser.xml;
 
 #if macro
-import hex.compiler.parser.xml.XmlParser;
 import haxe.macro.Context;
 import haxe.macro.Expr.Position;
 

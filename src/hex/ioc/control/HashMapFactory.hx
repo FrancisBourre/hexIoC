@@ -49,8 +49,8 @@ class HashMapFactory
 				var mapTypes = constructorVO.mapTypes;
 				for ( mapType in mapTypes )
 				{
-					var classToMap : Class<Dynamic> = Type.resolveClass( mapType );
-					factoryVO.contextFactory.getApplicationContext().getInjector().mapToValue( classToMap, map, constructorVO.ID );
+					factoryVO.contextFactory.getApplicationContext().getInjector()
+						.mapClassNameToValue( mapType, map, constructorVO.ID );
 				}
 			}
 		}
