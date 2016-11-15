@@ -136,7 +136,7 @@ class XmlCompiler
 							var type = ClassImportHelper.getClassFullyQualifiedNameFromStaticRef( arg.staticRef );
 							try 
 							{
-								XmlCompiler._importHelper.forceCompilation( type );
+								XmlCompiler._importHelper.forceCompilation( type.split( '<' )[ 0 ] );
 								
 							} catch ( e : String ) 
 							{
@@ -149,7 +149,7 @@ class XmlCompiler
 							{
 								try 
 								{
-									XmlCompiler._importHelper.forceCompilation( arg.arguments[ 0 ] );
+									XmlCompiler._importHelper.forceCompilation( ( arg.arguments[ 0 ] ).split( '<' )[ 0 ] );
 									
 								} catch ( e : String ) 
 								{
@@ -175,7 +175,7 @@ class XmlCompiler
 			{
 				try
 				{
-					XmlCompiler._importHelper.forceCompilation( type );
+					XmlCompiler._importHelper.forceCompilation( type.split( '<' )[ 0 ] );
 				}
 				catch ( e : String )
 				{
@@ -188,7 +188,7 @@ class XmlCompiler
 				
 				try
 				{
-					XmlCompiler._importHelper.forceCompilation( t );
+					XmlCompiler._importHelper.forceCompilation( t.split( '<' )[ 0 ] );
 				}
 				catch ( e : String )
 				{
@@ -216,7 +216,7 @@ class XmlCompiler
 
 					try
 					{
-						XmlCompiler._importHelper.forceCompilation( type );
+						XmlCompiler._importHelper.forceCompilation( type.split( '<' )[ 0 ] );
 					}
 					catch ( e : String )
 					{
@@ -260,7 +260,7 @@ class XmlCompiler
 						try 
 						{
 							var type = ClassImportHelper.getClassFullyQualifiedNameFromStaticRef( staticRef );
-							XmlCompiler._importHelper.forceCompilation( type );
+							XmlCompiler._importHelper.forceCompilation( type.split( '<' )[ 0 ] );
 							
 						} catch ( e : String ) 
 						{
@@ -273,7 +273,7 @@ class XmlCompiler
 						{
 							try 
 							{
-								XmlCompiler._importHelper.forceCompilation( arg.arguments[ 0 ] );
+								XmlCompiler._importHelper.forceCompilation( ( arg.arguments[ 0 ] ).split( '<' )[ 0 ] );
 								
 							} catch ( e : String ) 
 							{
@@ -319,7 +319,7 @@ class XmlCompiler
 							
 							try
 							{
-								XmlCompiler._importHelper.forceCompilation( type );
+								XmlCompiler._importHelper.forceCompilation( type.split( '<' )[ 0 ] );
 							}
 							catch ( e : String )
 							{

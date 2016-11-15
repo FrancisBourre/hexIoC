@@ -123,7 +123,6 @@ class ClassInstanceFactory
 					//TODO throws an error if interface is not implemented
 					e = macro @:pos( constructorVO.filePosition ) { __applicationContextInjector.injectInto( $instanceVar ); };
 					factoryVO.expressions.push( macro @:mergeBlock { $e; } );
-					
 				}
 				
 				if ( MacroUtil.implementsInterface( classType, _annotationParsableInterface ) )
@@ -145,11 +144,15 @@ class ClassInstanceFactory
 				var mapTypes = constructorVO.mapTypes;
 				for ( mapType in mapTypes )
 				{
-					var classToMap = MacroUtil.getPack( mapType, constructorVO.filePosition );
+					//Check if class exists
+					MacroUtil.getPack( mapType.split( '<' )[ 0 ], constructorVO.filePosition );
+
+					//Map it
 					factoryVO.expressions.push
 					( 
 						macro @:pos( constructorVO.filePosition ) 
-							@:mergeBlock { __applicationContextInjector.mapToValue( $p { classToMap }, $instanceVar, $v { idVar } ); } 
+							@:mergeBlock { __applicationContextInjector
+								.mapClassNameToValue( $v { mapType }, $instanceVar, $v { idVar } ); } 
 					);
 				}
 			}

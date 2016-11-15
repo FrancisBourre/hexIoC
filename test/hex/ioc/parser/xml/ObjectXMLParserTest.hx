@@ -433,8 +433,36 @@ class ObjectXMLParserTest
 		Assert.equals( "orange", orange.toString(), "" );
 		Assert.equals( "apple", apple.toString(), "" );
 		
-		var map = this._builderFactory.getCoreFactory().getInjector().getInstance( HashMap, "fruits" );
+		var map = this._builderFactory.getCoreFactory().getInjector().getInstanceWithClassName( "hex.collection.HashMap<MockFruitVO>", "fruits" );
 		Assert.equals( fruits, map );
+	}
+	
+	@Test( "testmap-type attribute with Array" )
+	public function testMapTypeWithArray() : Void
+	{
+		this.build( XmlReader.getXml( "context/testMapTypeWithArray.xml" ) );
+		
+		var intCollection = this._builderFactory.getCoreFactory().getInjector().getInstanceWithClassName( "Array<Int>", "intCollection" );
+		var intCollection = this._builderFactory.getCoreFactory().getInjector().getInstanceWithClassName( "Array<UInt>", "intCollection" );
+		var stringCollection = this._builderFactory.getCoreFactory().getInjector().getInstanceWithClassName( "Array<String>", "stringCollection" );
+		
+		Assert.isInstanceOf( intCollection, Array );
+		Assert.isInstanceOf( stringCollection, Array );
+		Assert.notEquals( intCollection, stringCollection );
+	}
+	
+	@Test( "testmap-type attribute with instance" )
+	public function testMapTypeWithInstance() : Void
+	{
+		this.build( XmlReader.getXml( "context/testMapTypeWithInstance.xml" ) );
+		
+		/*var intCollection = this._builderFactory.getCoreFactory().getInjector().getInstanceWithClassName( "Array<Int>", "intCollection" );
+		var intCollection = this._builderFactory.getCoreFactory().getInjector().getInstanceWithClassName( "Array<UInt>", "intCollection" );
+		var stringCollection = this._builderFactory.getCoreFactory().getInjector().getInstanceWithClassName( "Array<String>", "stringCollection" );
+		
+		Assert.isInstanceOf( intCollection, Array );
+		Assert.isInstanceOf( stringCollection, Array );
+		Assert.notEquals( intCollection, stringCollection );*/
 	}
 	
 	@Test( "test building two modules listening each other" )

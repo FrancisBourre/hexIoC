@@ -66,7 +66,7 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 	var _applicationContext 		: AbstractApplicationContext;
 	var _factoryMap 				: Map<String, FactoryVO->Void>;
 	var _coreFactory 				: ICoreFactory;
-	var _IDExpert 					: IDExpert;
+	var _symbolTable 				: SymbolTable;
 	var _constructorVOLocator 		: ConstructorVOLocator;
 	var _propertyVOLocator 			: PropertyVOLocator;
 	var _methodCallVOLocator 		: MethodCallVOLocator;
@@ -126,9 +126,14 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		this._contextDispatcher.dispatch( ApplicationAssemblerMessage.ASSEMBLING_END );
 	}
 	
+	public function getSymbolTable() : SymbolTable
+	{
+		return this._symbolTable;
+	}
+	
 	public function registerID( id : String ) : Bool
 	{
-		return this._IDExpert.register( id );
+		return this._symbolTable.register( id );
 	}
 	
 	public function registerStateTransitionVO( stateTransitionVO : StateTransitionVO ) : Void
@@ -385,13 +390,13 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		this._stateTransitionVOLocator.release();
 		this._moduleLocator.release();
 		this._factoryMap = new Map();
-		this._IDExpert.clear();
+		this._symbolTable.clear();
 	}
 
 	function _init() : Void
 	{
 		this._factoryMap 				= new Map();
-		this._IDExpert 					= new IDExpert();
+		this._symbolTable 					= new SymbolTable();
 		this._constructorVOLocator 		= new ConstructorVOLocator();
 		this._propertyVOLocator 		= new PropertyVOLocator();
 		this._methodCallVOLocator 		= new MethodCallVOLocator();

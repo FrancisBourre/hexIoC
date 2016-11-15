@@ -1,0 +1,13 @@
+<root name="applicationContext">
+   
+    <i id="i"  type="Int"  value="3"/>
+	<intInstance id="intInstance" type="hex.ioc.parser.xml.mock.MockClassWithIntGeneric" map-type="hex.ioc.parser.xml.mock.IMockInterfaceWithGeneric<Int>, hex.ioc.parser.xml.mock.IMockInterfaceWithGeneric<UInt>">
+		<argument ref="i"/>
+	</intInstance>
+	
+	<s id="s"  value="test"/>
+	<stringInstance id="stringInstance" type="hex.ioc.parser.xml.mock.MockClassWithStringGeneric" map-type="hex.ioc.parser.xml.mock.IMockInterfaceWithGeneric<String>">
+		<argument ref="s"/>
+	</stringInstance>
+	
+</root>

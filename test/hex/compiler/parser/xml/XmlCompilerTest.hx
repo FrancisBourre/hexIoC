@@ -32,6 +32,7 @@ import hex.ioc.parser.xml.mock.MockAmazonService;
 import hex.ioc.parser.xml.mock.MockBooleanVO;
 import hex.ioc.parser.xml.mock.MockCaller;
 import hex.ioc.parser.xml.mock.MockChatModule;
+import hex.ioc.parser.xml.mock.MockClassWithGeneric;
 import hex.ioc.parser.xml.mock.MockClassWithInjectedProperty;
 import hex.ioc.parser.xml.mock.MockCommandWithAnnotation;
 import hex.ioc.parser.xml.mock.MockAsyncCommandWithAnnotation;
@@ -467,8 +468,42 @@ class XmlCompilerTest
 		Assert.equals( "orange", orange.toString(), "" );
 		Assert.equals( "apple", apple.toString(), "" );
 		
-		var map = this._getCoreFactory().getInjector().getInstance( HashMap, "fruits" );
+		var map = this._getCoreFactory().getInjector().getInstanceWithClassName( "hex.collection.HashMap<MockFruitVO>", "fruits" );
 		Assert.equals( fruits, map );
+	}
+	
+	@Test( "test map-type attribute with Array" )
+	public function testMapTypeWithArray() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/testMapTypeWithArray.xml" );
+		
+		var intCollection = this._getCoreFactory().getInjector().getInstanceWithClassName( "Array<Int>", "intCollection" );
+		var uintCollection = this._getCoreFactory().getInjector().getInstanceWithClassName( "Array<UInt>", "intCollection" );
+		var stringCollection = this._getCoreFactory().getInjector().getInstanceWithClassName( "Array<String>", "stringCollection" );
+		
+		Assert.isInstanceOf( intCollection, Array );
+		Assert.isInstanceOf( uintCollection, Array );
+		Assert.isInstanceOf( stringCollection, Array );
+		
+		Assert.equals( intCollection, uintCollection );
+		Assert.notEquals( intCollection, stringCollection );
+	}
+	
+	@Test( "test map-type attribute with instance" )
+	public function testMapTypeWithInstance() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/testMapTypeWithInstance.xml" );
+		
+		var intInstance = this._getCoreFactory().getInjector().getInstanceWithClassName( "hex.ioc.parser.xml.mock.IMockInterfaceWithGeneric<Int>", "intInstance" );
+		var uintInstance = this._getCoreFactory().getInjector().getInstanceWithClassName( "hex.ioc.parser.xml.mock.IMockInterfaceWithGeneric<UInt>", "intInstance" );
+		var stringInstance = this._getCoreFactory().getInjector().getInstanceWithClassName( "hex.ioc.parser.xml.mock.IMockInterfaceWithGeneric<String>", "stringInstance" );
+
+		Assert.isInstanceOf( intInstance, MockClassWithGeneric );
+		Assert.isInstanceOf( uintInstance, MockClassWithGeneric );
+		Assert.isInstanceOf( stringInstance, MockClassWithGeneric );
+		
+		Assert.equals( intInstance, uintInstance );
+		Assert.notEquals( intInstance, stringInstance );
 	}
 	
 	@Test( "test building two modules listening each other" )
