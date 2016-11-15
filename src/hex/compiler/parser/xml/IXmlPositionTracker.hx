@@ -1,5 +1,6 @@
-#if (macro || doc_gen)
 package hex.compiler.parser.xml;
+
+#if (macro || doc_gen)
 
 import haxe.macro.Expr.Position;
 /**
