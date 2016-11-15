@@ -11,5 +11,5 @@ import hex.compiler.parser.xml.context.ApplicationContextBuildingTest;
 class CompilerXmlSuite
 {
 	@Suite( "Xml" )
-    public var list : Array<Class<Dynamic>> = [ ApplicationAssemblerStateTest, ApplicationContextBuildingTest, StatefulStateMachineConfigTest, XmlCompilerTest ];
+    public var list : Array<Class<Dynamic>> = [ ApplicationAssemblerStateTest, ApplicationContextBuildingTest, StatefulStateMachineConfigTest, XmlCompilerBuildsTwoContext, XmlCompilerTest ];
 }

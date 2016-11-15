@@ -68,6 +68,8 @@ class XmlCompilerTest
 	var _applicationContext 		: AbstractApplicationContext;
 	var _contextFactory 			: IContextFactory;
 	var _applicationAssembler 		: ApplicationAssembler;
+	
+	static var applicationAssembler : ApplicationAssembler;
 
 	@Before
 	public function setUp() : Void
@@ -118,6 +120,44 @@ class XmlCompilerTest
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/testBuildingString.xml" );
 		var s : String = this._getCoreFactory().locate( "s" );
 		Assert.equals( "hello", s, "" );
+	}
+	
+	@Test( "test building String with assembler property" )
+	public function testBuildingStringWithAssemblerProperty() : Void
+	{
+		this._applicationAssembler = new ApplicationAssembler();
+		XmlCompiler.readXmlFileWithAssembler( this._applicationAssembler, "context/testBuildingString.xml" );
+		var s : String = this._getCoreFactory().locate( "s" );
+		Assert.equals( "hello", s, "" );
+	}
+	
+	@Ignore( "test building String with assembler static property" )
+	public function testBuildingStringWithAssemblerStaticProperty() : Void
+	{
+		XmlCompilerTest.applicationAssembler = new ApplicationAssembler();
+		XmlCompiler.readXmlFileWithAssembler( XmlCompilerTest.applicationAssembler, "context/testBuildingString.xml" );
+		var s : String = this._getCoreFactory().locate( "s" );
+		Assert.equals( "hello", s, "" );
+	}
+	
+	@Test( "test read twice the same context" )
+	public function testReadTwiceTheSameContext() : Void
+	{
+		var applicationAssembler = new ApplicationAssembler();
+		this._applicationAssembler = new ApplicationAssembler();
+		
+		XmlCompiler.readXmlFileWithAssembler( applicationAssembler, "context/simpleInstanceWithoutArguments.xml" );
+		XmlCompiler.readXmlFileWithAssembler( this._applicationAssembler, "context/simpleInstanceWithoutArguments.xml" );
+		
+		var coreFactory = applicationAssembler.getApplicationContext( "applicationContext" ).getCoreFactory();
+
+		var command1 = coreFactory.locate( "command" );
+		Assert.isInstanceOf( command1, BasicCommand );
+		
+		var command2 = this._getCoreFactory().locate( "command" );
+		Assert.isInstanceOf( command2, BasicCommand );
+		
+		Assert.notEquals( command1, command2 );
 	}
 	
 	@Test( "test building Int" )
