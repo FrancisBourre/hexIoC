@@ -145,7 +145,7 @@ class ClassInstanceFactory
 				for ( mapType in mapTypes )
 				{
 					//Check if class exists
-					MacroUtil.getPack( mapType.split( '<' )[ 0 ], constructorVO.filePosition );
+					FactoryUtil.checkTypeParamsExist( mapType, constructorVO.filePosition );
 
 					//Map it
 					factoryVO.expressions.push

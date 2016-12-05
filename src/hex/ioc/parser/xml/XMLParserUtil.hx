@@ -205,7 +205,7 @@ class XMLParserUtil
 		var s = xml.get( ContextAttributeList.MAP_TYPE );
 		if ( s != null )
 		{
-			var a = s.split( "," );
+			var a = s.split( ";" );
 			return [ for ( e in a ) e.trim() ];
 		}
 		

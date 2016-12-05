@@ -1,8 +1,6 @@
 package hex.compiler.factory;
 
-import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.FactoryVO;
-import hex.util.MacroUtil;
 
 /**
  * ...
@@ -18,7 +16,7 @@ class ArrayFactory
 	#if macro
 	static public function build( factoryVO : FactoryVO ) : Dynamic
 	{
-		var constructorVO : ConstructorVO = factoryVO.constructorVO;
+		var constructorVO = factoryVO.constructorVO;
 		//var e =  macro @:pos( constructorVO.filePosition ) { $a { constructorVO.constructorArgs }; };
 		
 		if ( !constructorVO.isProperty )
@@ -35,7 +33,7 @@ class ArrayFactory
 			for ( mapType in mapTypes )
 			{
 				//Check if class exists
-				MacroUtil.getPack( mapType.split( '<' )[ 0 ], constructorVO.filePosition );
+				FactoryUtil.checkTypeParamsExist( mapType, constructorVO.filePosition );
 				
 				//Map it
 				factoryVO.expressions.push

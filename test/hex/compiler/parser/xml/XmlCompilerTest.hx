@@ -508,7 +508,7 @@ class XmlCompilerTest
 		Assert.equals( "orange", orange.toString(), "" );
 		Assert.equals( "apple", apple.toString(), "" );
 		
-		var map = this._getCoreFactory().getInjector().getInstanceWithClassName( "hex.collection.HashMap<MockFruitVO>", "fruits" );
+		var map = this._getCoreFactory().getInjector().getInstanceWithClassName( "hex.collection.HashMap<String,hex.ioc.parser.xml.mock.MockFruitVO>", "fruits" );
 		Assert.equals( fruits, map );
 	}
 	

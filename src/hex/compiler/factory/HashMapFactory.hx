@@ -28,8 +28,8 @@ class HashMapFactory
 		var idVar = constructorVO.ID;
 		var params = [ TPType( macro:Dynamic ), TPType( macro:Dynamic ) ];
 		var typePath = MacroUtil.getTypePath( Type.getClassName( HashMap ), params );
-		
 		var e = macro @:pos( constructorVO.filePosition ) { new $typePath(); };
+		
 		factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
 		
 		var extVar = macro $i{ idVar };
@@ -58,7 +58,7 @@ class HashMapFactory
 				for ( mapType in mapTypes )
 				{
 					//Check if class exists
-					MacroUtil.getPack( mapType.split( '<' )[ 0 ], constructorVO.filePosition );
+					FactoryUtil.checkTypeParamsExist( mapType, constructorVO.filePosition );
 					
 					//Map it
 					factoryVO.expressions.push
