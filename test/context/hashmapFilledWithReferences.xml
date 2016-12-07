@@ -1,5 +1,5 @@
 <root name="applicationContext">
-    <collection id="fruits" type="hex.collection.HashMap">
+    <collection id="fruits" type="hex.collection.HashMap<Dynamic, hex.ioc.parser.xml.mock.MockFruitVO>">
         <item> <key value="0"/> <value ref="fruit0"/></item>
         <item> <key type="Int" value="1"/> <value ref="fruit1"/></item>
         <item> <key ref="stubKey"/> <value ref="fruit2"/></item>

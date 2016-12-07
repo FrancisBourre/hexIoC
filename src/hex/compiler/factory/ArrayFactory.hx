@@ -1,5 +1,8 @@
 package hex.compiler.factory;
 
+import haxe.macro.Context;
+import haxe.macro.TypeTools;
+import hex.error.PrivateConstructorException;
 import hex.ioc.vo.FactoryVO;
 
 /**
@@ -8,21 +11,24 @@ import hex.ioc.vo.FactoryVO;
  */
 class ArrayFactory
 {
-	function new()
-	{
-
-	}
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
 	
 	#if macro
 	static public function build( factoryVO : FactoryVO ) : Dynamic
 	{
 		var constructorVO = factoryVO.constructorVO;
-		//var e =  macro @:pos( constructorVO.filePosition ) { $a { constructorVO.constructorArgs }; };
-		
+
 		if ( !constructorVO.isProperty )
 		{
-			var idVar = constructorVO.ID;
-			factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $a{ constructorVO.constructorArgs }; } );
+			var idVar 	= constructorVO.ID;
+			var exp 	= Context.parseInlineString( "new " + constructorVO.type + "()", constructorVO.filePosition );
+			var varType = TypeTools.toComplexType( Context.typeof( exp ) );
+			
+			factoryVO.expressions.push( macro @:mergeBlock {var $idVar : $varType = $a{ constructorVO.constructorArgs }; } );
 		}
 		
 		if ( constructorVO.mapTypes != null )
@@ -34,6 +40,9 @@ class ArrayFactory
 			{
 				//Check if class exists
 				FactoryUtil.checkTypeParamsExist( mapType, constructorVO.filePosition );
+				
+				//Remove whitespaces
+				mapType = mapType.split( ' ' ).join( '' );
 				
 				//Map it
 				factoryVO.expressions.push

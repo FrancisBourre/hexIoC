@@ -146,6 +146,9 @@ class ClassInstanceFactory
 				{
 					//Check if class exists
 					FactoryUtil.checkTypeParamsExist( mapType, constructorVO.filePosition );
+					
+					//Remove whitespaces
+					mapType = mapType.split( ' ' ).join( '' );
 
 					//Map it
 					factoryVO.expressions.push

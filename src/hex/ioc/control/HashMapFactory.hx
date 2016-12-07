@@ -49,6 +49,9 @@ class HashMapFactory
 				var mapTypes = constructorVO.mapTypes;
 				for ( mapType in mapTypes )
 				{
+					//Remove whitespaces
+					mapType = mapType.split( ' ' ).join( '' );
+					
 					factoryVO.contextFactory.getApplicationContext().getInjector()
 						.mapClassNameToValue( mapType, map, constructorVO.ID );
 				}

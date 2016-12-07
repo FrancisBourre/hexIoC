@@ -70,7 +70,8 @@ class ObjectXMLParser extends AbstractXMLParser
 		}
 		else
 		{
-			args 				= ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR || type == ContextTypeList.MAPPING_CONFIG ) ? XMLParserUtil.getMapArguments( identifier, xml ) : XMLParserUtil.getArguments( identifier, xml, type );
+			var strippedType 	= type != null ? type.split( '<' )[ 0 ] : type;
+			args 				= ( strippedType == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR || type == ContextTypeList.MAPPING_CONFIG ) ? XMLParserUtil.getMapArguments( identifier, xml ) : XMLParserUtil.getArguments( identifier, xml, type );
 			factory 			= XMLAttributeUtil.getFactoryMethod( xml );
 			singleton 			= XMLAttributeUtil.getSingletonAccess( xml );
 			injectInto			= XMLAttributeUtil.getInjectInto( xml );

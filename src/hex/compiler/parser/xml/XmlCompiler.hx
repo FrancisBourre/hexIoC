@@ -95,7 +95,8 @@ class XmlCompiler
 				type = staticRef != null ? ContextTypeList.STATIC_VARIABLE : ContextTypeList.STRING;
 			}
 
-			if ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR || type == ContextTypeList.MAPPING_CONFIG )
+			var strippedType = type != null ? type.split( '<' )[ 0 ] : null;
+			if ( strippedType == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR || type == ContextTypeList.MAPPING_CONFIG )
 			{
 				args = XmlCompiler.getMapArguments( identifier, xml, exceptionReporter );
 

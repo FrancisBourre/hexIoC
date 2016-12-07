@@ -284,12 +284,12 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		#if macro
 		if ( this._constructorVOLocator.isRegisteredWithKey( id ) )
 		{
-			var cons : ConstructorVO = this._constructorVOLocator.locate( id );
-			
+			var cons = this._constructorVOLocator.locate( id );	
 			var args = cons.arguments;
 			if ( args != null )
 			{
-				if ( cons.type == ContextTypeList.HASHMAP || cons.type == ContextTypeList.SERVICE_LOCATOR || cons.type == ContextTypeList.MAPPING_CONFIG )
+				var strippedType = cons.type.split( '<' )[ 0 ];
+				if ( strippedType == ContextTypeList.HASHMAP || cons.type == ContextTypeList.SERVICE_LOCATOR || cons.type == ContextTypeList.MAPPING_CONFIG )
 				{
 					var result = [];
 					for ( obj in args )
@@ -522,7 +522,8 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	function _build( constructorVO : ConstructorVO, ?id : String ) : Dynamic
 	{
 		constructorVO.isProperty 	= id == null;
-		var type 					= constructorVO.type;
+		//TODO better type checking with Context.typeof
+		var type 					= constructorVO.type.split( "<" )[ 0 ];
 		var buildMethod 			= ( this._factoryMap.exists( type ) ) ? this._factoryMap.get( type ) : ClassInstanceFactory.build;
 		var result 					= buildMethod( this._getFactoryVO( constructorVO ) );
 

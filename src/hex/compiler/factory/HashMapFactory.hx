@@ -1,12 +1,11 @@
 package hex.compiler.factory;
 
 import haxe.macro.Context;
-import haxe.macro.Expr;
-import hex.collection.HashMap;
+import haxe.macro.TypeTools;
+import hex.error.PrivateConstructorException;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.FactoryVO;
 import hex.ioc.vo.MapVO;
-import hex.util.MacroUtil;
 
 /**
  * ...
@@ -14,10 +13,11 @@ import hex.util.MacroUtil;
  */
 class HashMapFactory
 {
-	function new()
-	{
-
-	}
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
 
 	#if macro
 	static public function build( factoryVO : FactoryVO ) : Dynamic
@@ -25,13 +25,14 @@ class HashMapFactory
 		var constructorVO : ConstructorVO = factoryVO.constructorVO;
 		var args : Array<MapVO> = cast constructorVO.arguments;
 		
-		var idVar = constructorVO.ID;
-		var params = [ TPType( macro:Dynamic ), TPType( macro:Dynamic ) ];
-		var typePath = MacroUtil.getTypePath( Type.getClassName( HashMap ), params );
-		var e = macro @:pos( constructorVO.filePosition ) { new $typePath(); };
+		var idVar 	= constructorVO.ID;
+		var e 	= Context.parseInlineString( "new " + constructorVO.type + "()", constructorVO.filePosition );
+		var varType = TypeTools.toComplexType( Context.typeof( e ) );
+		factoryVO.expressions.push( macro @:mergeBlock { var $idVar : $varType = $e; } );
 		
-		factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
-		
+		/*var params = [ TPType( macro:Dynamic ), TPType( macro:Dynamic ) ];
+		var typePath = MacroUtil.getTypePath( Type.getClassName( HashMap ), params );*/
+	
 		var extVar = macro $i{ idVar };
 		if ( args.length == 0 )
 		{
@@ -59,6 +60,9 @@ class HashMapFactory
 				{
 					//Check if class exists
 					FactoryUtil.checkTypeParamsExist( mapType, constructorVO.filePosition );
+					
+					//Remove whitespaces
+					mapType = mapType.split( ' ' ).join( '' );
 					
 					//Map it
 					factoryVO.expressions.push
