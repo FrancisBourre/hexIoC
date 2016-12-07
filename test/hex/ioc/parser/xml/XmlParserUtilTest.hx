@@ -17,9 +17,9 @@ class XmlParserUtilTest
 		var args : Array<ConstructorVO> = XMLParserUtil.getArguments( "ownerID", argXML.firstElement(), "" );
 
 		Assert.equals( 2, args.length, "Arguments length should be 2" );
-		Assert.equals( "Int", args[0].type, "Type should be 'Int'" );
+		Assert.equals( "Int", args[0].className, "Type should be 'Int'" );
 		Assert.equals( "30", args[0].arguments[ 0 ], "Value should be '30'" );
-		Assert.equals( "Bool", args[1].type, "Type should be 'Bool'" );
+		Assert.equals( "Bool", args[1].className, "Type should be 'Bool'" );
 		Assert.equals( "true", args[1].arguments[ 0 ], "Value should be 'true'" );
 	}
 	
@@ -31,7 +31,7 @@ class XmlParserUtilTest
 		var args : Array<ConstructorVO> = XMLParserUtil.getArguments( "ownerID", argXML.firstElement(), "" );
 		
 		Assert.equals( 1, args.length, "Arguments length should be 1" );
-		Assert.equals( "String", args[0].type, "Type should be 'Class'" );
+		Assert.equals( "String", args[0].className, "Type should be 'Class'" );
 		Assert.equals( "service.userinfo.note.UserInfoServiceNote", args[0].arguments[ 0 ], "Value should be 'service.userinfo.note.UserInfoServiceNote'" );
 	}
 	

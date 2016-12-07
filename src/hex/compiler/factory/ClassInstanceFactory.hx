@@ -1,6 +1,8 @@
 package hex.compiler.factory;
 
+import haxe.macro.Context;
 import haxe.macro.Expr;
+import haxe.macro.TypeTools;
 import hex.core.IAnnotationParsable;
 import hex.di.IDependencyInjector;
 import hex.di.IInjectorContainer;
@@ -48,14 +50,14 @@ class ClassInstanceFactory
 		else
 		{
 			var idVar = constructorVO.ID;
-			var tp : Array<String> = MacroUtil.getPack( constructorVO.type, constructorVO.filePosition );
-			var typePath : TypePath = MacroUtil.getTypePath( constructorVO.type, constructorVO.filePosition );
+			var tp : Array<String> = MacroUtil.getPack( constructorVO.className, constructorVO.filePosition );
+			var typePath : TypePath = MacroUtil.getTypePath( constructorVO.className, constructorVO.filePosition );
 
 			//build instance
 			var singleton = constructorVO.singleton;
 			var factory = constructorVO.factory;
 			var staticRef = constructorVO.staticRef;
-			var classType = MacroUtil.getClassType( constructorVO.type, constructorVO.filePosition );
+			var classType = MacroUtil.getClassType( constructorVO.className, constructorVO.filePosition );
 			
 			if ( constructorVO.injectorCreation && MacroUtil.implementsInterface( classType, _injectorContainerInterface ) )
 			{
@@ -113,8 +115,16 @@ class ClassInstanceFactory
 					factoryVO.moduleLocator.register( constructorVO.ID, new EmptyModule( constructorVO.ID ) );
 				}
 				
+				e = Context.parseInlineString( '( null : ${constructorVO.type})', constructorVO.filePosition );
+				var varType = TypeTools.toComplexType( Context.typeof( e ) );
+				
+				e = macro @:pos( constructorVO.filePosition ) { new $typePath( $a { constructorVO.constructorArgs } ); };
+				factoryVO.expressions.push( macro @:mergeBlock { var $idVar : $varType = $e; } );
+				
+				/*
 				e = macro @:pos( constructorVO.filePosition ) { new $typePath( $a{ constructorVO.constructorArgs } ); };
 				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
+				*/
 				
 				if ( constructorVO.injectInto && MacroUtil.implementsInterface( classType, _injectorContainerInterface ) )
 				{

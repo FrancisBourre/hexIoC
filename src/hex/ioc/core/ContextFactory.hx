@@ -250,8 +250,7 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 			
 			if ( args != null )
 			{
-				var strippedType = cons.type.split( '<' )[ 0 ];
-				if ( strippedType == ContextTypeList.HASHMAP || cons.type == ContextTypeList.SERVICE_LOCATOR || cons.type == ContextTypeList.MAPPING_CONFIG )
+				if ( cons.className == ContextTypeList.HASHMAP || cons.className == ContextTypeList.SERVICE_LOCATOR || cons.className == ContextTypeList.MAPPING_CONFIG )
 				{
 					var result = [];
 					for ( obj in args )
@@ -429,7 +428,7 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 	function _build( constructorVO : ConstructorVO, ?id : String ) : Dynamic
 	{
 		//TODO better type checking
-		var type 								= constructorVO.type.split( "<" )[ 0 ];
+		var type 								= constructorVO.className.split( "<" )[ 0 ];
 		
 		var buildMethod 						= ( this._factoryMap.exists( type ) ) ? this._factoryMap.get( type ) : ClassInstanceFactory.build;
 

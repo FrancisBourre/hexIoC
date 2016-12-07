@@ -25,10 +25,10 @@ class ArrayFactory
 		if ( !constructorVO.isProperty )
 		{
 			var idVar 	= constructorVO.ID;
-			var exp 	= Context.parseInlineString( "new " + constructorVO.type + "()", constructorVO.filePosition );
+			var exp 	= Context.parseInlineString( "new " + constructorVO.className + "()", constructorVO.filePosition );
 			var varType = TypeTools.toComplexType( Context.typeof( exp ) );
 			
-			factoryVO.expressions.push( macro @:mergeBlock {var $idVar : $varType = $a{ constructorVO.constructorArgs }; } );
+			factoryVO.expressions.push( macro @:mergeBlock @:pos( constructorVO.filePosition ) { var $idVar : $varType = $a { constructorVO.constructorArgs }; } );
 		}
 		
 		if ( constructorVO.mapTypes != null )

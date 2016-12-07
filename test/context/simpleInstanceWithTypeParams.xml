@@ -1,0 +1,5 @@
+<root name="applicationContext">
+    <bean id="instance" type="hex.ioc.parser.xml.mock.MockClassWithGeneric<String>">
+			<argument value="hello world"/>
+	</bean>
+</root>

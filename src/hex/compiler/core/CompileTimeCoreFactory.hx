@@ -190,7 +190,7 @@ class CompileTimeCoreFactory implements ICoreFactory
 	
 	public function buildInstance( constructorVO : ConstructorVODef ) : Dynamic
 	{
-		var qualifiedClassName 	= constructorVO.type;
+		var qualifiedClassName 	= constructorVO.className;
 		var args 				= constructorVO.arguments;
 		var factoryMethod 		= constructorVO.factory;
 		var singletonAccess 	= constructorVO.singleton;

@@ -146,7 +146,7 @@ class XmlCompiler
 						}
 						else
 						{
-							if ( arg.type == ContextTypeList.CLASS )
+							if ( arg.className == ContextTypeList.CLASS )
 							{
 								try 
 								{
@@ -270,7 +270,7 @@ class XmlCompiler
 					}
 					else
 					{
-						if ( arg.type == ContextTypeList.CLASS )
+						if ( arg.className == ContextTypeList.CLASS )
 						{
 							try 
 							{
@@ -544,7 +544,7 @@ class XmlCompiler
 		{
 			XmlCompiler._parseNode( applicationContext, iterator.next(), exceptionReporter );
 		}
-		
+
 		var assembler = XmlCompiler._assembler;
 
 		//Create runtime applicationAssembler
