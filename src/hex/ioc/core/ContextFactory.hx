@@ -126,6 +126,11 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		this._contextDispatcher.dispatch( ApplicationAssemblerMessage.ASSEMBLING_END );
 	}
 	
+	public function dispatchIdleMode() : Void
+	{
+		this._contextDispatcher.dispatch( ApplicationAssemblerMessage.IDLE_MODE );
+	}
+	
 	public function getSymbolTable() : SymbolTable
 	{
 		return this._symbolTable;

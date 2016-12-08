@@ -127,6 +127,14 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		#end
 	}
 	
+	public function dispatchIdleMode() : Void
+	{
+		#if macro
+		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.IDLE_MODE" );
+		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
+		#end
+	}
+	
 	public function registerID( id : String ) : Bool
 	{
 		return this._symbolTable.register( id );

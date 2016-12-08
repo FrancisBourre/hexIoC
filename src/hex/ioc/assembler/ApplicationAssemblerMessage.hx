@@ -1,5 +1,6 @@
 package hex.ioc.assembler;
 
+import hex.error.PrivateConstructorException;
 import hex.event.MessageType;
 
 /**
@@ -16,9 +17,11 @@ class ApplicationAssemblerMessage
 	static public var DOMAIN_LISTENERS_ASSIGNED = new MessageType( "onDomainListenersAssigned" );
 	static public var MODULES_INITIALIZED 		= new MessageType( "onModulesInitialized" );
 	static public var ASSEMBLING_END 			= new MessageType( "onAssemblingEnd" );
+	static public var IDLE_MODE 				= new MessageType( "onIdleMode" );
 	
-	function new() 
-	{
-		
-	}
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
 }
