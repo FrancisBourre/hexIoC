@@ -83,6 +83,7 @@ class ApplicationAssemblerStateTest
 	public function testCustomStateTransition() : Void
 	{
 		MockStateCommand.callCount = 0;
+		MockExitStateCommand.callCount = 0;
 		MockStateCommand.lastInjecteContext = null;
 		
 		this._applicationAssembler = XmlReader.readXmlFile( "context/testCustomStateTransition.xml" );
