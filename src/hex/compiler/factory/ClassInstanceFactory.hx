@@ -115,8 +115,10 @@ class ClassInstanceFactory
 					factoryVO.moduleLocator.register( constructorVO.ID, new EmptyModule( constructorVO.ID ) );
 				}
 				
-				e = Context.parseInlineString( '( null : ${constructorVO.type})', constructorVO.filePosition );
-				var varType = TypeTools.toComplexType( Context.typeof( e ) );
+				var varType = 
+					TypeTools.toComplexType( 
+						Context.typeof( 
+							Context.parseInlineString( '( null : ${constructorVO.type})', constructorVO.filePosition ) ) );
 				
 				e = macro @:pos( constructorVO.filePosition ) { new $typePath( $a { constructorVO.constructorArgs } ); };
 				factoryVO.expressions.push( macro @:mergeBlock { var $idVar : $varType = $e; } );
