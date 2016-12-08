@@ -125,7 +125,7 @@ class StateTransitionFactory
 				}
 				else
 				{
-					vo.expressions.push( macro @:pos( exitVO.filePosition ) @:mergeBlock { exitMapping.setContextOwner( __applicationContext ); } );
+					vo.expressions.push( macro @:pos( exitVO.filePosition ) @:mergeBlock { exitMapping.setContextOwner( applicationContext ); } );
 				}
 				
 				if ( exitVO.fireOnce )

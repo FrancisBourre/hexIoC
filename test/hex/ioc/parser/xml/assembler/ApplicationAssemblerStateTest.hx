@@ -6,6 +6,7 @@ import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.core.IContextFactory;
 import hex.ioc.parser.xml.assembler.mock.MockApplicationContext;
+import hex.ioc.parser.xml.assembler.mock.MockExitStateCommand;
 import hex.ioc.parser.xml.assembler.mock.MockModule;
 import hex.ioc.parser.xml.assembler.mock.MockStateCommand;
 import hex.ioc.parser.xml.assembler.mock.MockStateCommandWithModule;
@@ -108,6 +109,8 @@ class ApplicationAssemblerStateTest
 		context.state.ASSEMBLING_END.addTransition( trigger, customState );
 		
 		context.dispatch( trigger );
+		Assert.equals( 0, MockExitStateCommand.callCount, "'MockExitStateCommand' should not have been called" );
+		
 
 		Assert.equals( 0, MockStateCommand.callCount, "'MockStateCommand' should not have been called yet" );
 		Assert.equals( 1, module.callbackCount, "module callback should be triggered once" );
@@ -122,5 +125,6 @@ class ApplicationAssemblerStateTest
 		context.dispatch( anotherMessageType );
 		Assert.equals( 1, module.callbackCount, "module callback should be triggered once again" );
 		Assert.equals( 0, MockStateCommand.callCount, "'MockStateCommand' should not have been called this time" );
+		Assert.equals( 1, MockExitStateCommand.callCount, "'MockExitStateCommand' should have been called" );
 	}
 }
