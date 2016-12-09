@@ -1,4 +1,4 @@
 <root name="applicationContext">
-    <test id="intCollection" type="Array" map-type="Array<Int>, Array<UInt>"/>
-    <test id="stringCollection" type="Array" map-type="Array<String>"/>
+    <test id="intCollection" type="Array<Int>" map-type="Array<Int>; Array<UInt>"/>
+    <test id="stringCollection" type="Array<String>" map-type="Array<String>"/>
 </root>

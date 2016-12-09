@@ -5,7 +5,7 @@ package hex.ioc.vo;
  */
 typedef ConstructorVODef =
 {
-	var type            	: String;
+	var className           : String;
 	var arguments       	: Array<Dynamic>;
 	var factory         	: String;
 	var singleton       	: String;

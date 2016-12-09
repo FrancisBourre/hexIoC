@@ -95,7 +95,8 @@ class XmlCompiler
 				type = staticRef != null ? ContextTypeList.STATIC_VARIABLE : ContextTypeList.STRING;
 			}
 
-			if ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR || type == ContextTypeList.MAPPING_CONFIG )
+			var strippedType = type != null ? type.split( '<' )[ 0 ] : null;
+			if ( strippedType == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR || type == ContextTypeList.MAPPING_CONFIG )
 			{
 				args = XmlCompiler.getMapArguments( identifier, xml, exceptionReporter );
 
@@ -145,7 +146,7 @@ class XmlCompiler
 						}
 						else
 						{
-							if ( arg.type == ContextTypeList.CLASS )
+							if ( arg.className == ContextTypeList.CLASS )
 							{
 								try 
 								{
@@ -269,7 +270,7 @@ class XmlCompiler
 					}
 					else
 					{
-						if ( arg.type == ContextTypeList.CLASS )
+						if ( arg.className == ContextTypeList.CLASS )
 						{
 							try 
 							{
@@ -543,7 +544,7 @@ class XmlCompiler
 		{
 			XmlCompiler._parseNode( applicationContext, iterator.next(), exceptionReporter );
 		}
-		
+
 		var assembler = XmlCompiler._assembler;
 
 		//Create runtime applicationAssembler

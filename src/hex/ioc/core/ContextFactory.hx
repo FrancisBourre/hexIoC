@@ -126,6 +126,11 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		this._contextDispatcher.dispatch( ApplicationAssemblerMessage.ASSEMBLING_END );
 	}
 	
+	public function dispatchIdleMode() : Void
+	{
+		this._contextDispatcher.dispatch( ApplicationAssemblerMessage.IDLE_MODE );
+	}
+	
 	public function getSymbolTable() : SymbolTable
 	{
 		return this._symbolTable;
@@ -245,12 +250,12 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 	{
 		if ( this._constructorVOLocator.isRegisteredWithKey( id ) )
 		{
-			var cons : ConstructorVO = this._constructorVOLocator.locate( id );
-			
+			var cons = this._constructorVOLocator.locate( id );
 			var args = cons.arguments;
+			
 			if ( args != null )
 			{
-				if ( cons.type == ContextTypeList.HASHMAP || cons.type == ContextTypeList.SERVICE_LOCATOR || cons.type == ContextTypeList.MAPPING_CONFIG )
+				if ( cons.className == ContextTypeList.HASHMAP || cons.className == ContextTypeList.SERVICE_LOCATOR || cons.className == ContextTypeList.MAPPING_CONFIG )
 				{
 					var result = [];
 					for ( obj in args )
@@ -427,7 +432,9 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 
 	function _build( constructorVO : ConstructorVO, ?id : String ) : Dynamic
 	{
-		var type 								= constructorVO.type;
+		//TODO better type checking
+		var type 								= constructorVO.className.split( "<" )[ 0 ];
+		
 		var buildMethod 						= ( this._factoryMap.exists( type ) ) ? this._factoryMap.get( type ) : ClassInstanceFactory.build;
 
 		var builderHelperVO 					= new FactoryVO();

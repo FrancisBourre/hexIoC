@@ -31,9 +31,9 @@ class ClassInstanceFactory
 		else
 		{
 			//TODO Allows proxy classes
-			if ( !factoryVO.coreFactory.hasProxyFactoryMethod( constructorVO.type ) )
+			if ( !factoryVO.coreFactory.hasProxyFactoryMethod( constructorVO.className ) )
 			{
-				var classReference = ClassUtil.getClassReference( constructorVO.type );
+				var classReference = ClassUtil.getClassReference( constructorVO.className );
 			
 				var isModule : Bool = ClassUtil.classExtendsOrImplements( classReference, IModule );
 				if ( isModule && constructorVO.ID != null && constructorVO.ID.length > 0 )
@@ -56,6 +56,9 @@ class ClassInstanceFactory
 				var mapTypes = constructorVO.mapTypes;
 				for ( mapType in mapTypes )
 				{
+					//Remove whitespaces
+					mapType = mapType.split( ' ' ).join( '' );
+					
 					factoryVO.contextFactory.getApplicationContext().getInjector()
 						.mapClassNameToValue( mapType, constructorVO.result, constructorVO.ID );
 				}

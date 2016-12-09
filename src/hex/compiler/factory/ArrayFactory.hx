@@ -1,8 +1,9 @@
 package hex.compiler.factory;
 
-import hex.ioc.vo.ConstructorVO;
+import haxe.macro.Context;
+import haxe.macro.TypeTools;
+import hex.error.PrivateConstructorException;
 import hex.ioc.vo.FactoryVO;
-import hex.util.MacroUtil;
 
 /**
  * ...
@@ -10,21 +11,24 @@ import hex.util.MacroUtil;
  */
 class ArrayFactory
 {
-	function new()
-	{
-
-	}
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
 	
 	#if macro
 	static public function build( factoryVO : FactoryVO ) : Dynamic
 	{
-		var constructorVO : ConstructorVO = factoryVO.constructorVO;
-		//var e =  macro @:pos( constructorVO.filePosition ) { $a { constructorVO.constructorArgs }; };
-		
+		var constructorVO = factoryVO.constructorVO;
+
 		if ( !constructorVO.isProperty )
 		{
-			var idVar = constructorVO.ID;
-			factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $a{ constructorVO.constructorArgs }; } );
+			var idVar 	= constructorVO.ID;
+			var exp 	= Context.parseInlineString( "new " + constructorVO.className + "()", constructorVO.filePosition );
+			var varType = TypeTools.toComplexType( Context.typeof( exp ) );
+			
+			factoryVO.expressions.push( macro @:mergeBlock @:pos( constructorVO.filePosition ) { var $idVar : $varType = $a { constructorVO.constructorArgs }; } );
 		}
 		
 		if ( constructorVO.mapTypes != null )
@@ -35,7 +39,10 @@ class ArrayFactory
 			for ( mapType in mapTypes )
 			{
 				//Check if class exists
-				MacroUtil.getPack( mapType.split( '<' )[ 0 ], constructorVO.filePosition );
+				FactoryUtil.checkTypeParamsExist( mapType, constructorVO.filePosition );
+				
+				//Remove whitespaces
+				mapType = mapType.split( ' ' ).join( '' );
 				
 				//Map it
 				factoryVO.expressions.push

@@ -9,6 +9,7 @@ import haxe.macro.Expr;
 class ConstructorVO extends AssemblerVO
 {
 	public var              ID              	: String;
+	public var              className           : String;
 	public var              type            	: String;
 	public var              arguments       	: Array<Dynamic>;
 	public var              factory         	: String;
@@ -40,6 +41,7 @@ class ConstructorVO extends AssemblerVO
 		
 		this.ID         		= id;
 		this.type       		= type;
+		this.className       	= type != null ? type.split( '<' )[ 0 ] : null;
 		this.arguments  		= args;
 		this.factory    		= factory;
 		this.singleton  		= singleton;
@@ -54,7 +56,7 @@ class ConstructorVO extends AssemblerVO
 	{
 		return 	"("
 				+ "id:"                 + ID            	+ ", "
-				+ "type:"               + type          	+ ", "
+				+ "type:"               + className          	+ ", "
 				+ "arguments:[" 		+ arguments 		+ "], "
 				+ "factory:"    		+ factory       	+ ", "
 				+ "singleton:"  		+ singleton 		+ ", "

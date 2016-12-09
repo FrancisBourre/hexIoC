@@ -90,6 +90,7 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 		contextFactories.map( function( factory ) { factory.callAllMethods(); } );
 		contextFactories.map( function( factory ) { factory.callModuleInitialisation(); } );
 		contextFactories.map( function( factory ) { factory.dispatchAssemblingEnd(); } );
+		contextFactories.map( function( factory ) { factory.dispatchIdleMode(); } );
 	}
 
 	public function getApplicationContext( applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null ) : AbstractApplicationContext

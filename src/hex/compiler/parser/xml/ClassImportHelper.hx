@@ -33,24 +33,29 @@ class ClassImportHelper
 	#if macro
 	public function forceCompilation( type : String ) : Bool
 	{
-		if ( type != null && ClassImportHelper._primType.indexOf( type ) == -1 && this._compiledClass.indexOf( type ) == -1 )
+		if ( type != null )
 		{
-			this._compiledClass.push( type );
-			try
-			{
-				Context.getType( type );
-			}
-			catch ( e : Dynamic )
-			{
-				Context.error( e.message, e.pos );
-			}
+			type = type.split( '<' )[ 0 ];
 			
-			return true;
-		}
-		else
-		{
+			if ( ClassImportHelper._primType.indexOf( type.split( '<' )[ 0 ] ) == -1 && this._compiledClass.indexOf( type ) == -1 )
+			{
+				this._compiledClass.push( type );
+				try
+				{
+					Context.getType( type );
+				}
+				catch ( e : Dynamic )
+				{
+					Context.error( e.message, e.pos );
+				}
+				
+				return true;
+			}
+
 			return false;
 		}
+
+		return false;
 	}
 
 	static public function getClassFullyQualifiedNameFromStaticRef( staticRef : String ) : String

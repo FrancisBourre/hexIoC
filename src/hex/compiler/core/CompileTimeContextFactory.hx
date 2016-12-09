@@ -127,6 +127,14 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		#end
 	}
 	
+	public function dispatchIdleMode() : Void
+	{
+		#if macro
+		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.IDLE_MODE" );
+		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
+		#end
+	}
+	
 	public function registerID( id : String ) : Bool
 	{
 		return this._symbolTable.register( id );
@@ -284,12 +292,11 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		#if macro
 		if ( this._constructorVOLocator.isRegisteredWithKey( id ) )
 		{
-			var cons : ConstructorVO = this._constructorVOLocator.locate( id );
-			
+			var cons = this._constructorVOLocator.locate( id );	
 			var args = cons.arguments;
 			if ( args != null )
 			{
-				if ( cons.type == ContextTypeList.HASHMAP || cons.type == ContextTypeList.SERVICE_LOCATOR || cons.type == ContextTypeList.MAPPING_CONFIG )
+				if ( cons.className == ContextTypeList.HASHMAP || cons.className == ContextTypeList.SERVICE_LOCATOR || cons.className == ContextTypeList.MAPPING_CONFIG )
 				{
 					var result = [];
 					for ( obj in args )
@@ -301,14 +308,14 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 					}
 					cons.arguments = result;
 				}
-				else if ( 	cons.type == ContextTypeList.STRING || 
-							cons.type == ContextTypeList.INT || 
-							cons.type == ContextTypeList.UINT || 
-							cons.type == ContextTypeList.FLOAT || 
-							cons.type == ContextTypeList.BOOLEAN || 
-							cons.type == ContextTypeList.NULL || 
-							cons.type == ContextTypeList.CLASS || 
-							cons.type == ContextTypeList.OBJECT )
+				else if ( 	cons.className == ContextTypeList.STRING || 
+							cons.className == ContextTypeList.INT || 
+							cons.className == ContextTypeList.UINT || 
+							cons.className == ContextTypeList.FLOAT || 
+							cons.className == ContextTypeList.BOOLEAN || 
+							cons.className == ContextTypeList.NULL || 
+							cons.className == ContextTypeList.CLASS || 
+							cons.className == ContextTypeList.OBJECT )
 				{
 					var arguments = cons.arguments;
 					var l : Int = arguments.length;
@@ -522,7 +529,8 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	function _build( constructorVO : ConstructorVO, ?id : String ) : Dynamic
 	{
 		constructorVO.isProperty 	= id == null;
-		var type 					= constructorVO.type;
+		//TODO better type checking with Context.typeof
+		var type 					= constructorVO.className;
 		var buildMethod 			= ( this._factoryMap.exists( type ) ) ? this._factoryMap.get( type ) : ClassInstanceFactory.build;
 		var result 					= buildMethod( this._getFactoryVO( constructorVO ) );
 
@@ -543,7 +551,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		
 		if ( constructorVO != null )
 		{
-			factoryVO.type 			= constructorVO.type;
+			factoryVO.type 			= constructorVO.className;
 			factoryVO.constructorVO = constructorVO;
 		}
 		

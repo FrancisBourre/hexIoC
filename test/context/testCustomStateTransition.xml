@@ -19,6 +19,7 @@
 	
 	<state id="anotherCustomState">
 		<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand"/>
+		<exit command-class="hex.ioc.parser.xml.assembler.mock.MockExitStateCommand"/>
 		<transition>
 				<message ref="anotherMessageID"/>
 				<state ref="customState"/>

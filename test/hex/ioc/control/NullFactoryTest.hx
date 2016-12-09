@@ -15,7 +15,7 @@ class NullFactoryTest
     public function testExecute() : Void
     {
 		var helper = new FactoryVO();
-		helper.constructorVO 		= new ConstructorVO( "test" );
+		helper.constructorVO = new ConstructorVO( "test" );
 		NullFactory.build( helper );
 		Assert.isNull( helper.constructorVO.result, "constructorVO.result should be null" );
 	}

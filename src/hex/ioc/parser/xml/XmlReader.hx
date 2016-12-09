@@ -51,7 +51,8 @@ class XmlReader
 		}
 		else
 		{
-			if ( type == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR || type == ContextTypeList.MAPPING_CONFIG )
+			var strippedType = type != null ? type.split( '<' )[ 0 ] : type;
+			if ( strippedType == ContextTypeList.HASHMAP || strippedType == ContextTypeList.SERVICE_LOCATOR || strippedType == ContextTypeList.MAPPING_CONFIG )
 			{
 				args = XMLParserUtil.getMapArguments( identifier, xml );
 				for ( arg in args )

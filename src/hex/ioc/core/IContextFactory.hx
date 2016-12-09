@@ -56,5 +56,7 @@ interface IContextFactory
 	
 	function dispatchAssemblingEnd() : Void;
 	
+	function dispatchIdleMode() : Void;
+	
 	function getSymbolTable() : SymbolTable;
 }
