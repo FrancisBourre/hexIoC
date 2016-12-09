@@ -6,7 +6,7 @@ import hex.error.IllegalArgumentException;
 class Preprocessor implements IParser<String>
 {
 	var _property 	: Map<String, String>;
-	var _separator 	: EReg = ~/\$\{.*\}/;
+	var _separator 	: EReg = ~/\${.*}/;
 
 	public function new()
 	{
