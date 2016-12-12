@@ -3,9 +3,9 @@ package hex.ioc.parser;
 /**
  * @author Francis Bourre
  */
-interface IParserCollection 
+interface IParserCollection<T:IParserCommand>
 {
-	function next() : IParserCommand;
+	function next() : T;
 	
 	function hasNext() : Bool;
 		

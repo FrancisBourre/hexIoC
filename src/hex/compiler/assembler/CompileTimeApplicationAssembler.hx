@@ -1,4 +1,6 @@
 package hex.compiler.assembler;
+import hex.ioc.assembler.ApplicationAssembler;
+import hex.util.MacroUtil;
 
 #if macro
 import haxe.macro.Context;
@@ -22,11 +24,26 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 {
 	var _mApplicationContext 	= new Map<String, AbstractApplicationContext>();
 	var _mContextFactories 		= new Map<AbstractApplicationContext, IContextFactory>();
-	var _expressions 			= [ macro {} ];
+	var _expressions 			= [ macro { } ];
+	
+	var _assemblerExpression : Expr;
 
-	public function new()
+	public function new( assemblerExpression : Expr = null )
 	{
+		//Create runtime applicationAssembler
+		var applicationAssemblerTypePath 	= MacroUtil.getTypePath( Type.getClassName( ApplicationAssembler ) );
+		var applicationAssemblerVarName 	= "";
 		
+		if ( assemblerExpression == null )
+		{
+			applicationAssemblerVarName = 'applicationAssembler';
+			this.addExpression( macro @:mergeBlock { var $applicationAssemblerVarName = new $applicationAssemblerTypePath(); } );
+			this._assemblerExpression = macro $i { applicationAssemblerVarName };
+		}
+		else
+		{
+			this._assemblerExpression = assemblerExpression;
+		}
 	}
 	
 	public function addExpression( expr : Expr ) : Void
@@ -37,6 +54,11 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 	public function getMainExpression() : Expr
 	{
 		return return macro $b{ this._expressions };
+	}
+	
+	public function getAssemblerExpression() : Expr
+	{
+		return this._assemblerExpression;
 	}
 	
 	public function getContextFactory( applicationContext : AbstractApplicationContext ) : IContextFactory

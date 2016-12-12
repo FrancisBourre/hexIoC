@@ -1,19 +1,23 @@
-package hex.ioc.parser.xml;
+package hex.compiler.parser.xml;
 
-import hex.error.NullPointerException;
+import haxe.macro.Context;
 import hex.ioc.assembler.IApplicationAssembler;
+import hex.ioc.parser.xml.XmlAssemblingExceptionReporter;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class ApplicationXMLParser
+class CompileTimeParser 
 {
 	var _contextData 		: Dynamic;
 	var _assembler 			: IApplicationAssembler;
-	var _parserCollection 	: XMLParserCollection;
 	
-	public function new( ?parserCollection : XMLParserCollection )
+	var _parserCollection 	: CompileTimeParserCollection;
+	var _importHelper 		: ClassImportHelper;
+	var _exceptionReporter 	: XmlAssemblingExceptionReporter;
+	
+	public function new( ?parserCollection : CompileTimeParserCollection )
 	{
 		if ( parserCollection != null )
 		{
@@ -21,19 +25,18 @@ class ApplicationXMLParser
 		}
 		else
 		{
-			this._parserCollection = new XMLParserCollection( true );
+			this._parserCollection = new CompileTimeParserCollection();
 		}
 	}
 	
-	inline static public function parseString( assembler : IApplicationAssembler, s : String ) : Void
+	public function setImportHelper( importHelper : ClassImportHelper ) : Void
 	{
-		ApplicationXMLParser.parseXml( assembler, Xml.parse( s ) );
+		this._importHelper = importHelper;
 	}
 	
-	inline static public function parseXml( assembler : IApplicationAssembler, xml : Xml ) : Void
+	public function setExceptionReporter( exceptionReporter : XmlAssemblingExceptionReporter ) : Void
 	{
-		var applicationXMLParser = new ApplicationXMLParser();
-		applicationXMLParser.parse( assembler, xml );
+		this._exceptionReporter = exceptionReporter;
 	}
 
 	public function setApplicationAssembler( applicationAssembler : IApplicationAssembler ) : Void
@@ -64,7 +67,7 @@ class ApplicationXMLParser
 
 		} else
 		{
-			throw new NullPointerException ( this + ".parse() can't retrieve instance of ApplicationAssembler" );
+			Context.error ( this + ".parse() can't retrieve instance of ApplicationAssembler", Context.currentPos() );
 		}
 
 		if ( context != null )
@@ -73,19 +76,21 @@ class ApplicationXMLParser
 
 		} else
 		{
-			throw new NullPointerException ( this + ".parse() can't retrieve IoC context data" );
+			Context.error ( this + ".parse() can't retrieve IoC context data", Context.currentPos() );
 		}
 
 		if ( this._parserCollection == null )
 		{
-			this._parserCollection = new XMLParserCollection();
+			this._parserCollection = new CompileTimeParserCollection();
 		}
 
 		while ( this._parserCollection.hasNext() )
 		{
-			var parser : IParserCommand = this._parserCollection.next();
-			parser.setContextData( this._contextData );
+			var parser = this._parserCollection.next();
+			parser.setImportHelper( this._importHelper );
+			parser.setExceptionReporter( this._exceptionReporter );
 			parser.setApplicationAssembler( this._assembler );
+			parser.setContextData( this._contextData );
 			parser.parse();
 
 			this._contextData = parser.getContextData();

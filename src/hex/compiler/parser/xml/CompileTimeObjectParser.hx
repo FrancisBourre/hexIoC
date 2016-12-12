@@ -5,6 +5,7 @@ import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.core.ContextTypeList;
+import hex.ioc.parser.xml.AbstractXMLParser;
 import hex.ioc.parser.xml.XMLAttributeUtil;
 import hex.ioc.parser.xml.XMLParserUtil;
 import hex.ioc.parser.xml.XmlAssemblingExceptionReporter;
@@ -19,26 +20,32 @@ import hex.ioc.vo.PropertyVO;
  * ...
  * @author Francis Bourre
  */
-class CompileTimeObjectParser 
+class CompileTimeObjectParser extends CompileTimeXMLParser
 {
-	var _assembler 		: IApplicationAssembler;
-	var _importHelper 	: ClassImportHelper;
-	
-	public function new( assembler : IApplicationAssembler, importHelper : ClassImportHelper ) 
+	public function new() 
 	{
-		this._assembler 	= assembler;
-		this._importHelper 	= importHelper;
+		super();
 	}
 	
-	public function parseNode( 	applicationContext 	: AbstractApplicationContext, 
-								xml 				: Xml, 
-								exceptionReporter 	: XmlAssemblingExceptionReporter
-							) : Void
+	override public function parse() : Void
 	{
-		var identifier : String = xml.get( ContextAttributeList.ID );
+		var applicationContext 	= this.getApplicationAssembler().getApplicationContext( this._getRootApplicationContextName() );
+		var iterator 			= this.getXMLContext().firstElement().elements();
+		
+		while ( iterator.hasNext() )
+		{
+			this._parseNode( iterator.next(), applicationContext );
+		}
+	}
+	
+	public function _parseNode( xml : Xml, applicationContext :  AbstractApplicationContext ) : Void
+	{
+		var assembler = this.getApplicationAssembler();
+		
+		var identifier = xml.get( ContextAttributeList.ID );
 		if ( identifier == null )
 		{
-			exceptionReporter.throwMissingIDException( xml );
+			this._exceptionReporter.throwMissingIDException( xml );
 		}
 
 		var type 				: String;
@@ -60,14 +67,14 @@ class CompileTimeObjectParser
 		{
 			factory 			= xml.get( ContextAttributeList.PARSER_CLASS );
 			var arg 			= new ConstructorVO( identifier, ContextTypeList.STRING, [ xml.firstElement().toString() ] );
-			arg.filePosition 	= exceptionReporter._positionTracker.makePositionFromNode( xml.firstElement() );
+			arg.filePosition 	= this._exceptionReporter._positionTracker.makePositionFromNode( xml.firstElement() );
 			
 			var constructorVO 			= new ConstructorVO( identifier, type, [ arg ], factory );
-			constructorVO.filePosition 	= exceptionReporter._positionTracker.makePositionFromNode( xml );
+			constructorVO.filePosition 	= this._exceptionReporter._positionTracker.makePositionFromNode( xml );
 			constructorVO.ifList 		= XMLParserUtil.getIfList( xml );
 			constructorVO.ifNotList 	= XMLParserUtil.getIfNotList( xml );
 
-			this._assembler.buildObject( applicationContext, constructorVO );
+			assembler.buildObject( applicationContext, constructorVO );
 		}
 		else
 		{
@@ -88,7 +95,7 @@ class CompileTimeObjectParser
 			var strippedType = type != null ? type.split( '<' )[ 0 ] : null;
 			if ( strippedType == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR || type == ContextTypeList.MAPPING_CONFIG )
 			{
-				args = this._getMapArguments( identifier, xml, exceptionReporter );
+				args = this._getMapArguments( identifier, xml, this._exceptionReporter );
 
 				for ( arg in args )
 				{
@@ -120,7 +127,7 @@ class CompileTimeObjectParser
 					{
 						var node = iterator.next();
 						var arg = XMLParserUtil._getConstructorVOFromXML( identifier, node );
-						arg.filePosition = exceptionReporter._positionTracker.makePositionFromNode( node );
+						arg.filePosition = this._exceptionReporter._positionTracker.makePositionFromNode( node );
 						
 						if ( arg.staticRef != null )
 						{
@@ -131,7 +138,7 @@ class CompileTimeObjectParser
 								
 							} catch ( e : String ) 
 							{
-								exceptionReporter.throwMissingTypeException( type.length > 0 ? type : arg.staticRef, node, ContextAttributeList.STATIC_REF );
+								this._exceptionReporter.throwMissingTypeException( type.length > 0 ? type : arg.staticRef, node, ContextAttributeList.STATIC_REF );
 							}
 						}
 						else
@@ -144,7 +151,7 @@ class CompileTimeObjectParser
 									
 								} catch ( e : String ) 
 								{
-									exceptionReporter.throwMissingTypeException( arg.arguments[ 0 ], node, ContextAttributeList.VALUE );
+									this._exceptionReporter.throwMissingTypeException( arg.arguments[ 0 ], node, ContextAttributeList.VALUE );
 								}
 							}
 						}
@@ -170,7 +177,7 @@ class CompileTimeObjectParser
 				}
 				catch ( e : String )
 				{
-					exceptionReporter.throwMissingTypeException( type, xml, ContextAttributeList.TYPE );
+					this._exceptionReporter.throwMissingTypeException( type, xml, ContextAttributeList.TYPE );
 				}
 			}
 			else
@@ -183,16 +190,16 @@ class CompileTimeObjectParser
 				}
 				catch ( e : String )
 				{
-					exceptionReporter.throwMissingTypeException( t, xml, ContextAttributeList.STATIC_REF );
+					this._exceptionReporter.throwMissingTypeException( t, xml, ContextAttributeList.STATIC_REF );
 				}
 			}
 
 			var constructorVO 			= new ConstructorVO( identifier, type, args, factory, singleton, injectInto, null, mapType, staticRef, injectorCreation );
 			constructorVO.ifList 		= ifList;
 			constructorVO.ifNotList 	= ifNotList;
-			constructorVO.filePosition 	= constructorVO.ref == null ? exceptionReporter._positionTracker.makePositionFromNode( xml ) : exceptionReporter._positionTracker.makePositionFromAttribute( xml, ContextAttributeList.REF );
+			constructorVO.filePosition 	= constructorVO.ref == null ? this._exceptionReporter._positionTracker.makePositionFromNode( xml ) : this._exceptionReporter._positionTracker.makePositionFromAttribute( xml, ContextAttributeList.REF );
 
-			this._assembler.buildObject( applicationContext, constructorVO );
+			assembler.buildObject( applicationContext, constructorVO );
 
 			// Build property.
 			var propertyIterator = xml.elementsNamed( ContextNameList.PROPERTY );
@@ -211,7 +218,7 @@ class CompileTimeObjectParser
 					}
 					catch ( e : String )
 					{
-						exceptionReporter.throwMissingTypeException( type, property, ContextAttributeList.STATIC_REF );
+						this._exceptionReporter.throwMissingTypeException( type, property, ContextAttributeList.STATIC_REF );
 					}
 				}
 				
@@ -223,11 +230,11 @@ class CompileTimeObjectParser
 													XMLAttributeUtil.getMethod( property ),
 													XMLAttributeUtil.getStaticRef( property ) );
 				
-				propertyVO.filePosition = propertyVO.ref == null ? exceptionReporter._positionTracker.makePositionFromNode( property ) : exceptionReporter._positionTracker.makePositionFromAttribute( property, ContextAttributeList.REF );
+				propertyVO.filePosition = propertyVO.ref == null ? this._exceptionReporter._positionTracker.makePositionFromNode( property ) : this._exceptionReporter._positionTracker.makePositionFromAttribute( property, ContextAttributeList.REF );
 				propertyVO.ifList 		= XMLParserUtil.getIfList( xml );
 				propertyVO.ifNotList 	= XMLParserUtil.getIfNotList( xml );
 				
-				this._assembler.buildProperty( applicationContext, propertyVO );
+				assembler.buildProperty( applicationContext, propertyVO );
 			}
 
 			// Build method call.
@@ -243,7 +250,7 @@ class CompileTimeObjectParser
 				{
 					var node 			= iterator.next();
 					var arg 			= XMLParserUtil._getConstructorVOFromXML( identifier, node );
-					arg.filePosition 	= exceptionReporter._positionTracker.makePositionFromNode( node );
+					arg.filePosition 	= this._exceptionReporter._positionTracker.makePositionFromNode( node );
 					
 					if ( arg.staticRef != null )
 					{
@@ -255,7 +262,7 @@ class CompileTimeObjectParser
 							
 						} catch ( e : String ) 
 						{
-							exceptionReporter.throwMissingTypeException( type.length > 0 ? type : arg.staticRef, node, ContextAttributeList.STATIC_REF );
+							this._exceptionReporter.throwMissingTypeException( type.length > 0 ? type : arg.staticRef, node, ContextAttributeList.STATIC_REF );
 						}
 					}
 					else
@@ -268,7 +275,7 @@ class CompileTimeObjectParser
 								
 							} catch ( e : String ) 
 							{
-								exceptionReporter.throwMissingTypeException( arg.arguments[ 0 ], node, ContextAttributeList.VALUE );
+								this._exceptionReporter.throwMissingTypeException( arg.arguments[ 0 ], node, ContextAttributeList.VALUE );
 							}
 						}
 					}
@@ -277,11 +284,11 @@ class CompileTimeObjectParser
 				}
 				
 				var methodCallVO 			= new MethodCallVO( identifier, methodCallItem.get( ContextAttributeList.NAME ), args );
-				methodCallVO.filePosition 	= exceptionReporter._positionTracker.makePositionFromNode( methodCallItem );
+				methodCallVO.filePosition 	= this._exceptionReporter._positionTracker.makePositionFromNode( methodCallItem );
 				methodCallVO.ifList 		= XMLParserUtil.getIfList( methodCallItem );
 				methodCallVO.ifNotList 		= XMLParserUtil.getIfNotList( methodCallItem );
 				
-				this._assembler.buildMethodCall( applicationContext, methodCallVO );
+				assembler.buildMethodCall( applicationContext, methodCallVO );
 			}
 
 			// Build channel listener.
@@ -300,7 +307,7 @@ class CompileTimeObjectParser
 					{
 						var node = iterator.next();
 						var listenerArg = XMLParserUtil.getEventArgument( node );
-						listenerArg.filePosition = exceptionReporter._positionTracker.makePositionFromNode( node );
+						listenerArg.filePosition = this._exceptionReporter._positionTracker.makePositionFromNode( node );
 						
 						//
 						var staticRef = listenerArg.staticRef;
@@ -314,7 +321,7 @@ class CompileTimeObjectParser
 							}
 							catch ( e : String )
 							{
-								exceptionReporter.throwMissingTypeException( type, node, ContextAttributeList.STATIC_REF );
+								this._exceptionReporter.throwMissingTypeException( type, node, ContextAttributeList.STATIC_REF );
 							}
 						}
 						
@@ -322,15 +329,15 @@ class CompileTimeObjectParser
 					}
 
 					var domainListenerVO 			= new DomainListenerVO( identifier, channelName, listenerArgs );
-					domainListenerVO.filePosition 	= exceptionReporter._positionTracker.makePositionFromNode( listener );
+					domainListenerVO.filePosition 	= this._exceptionReporter._positionTracker.makePositionFromNode( listener );
 					domainListenerVO.ifList 		= XMLParserUtil.getIfList( listener );
 					domainListenerVO.ifNotList 		= XMLParserUtil.getIfNotList( listener );
 					
-					this._assembler.buildDomainListener( applicationContext, domainListenerVO );
+					assembler.buildDomainListener( applicationContext, domainListenerVO );
 				}
 				else
 				{
-					exceptionReporter.throwMissingListeningReferenceException( xml, listener );
+					this._exceptionReporter.throwMissingListeningReferenceException( xml, listener );
 				}
 			}
 		}

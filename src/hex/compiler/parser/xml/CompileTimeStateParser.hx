@@ -1,7 +1,6 @@
 package hex.compiler.parser.xml;
 
 import hex.ioc.assembler.AbstractApplicationContext;
-import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.parser.xml.XMLParserUtil;
@@ -14,44 +13,50 @@ import hex.ioc.vo.TransitionVO;
  * ...
  * @author Francis Bourre
  */
-class CompileTimeStateParser 
+class CompileTimeStateParser extends CompileTimeXMLParser 
 {
-	var _assembler 		: IApplicationAssembler;
-	var _importHelper 	: ClassImportHelper;
-	
-	public function new( assembler : IApplicationAssembler, importHelper : ClassImportHelper ) 
+	public function new() 
 	{
-		this._assembler 	= assembler;
-		this._importHelper 	= importHelper;
+		super();
 	}
 	
-	public function parseNode( 	applicationContext : AbstractApplicationContext, 
-								xml : Xml, 
-								exceptionReporter : XmlAssemblingExceptionReporter 
-							) : Void
+	override public function parse() : Void
+	{
+		var applicationContext 	= this.getApplicationAssembler().getApplicationContext( this._getRootApplicationContextName() );
+		var iterator 			= this.getXMLContext().firstElement().elementsNamed( "state" );
+		
+		while ( iterator.hasNext() )
+		{
+			var node = iterator.next();
+			this._parseNode( applicationContext, node );
+			this.getXMLContext().firstElement().removeChild( node );
+		}
+	}
+	
+	function _parseNode( applicationContext : AbstractApplicationContext, xml : Xml ) : Void
 	{
 		var identifier = xml.get( ContextAttributeList.ID );
 		if ( identifier == null )
 		{
-			exceptionReporter.throwMissingIDException( xml );
+			this._exceptionReporter.throwMissingIDException( xml );
 		}
 		
 		var staticReference 		= xml.get( ContextAttributeList.STATIC_REF );
 		var instanceReference 		= xml.get( ContextAttributeList.REF );
 		
-		var enterList 				= this._getCommandList( xml, ContextNameList.ENTER, exceptionReporter );
-		var exitList 				= this._getCommandList( xml, ContextNameList.EXIT, exceptionReporter );
-		var transitionList 			= this._getTransitionList( xml, exceptionReporter );
+		var enterList 				= this._getCommandList( xml, ContextNameList.ENTER );
+		var exitList 				= this._getCommandList( xml, ContextNameList.EXIT );
+		var transitionList 			= this._getTransitionList( xml );
 		
 		var stateTransitionVO 		= new StateTransitionVO( identifier, staticReference, instanceReference, enterList, exitList, transitionList );
 		stateTransitionVO.ifList 	= XMLParserUtil.getIfList( xml );
 		stateTransitionVO.ifNotList = XMLParserUtil.getIfNotList( xml );
 		
-		stateTransitionVO.filePosition 	= exceptionReporter._positionTracker.makePositionFromNode( xml );
-		this._assembler.configureStateTransition( applicationContext, stateTransitionVO );
+		stateTransitionVO.filePosition 	= this._exceptionReporter._positionTracker.makePositionFromNode( xml );
+		this._applicationAssembler.configureStateTransition( applicationContext, stateTransitionVO );
 	}
 	
-	function _getCommandList( xml : Xml, elementName : String, exceptionReporter : XmlAssemblingExceptionReporter ) : Array<CommandMappingVO>
+	function _getCommandList( xml : Xml, elementName : String ) : Array<CommandMappingVO>
 	{
 		var iterator = xml.elementsNamed( elementName );
 		var list : Array<CommandMappingVO> = [];
@@ -66,14 +71,14 @@ class CompileTimeStateParser
 			}
 			catch ( e : String )
 			{
-				exceptionReporter.throwMissingTypeException( commandClass, item, ContextAttributeList.COMMAND_CLASS );
+				this._exceptionReporter.throwMissingTypeException( commandClass, item, ContextAttributeList.COMMAND_CLASS );
 			}
 
 			var commandMappingVO = 	{ 	commandClassName: commandClass, 
 										fireOnce: item.get( ContextAttributeList.FIRE_ONCE ) == "true", 
 										contextOwner: item.get( ContextAttributeList.CONTEXT_OWNER ),
 										methodRef: methodRef,
-										filePosition: exceptionReporter._positionTracker.makePositionFromNode( item )
+										filePosition: this._exceptionReporter._positionTracker.makePositionFromNode( item )
 									};
 
 			list.push( commandMappingVO );
@@ -82,7 +87,7 @@ class CompileTimeStateParser
 		return list;
 	}
 	
-	function _getTransitionList( xml : Xml, exceptionReporter : XmlAssemblingExceptionReporter ) : Array<TransitionVO>
+	function _getTransitionList( xml : Xml ) : Array<TransitionVO>
 	{
 		var iterator = xml.elementsNamed( ContextNameList.TRANSITION );
 		var list : Array<TransitionVO> = [];
