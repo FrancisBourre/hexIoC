@@ -1,13 +1,6 @@
 package hex.compiler.parser.xml;
 
-import haxe.macro.Expr;
-import hex.compiler.assembler.CompileTimeApplicationAssembler;
-import hex.compiler.parser.xml.ClassImportHelper;
-import hex.ioc.assembler.AbstractApplicationContext;
-import hex.ioc.assembler.ApplicationAssembler;
-import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.core.ContextAttributeList;
-import hex.ioc.parser.xml.XmlAssemblingExceptionReporter;
 import hex.util.MacroUtil;
 
 /**
@@ -16,27 +9,13 @@ import hex.util.MacroUtil;
  */
 class CompileTimeApplicationContextParser extends CompileTimeXMLParser
 {
-	//public var applicationAssemblerExpr : Expr;
-	
-	public function new( /*applicationAssemblerExpr	: Expr*/ ) 
+	public function new() 
 	{
-		//this.applicationAssemblerExpr 	= applicationAssemblerExpr;
 		super();
 	}
 	
 	override public function parse() : Void
 	{
-		//Create runtime applicationAssembler
-		/*var applicationAssemblerTypePath 	= MacroUtil.getTypePath( Type.getClassName( ApplicationAssembler ) );
-		var applicationAssemblerVarName 	= "";
-		
-		if ( this.applicationAssemblerExpr == null )
-		{
-			applicationAssemblerVarName = 'applicationAssembler';
-			( cast this._applicationAssembler ).addExpression( macro @:mergeBlock { var $applicationAssemblerVarName = new $applicationAssemblerTypePath(); } );
-			this.applicationAssemblerExpr = macro $i { applicationAssemblerVarName };
-		}*/
-		
 		//Create runtime applicationContext
 		var assemblerExpr	 	= ( cast this._applicationAssembler ).getAssemblerExpression();
 		var xml : Xml 			= this.getContextData().firstElement();
