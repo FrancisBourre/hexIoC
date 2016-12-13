@@ -23,18 +23,16 @@ class XmlCompiler
 	{
 		var conditionalVariablesMap 	= MacroConditionalVariablesProcessor.parse( conditionalVariables );
 		var conditionalVariablesChecker = new ConditionalVariablesChecker( conditionalVariablesMap );
-		var positionTracker				= new PositionTracker() ;
 		
-		var parser						= new XmlDSLParser( positionTracker );
-		var document 					= parser.parse( fileName, preprocessingVariables, conditionalVariablesChecker );
-		var exceptionReporter 			= new XmlAssemblingExceptionReporter( positionTracker );
-		var importHelper 				= new ClassImportHelper();
+		var positionTracker				= new PositionTracker();
+		var xmlParser					= new XmlDSLParser( positionTracker );
+		var document 					= xmlParser.parse( fileName, preprocessingVariables, conditionalVariablesChecker );
 		
 		var assembler 					= new CompileTimeApplicationAssembler( applicationAssemblerExpr );
-		
 		var parser 						= new CompileTimeParser( new CompileTimeParserCollection() );
-		parser.setImportHelper( importHelper );
-		parser.setExceptionReporter( exceptionReporter );
+		
+		parser.setImportHelper( new ClassImportHelper() );
+		parser.setExceptionReporter( new XmlAssemblingExceptionReporter( positionTracker ) );
 		parser.parse( assembler, document );
 
 		return assembler.getMainExpression();
