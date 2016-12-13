@@ -123,11 +123,6 @@ class ClassInstanceFactory
 				e = macro @:pos( constructorVO.filePosition ) { new $typePath( $a { constructorVO.constructorArgs } ); };
 				factoryVO.expressions.push( macro @:mergeBlock { var $idVar : $varType = $e; } );
 				
-				/*
-				e = macro @:pos( constructorVO.filePosition ) { new $typePath( $a{ constructorVO.constructorArgs } ); };
-				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
-				*/
-				
 				if ( constructorVO.injectInto && MacroUtil.implementsInterface( classType, _injectorContainerInterface ) )
 				{
 					var instanceVar = macro $i { idVar };

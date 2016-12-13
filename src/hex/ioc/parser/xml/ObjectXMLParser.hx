@@ -24,13 +24,11 @@ class ObjectXMLParser extends AbstractXMLParser
 	
 	override public function parse() : Void
 	{
-		var iterator = this.getXMLContext().firstElement().elements();
+		var iterator = this.getContextData().firstElement().elements();
 		while ( iterator.hasNext() )
 		{
 			this._parseNode( iterator.next() );
 		}
-
-		this._handleComplete();
 	}
 	
 	function _parseNode( xml : Xml ) : Void

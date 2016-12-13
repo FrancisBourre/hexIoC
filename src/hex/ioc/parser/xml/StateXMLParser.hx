@@ -1,7 +1,5 @@
 package hex.ioc.parser.xml;
 
-import hex.ioc.assembler.AbstractApplicationContext;
-import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.error.ParsingException;
@@ -22,15 +20,13 @@ class StateXMLParser extends AbstractXMLParser
 	
 	override public function parse() : Void
 	{
-		var iterator = this.getXMLContext().firstElement().elementsNamed( "state" );
+		var iterator = this.getContextData().firstElement().elementsNamed( "state" );
 		while ( iterator.hasNext() )
 		{
 			var node = iterator.next();
 			this._parseNode( node );
-			this.getXMLContext().firstElement().removeChild( node );
+			this.getContextData().firstElement().removeChild( node );
 		}
-
-		this._handleComplete();
 	}
 	
 	function _parseNode( xml : Xml ) : Void

@@ -1,21 +1,23 @@
 package hex.ioc.parser.xml;
 
+
 #if macro
 import haxe.macro.Context;
-import hex.compiler.parser.xml.IXmlPositionTracker;
+import hex.compiler.parser.xml.IPositionTracker;
 import hex.ioc.error.IAssemblingExceptionReporter;
 import hex.ioc.vo.AssemblerVO;
+import haxe.macro.Expr.Position;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class XmlAssemblingExceptionReporter implements IAssemblingExceptionReporter
+class XmlAssemblingExceptionReporter implements IAssemblingExceptionReporter<Xml>
 {
 	var _map : Map<AssemblerVO, Xml>;
-	public var _positionTracker ( default, null ) : IXmlPositionTracker;
+	var _positionTracker ( default, null ) : IPositionTracker;
 
-	public function new( positionTracker : IXmlPositionTracker ) 
+	public function new( positionTracker : IPositionTracker ) 
 	{
 		this._map = new Map();
 		this._positionTracker = positionTracker;
@@ -40,6 +42,11 @@ class XmlAssemblingExceptionReporter implements IAssemblingExceptionReporter
 	{
 		this._map.set( assemblerVO, xml );
 		return assemblerVO;
+	}
+	
+	public function getPosition( xml : Xml, ?additionalInformations : Dynamic ) : Position
+	{
+		return additionalInformations == null ? this._positionTracker.makePositionFromNode( xml ) : this._positionTracker.makePositionFromAttribute( xml, additionalInformations );
 	}
 	
 	//

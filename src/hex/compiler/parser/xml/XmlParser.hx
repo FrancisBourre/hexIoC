@@ -21,6 +21,7 @@
  */
 package hex.compiler.parser.xml;
 import haxe.macro.Context;
+import hex.compiler.parser.DSLPosition;
 
 using StringTools;
 
@@ -126,7 +127,7 @@ class XmlParser
 	 * @throws haxe.xml.XmlParserException
 	 */
 	#if macro
-	static public function parse( str: String, strict = false, file : String, positionTracker : IXmlPositionTracker ) : Xml
+	static public function parse( str: String, strict = false, file : String, positionTracker : IPositionTracker ) : Xml
 	{
 		var doc = Xml.createDocument();
 		_doParse( str, strict, 0, positionTracker.nodeMap, positionTracker.attributeMap, file, doc );

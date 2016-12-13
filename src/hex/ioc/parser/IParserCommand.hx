@@ -6,13 +6,13 @@ import hex.ioc.assembler.IApplicationAssembler;
 /**
  * @author Francis Bourre
  */
-interface IParserCommand 
+interface IParserCommand<ContentType> 
 {
-	function parse( ) : Void;
+	function parse() : Void;
 
-	function setContextData( data : Dynamic ) : Void;
+	function setContextData( data : ContentType ) : Void;
 	
-	function getContextData() : Dynamic;
+	function getContextData() : ContentType;
 	
 	function getApplicationContext( applicationContextClass : Class<AbstractApplicationContext> = null ) : AbstractApplicationContext;
 

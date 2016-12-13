@@ -10,7 +10,7 @@ import hex.ioc.parser.AbstractParserCommand;
  * ...
  * @author Francis Bourre
  */
-class AbstractXMLParser extends AbstractParserCommand
+class AbstractXMLParser extends AbstractParserCommand<Xml>
 {
 	function new()
 	{
@@ -20,7 +20,7 @@ class AbstractXMLParser extends AbstractParserCommand
 	@final
 	override public function getApplicationContext( applicationContextClass : Class<AbstractApplicationContext> = null ) : AbstractApplicationContext
 	{
-		var applicationContextName : String = this.getXMLContext().firstElement().get( "name" );
+		var applicationContextName : String = this.getContextData().firstElement().get( "name" );
 		if ( applicationContextName == null )
 		{
 			throw new ParsingException( this + " failed to retrieve applicationContext name. You should add 'name' attribute to the root of your xml context" );
@@ -30,7 +30,7 @@ class AbstractXMLParser extends AbstractParserCommand
 	}
 	
 	@final
-	override public function setContextData( data : Dynamic ) : Void
+	override public function setContextData( data : Xml ) : Void
 	{
 		if ( data != null )
 		{
@@ -49,11 +49,4 @@ class AbstractXMLParser extends AbstractParserCommand
 			throw new NullPointerException( this + ".setContext() failed. Data was null." );
 		}
 	}
-	
-	@final
-	function getXMLContext() : Xml
-	{
-		return cast getContextData();
-	}
-	
 }

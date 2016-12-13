@@ -25,11 +25,11 @@ class XmlCompiler
 		var conditionalVariablesChecker = new ConditionalVariablesChecker( conditionalVariablesMap );
 		
 		var positionTracker				= new PositionTracker();
-		var xmlParser					= new XmlDSLParser( positionTracker );
-		var document 					= xmlParser.parse( fileName, preprocessingVariables, conditionalVariablesChecker );
+		var dslReader					= new DSLReader( positionTracker );
+		var document 					= dslReader.read( fileName, preprocessingVariables, conditionalVariablesChecker );
 		
 		var assembler 					= new CompileTimeApplicationAssembler( applicationAssemblerExpr );
-		var parser 						= new CompileTimeParser( new CompileTimeParserCollection() );
+		var parser 						= new CompileTimeParser( new ParserCollection() );
 		
 		parser.setImportHelper( new ClassImportHelper() );
 		parser.setExceptionReporter( new XmlAssemblingExceptionReporter( positionTracker ) );

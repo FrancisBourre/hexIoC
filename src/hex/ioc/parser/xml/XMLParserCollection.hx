@@ -6,7 +6,7 @@ import hex.ioc.parser.AbstractParserCollection;
  * ...
  * @author Francis Bourre
  */
-class XMLParserCollection extends AbstractParserCollection<AbstractXMLParser>
+class XMLParserCollection extends AbstractParserCollection<AbstractXMLParser, Xml>
 {
 	private var _isAutoBuild : Bool = false;
 	
