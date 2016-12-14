@@ -39,7 +39,7 @@ class FlowCompilerTest
 	@Ignore( "test building String" )
 	public function testBuildingString() : Void
 	{
-		//this._applicationAssembler = FlowCompiler.readFile( "context/flow/testBuildingString.flow" );
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/testBuildingString.flow" );
 		//var s : String = this._getCoreFactory().locate( "s" );
 		//Assert.equals( "hello", s, "" );
 	}

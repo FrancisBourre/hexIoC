@@ -6,7 +6,7 @@ import hex.ioc.assembler.IApplicationAssembler;
 /**
  * @author Francis Bourre
  */
-interface IParserCommand<ContentType> 
+interface IContextParser<ContentType> 
 {
 	function parse() : Void;
 

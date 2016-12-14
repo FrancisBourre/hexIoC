@@ -3,7 +3,7 @@ package hex.ioc.parser;
 /**
  * @author Francis Bourre
  */
-interface IParserCollection<T:IParserCommand<ContentType>, ContentType>
+interface IParserCollection<T:IContextParser<ContentType>, ContentType>
 {
 	function next() : T;
 	

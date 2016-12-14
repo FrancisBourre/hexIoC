@@ -10,7 +10,7 @@ import hex.ioc.assembler.IApplicationAssembler;
  * ...
  * @author Francis Bourre
  */
-class AbstractParserCommand<ContentType> implements IParserCommand<ContentType>
+class AbstractContextParser<ContentType> implements IContextParser<ContentType>
 {
 	var _applicationAssembler 	: IApplicationAssembler;
 	var _contextData 			: ContentType;
@@ -18,19 +18,6 @@ class AbstractParserCommand<ContentType> implements IParserCommand<ContentType>
 	function new() 
 	{
 		
-	}
-	
-	@final
-	public function execute( ?request : Request ) : Void 
-	{
-		if ( this._contextData != null )
-		{
-				this.parse();
-
-		} else
-		{
-			throw new NullPointerException( this + ".execute() failed. Context data was null." );
-		}
 	}
 	
 	@final

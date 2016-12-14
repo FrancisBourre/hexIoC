@@ -493,7 +493,7 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	function _init() : Void
 	{
 		this._factoryMap 						= new Map();
-		this._symbolTable 							= new SymbolTable();
+		this._symbolTable 						= new SymbolTable();
 		this._constructorVOLocator 				= new ConstructorVOLocator();
 		this._propertyVOLocator 				= new PropertyVOLocator();
 		this._methodCallVOLocator 				= new MethodCallVOLocator();

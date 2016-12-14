@@ -4,13 +4,13 @@ import hex.error.IllegalArgumentException;
 import hex.error.NullPointerException;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.error.ParsingException;
-import hex.ioc.parser.AbstractParserCommand;
+import hex.ioc.parser.AbstractContextParser;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class AbstractXMLParser extends AbstractParserCommand<Xml>
+class AbstractXMLParser extends AbstractContextParser<Xml>
 {
 	function new()
 	{

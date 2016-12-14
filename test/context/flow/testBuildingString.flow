@@ -1,2 +1,3 @@
-name( 'applicationContext' );
-s = "hello";
+context( 'applicationContext' );
+s = 'hello';
+i = customParsing(o);

@@ -21,9 +21,9 @@ class ApplicationContextParser extends AbstractExprParser
 		var contextData 	= this.getContextData();
 		
 		var applicationContextClass = null;
-		//var applicationContextClassName : String = xml.get( ContextAttributeList.TYPE );
+		var applicationContextClassName = this._getRootApplicationContextClassName();
 		
-		/*if ( applicationContextClassName != null )
+		if ( applicationContextClassName != null )
 		{
 			try
 			{
@@ -31,12 +31,12 @@ class ApplicationContextParser extends AbstractExprParser
 			}
 			catch ( error : Dynamic )
 			{
-				this._exceptionReporter.throwMissingTypeException( applicationContextClassName, xml, ContextAttributeList.TYPE );
+				this._exceptionReporter.throwMissingTypeException( applicationContextClassName, contextData, ContextAttributeList.TYPE );
 			}
-		}*/
-		
-		var applicationContextName : String = this._getRootApplicationContextName();
-		
+		}
+	
+		var applicationContextName = this._getRootApplicationContextName();
+	trace( applicationContextName );		
 		var expr;
 		if ( applicationContextClass != null )
 		{

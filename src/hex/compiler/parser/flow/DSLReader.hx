@@ -22,7 +22,6 @@ class DSLReader
 
 		//parse
 		var expr = Context.parse( dsl.data, Context.currentPos() );
-		trace( expr );
 		
 		return expr;
 	}

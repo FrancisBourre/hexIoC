@@ -2,13 +2,13 @@ package hex.compiler.parser;
 
 import hex.compiler.parser.xml.ClassImportHelper;
 import hex.ioc.error.IAssemblingExceptionReporter;
-import hex.ioc.parser.AbstractParserCommand;
+import hex.ioc.parser.AbstractContextParser;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class DSLParser<ContentType> extends AbstractParserCommand<ContentType>
+class DSLParser<ContentType> extends AbstractContextParser<ContentType>
 {
 	var _importHelper 		: ClassImportHelper;
 	var _exceptionReporter 	: IAssemblingExceptionReporter<ContentType>;

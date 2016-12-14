@@ -1,5 +1,6 @@
 package hex.compiler.parser.flow;
 
+import hex.compiler.parser.xml.ClassImportHelper;
 import hex.ioc.assembler.ApplicationAssembler;
 
 #if macro
@@ -26,13 +27,17 @@ class FlowCompiler
 		var document 					= reader.read( fileName, preprocessingVariables, conditionalVariablesChecker );
 		
 		var assembler 					= new CompileTimeApplicationAssembler( applicationAssemblerExpr );
-		//var parser 						= new CompileTimeParser( new ParserCollection() );
+		var parser 						= new CompileTimeParser( new ParserCollection() );
+		
+		parser.setImportHelper( new ClassImportHelper() );
+		//parser.setExceptionReporter( new XmlAssemblingExceptionReporter( positionTracker ) );
+		parser.parse( assembler, document );
 		
 		return assembler.getMainExpression();
 	}
 	#end
 
-	macro public static function readFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<ApplicationAssembler>
+	macro public static function compile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<ApplicationAssembler>
 	{
 		return _readFile( fileName, preprocessingVariables, conditionalVariables );
 	}
