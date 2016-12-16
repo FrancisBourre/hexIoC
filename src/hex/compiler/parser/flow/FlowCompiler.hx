@@ -39,7 +39,11 @@ class FlowCompiler
 
 	macro public static function compile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<ApplicationAssembler>
 	{
-		return _readFile( fileName, preprocessingVariables, conditionalVariables );
+		return FlowCompiler._readFile( fileName, preprocessingVariables, conditionalVariables );
 	}
 	
+	macro public static function compileWithAssembler( assemblerExpr : Expr, fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<ApplicationAssembler>
+	{
+		return FlowCompiler._readFile( fileName, preprocessingVariables, conditionalVariables, assemblerExpr );
+	}
 }

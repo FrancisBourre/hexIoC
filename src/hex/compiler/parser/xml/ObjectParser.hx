@@ -341,9 +341,9 @@ class ObjectParser extends AbstractXmlParser
 		}
 	}
 	
-	function _getMapArguments( ownerID : String, xml : Xml, exceptionReporter : IAssemblingExceptionReporter<Xml> ) : Array<Dynamic>
+	function _getMapArguments( ownerID : String, xml : Xml, exceptionReporter : IAssemblingExceptionReporter<Xml> ) : Array<MapVO>
 	{
-		var args : Array<Dynamic> = [];
+		var args : Array<MapVO> = [];
 		var iterator = xml.elementsNamed( ContextNameList.ITEM );
 
 		while ( iterator.hasNext() )

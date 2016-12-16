@@ -1,2 +1,6 @@
-context( 'applicationContext', hex.ioc.parser.xml.context.mock.MockApplicationContext );
-test = 'Hola Mundo';
+@context( 
+			name = 'applicationContext', 
+			type = hex.ioc.parser.xml.context.mock.MockApplicationContext )
+{
+	test = 'Hola Mundo';
+}

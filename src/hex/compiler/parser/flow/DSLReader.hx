@@ -39,7 +39,7 @@ class DSLReader
 			
 			//instantiate result
 			var result = 	{ 	
-								data: 				"{" + data + "}",
+								data: 				data,
 								length: 			data.length, 
 								path: 				path,
 							};

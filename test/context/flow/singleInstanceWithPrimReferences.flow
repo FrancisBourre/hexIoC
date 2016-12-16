@@ -1,0 +1,6 @@
+@context( name = 'applicationContext' )
+{
+	x = 1;
+	y = 2;
+	position = new hex.structures.Point( x, y );
+}

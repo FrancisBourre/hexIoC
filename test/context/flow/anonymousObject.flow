@@ -1,0 +1,4 @@
+@context( name = 'applicationContext' )
+{
+	obj = { name: "Francis", age: 44, height: 1.75, isWorking: true, isSleeping: false };
+}

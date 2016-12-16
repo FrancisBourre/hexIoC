@@ -44,7 +44,7 @@ class ApplicationContextBuildingTest
 		
 		var applicationContext : ApplicationContext = builderFactory.getCoreFactory().locate( "applicationContext" );
 		Assert.isNotNull( applicationContext, "applicationContext shouldn't be null" );
-		//Assert.isInstanceOf( applicationContext, MockApplicationContext, "applicationContext shouldn't be an instance of 'MockApplicationContext'" );
-		//Assert.equals( "Hola Mundo", builderFactory.getCoreFactory().locate( "test" ), "String values should be the same" );
+		Assert.isInstanceOf( applicationContext, MockApplicationContext, "applicationContext shouldn't be an instance of 'MockApplicationContext'" );
+		Assert.equals( "Hola Mundo", builderFactory.getCoreFactory().locate( "test" ), "String values should be the same" );
 	}
 }

@@ -36,7 +36,7 @@ class ApplicationContextParser extends AbstractExprParser
 		}
 	
 		var applicationContextName = this._getRootApplicationContextName();
-	trace( applicationContextName );		
+	
 		var expr;
 		if ( applicationContextClass != null )
 		{
