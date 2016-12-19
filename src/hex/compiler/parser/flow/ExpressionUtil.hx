@@ -40,54 +40,49 @@ class ExpressionUtil
 	
 	static public function getArgument( id : String, e : Expr ) : ConstructorVO
 	{
-		var type 	: String;
-		var ref 	: String;
-		var vo 		: ConstructorVO;
-		
+		var vo : ConstructorVO;
+
 		switch( e.expr )
 		{
 			case EConst(CString(v)):
-				type = ContextTypeList.STRING;
-				vo = new ConstructorVO( id, type, [ v ] );
-				
-			
+				//String
+				vo = new ConstructorVO( id, ContextTypeList.STRING, [ v ] );
+
 			case EConst(CInt(v)):
-				type = ContextTypeList.INT;
-				vo = new ConstructorVO( id, type, [ v ] );
-				
+				//Int
+				vo = new ConstructorVO( id, ContextTypeList.INT, [ v ] );
+
 			case EConst(CFloat(v)):
-				type = ContextTypeList.FLOAT;
-				vo = new ConstructorVO( id, type, [ v ] );
-				
+				//Float
+				vo = new ConstructorVO( id, ContextTypeList.FLOAT, [ v ] );
+
 			case EConst(CIdent(v)):
-				var args : Array<Dynamic>;
 				
+				var args : Array<Dynamic>;
+
 				switch( v )
 				{
 					case "null":
-						type = ContextTypeList.NULL;
-						args = [ v ];
-						
+						//null
+						vo =  new ConstructorVO( id, ContextTypeList.NULL, [ 'null' ] );
+
 					case "true" | "false":
-						type = ContextTypeList.BOOLEAN;
-						args = [ v ];
-						
+						//Boolean
+						vo =  new ConstructorVO( id, ContextTypeList.BOOLEAN, [ v ] );
+
 					case _:
-						type = ContextTypeList.INSTANCE;
-						ref = v;
+						//Object reference
+						vo =  new ConstructorVO( id, ContextTypeList.INSTANCE, [ v ], null, null, null, v );
 				}
-				
-				vo =  new ConstructorVO( id, type, args, null, null, null, ref );
-			
+
 			case EField( e, field ):
-				type = ContextTypeList.INSTANCE;
-				ref = compressField(e.expr) + '.' + field;
-				vo =  new ConstructorVO( id, type, [], null, null, null, ref );
-				
+				//Property or method reference
+				vo =  new ConstructorVO( id, ContextTypeList.INSTANCE, [], null, null, null, compressField(e.expr) + '.' + field );
+
 			case _:
 				trace( e.expr );
 		}
-		
+
 		vo.filePosition = e.pos;
 		return vo;
 	}
@@ -106,25 +101,29 @@ class ExpressionUtil
 				{
 					case "null":
 						type = ContextTypeList.NULL;
+						propertyVO = new PropertyVO( ident, field, v, type, ref );
 						
 					case "true" | "false":
 						type = ContextTypeList.BOOLEAN;
+						propertyVO = new PropertyVO( ident, field, v, type, ref );
 						
 					case _:
 						type = ContextTypeList.INSTANCE;
 						ref = v;
 						v = null;
+						propertyVO = new PropertyVO( ident, field, v, type, ref );
 				}
-				
-				propertyVO = new PropertyVO( ident, field, v, type, ref );
 			
 			case EConst(CInt(v)):
+				//Int
 				propertyVO = new PropertyVO( ident, field, v, ContextTypeList.INT );
 				
 			case EConst(CFloat(v)):
+				//Float
 				propertyVO = new PropertyVO( ident, field, v, ContextTypeList.FLOAT );
 				
 			case EConst(CString(v)):
+				//String
 				propertyVO = new PropertyVO( ident, field, v, ContextTypeList.STRING );
 				
 			case EField( e, ff ):
@@ -146,6 +145,7 @@ class ExpressionUtil
 						}
 						
 					case _:
+						
 						trace( exp );
 				}
 				
@@ -169,17 +169,20 @@ class ExpressionUtil
 			switch( param.expr )
 			{
 				case EBinop( OpArrow, e1, e2 ):
-					var key = getArgument( ident, e1 );
-					var value = getArgument( ident, e2 );
-					var mapVO = new MapVO( key, value );
+					
+					var key 	= ExpressionUtil.getArgument( ident, e1 );
+					var value 	= ExpressionUtil.getArgument( ident, e2 );
+					var mapVO 	= new MapVO( key, value );
 					mapVO.filePosition = param.pos;
 					args.push( mapVO );
 					
 				case _:
+					
 					trace( param.expr );
 			}
 			
 		}
+		
 		return args;
 	}
 	
