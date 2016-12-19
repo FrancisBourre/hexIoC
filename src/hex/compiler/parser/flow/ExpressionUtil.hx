@@ -1,6 +1,8 @@
 package hex.compiler.parser.flow;
 
+import haxe.macro.Context;
 import haxe.macro.Expr;
+import haxe.macro.ExprTools;
 import hex.error.PrivateConstructorException;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.vo.ConstructorVO;
@@ -92,7 +94,6 @@ class ExpressionUtil
 	
 	static public function getProperty( ident : String, field : String, assigned : Expr ) : PropertyVO
 	{
-		//trace( ident, field, assigned );
 		var propertyVO 	: PropertyVO;
 		var type 		: String;
 		var ref 		: String;
@@ -126,6 +127,28 @@ class ExpressionUtil
 			case EConst(CString(v)):
 				propertyVO = new PropertyVO( ident, field, v, ContextTypeList.STRING );
 				
+			case EField( e, ff ):
+				
+				var className = ExpressionUtil.compressField( e.expr, ff );
+				var exp = Context.parse( '(null: ${className})', Context.currentPos() );
+
+				switch( exp.expr )
+				{
+					case EParenthesis( _.expr => ECheckType( ee, TPath(p) ) ):
+						
+						if ( p.sub != null )
+						{
+							propertyVO = new PropertyVO( ident, field, null, null, null, null, className );
+						}
+						else
+						{
+							propertyVO = new PropertyVO( ident, field, className, ContextTypeList.CLASS, null, null, null );
+						}
+						
+					case _:
+						trace( exp );
+				}
+				
 			case _:
 				trace( assigned.expr );
 		}
@@ -149,8 +172,6 @@ class ExpressionUtil
 					var key = getArgument( ident, e1 );
 					var value = getArgument( ident, e2 );
 					var mapVO = new MapVO( key, value );
-					trace( key );
-					trace( value );
 					mapVO.filePosition = param.pos;
 					args.push( mapVO );
 					
@@ -159,6 +180,12 @@ class ExpressionUtil
 			}
 			
 		}
-		return [];
+		return args;
+	}
+	
+	static public function getFullClassDeclaration( tp : TypePath ) : String
+	{
+		var className = ExprTools.toString( macro new $tp() );
+		return className.split( "new " ).join( '' ).split( '()' ).join( '' );
 	}
 }

@@ -852,13 +852,17 @@ class ObjectXMLParserTest
 	}
 	
 	@Test( "test static-ref property" )
-	public function testStaticRefProperty() : Void
+	public function testStaticProperty() : Void
 	{
 		this.build(  XmlReader.getXml( "context/staticRefProperty.xml" ) );
 
 		var object : Dynamic = this._builderFactory.getCoreFactory().locate( "object" );
-		Assert.isNotNull( object, "" );
-		Assert.equals( object.property, MockStubStatefulService.INT_VO_UPDATE, "" );
+		Assert.isNotNull( object );
+		Assert.equals( MockStubStatefulService.INT_VO_UPDATE, object.property );
+		
+		var object2 : Dynamic = this._builderFactory.getCoreFactory().locate( "object2" );
+		Assert.isNotNull( object2 );
+		Assert.equals( MockStubStatefulService, object2.property );
 	}
 	
 	@Test( "test static-ref argument" )

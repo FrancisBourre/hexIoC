@@ -1,0 +1,4 @@
+@context( name = 'applicationContext' )
+{
+	constant = hex.ioc.parser.xml.mock.MockStubStatefulService.INT_VO_UPDATE;
+}

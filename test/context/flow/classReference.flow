@@ -1,0 +1,5 @@
+@context( name = 'applicationContext' )
+{
+	RectangleClass = hex.ioc.parser.xml.mock.MockRectangle;
+	classContainer = { AnotherRectangleClass: RectangleClass };
+}

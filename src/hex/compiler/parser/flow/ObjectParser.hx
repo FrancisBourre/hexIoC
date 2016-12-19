@@ -1,4 +1,5 @@
 package hex.compiler.parser.flow;
+import haxe.macro.Context;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.MethodCallVO;
@@ -22,9 +23,10 @@ class ObjectParser extends AbstractExprParser
 		var i = exprs.iterator();
 		while ( i.hasNext() )
 		{
-			var id 		: String;
-			var type 	: String;
-			var args 	: Array<Dynamic> = [];
+			var id 			: String;
+			var type 		: String;
+			var args 		: Array<Dynamic> = [];
+			var staticRef 	: String;
 			
 			var e = i.next();
 			switch ( e.expr )
@@ -73,12 +75,13 @@ class ObjectParser extends AbstractExprParser
 								case ContextTypeList.HASHMAP | 
 										ContextTypeList.SERVICE_LOCATOR | 
 											ContextTypeList.MAPPING_CONFIG:
-
+									
 									if ( params.length > 0 )
 									{
 										switch( params[ 0 ].expr )
 										{
 											case EArrayDecl( values ):
+												type = ExpressionUtil.getFullClassDeclaration( t );
 												args = ExpressionUtil.getMapArguments( id, values );
 												
 											case _:
@@ -86,7 +89,6 @@ class ObjectParser extends AbstractExprParser
 										}
 										//
 									}
-									
 									
 								case _ :
 									if ( params.length > 0 )
@@ -116,13 +118,50 @@ class ObjectParser extends AbstractExprParser
 							var it = values.iterator();
 							while ( it.hasNext() )
 								args.push( ExpressionUtil.getArgument( id, it.next() ) );
-						
+								
+						case EField( e, field ):
+							
+							var className = ExpressionUtil.compressField( e.expr, field );
+							var exp = Context.parse( '(null: ${className})', Context.currentPos() );
+
+							switch( exp.expr )
+							{
+								case EParenthesis( _.expr => ECheckType( ee, TPath(p) ) ):
+									
+									if ( p.sub != null )
+									{
+										type = ContextTypeList.STATIC_VARIABLE;
+										staticRef = className;
+
+									}
+									else
+									{
+										type = ContextTypeList.CLASS;
+										args = [new ConstructorVO( id, ContextTypeList.CLASS, [className] )];
+									}
+									
+								case _:
+									trace( exp );
+							}
+							
+						case ECall( _.expr => EField( e, field ), params ):
+							//trace( e );
+							/*trace( params );
+							
+							
+							var className = ExpressionUtil.compressField( e.expr, field );
+							trace( className );
+							
+							var exp = Context.parse( '${className}', Context.currentPos() );
+							trace( exp );*/
+							break;
+
 						case _:
 							trace( value.expr );
 							
 					}
 					
-					var constructorVO = new ConstructorVO( id, type, args );
+					var constructorVO = new ConstructorVO( id, type, args, null, null, false, null, null, staticRef );
 					constructorVO.filePosition = e.pos;
 					this._applicationAssembler.buildObject( this.getApplicationContext(), constructorVO );
 				
