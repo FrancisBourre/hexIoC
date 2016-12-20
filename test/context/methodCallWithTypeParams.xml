@@ -1,0 +1,19 @@
+<root name="applicationContext">
+
+    <caller id="caller" type="hex.ioc.parser.xml.mock.MockCaller">
+        <method-call name="callArray">
+            <argument ref="fruitsInterfaces"/>
+        </method-call>
+    </caller>
+
+    <collection id="fruitsInterfaces" type="Array<hex.ioc.parser.xml.mock.IMockFruit>">
+        <argument ref="fruit0" />
+        <argument ref="fruit1" />
+        <argument ref="fruit2" />
+    </collection>
+	
+    <fruit id="fruit0" type="hex.ioc.parser.xml.mock.MockFruitVO"><argument value="orange"/></fruit>
+    <fruit id="fruit1" type="hex.ioc.parser.xml.mock.MockFruitVO"><argument value="apple"/></fruit>
+    <fruit id="fruit2" type="hex.ioc.parser.xml.mock.MockFruitVO"><argument value="banana"/></fruit>
+	
+</root>
