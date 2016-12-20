@@ -52,7 +52,7 @@ class ObjectParser extends AbstractXmlParser
 		var staticRef			: String;
 		
 		var factory 			: String;
-		var singleton 			: String;
+		var staticCall 			: String;
 		var injectInto			: Bool;
 		var injectorCreation	: Bool;
 		var ifList				: Array<String>;
@@ -76,8 +76,8 @@ class ObjectParser extends AbstractXmlParser
 		}
 		else
 		{
-			factory 			= xml.get( ContextAttributeList.FACTORY );
-			singleton 			= xml.get( ContextAttributeList.SINGLETON_ACCESS );
+			factory 			= xml.get( ContextAttributeList.FACTORY_METHOD );
+			staticCall 			= xml.get( ContextAttributeList.STATIC_CALL );
 			injectInto			= xml.get( ContextAttributeList.INJECT_INTO ) == "true";
 			mapType 			= XMLParserUtil.getMapType( xml );
 			staticRef 			= xml.get( ContextAttributeList.STATIC_REF );
@@ -192,7 +192,7 @@ class ObjectParser extends AbstractXmlParser
 				}
 			}
 
-			var constructorVO 			= new ConstructorVO( identifier, type, args, factory, singleton, injectInto, null, mapType, staticRef, injectorCreation );
+			var constructorVO 			= new ConstructorVO( identifier, type, args, factory, staticCall, injectInto, null, mapType, staticRef, injectorCreation );
 			constructorVO.ifList 		= ifList;
 			constructorVO.ifNotList 	= ifNotList;
 			constructorVO.filePosition 	= constructorVO.ref == null ? this._exceptionReporter.getPosition( xml ) : this._exceptionReporter.getPosition( xml, ContextAttributeList.REF );

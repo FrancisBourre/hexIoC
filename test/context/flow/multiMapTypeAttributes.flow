@@ -1,0 +1,3 @@
+<root name="applicationContext">
+    <module id="myModule" type="hex.ioc.parser.xml.mock.MockMappedModule" map-type="hex.ioc.parser.xml.mock.IMockMappedModule; hex.ioc.parser.xml.mock.IAnotherMockMappedModule"/>
+</root>

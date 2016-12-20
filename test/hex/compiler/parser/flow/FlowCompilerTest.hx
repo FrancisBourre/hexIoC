@@ -299,20 +299,20 @@ class FlowCompilerTest
 	}
 	
 	/*
-	@Ignore( "test building instance with singleton method" )
-	public function testBuildingInstanceWithSingletonMethod() : Void
+	@Ignore( "test building instance with static method" )
+	public function testBuildingInstanceWithStaticMethod() : Void
 	{
-		this._applicationAssembler = XmlCompiler.readXmlFile( "context/instanceWithSingletonMethod.xml" );
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/instanceWithStaticMethod.flow" );
 
 		var service : MockServiceProvider = this._getCoreFactory().locate( "service" );
 		Assert.isInstanceOf( service, MockServiceProvider, "" );
 		Assert.equals( "http://localhost/amfphp/gateway.php", MockServiceProvider.getInstance().getGateway(), "" );
-	}*/
+	}
 	
-	/*@Test( "test building instance with factory static method" )
-	public function testBuildingInstanceWithFactoryStaticMethod() : Void
+	@Ignore( "test building instance with static method and arguments" )
+	public function testBuildingInstanceWithStaticMethodAndArguments() : Void
 	{
-		this._applicationAssembler = FlowCompiler.compile( "context/flow/instanceWithFactoryStaticMethod.flow" );
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/instanceWithStaticMethodAndArguments.flow" );
 
 		var rect : MockRectangle = this._getCoreFactory().locate( "rect" );
 		Assert.isInstanceOf( rect, MockRectangle, "" );
@@ -320,12 +320,12 @@ class FlowCompilerTest
 		Assert.equals( 20, rect.y, "" );
 		Assert.equals( 30, rect.width, "" );
 		Assert.equals( 40, rect.height, "" );
-	}*/
+	}
 	
-	/*@Ignore( "test building instance with factory singleton method" )
-	public function testFactoryWithFactorySingletonMethod() : Void
+	@Ignore( "test building instance with static method and factory method" )
+	public function testBuildingInstanceWithStaticMethodAndFactoryMethod() : Void
 	{
-		this._applicationAssembler = XmlCompiler.readXmlFile( "context/instanceWithFactorySingletonMethod.xml" );
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/instanceWithStaticMethodAndFactoryMethod.flow" );
 
 		var point : Point = this._getCoreFactory().locate( "point" );
 		//Assert.isInstanceOf( point, Point, "" );

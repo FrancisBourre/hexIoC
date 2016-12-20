@@ -1,5 +1,5 @@
 <root name="applicationContext">
-    <rectangle id="rect" type="hex.ioc.parser.xml.mock.MockRectangleFactory" factory="getRectangle">
+    <rectangle id="rect" type="hex.ioc.parser.xml.mock.MockRectangleFactory" static-call="getRectangle">
         <argument type="Int" value="10"/><argument type="Int" value="20"/>
         <argument type="Int" value="30"/><argument type="Int" value="40"/>
     </rectangle>

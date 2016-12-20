@@ -50,7 +50,7 @@ class XMLParserUtil
 		var method 		= item.get( ContextAttributeList.METHOD );
 		var ref 		= item.get( ContextAttributeList.REF );
 		var staticRef 	= item.get( ContextAttributeList.STATIC_REF );
-		var factory 	= item.get( ContextAttributeList.FACTORY );
+		var factory 	= item.get( ContextAttributeList.FACTORY_METHOD );
 		
 		if ( method != null )
 		{

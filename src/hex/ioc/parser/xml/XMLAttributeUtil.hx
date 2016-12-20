@@ -42,12 +42,12 @@ class XMLAttributeUtil
 
 	static public function getFactoryMethod( xml : Xml ) : String
 	{
-		return xml.get( ContextAttributeList.FACTORY );
+		return xml.get( ContextAttributeList.FACTORY_METHOD );
 	}
 
-	static public function getSingletonAccess( xml : Xml ) : String
+	static public function getStaticCall( xml : Xml ) : String
 	{
-		return xml.get( ContextAttributeList.SINGLETON_ACCESS );
+		return xml.get( ContextAttributeList.STATIC_CALL );
 	}
 	
 	static public function getInjectInto( xml : Xml ) : Bool

@@ -186,7 +186,7 @@ class CoreFactory implements ICoreFactory
 		var qualifiedClassName 	= constructorVO.className;
 		var args 				= constructorVO.arguments;
 		var factoryMethod 		= constructorVO.factory;
-		var singletonAccess 	= constructorVO.singleton;
+		var staticCall 			= constructorVO.staticCall;
 		var staticRef 			= constructorVO.staticRef;
 		var injectorCreation 	= constructorVO.injectorCreation;
 		var injectInto 			= constructorVO.injectInto;
@@ -216,9 +216,9 @@ class CoreFactory implements ICoreFactory
 		{
 			obj = this._injector.instantiateUnmapped( classReference );
 		}
-		else if ( factoryMethod != null )
+		else if ( factoryMethod != null )//factory method
 		{
-			if ( staticRef != null )
+			if ( staticRef != null )//static variable - with factory method
 			{
 				var staticReference = Reflect.field( classReference, staticRef );
 				
@@ -244,60 +244,49 @@ class CoreFactory implements ICoreFactory
 					throw new IllegalArgumentException( qualifiedClassName + "." + staticReference + "' is not available." );
 				}
 			}
-			else
+			else if ( staticCall != null )//static method call - with factory method
 			{
-				if ( singletonAccess != null )
+				var inst : Dynamic = null;
+
+				var staticCallRef = Reflect.field( classReference, staticCall );
+				if ( staticCallRef != null )
 				{
-					var inst : Dynamic = null;
-
-					var singletonCall = Reflect.field( classReference, singletonAccess );
-					if ( singletonCall != null )
-					{
-						inst = singletonCall();
-					}
-					else
-					{
-						throw new IllegalArgumentException( qualifiedClassName + "." + singletonAccess + "()' singleton access failed." );
-					}
-
-					var methodReference : Dynamic = Reflect.field( inst, factoryMethod );
-					if ( methodReference != null )
-					{
-						obj = Reflect.callMethod( inst, methodReference, args );
-					}
-					else 
-					{
-						throw new IllegalArgumentException( qualifiedClassName + "." + singletonAccess + "()." + factoryMethod + "()' factory method call failed." );
-					}
+					inst = staticCallRef();
 				}
 				else
 				{
-					var methodReference : Dynamic = Reflect.field( classReference, factoryMethod );
-					
-					if ( methodReference != null )
-					{
-						obj = Reflect.callMethod( classReference, methodReference, args );
-					}
-					else 
-					{
-						throw new IllegalArgumentException( qualifiedClassName + "." + factoryMethod + "()' factory method call failed." );
-					}
+					throw new IllegalArgumentException( qualifiedClassName + "." + staticCall + "()' static method call failed." );
 				}
-			}
-			
-		} else if ( singletonAccess != null )
-		{
-			var singletonCall = Reflect.field( classReference, singletonAccess );
-			if ( singletonCall != null )
-			{
-				obj = singletonCall();
+
+				var methodReference : Dynamic = Reflect.field( inst, factoryMethod );
+				if ( methodReference != null )
+				{
+					obj = Reflect.callMethod( inst, methodReference, args );
+				}
+				else 
+				{
+					throw new IllegalArgumentException( qualifiedClassName + "." + staticCall + "()." + factoryMethod + "()' factory method call failed." );
+				}
 			}
 			else
 			{
-				throw new IllegalArgumentException( qualifiedClassName + "." + singletonAccess + "()' singleton call failed." );
+				throw new IllegalArgumentException( "'" + factoryMethod + "' method cannot be called on '" + 
+					constructorVO.className +"' class. Add static method or variable to make it working." );
+			}
+			
+		} else if ( staticCall != null )//simple static method call
+		{
+			var staticCallReference = Reflect.field( classReference, staticCall );
+			if ( staticCallReference != null )
+			{
+				obj = Reflect.callMethod( classReference, staticCallReference, args );//staticCallReference( args );
+			}
+			else
+			{
+				throw new IllegalArgumentException( qualifiedClassName + "." + staticCall + "()' static method call failed." );
 			}
 		}
-		else
+		else//Standard instantiation
 		{
 			if ( args == null )
 			{

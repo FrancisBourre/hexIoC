@@ -13,7 +13,7 @@ class ConstructorVO extends AssemblerVO
 	public var              type            	: String;
 	public var              arguments       	: Array<Dynamic>;
 	public var              factory         	: String;
-	public var              singleton       	: String;
+	public var              staticCall       	: String;
 	public var              injectInto      	: Bool;
 	public var              ref             	: String;
 	public var              result          	: Dynamic;
@@ -22,15 +22,15 @@ class ConstructorVO extends AssemblerVO
 	public var              injectorCreation 	: Bool;
 	
 	#if macro
-	public var 				isProperty		: Bool = false;
-	public var 				constructorArgs	: Array<Expr>;
+	public var 				isProperty			: Bool = false;
+	public var 				constructorArgs		: Array<Expr>;
 	#end
 		
 	public function new(  	id 					: String,
 							?type 				: String,
 							?args 				: Array<Dynamic>,
 							?factory 			: String,
-							?singleton 			: String,
+							?staticCall 		: String,
 							?injectInto 		: Bool = false,
 							?ref 				: String,
 							?mapTypes 			: Array<String>,
@@ -44,7 +44,7 @@ class ConstructorVO extends AssemblerVO
 		this.className       	= type != null ? type.split( '<' )[ 0 ] : null;
 		this.arguments  		= args;
 		this.factory    		= factory;
-		this.singleton  		= singleton;
+		this.staticCall  		= staticCall;
 		this.injectInto 		= injectInto;
 		this.ref 				= ref;
 		this.mapTypes 			= mapTypes;
@@ -59,7 +59,7 @@ class ConstructorVO extends AssemblerVO
 				+ "type:"               + className          	+ ", "
 				+ "arguments:[" 		+ arguments 		+ "], "
 				+ "factory:"    		+ factory       	+ ", "
-				+ "singleton:"  		+ singleton 		+ ", "
+				+ "staticCall:"  		+ staticCall 		+ ", "
 				+ "injectInto:"  		+ injectInto 		+ ", "
 				+ "ref:"  				+ ref 				+ ", "
 				+ "mapTypes:"  			+ mapTypes 			+ ", "

@@ -105,7 +105,7 @@ class XmlReader
 				}
 			}
 	
-			if ( xml.get( ContextAttributeList.FACTORY ) == null ) 
+			if ( xml.get( ContextAttributeList.FACTORY_METHOD ) == null ) 
 			{
 				XmlReader._importHelper.includeStaticRef( xml.get( ContextAttributeList.STATIC_REF ) );
 			}

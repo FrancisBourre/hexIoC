@@ -54,50 +54,45 @@ class ClassInstanceFactory
 			var typePath : TypePath = MacroUtil.getTypePath( constructorVO.className, constructorVO.filePosition );
 
 			//build instance
-			var singleton = constructorVO.singleton;
-			var factory = constructorVO.factory;
-			var staticRef = constructorVO.staticRef;
-			var classType = MacroUtil.getClassType( constructorVO.className, constructorVO.filePosition );
+			var staticCall 		= constructorVO.staticCall;
+			var factoryMethod 	= constructorVO.factory;
+			var staticRef 		= constructorVO.staticRef;
+			var classType 		= MacroUtil.getClassType( constructorVO.className, constructorVO.filePosition );
 			
 			if ( constructorVO.injectorCreation && MacroUtil.implementsInterface( classType, _injectorContainerInterface ) )
 			{
 				e = macro @:pos( constructorVO.filePosition ) { __applicationContextInjector.instantiateUnmapped( $p { tp } ); };
 				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
 			}
-			else if ( factory != null )
+			else if ( factoryMethod != null )//factory method
 			{
 				//TODO implement the same behavior @runtime issue#1
-				if ( staticRef != null )
+				if ( staticRef != null )//static variable - with factory method
 				{
-					e = macro @:pos( constructorVO.filePosition ) { $p { tp } .$staticRef.$factory( $a { constructorVO.constructorArgs } ); };
+					e = macro @:pos( constructorVO.filePosition ) { $p { tp } .$staticRef.$factoryMethod( $a { constructorVO.constructorArgs } ); };
 					factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
 				}
-				else
+				else if ( staticCall != null )//static method call - with factory method
 				{
-					if ( singleton != null )
-					{
-						e = macro @:pos( constructorVO.filePosition ) { $p { tp }.$singleton().$factory( $a{ constructorVO.constructorArgs } ); };
+					e = macro @:pos( constructorVO.filePosition ) { $p { tp }.$staticCall().$factoryMethod( $a{ constructorVO.constructorArgs } ); };
 						factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
-					}
-					else
-					{
-						e = macro @:pos( constructorVO.filePosition ) { $p { tp }.$factory( $a{ constructorVO.constructorArgs } ); };
-						factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
-					}
 				}
-				
-			
+				else//factory method error
+				{
+					Context.error( "'" + factoryMethod + "' method cannot be called on '" + 
+					constructorVO.className +"' class. Add static method or variable to make it working.", constructorVO.filePosition );
+				}
 			}
-			else if ( singleton != null )
+			else if ( staticCall != null )//simple static method call
 			{
-				e = macro @:pos( constructorVO.filePosition ) { $p { tp }.$singleton(); };
+				e = macro @:pos( constructorVO.filePosition ) { $p { tp }.$staticCall( $a{ constructorVO.constructorArgs } ); };
 				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
 			}
-			else
+			else//Standard instantiation
 			{
 				if ( MacroUtil.implementsInterface( classType, _moduleInterface ) )
 				{
-					//TODO register for every instance (from singleton and/or factory)
+					//TODO register for every instance (from staticCall and/or factory)
 					factoryVO.expressions.push( macro @:mergeBlock { $p { _domainExpertClass } .getInstance().registerDomain( $p { _domainUtilClass } .getDomain( $v { idVar }, $p { _domainClass } ) ); } );
 					
 					var applicationContextName = factoryVO.contextFactory.getApplicationContext().getName();

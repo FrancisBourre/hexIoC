@@ -44,7 +44,7 @@ class ObjectXMLParser extends AbstractXMLParser
 		var type 				: String;
 		var args 				: Array<Dynamic>;
 		var factory 			: String;
-		var singleton 			: String;
+		var staticCall 			: String;
 		var injectInto			: Bool;
 		var injectorCreation	: Bool;
 		var mapType				: Array<String>;
@@ -71,7 +71,7 @@ class ObjectXMLParser extends AbstractXMLParser
 			var strippedType 	= type != null ? type.split( '<' )[ 0 ] : type;
 			args 				= ( strippedType == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR || type == ContextTypeList.MAPPING_CONFIG ) ? XMLParserUtil.getMapArguments( identifier, xml ) : XMLParserUtil.getArguments( identifier, xml, type );
 			factory 			= XMLAttributeUtil.getFactoryMethod( xml );
-			singleton 			= XMLAttributeUtil.getSingletonAccess( xml );
+			staticCall 			= XMLAttributeUtil.getStaticCall( xml );
 			injectInto			= XMLAttributeUtil.getInjectInto( xml );
 			injectorCreation	= XMLAttributeUtil.getInjectorCreation( xml );
 			mapType 			= XMLParserUtil.getMapType( xml );
@@ -82,7 +82,7 @@ class ObjectXMLParser extends AbstractXMLParser
 				type = staticRef != null ? ContextTypeList.STATIC_VARIABLE : ContextTypeList.STRING;
 			}
 			
-			var constructorVO 		= new ConstructorVO( identifier, type, args, factory, singleton, injectInto, null, mapType, staticRef, injectorCreation );
+			var constructorVO 		= new ConstructorVO( identifier, type, args, factory, staticCall, injectInto, null, mapType, staticRef, injectorCreation );
 			constructorVO.ifList 	= XMLParserUtil.getIfList( xml );
 			constructorVO.ifNotList = XMLParserUtil.getIfNotList( xml );
 

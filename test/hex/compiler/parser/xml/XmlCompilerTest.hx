@@ -368,20 +368,20 @@ class XmlCompilerTest
 		Assert.equals( 0, anotherRect.height, "" );
 	}
 	
-	@Test( "test building instance with singleton method" )
-	public function testBuildingInstanceWithSingletonMethod() : Void
+	@Test( "test building instance with static method" )
+	public function testBuildingInstanceWithStaticMethod() : Void
 	{
-		this._applicationAssembler = XmlCompiler.readXmlFile( "context/instanceWithSingletonMethod.xml" );
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/instanceWithStaticMethod.xml" );
 
 		var service : MockServiceProvider = this._getCoreFactory().locate( "service" );
 		Assert.isInstanceOf( service, MockServiceProvider, "" );
 		Assert.equals( "http://localhost/amfphp/gateway.php", MockServiceProvider.getInstance().getGateway(), "" );
 	}
 	
-	@Test( "test building instance with factory static method" )
-	public function testBuildingInstanceWithFactoryStaticMethod() : Void
+	@Test( "test building instance with static method and arguments" )
+	public function testBuildingInstanceWithStaticMethodAndArguments() : Void
 	{
-		this._applicationAssembler = XmlCompiler.readXmlFile( "context/instanceWithFactoryStaticMethod.xml" );
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/instanceWithStaticMethodAndArguments.xml" );
 
 		var rect : MockRectangle = this._getCoreFactory().locate( "rect" );
 		Assert.isInstanceOf( rect, MockRectangle, "" );
@@ -391,10 +391,10 @@ class XmlCompilerTest
 		Assert.equals( 40, rect.height, "" );
 	}
 	
-	@Test( "test building instance with factory singleton method" )
-	public function testFactoryWithFactorySingletonMethod() : Void
+	@Test( "test building instance with static method and factory method" )
+	public function testBuildingInstanceWithStaticMethodAndFactoryMethod() : Void
 	{
-		this._applicationAssembler = XmlCompiler.readXmlFile( "context/instanceWithFactorySingletonMethod.xml" );
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/instanceWithStaticMethodAndFactoryMethod.xml" );
 
 		var point : Point = this._getCoreFactory().locate( "point" );
 		//Assert.isInstanceOf( point, Point, "" );
