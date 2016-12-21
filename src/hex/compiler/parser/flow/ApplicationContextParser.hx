@@ -31,7 +31,7 @@ class ApplicationContextParser extends AbstractExprParser
 			}
 			catch ( error : Dynamic )
 			{
-				this._exceptionReporter.throwMissingTypeException( applicationContextClassName, contextData, ContextAttributeList.TYPE );
+				//this._throwMissingTypeException( applicationContextClassName, contextData, ContextAttributeList.TYPE );
 			}
 		}
 	

@@ -1,0 +1,6 @@
+@context( name = 'applicationContext' )
+{
+	gateway = "http://localhost/amfphp/gateway.php";
+	service = hex.ioc.parser.xml.mock.MockServiceProvider.getInstance();
+	service.setGateway( gateway );
+}

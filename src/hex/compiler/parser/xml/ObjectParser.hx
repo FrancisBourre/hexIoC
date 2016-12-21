@@ -1,5 +1,6 @@
 package hex.compiler.parser.xml;
 
+import haxe.macro.Context;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
@@ -43,7 +44,12 @@ class ObjectParser extends AbstractXmlParser
 		var identifier = xml.get( ContextAttributeList.ID );
 		if ( identifier == null )
 		{
-			this._exceptionReporter.throwMissingIDException( xml );
+			Context.error
+			( 
+				"Parsing error with '" + xml.nodeName + 
+				"' node, 'id' attribute not found.", 
+				this._exceptionReporter.getPosition( xml ) );
+
 		}
 
 		var type 				: String;
@@ -136,7 +142,7 @@ class ObjectParser extends AbstractXmlParser
 								
 							} catch ( e : String ) 
 							{
-								this._exceptionReporter.throwMissingTypeException( type.length > 0 ? type : arg.staticRef, node, ContextAttributeList.STATIC_REF );
+								this._throwMissingTypeException( type.length > 0 ? type : arg.staticRef, node, ContextAttributeList.STATIC_REF );
 							}
 						}
 						else
@@ -149,7 +155,7 @@ class ObjectParser extends AbstractXmlParser
 									
 								} catch ( e : String ) 
 								{
-									this._exceptionReporter.throwMissingTypeException( arg.arguments[ 0 ], node, ContextAttributeList.VALUE );
+									this._throwMissingTypeException( arg.arguments[ 0 ], node, ContextAttributeList.VALUE );
 								}
 							}
 						}
@@ -175,7 +181,7 @@ class ObjectParser extends AbstractXmlParser
 				}
 				catch ( e : String )
 				{
-					this._exceptionReporter.throwMissingTypeException( type, xml, ContextAttributeList.TYPE );
+					this._throwMissingTypeException( type, xml, ContextAttributeList.TYPE );
 				}
 			}
 			else
@@ -188,7 +194,7 @@ class ObjectParser extends AbstractXmlParser
 				}
 				catch ( e : String )
 				{
-					this._exceptionReporter.throwMissingTypeException( t, xml, ContextAttributeList.STATIC_REF );
+					this._throwMissingTypeException( t, xml, ContextAttributeList.STATIC_REF );
 				}
 			}
 
@@ -216,7 +222,7 @@ class ObjectParser extends AbstractXmlParser
 					}
 					catch ( e : String )
 					{
-						this._exceptionReporter.throwMissingTypeException( type, property, ContextAttributeList.STATIC_REF );
+						this._throwMissingTypeException( type, property, ContextAttributeList.STATIC_REF );
 					}
 				}
 				
@@ -260,7 +266,7 @@ class ObjectParser extends AbstractXmlParser
 							
 						} catch ( e : String ) 
 						{
-							this._exceptionReporter.throwMissingTypeException( type.length > 0 ? type : arg.staticRef, node, ContextAttributeList.STATIC_REF );
+							this._throwMissingTypeException( type.length > 0 ? type : arg.staticRef, node, ContextAttributeList.STATIC_REF );
 						}
 					}
 					else
@@ -273,7 +279,7 @@ class ObjectParser extends AbstractXmlParser
 								
 							} catch ( e : String ) 
 							{
-								this._exceptionReporter.throwMissingTypeException( arg.arguments[ 0 ], node, ContextAttributeList.VALUE );
+								this._throwMissingTypeException( arg.arguments[ 0 ], node, ContextAttributeList.VALUE );
 							}
 						}
 					}
@@ -319,7 +325,7 @@ class ObjectParser extends AbstractXmlParser
 							}
 							catch ( e : String )
 							{
-								this._exceptionReporter.throwMissingTypeException( type, node, ContextAttributeList.STATIC_REF );
+								this._throwMissingTypeException( type, node, ContextAttributeList.STATIC_REF );
 							}
 						}
 						
@@ -335,12 +341,17 @@ class ObjectParser extends AbstractXmlParser
 				}
 				else
 				{
-					this._exceptionReporter.throwMissingListeningReferenceException( xml, listener );
+					Context.error
+					( 
+						"Parsing error with '" + xml.nodeName + 
+							"' node, 'ref' attribute is mandatory in a 'listen' node.", 
+						this._exceptionReporter.getPosition( listener ) );
+	
 				}
 			}
 		}
 	}
-	
+
 	function _getMapArguments( ownerID : String, xml : Xml, exceptionReporter : IAssemblingExceptionReporter<Xml> ) : Array<MapVO>
 	{
 		var args : Array<MapVO> = [];

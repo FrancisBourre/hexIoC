@@ -1,5 +1,6 @@
 package hex.compiler.parser.xml;
 
+import haxe.macro.Context;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
@@ -38,7 +39,11 @@ class StateParser extends AbstractXmlParser
 		var identifier = xml.get( ContextAttributeList.ID );
 		if ( identifier == null )
 		{
-			this._exceptionReporter.throwMissingIDException( xml );
+			Context.error
+			( 
+				"Parsing error with '" + xml.nodeName + 
+				"' node, 'id' attribute not found.", 
+				this._exceptionReporter.getPosition( xml ) );
 		}
 		
 		var staticReference 		= xml.get( ContextAttributeList.STATIC_REF );
@@ -71,7 +76,7 @@ class StateParser extends AbstractXmlParser
 			}
 			catch ( e : String )
 			{
-				this._exceptionReporter.throwMissingTypeException( commandClass, item, ContextAttributeList.COMMAND_CLASS );
+				this._throwMissingTypeException( commandClass, item, ContextAttributeList.COMMAND_CLASS );
 			}
 
 			var commandMappingVO = 	{ 	commandClassName: commandClass, 

@@ -21,7 +21,9 @@ class AbstractXmlParser extends DSLParser<Xml>
 		
 		if ( applicationContextName == null )
 		{
-			this._exceptionReporter.throwMissingApplicationContextNameException( xml );
+			Context.error( "Fails to retrieve applicationContext name. You should add 'name' attribute to the root of your xml context", 
+				this._exceptionReporter.getPosition( xml  ) );
+
 			return null;
 		}
 		else
@@ -55,5 +57,10 @@ class AbstractXmlParser extends DSLParser<Xml>
 		{
 			Context.error( "Context data is null.", Context.currentPos() );
 		}
+	}
+	
+	function _throwMissingTypeException( type : String, xml : Xml, attributeName : String ) : Void 
+	{
+		Context.error( "Type not found '" + type + "' ", this._exceptionReporter.getPosition( xml, attributeName ) );
 	}
 }

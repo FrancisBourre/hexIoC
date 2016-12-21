@@ -1,0 +1,4 @@
+@context( name = 'applicationContext' )
+{
+	point = hex.ioc.parser.xml.mock.MockPointFactory.getInstance().getPoint( 10, 20 );
+}

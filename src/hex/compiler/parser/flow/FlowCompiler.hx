@@ -30,7 +30,7 @@ class FlowCompiler
 		var parser 						= new CompileTimeParser( new ParserCollection() );
 		
 		parser.setImportHelper( new ClassImportHelper() );
-		//parser.setExceptionReporter( new XmlAssemblingExceptionReporter( positionTracker ) );
+		parser.setExceptionReporter( new FlowAssemblingExceptionReporter( /*positionTracker*/ ) );
 		parser.parse( assembler, document );
 		
 		return assembler.getMainExpression();
