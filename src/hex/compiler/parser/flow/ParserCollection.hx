@@ -1,6 +1,7 @@
 package hex.compiler.parser.flow;
 
 import haxe.macro.Expr;
+import hex.factory.BuildRequest;
 import hex.ioc.parser.AbstractParserCollection;
 
 /**

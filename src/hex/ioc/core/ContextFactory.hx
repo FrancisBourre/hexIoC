@@ -12,7 +12,8 @@ import hex.domain.Domain;
 import hex.domain.DomainUtil;
 import hex.event.IDispatcher;
 import hex.event.IEvent;
-import hex.factory.ProxyFactory;
+import hex.factory.BuildRequest;
+import hex.factory.IRequestFactory;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.ApplicationAssemblerMessage;
 import hex.ioc.assembler.ApplicationContext;
@@ -60,8 +61,9 @@ import hex.util.ClassUtil;
  */
 @:keepSub
 class ContextFactory 
-	extends ProxyFactory
-	implements IContextFactory implements ILocatorListener<String, Dynamic>
+	implements IRequestFactory<BuildRequest>
+	implements IContextFactory 
+	implements ILocatorListener<String, Dynamic>
 {
 	var _annotationProvider			: IAnnotationProvider;
 	var _contextDispatcher			: IDispatcher<{}>;
@@ -80,8 +82,6 @@ class ContextFactory
 
 	public function new( applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null  )
 	{
-		super();
-		
 		//build contextDispatcher
 		var domain : Domain = DomainUtil.getDomain( applicationContextName, Domain );
 		this._contextDispatcher = ApplicationDomainDispatcher.getInstance().getDomainDispatcher( domain );
@@ -119,6 +119,18 @@ class ContextFactory
 		
 		this._contextDispatcher.dispatch( ApplicationAssemblerMessage.CONTEXT_PARSED );
 		this._init();
+	}
+	
+	public function build( request : BuildRequest ) : Void
+	{
+		switch( request )
+		{
+			case OBJECT( vo ): this.registerConstructorVO( vo );
+			case PROPERTY( vo ): this.registerPropertyVO( vo );
+			case METHOD_CALL( vo ): this.registerMethodCallVO( vo );
+			case DOMAIN_LISTENER( vo ): this.registerDomainListenerVO( vo );
+			case STATE_TRANSITION( vo ): this.registerStateTransitionVO( vo );
+		}
 	}
 	
 	public function buildEverything() : Void
@@ -445,12 +457,6 @@ class ContextFactory
 		this._factoryMap.set( ContextTypeList.MAPPING_CONFIG, MappingConfigurationFactory.build );
 		
 		this._coreFactory.addListener( this );
-		
-		this.registerFactoryMethod( PropertyVO, this.registerPropertyVO );
-		this.registerFactoryMethod( ConstructorVO, this.registerConstructorVO );
-		this.registerFactoryMethod( MethodCallVO, this.registerMethodCallVO );
-		this.registerFactoryMethod( DomainListenerVO, this.registerDomainListenerVO );
-		this.registerFactoryMethod( StateTransitionVO, this.registerStateTransitionVO );
 	}
 
 	function _build( constructorVO : ConstructorVO, ?id : String ) : Dynamic

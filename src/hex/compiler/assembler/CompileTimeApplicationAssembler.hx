@@ -1,21 +1,15 @@
 package hex.compiler.assembler;
-import hex.factory.IProxyFactory;
-import hex.ioc.assembler.ApplicationAssembler;
-import hex.util.MacroUtil;
 
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import hex.compiler.core.CompileTimeContextFactory;
+import hex.factory.IRequestFactory;
 import hex.error.IllegalArgumentException;
 import hex.ioc.assembler.AbstractApplicationContext;
+import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.assembler.IApplicationAssembler;
-import hex.ioc.core.IContextFactory;
-import hex.ioc.vo.ConstructorVO;
-import hex.ioc.vo.DomainListenerVO;
-import hex.ioc.vo.MethodCallVO;
-import hex.ioc.vo.PropertyVO;
-import hex.ioc.vo.StateTransitionVO;
+import hex.util.MacroUtil;
 
 /**
  * ...
@@ -24,7 +18,7 @@ import hex.ioc.vo.StateTransitionVO;
 class CompileTimeApplicationAssembler implements IApplicationAssembler
 {
 	var _mApplicationContext 	= new Map<String, AbstractApplicationContext>();
-	var _mContextFactories 		= new Map<AbstractApplicationContext, IContextFactory>();
+	var _mContextFactories 		= new Map<AbstractApplicationContext, CompileTimeContextFactory>();
 	var _expressions 			= [ macro { } ];
 	
 	var _assemblerExpression : Expr;
@@ -47,12 +41,12 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 		}
 	}
 	
-	public function getProxyFactory( applicationContext : AbstractApplicationContext ) : IProxyFactory
+	public function getRequestFactory<T>( applicationContext : AbstractApplicationContext ) : IRequestFactory<T>
 	{
-		return this._mContextFactories.get( applicationContext );
+		return cast this._mContextFactories.get( applicationContext );
 	}
 	
-	public function getContextFactory( applicationContext : AbstractApplicationContext ) : IContextFactory
+	public function getContextFactory( applicationContext : AbstractApplicationContext ) : CompileTimeContextFactory
 	{
 		return this._mContextFactories.get( applicationContext );
 	}

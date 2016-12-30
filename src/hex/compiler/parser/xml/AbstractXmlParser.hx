@@ -1,6 +1,8 @@
 package hex.compiler.parser.xml;
 
 import haxe.macro.Context;
+import hex.factory.BuildRequest;
+import hex.factory.IRequestFactory;
 import hex.ioc.assembler.AbstractApplicationContext;
 
 /**
@@ -9,6 +11,7 @@ import hex.ioc.assembler.AbstractApplicationContext;
  */
 class AbstractXmlParser extends DSLParser<Xml>
 {
+	var _requestFactory 				: IRequestFactory<BuildRequest>;
 	var _applicationContextName 		: String;
 	//var _applicationContextClassName 	: String;
 	
@@ -34,7 +37,7 @@ class AbstractXmlParser extends DSLParser<Xml>
 				this._findApplicationContextName( data );
 				
 				var context = this._applicationAssembler.getApplicationContext( this._applicationContextName );
-				this._proxyFactory = this._applicationAssembler.getContextFactory( context );
+				this._requestFactory = this._applicationAssembler.getRequestFactory( context );
 			}
 			else
 			{

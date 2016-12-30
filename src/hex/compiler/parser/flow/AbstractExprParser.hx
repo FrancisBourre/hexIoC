@@ -2,6 +2,8 @@ package hex.compiler.parser.flow;
 
 import haxe.macro.Context;
 import haxe.macro.Expr;
+import hex.factory.BuildRequest;
+import hex.factory.IRequestFactory;
 import hex.ioc.assembler.AbstractApplicationContext;
 
 using hex.util.MacroUtil;
@@ -13,6 +15,7 @@ using hex.compiler.parser.flow.ExpressionUtil;
  */
 class AbstractExprParser extends DSLParser<Expr>
 {
+	var _requestFactory 				: IRequestFactory<BuildRequest>;
 	var _applicationContextName 		: String;
 	var _applicationContextClassName 	: String;
 	
@@ -37,7 +40,7 @@ class AbstractExprParser extends DSLParser<Expr>
 			this._findApplicationContextClassName( data );
 			
 			var context = this._applicationAssembler.getApplicationContext( this._applicationContextName );
-			this._proxyFactory = this._applicationAssembler.getProxyFactory( context );
+			this._requestFactory = this._applicationAssembler.getRequestFactory( context );
 		}
 		else
 		{

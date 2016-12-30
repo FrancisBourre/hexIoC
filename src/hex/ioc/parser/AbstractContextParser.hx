@@ -1,9 +1,6 @@
 package hex.ioc.parser;
 
-import hex.control.Request;
-import hex.error.NullPointerException;
 import hex.error.VirtualMethodException;
-import hex.factory.IProxyFactory;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.IApplicationAssembler;
 
@@ -13,7 +10,6 @@ import hex.ioc.assembler.IApplicationAssembler;
  */
 class AbstractContextParser<ContentType> implements IContextParser<ContentType>
 {
-	var _proxyFactory 			: IProxyFactory;
 	var _applicationAssembler 	: IApplicationAssembler;
 	var _contextData 			: ContentType;
 

@@ -1,5 +1,6 @@
 package hex.compiler.parser.xml;
 
+import hex.factory.BuildRequest;
 import hex.ioc.parser.AbstractParserCollection;
 
 /**

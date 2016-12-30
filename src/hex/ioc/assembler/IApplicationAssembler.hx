@@ -1,6 +1,6 @@
 package hex.ioc.assembler;
 
-import hex.factory.IProxyFactory;
+import hex.factory.IRequestFactory;
 import hex.ioc.core.IContextFactory;
 
 /**
@@ -8,7 +8,7 @@ import hex.ioc.core.IContextFactory;
  */
 interface IApplicationAssembler
 {
-	function getProxyFactory( applicationContext : AbstractApplicationContext ) : IProxyFactory;
+	function getRequestFactory<T>( applicationContext : AbstractApplicationContext ) : IRequestFactory<T>;
 	function getContextFactory( applicationContext : AbstractApplicationContext ) : IContextFactory;
 	function buildEverything() : Void;
 	function release() : Void;

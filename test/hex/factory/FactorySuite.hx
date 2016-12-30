@@ -1,7 +1,5 @@
 package hex.factory;
 
-import hex.factory.ProxyFactoryTest;
-
 /**
  * ...
  * @author Francis Bourre
@@ -9,5 +7,5 @@ import hex.factory.ProxyFactoryTest;
 class FactorySuite
 {
 	@Suite( "Factory" )
-    public var list : Array<Class<Dynamic>> = [ ProxyFactoryTest ];
+    public var list : Array<Class<Dynamic>> = [];
 }

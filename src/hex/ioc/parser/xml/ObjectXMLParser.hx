@@ -61,7 +61,7 @@ class ObjectXMLParser extends AbstractXMLParser
 			constructorVO.ifList 	= XMLParserUtil.getIfList( xml );
 			constructorVO.ifNotList = XMLParserUtil.getIfNotList( xml );
 
-			this._proxyFactory.buildElement( ConstructorVO, constructorVO );
+			this._requestFactory.build( OBJECT( constructorVO ) );
 		}
 		else
 		{
@@ -83,7 +83,7 @@ class ObjectXMLParser extends AbstractXMLParser
 			constructorVO.ifList 	= XMLParserUtil.getIfList( xml );
 			constructorVO.ifNotList = XMLParserUtil.getIfNotList( xml );
 
-			this._proxyFactory.buildElement( ConstructorVO, constructorVO );
+			this._requestFactory.build( OBJECT( constructorVO ) );
 
 			// Build property.
 			var propertyIterator = xml.elementsNamed( ContextNameList.PROPERTY );
@@ -101,7 +101,7 @@ class ObjectXMLParser extends AbstractXMLParser
 				propertyVO.ifList = XMLParserUtil.getIfList( xml );
 				propertyVO.ifNotList = XMLParserUtil.getIfNotList( xml );
 				
-				this._proxyFactory.buildElement( PropertyVO, propertyVO );
+				this._requestFactory.build( PROPERTY( propertyVO ) );
 			}
 
 			// Build method call.
@@ -113,7 +113,7 @@ class ObjectXMLParser extends AbstractXMLParser
 				methodCallVO.ifList 	= XMLParserUtil.getIfList( methodCallItem );
 				methodCallVO.ifNotList 	= XMLParserUtil.getIfNotList( methodCallItem );
 				
-				this._proxyFactory.buildElement( MethodCallVO, methodCallVO );
+				this._requestFactory.build( METHOD_CALL( methodCallVO ) );
 			}
 
 			// Build channel listener.
@@ -129,7 +129,7 @@ class ObjectXMLParser extends AbstractXMLParser
 					domainListenerVO.ifList 	= XMLParserUtil.getIfList( listener );
 					domainListenerVO.ifNotList 	= XMLParserUtil.getIfNotList( listener );
 					
-					this._proxyFactory.buildElement( DomainListenerVO, domainListenerVO );
+					this._requestFactory.build( DOMAIN_LISTENER( domainListenerVO ) );
 				}
 				else
 				{

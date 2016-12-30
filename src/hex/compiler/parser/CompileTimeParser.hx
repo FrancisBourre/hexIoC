@@ -10,7 +10,7 @@ import hex.ioc.parser.AbstractParserCollection;
  * ...
  * @author Francis Bourre
  */
-class CompileTimeParser<ContentType, ParserType:DSLParser<ContentType>> 
+class CompileTimeParser<ContentType, ParserType:DSLParser<ContentType>, RequestType> 
 {
 	var _contextData 		: ContentType;
 	var _assembler 			: IApplicationAssembler;

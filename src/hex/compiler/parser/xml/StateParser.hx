@@ -1,6 +1,7 @@
 package hex.compiler.parser.xml;
 
 import haxe.macro.Context;
+import hex.factory.BuildRequest;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
@@ -58,7 +59,7 @@ class StateParser extends AbstractXmlParser
 		stateTransitionVO.ifNotList = XMLParserUtil.getIfNotList( xml );
 		
 		stateTransitionVO.filePosition 	= this._exceptionReporter.getPosition( xml );
-		this._proxyFactory.buildElement( StateTransitionVO, stateTransitionVO);
+		this._requestFactory.build( STATE_TRANSITION( stateTransitionVO ) );
 	}
 	
 	function _getCommandList( xml : Xml, elementName : String ) : Array<CommandMappingVO>

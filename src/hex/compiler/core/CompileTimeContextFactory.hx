@@ -1,5 +1,6 @@
 package hex.compiler.core;
 
+#if macro
 import haxe.macro.Expr;
 import hex.collection.ILocatorListener;
 import hex.compiler.core.CompileTimeCoreFactory;
@@ -24,9 +25,9 @@ import hex.compiler.factory.XmlFactory;
 import hex.core.HashCodeFactory;
 import hex.event.IDispatcher;
 import hex.event.IEvent;
-import hex.factory.ProxyFactory;
+import hex.factory.BuildRequest;
+import hex.factory.IRequestFactory;
 import hex.ioc.assembler.AbstractApplicationContext;
-import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.core.IContextFactory;
 import hex.ioc.core.ICoreFactory;
@@ -53,8 +54,9 @@ import hex.util.MacroUtil;
  * @author Francis Bourre
  */
 class CompileTimeContextFactory 
-	extends ProxyFactory
-	implements IContextFactory implements ILocatorListener<String, Dynamic>
+	implements IRequestFactory<BuildRequest>
+	implements IContextFactory 
+	implements ILocatorListener<String, Dynamic>
 {
 	var _expressions 				: Array<Expr>;
 	
@@ -75,8 +77,6 @@ class CompileTimeContextFactory
 	
 	public function new( expressions : Array<Expr>, applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null  )
 	{
-		super();
-		
 		this._expressions = expressions;
 		
 		//build coreFactory
@@ -94,6 +94,18 @@ class CompileTimeContextFactory
 		this._init();
 	}
 	
+	public function build( request : BuildRequest ) : Void
+	{
+		switch( request )
+		{
+			case OBJECT( vo ): this.registerConstructorVO( vo );
+			case PROPERTY( vo ): this.registerPropertyVO( vo );
+			case METHOD_CALL( vo ): this.registerMethodCallVO( vo );
+			case DOMAIN_LISTENER( vo ): this.registerDomainListenerVO( vo );
+			case STATE_TRANSITION( vo ): this.registerStateTransitionVO( vo );
+		}
+	}
+	
 	public function buildEverything() : Void
 	{
 		this.buildAllStateTransitions();
@@ -108,26 +120,20 @@ class CompileTimeContextFactory
 	
 	public function dispatchAssemblingStart() : Void
 	{
-		#if macro
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.ASSEMBLING_START" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
-		#end
 	}
 	
 	public function dispatchAssemblingEnd() : Void
 	{
-		#if macro
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.ASSEMBLING_END" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
-		#end
 	}
 	
 	public function dispatchIdleMode() : Void
 	{
-		#if macro
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.IDLE_MODE" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
-		#end
 	}
 	
 	public function registerID( id : String ) : Bool
@@ -148,7 +154,7 @@ class CompileTimeContextFactory
 	public function buildStateTransition( key : String ) : Array<TransitionVO>
 	{
 		var transitions : Array<TransitionVO> = null;
-		#if macro
+
 		if ( this._stateTransitionVOLocator.isRegisteredWithKey( key ) )
 		{
 			var stateTransitionVO = this._stateTransitionVOLocator.locate( key );
@@ -156,7 +162,7 @@ class CompileTimeContextFactory
 			transitions = StateTransitionFactory.build( stateTransitionVO, this );
 			this._stateTransitionVOLocator.unregister( key );
 		}
-		#end
+
 		return transitions;
 	}
 	
@@ -170,10 +176,8 @@ class CompileTimeContextFactory
 			this._transitions = this._transitions.concat( this.buildStateTransition( key ) );
 		}
 
-		#if macro
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.STATE_TRANSITIONS_BUILT" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
-		#end
 	}
 	
 	//
@@ -198,38 +202,31 @@ class CompileTimeContextFactory
 		
 		if ( property.method != null )
 		{
-			#if macro
 			var constructorVO = new ConstructorVO( null, ContextTypeList.FUNCTION, [ property.method ], null, null, false, null, null, null );
 			constructorVO.filePosition = property.filePosition;
 			value = this._build( constructorVO );
 			var extVar = macro $i{ id };
 			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $value; } );
-			#end
 
 		} else if ( property.ref != null )
 		{
-			#if macro
 			var constructorVO = new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, property.ref, null, null );
 			constructorVO.filePosition = property.filePosition;
 			value = this._build( constructorVO );
 			var extVar = macro $i{ id };
 			var refVar = macro $i{ property.ref };
 			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $refVar; } );
-			#end
 
 		} else if ( property.staticRef != null )
 		{
-			#if macro
 			var constructorVO = new ConstructorVO( null, ContextTypeList.STATIC_VARIABLE, null, null, null, false, null, null,  property.staticRef );
 			constructorVO.filePosition = property.filePosition;
 			value = this._build( constructorVO );
 			var extVar = macro $i{ id };
 			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $value; } );
-			#end
 
 		} else
 		{
-			#if macro
 			var type : String = property.type != null ? property.type : ContextTypeList.STRING;
 			var constructorVO = new ConstructorVO( property.ownerID, type, [ property.value ], null, null, false, null, null, null );
 			constructorVO.filePosition = property.filePosition;
@@ -237,7 +234,6 @@ class CompileTimeContextFactory
 			
 			var extVar = macro $i{ id };
 			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $value; } );
-			#end
 		}
 		
 		return value;
@@ -284,7 +280,6 @@ class CompileTimeContextFactory
 	
 	public function buildObject( id : String ) : Void
 	{
-		#if macro
 		if ( this._constructorVOLocator.isRegisteredWithKey( id ) )
 		{
 			var cons = this._constructorVOLocator.locate( id );	
@@ -335,7 +330,6 @@ class CompileTimeContextFactory
 			this._build( cons, id );
 			this._constructorVOLocator.unregister( id );
 		}
-		#end
 	}
 	
 	public function buildAllObjects() : Void
@@ -346,12 +340,10 @@ class CompileTimeContextFactory
 			this.buildObject( key );
 		}
 		
-		#if macro
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.OBJECTS_BUILT" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 		
 		StateTransitionFactory.flush( this._expressions, this._transitions );
-		#end
 	}
 	
 	public function registerDomainListenerVO( domainListenerVO : DomainListenerVO ) : Void
@@ -368,20 +360,13 @@ class CompileTimeContextFactory
 		}
 		
 		this._domainListenerVOLocator.clear();
-
-		#if macro
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.DOMAIN_LISTENERS_ASSIGNED" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
-		#end
 	}
 
 	public function assignDomainListener( id : String ) : Bool
 	{
-		#if macro
 		return DomainListenerFactory.build( this._getFactoryVO( null ), this._domainListenerVOLocator.locate( id ) );
-		#else
-		return false;
-		#end
 	}
 	
 	public function registerMethodCallVO( methodCallVO : MethodCallVO ) : Void
@@ -392,7 +377,6 @@ class CompileTimeContextFactory
 	
 	public function callMethod( id : String ) : Void
 	{
-		#if macro
 		var method 			= this._methodCallVOLocator.locate( id );
 		var methodName 		= method.name;
 		var cons 			= new ConstructorVO( null, ContextTypeList.FUNCTION, [ method.ownerID + "." + methodName ] );
@@ -411,7 +395,6 @@ class CompileTimeContextFactory
 		
 		var varOwner = macro $i{ method.ownerID };
 		this._expressions.push( macro @:mergeBlock { $varOwner.$methodName( $a{ args } ); } );
-		#end
 	}
 
 	public function callAllMethods() : Void
@@ -424,10 +407,8 @@ class CompileTimeContextFactory
 		
 		this._methodCallVOLocator.clear();
 
-		#if macro
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.METHODS_CALLED" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
-		#end
 	}
 	
 	public function callModuleInitialisation() : Void
@@ -441,10 +422,8 @@ class CompileTimeContextFactory
 		
 		this._moduleLocator.clear();
 		
-		#if macro
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.MODULES_INITIALIZED" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
-		#end
 	}
 
 	public function getApplicationContext() : AbstractApplicationContext
@@ -480,9 +459,7 @@ class CompileTimeContextFactory
 		this._factoryMap = new Map();
 		this._symbolTable.clear();
 		
-		#if macro
 		DomainListenerFactory.domainLocator = null;
-		#end
 	}
 
 	function _init() : Void
@@ -496,7 +473,6 @@ class CompileTimeContextFactory
 		this._stateTransitionVOLocator 			= new StateTransitionVOLocator( this );
 		this._moduleLocator 					= new ModuleLocator( this );
 		
-		#if macro
 		DomainListenerFactory.domainLocator = new Map();
 		
 		this._factoryMap.set( ContextTypeList.ARRAY, ArrayFactory.build );
@@ -515,18 +491,10 @@ class CompileTimeContextFactory
 		this._factoryMap.set( ContextTypeList.FUNCTION, FunctionFactory.build );
 		this._factoryMap.set( ContextTypeList.STATIC_VARIABLE, StaticVariableFactory.build );
 		this._factoryMap.set( ContextTypeList.MAPPING_CONFIG, MappingConfigurationFactory.build );
-		#end
 		
 		this._coreFactory.addListener( this );
-		
-		this.registerFactoryMethod( PropertyVO, this.registerPropertyVO );
-		this.registerFactoryMethod( ConstructorVO, this.registerConstructorVO );
-		this.registerFactoryMethod( MethodCallVO, this.registerMethodCallVO );
-		this.registerFactoryMethod( DomainListenerVO, this.registerDomainListenerVO );
-		this.registerFactoryMethod( StateTransitionVO, this.registerStateTransitionVO );
 	}
 	
-	#if macro
 	function _build( constructorVO : ConstructorVO, ?id : String ) : Dynamic
 	{
 		constructorVO.isProperty 	= id == null;
@@ -562,5 +530,5 @@ class CompileTimeContextFactory
 
 		return factoryVO;
 	}
-	#end
 }
+#end

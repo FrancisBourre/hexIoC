@@ -1,6 +1,6 @@
 package hex.ioc.assembler;
 
-import hex.factory.IProxyFactory;
+import hex.factory.IRequestFactory;
 import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.core.ContextFactory;
 import hex.ioc.core.IContextFactory;
@@ -19,13 +19,13 @@ class ApplicationAssembler implements IApplicationAssembler
 	
 	var _mApplicationContext 			= new Map<String, AbstractApplicationContext>();
 	var _mContextFactories 				= new Map<AbstractApplicationContext, ContextFactory>();
-
-	public function getProxyFactory( applicationContext : AbstractApplicationContext ) : IProxyFactory
+	
+	public function getRequestFactory<T>( applicationContext : AbstractApplicationContext ) : IRequestFactory<T>
 	{
-		return this._mContextFactories.get( applicationContext );
+		return cast this._mContextFactories.get( applicationContext );
 	}
 	
-	public function getContextFactory( applicationContext : AbstractApplicationContext ) : IContextFactory
+	public function getContextFactory( applicationContext : AbstractApplicationContext ) : ContextFactory
 	{
 		return this._mContextFactories.get( applicationContext );
 	}
