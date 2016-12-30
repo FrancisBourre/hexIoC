@@ -14,7 +14,7 @@ interface IContextParser<ContentType>
 	
 	function getContextData() : ContentType;
 	
-	function getApplicationContext( applicationContextClass : Class<AbstractApplicationContext> = null ) : AbstractApplicationContext;
+	function getApplicationContext() : AbstractApplicationContext;
 
 	function getApplicationAssembler() : IApplicationAssembler;
 	

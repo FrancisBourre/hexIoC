@@ -21,7 +21,7 @@ class ApplicationContextParser extends AbstractExprParser
 		var contextData 	= this.getContextData();
 		
 		var applicationContextClass = null;
-		var applicationContextClassName = this._getRootApplicationContextClassName();
+		var applicationContextClassName = this._applicationContextClassName;
 		
 		if ( applicationContextClassName != null )
 		{
@@ -35,7 +35,7 @@ class ApplicationContextParser extends AbstractExprParser
 			}
 		}
 	
-		var applicationContextName = this._getRootApplicationContextName();
+		var applicationContextName = this._applicationContextName;
 	
 		var expr;
 		if ( applicationContextClass != null )

@@ -3,6 +3,7 @@ package hex.ioc.parser;
 import hex.control.Request;
 import hex.error.NullPointerException;
 import hex.error.VirtualMethodException;
+import hex.factory.IProxyFactory;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.IApplicationAssembler;
 
@@ -12,12 +13,13 @@ import hex.ioc.assembler.IApplicationAssembler;
  */
 class AbstractContextParser<ContentType> implements IContextParser<ContentType>
 {
+	var _proxyFactory 			: IProxyFactory;
 	var _applicationAssembler 	: IApplicationAssembler;
 	var _contextData 			: ContentType;
 
 	function new() 
 	{
-		
+		//
 	}
 	
 	@final
@@ -25,7 +27,7 @@ class AbstractContextParser<ContentType> implements IContextParser<ContentType>
 	{
 		this._applicationAssembler = applicationAssembler;
 	}
-
+	
 	@final
 	public function getApplicationAssembler() : IApplicationAssembler
 	{
@@ -48,7 +50,7 @@ class AbstractContextParser<ContentType> implements IContextParser<ContentType>
 		throw new VirtualMethodException( "setContextData must be implemented in concrete class." );
 	}
 	
-	public function getApplicationContext( applicationContextClass : Class<AbstractApplicationContext> = null ) : AbstractApplicationContext
+	public function getApplicationContext() : AbstractApplicationContext
 	{
 		throw new VirtualMethodException( "getApplicationContext must be implemented in concrete class." );
 	}

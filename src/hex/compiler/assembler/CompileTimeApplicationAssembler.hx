@@ -73,46 +73,11 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 		this._expressions = [ macro {} ];
 	}
 
-	public function buildProperty( applicationContext : AbstractApplicationContext, propertyVO : PropertyVO ) : Void
-	{
-		this.getContextFactory( applicationContext ).registerPropertyVO( propertyVO );
-	}
-	
-	public function buildObject( applicationContext : AbstractApplicationContext, constructorVO : ConstructorVO ) : Void
-	{
-		this._registerID( applicationContext, constructorVO.ID, constructorVO.filePosition );
-		this.getContextFactory( applicationContext ).registerConstructorVO( constructorVO );
-	}
-
-	public function buildMethodCall ( applicationContext : AbstractApplicationContext, methodCallVO : MethodCallVO ) : Void
-	{
-		this.getContextFactory( applicationContext ).registerMethodCallVO( methodCallVO );
-	}
-
-	public function buildDomainListener( applicationContext : AbstractApplicationContext, domainListenerVO : DomainListenerVO ) : Void
-	{
-		this.getContextFactory( applicationContext ).registerDomainListenerVO( domainListenerVO );
-	}
-
-	public function configureStateTransition( applicationContext : AbstractApplicationContext, stateTransitionVO : StateTransitionVO ) : Void
-	{
-		this._registerID( applicationContext, stateTransitionVO.ID, stateTransitionVO.filePosition );
-		this.getContextFactory( applicationContext ).registerStateTransitionVO( stateTransitionVO );
-	}
-
 	public function buildEverything() : Void
 	{
 		var itFactory = this._mContextFactories.iterator();
 		var contextFactories = [ while ( itFactory.hasNext() ) itFactory.next() ];
-		
-		contextFactories.map( function( factory ) { factory.buildAllStateTransitions(); } );
-		contextFactories.map( function( factory ) { factory.dispatchAssemblingStart(); } );
-		contextFactories.map( function( factory ) { factory.buildAllObjects(); } );
-		contextFactories.map( function( factory ) { factory.assignAllDomainListeners(); } );
-		contextFactories.map( function( factory ) { factory.callAllMethods(); } );
-		contextFactories.map( function( factory ) { factory.callModuleInitialisation(); } );
-		contextFactories.map( function( factory ) { factory.dispatchAssemblingEnd(); } );
-		contextFactories.map( function( factory ) { factory.dispatchIdleMode(); } );
+		contextFactories.map( function( factory ) { factory.buildEverything(); } );
 	}
 
 	public function getApplicationContext( applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null ) : AbstractApplicationContext

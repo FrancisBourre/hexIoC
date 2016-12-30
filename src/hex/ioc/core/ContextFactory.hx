@@ -116,6 +116,18 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		this._init();
 	}
 	
+	public function buildEverything() : Void
+	{
+		this.buildAllStateTransitions();
+		this.dispatchAssemblingStart();
+		this.buildAllObjects();
+		this.assignAllDomainListeners();
+		this.callAllMethods();
+		this.callModuleInitialisation();
+		this.dispatchAssemblingEnd();
+		this.dispatchIdleMode();
+	}
+	
 	public function dispatchAssemblingStart() : Void
 	{
 		this._contextDispatcher.dispatch( ApplicationAssemblerMessage.ASSEMBLING_START );

@@ -35,14 +35,14 @@ class ObjectParser extends AbstractExprParser
 		switch ( e.expr )
 		{
 			case EBinop( OpAssign, _.expr => EConst(CIdent(ident)), value ):
-				this._applicationAssembler.buildObject( this.getApplicationContext(), this._getConstructorVO( ident, value ) );
+				this._proxyFactory.buildElement( ConstructorVO, this._getConstructorVO( ident, value ) );
 			
 			case EBinop( 	OpAssign, 
 							_.expr => EField( _.expr => EConst(CIdent(ident)), field ), 
 							assigned ):
 				
 				var propertyVO = ExpressionUtil.getProperty( ident, field, assigned );
-				this._applicationAssembler.buildProperty( this.getApplicationContext(), propertyVO );
+				this._proxyFactory.buildElement( PropertyVO, propertyVO );
 			
 			case ECall( _.expr => EField( _.expr => EConst(CIdent(ident)), field ), params ):
 				
@@ -52,8 +52,7 @@ class ObjectParser extends AbstractExprParser
 				while ( it.hasNext() )
 					methodArguments.push( ExpressionUtil.getArgument( ident, it.next() ) );
 
-				var methodCallVO = new MethodCallVO( ident, field, methodArguments );
-				this._applicationAssembler.buildMethodCall( this.getApplicationContext(), methodCallVO );
+				this._proxyFactory.buildElement( MethodCallVO, new MethodCallVO( ident, field, methodArguments ) );
 			
 			case EMeta( entry, e ):
 						
@@ -62,12 +61,12 @@ class ObjectParser extends AbstractExprParser
 					case [ 'inject_into', EBinop( OpAssign, _.expr => EConst(CIdent(ident)), value ) ]:
 						var constructorVO = this._getConstructorVO( ident, value );
 						constructorVO.injectInto = true;
-						this._applicationAssembler.buildObject( this.getApplicationContext(), constructorVO );
+						this._proxyFactory.buildElement( ConstructorVO, constructorVO );
 						
 					case [ 'injector_creation', EBinop( OpAssign, _.expr => EConst(CIdent(ident)), value ) ]:
 						var constructorVO = this._getConstructorVO( ident, value );
 						constructorVO.injectorCreation = true;
-						this._applicationAssembler.buildObject( this.getApplicationContext(), constructorVO );
+						this._proxyFactory.buildElement( ConstructorVO, constructorVO );
 						
 					case _:
 						//Context.error( "fuck", this._exceptionReporter.getPosition( e ) );
@@ -121,7 +120,7 @@ class ObjectParser extends AbstractExprParser
 				{
 					var argument = it.next();
 					var propertyVO = ExpressionUtil.getProperty( ident, argument.field, argument.expr );
-					this._applicationAssembler.buildProperty( this.getApplicationContext(), propertyVO );
+					this._proxyFactory.buildElement( PropertyVO, propertyVO );
 				}
 				
 			case EArrayDecl( values ):

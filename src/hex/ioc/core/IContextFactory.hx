@@ -14,35 +14,17 @@ import hex.metadata.IAnnotationProvider;
  */
 interface IContextFactory 
 {
-	function registerID( id : String ) : Bool;
+	function buildEverything() : Void;
 	
-	function registerStateTransitionVO( stateTransitionVO : StateTransitionVO ) : Void;
+	function registerID( id : String ) : Bool;
 	
 	function buildStateTransition( key : String ) : Array<TransitionVO>;
 	
-	function buildAllStateTransitions() : Void;
-	
-	function registerPropertyVO( propertyVO : PropertyVO  ) : Void;
-	
-	function registerConstructorVO( constructorVO : ConstructorVO ) : Void;
-	
 	function buildObject( id : String ) : Void;
-	
-	function buildAllObjects() : Void;
-	
-	function registerDomainListenerVO( domainListenerVO : DomainListenerVO ) : Void;
 	
 	function assignDomainListener( id : String ) : Bool;
 	
-	function assignAllDomainListeners() : Void;
-	
-	function registerMethodCallVO( methodCallVO : MethodCallVO ) : Void;
-	
 	function callMethod( id : String ) : Void;
-	
-	function callAllMethods() : Void;
-	
-	function callModuleInitialisation() : Void;
 	
 	function getApplicationContext() : AbstractApplicationContext;
 	
@@ -51,12 +33,6 @@ interface IContextFactory
 	function getCoreFactory() : ICoreFactory;
 
 	function release() : Void;
-	
-	function dispatchAssemblingStart() : Void;
-	
-	function dispatchAssemblingEnd() : Void;
-	
-	function dispatchIdleMode() : Void;
 	
 	function getSymbolTable() : SymbolTable;
 }

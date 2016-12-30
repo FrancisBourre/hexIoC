@@ -9,44 +9,32 @@ import hex.ioc.assembler.AbstractApplicationContext;
  */
 class AbstractXmlParser extends DSLParser<Xml>
 {
+	var _applicationContextName 		: String;
+	//var _applicationContextClassName 	: String;
+	
 	function new() 
 	{
 		super();
 	}
 	
-	function _getRootApplicationContextName() : String
+	@final
+	override public function getApplicationContext() : AbstractApplicationContext
 	{
-		var xml : Xml				= this.getContextData().firstElement();
-		var applicationContextName 	= xml.get( "name" );
-		
-		if ( applicationContextName == null )
-		{
-			Context.error( "Fails to retrieve applicationContext name. You should add 'name' attribute to the root of your xml context", 
-				this._exceptionReporter.getPosition( xml  ) );
-
-			return null;
-		}
-		else
-		{
-			return applicationContextName;
-		}
+		return this._applicationAssembler.getApplicationContext( this._applicationContextName );
 	}
 	
 	@final
-	override public function getApplicationContext( applicationContextClass : Class<AbstractApplicationContext> = null ) : AbstractApplicationContext
-	{
-		return this._applicationAssembler.getApplicationContext( this._getRootApplicationContextName() );
-	}
-	
-	@final
-	override public function setContextData( data : Dynamic ) : Void
+	override public function setContextData( data : Xml ) : Void
 	{
 		if ( data != null )
 		{
 			if ( Std.is( data, Xml ) )
 			{
 				this._contextData = data;
-
+				this._findApplicationContextName( data );
+				
+				var context = this._applicationAssembler.getApplicationContext( this._applicationContextName );
+				this._proxyFactory = new XmlProxyFactory( cast this._applicationAssembler.getContextFactory( context ) );
 			}
 			else
 			{
@@ -56,6 +44,17 @@ class AbstractXmlParser extends DSLParser<Xml>
 		else
 		{
 			Context.error( "Context data is null.", Context.currentPos() );
+		}
+	}
+	
+	function _findApplicationContextName( xml : Xml ) : Void
+	{
+		this._applicationContextName = xml.firstElement().get( "name" );
+		
+		if ( this._applicationContextName == null )
+		{
+			Context.error( "Fails to retrieve applicationContext name. You should add 'name' attribute to the root of your xml context", 
+			this._exceptionReporter.getPosition( xml  ) );
 		}
 	}
 	

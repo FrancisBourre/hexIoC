@@ -23,7 +23,7 @@ class StateParser extends AbstractXmlParser
 	
 	override public function parse() : Void
 	{
-		var applicationContext 	= this.getApplicationAssembler().getApplicationContext( this._getRootApplicationContextName() );
+		var applicationContext 	= this.getApplicationAssembler().getApplicationContext( this._applicationContextName );
 		var iterator 			= this.getContextData().firstElement().elementsNamed( "state" );
 		
 		while ( iterator.hasNext() )
@@ -58,7 +58,7 @@ class StateParser extends AbstractXmlParser
 		stateTransitionVO.ifNotList = XMLParserUtil.getIfNotList( xml );
 		
 		stateTransitionVO.filePosition 	= this._exceptionReporter.getPosition( xml );
-		this._applicationAssembler.configureStateTransition( applicationContext, stateTransitionVO );
+		this._proxyFactory.buildElement( StateTransitionVO, stateTransitionVO);
 	}
 	
 	function _getCommandList( xml : Xml, elementName : String ) : Array<CommandMappingVO>

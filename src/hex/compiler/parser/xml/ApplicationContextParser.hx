@@ -35,16 +35,14 @@ class ApplicationContextParser extends AbstractXmlParser
 			}
 		}
 		
-		var applicationContextName : String = this._getRootApplicationContextName();
-		
 		var expr;
 		if ( applicationContextClass != null )
 		{
-			expr = macro @:mergeBlock { var applicationContext = $assemblerExpr.getApplicationContext( $v { applicationContextName }, $p { applicationContextClass } ); };
+			expr = macro @:mergeBlock { var applicationContext = $assemblerExpr.getApplicationContext( $v { this._applicationContextName }, $p { applicationContextClass } ); };
 		}
 		else
 		{
-			expr = macro @:mergeBlock { var applicationContext = $assemblerExpr.getApplicationContext( $v { applicationContextName } ); };
+			expr = macro @:mergeBlock { var applicationContext = $assemblerExpr.getApplicationContext( $v { this._applicationContextName } ); };
 		}
 
 		( cast this._applicationAssembler ).addExpression( expr );

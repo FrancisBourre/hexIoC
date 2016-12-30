@@ -84,8 +84,8 @@ class ApplicationXMLParser
 		while ( this._parserCollection.hasNext() )
 		{
 			var parser = this._parserCollection.next();
-			parser.setContextData( this._contextData );
 			parser.setApplicationAssembler( this._assembler );
+			parser.setContextData( this._contextData );
 			parser.parse();
 
 			this._contextData = parser.getContextData();

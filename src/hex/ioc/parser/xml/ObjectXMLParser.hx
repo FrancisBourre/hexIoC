@@ -1,7 +1,6 @@
 package hex.ioc.parser.xml;
 
 import hex.error.Exception;
-import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.core.ContextTypeList;
@@ -33,8 +32,6 @@ class ObjectXMLParser extends AbstractXMLParser
 	
 	function _parseNode( xml : Xml ) : Void
 	{
-		var applicationContext : AbstractApplicationContext = this.getApplicationContext();
-
 		var identifier : String = XMLAttributeUtil.getID( xml );
 		if ( identifier == null )
 		{
@@ -64,7 +61,7 @@ class ObjectXMLParser extends AbstractXMLParser
 			constructorVO.ifList 	= XMLParserUtil.getIfList( xml );
 			constructorVO.ifNotList = XMLParserUtil.getIfNotList( xml );
 
-			this.getApplicationAssembler( ).buildObject( applicationContext, constructorVO );
+			this._proxyFactory.buildElement( ConstructorVO, constructorVO );
 		}
 		else
 		{
@@ -86,7 +83,7 @@ class ObjectXMLParser extends AbstractXMLParser
 			constructorVO.ifList 	= XMLParserUtil.getIfList( xml );
 			constructorVO.ifNotList = XMLParserUtil.getIfNotList( xml );
 
-			this.getApplicationAssembler( ).buildObject( applicationContext, constructorVO );
+			this._proxyFactory.buildElement( ConstructorVO, constructorVO );
 
 			// Build property.
 			var propertyIterator = xml.elementsNamed( ContextNameList.PROPERTY );
@@ -104,7 +101,7 @@ class ObjectXMLParser extends AbstractXMLParser
 				propertyVO.ifList = XMLParserUtil.getIfList( xml );
 				propertyVO.ifNotList = XMLParserUtil.getIfNotList( xml );
 				
-				this.getApplicationAssembler( ).buildProperty( applicationContext, propertyVO );
+				this._proxyFactory.buildElement( PropertyVO, propertyVO );
 			}
 
 			// Build method call.
@@ -116,7 +113,7 @@ class ObjectXMLParser extends AbstractXMLParser
 				methodCallVO.ifList 	= XMLParserUtil.getIfList( methodCallItem );
 				methodCallVO.ifNotList 	= XMLParserUtil.getIfNotList( methodCallItem );
 				
-				this.getApplicationAssembler( ).buildMethodCall( applicationContext, methodCallVO );
+				this._proxyFactory.buildElement( MethodCallVO, methodCallVO );
 			}
 
 			// Build channel listener.
@@ -132,7 +129,7 @@ class ObjectXMLParser extends AbstractXMLParser
 					domainListenerVO.ifList 	= XMLParserUtil.getIfList( listener );
 					domainListenerVO.ifNotList 	= XMLParserUtil.getIfNotList( listener );
 					
-					this.getApplicationAssembler().buildDomainListener( applicationContext, domainListenerVO );
+					this._proxyFactory.buildElement( DomainListenerVO, domainListenerVO );
 				}
 				else
 				{
