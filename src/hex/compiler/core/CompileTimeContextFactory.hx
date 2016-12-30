@@ -24,6 +24,7 @@ import hex.compiler.factory.XmlFactory;
 import hex.core.HashCodeFactory;
 import hex.event.IDispatcher;
 import hex.event.IEvent;
+import hex.factory.ProxyFactory;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.core.ContextTypeList;
@@ -51,7 +52,9 @@ import hex.util.MacroUtil;
  * ...
  * @author Francis Bourre
  */
-class CompileTimeContextFactory implements IContextFactory implements ILocatorListener<String, Dynamic>
+class CompileTimeContextFactory 
+	extends ProxyFactory
+	implements IContextFactory implements ILocatorListener<String, Dynamic>
 {
 	var _expressions 				: Array<Expr>;
 	
@@ -72,21 +75,9 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 	
 	public function new( expressions : Array<Expr>, applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null  )
 	{
+		super();
+		
 		this._expressions = expressions;
-		
-		//build contextDispatcher
-		//var domain : Domain = DomainUtil.getDomain( applicationContextName, Domain );
-		//this._contextDispatcher = ApplicationDomainDispatcher.getInstance().getDomainDispatcher( domain );
-
-		/*var injector = new Injector();
-		injector.mapToValue( IBasicInjector, injector );
-		injector.mapToValue( IDependencyInjector, injector );
-		injector.mapToType( IMacroExecutor, MacroExecutor );
-		
-		//build annotation provider
-		this._annotationProvider = new AnnotationProvider();
-		this._annotationProvider.registerInjector( injector );
-		*/
 		
 		//build coreFactory
 		this._coreFactory = new CompileTimeCoreFactory( this._expressions );
@@ -121,14 +112,6 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.ASSEMBLING_START" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 		#end
-		
-		/*var AbstractApplicationContextClass = MacroUtil.getPack( Type.getClassName( AbstractApplicationContext ) );
-		var ApplicationContextClass = MacroUtil.getPack( Type.getClassName( ApplicationContext ) );
-		this._expressions.push( macro @:mergeBlock
-		{ 
-			applicationContext.getInjector().mapToValue( $p { AbstractApplicationContextClass }, applicationContext );
-			applicationContext.getInjector().mapToValue( $p { ApplicationContextClass }, applicationContext );
-		} );*/
 	}
 	
 	public function dispatchAssemblingEnd() : Void
@@ -535,6 +518,12 @@ class CompileTimeContextFactory implements IContextFactory implements ILocatorLi
 		#end
 		
 		this._coreFactory.addListener( this );
+		
+		this.registerFactoryMethod( PropertyVO, this.registerPropertyVO );
+		this.registerFactoryMethod( ConstructorVO, this.registerConstructorVO );
+		this.registerFactoryMethod( MethodCallVO, this.registerMethodCallVO );
+		this.registerFactoryMethod( DomainListenerVO, this.registerDomainListenerVO );
+		this.registerFactoryMethod( StateTransitionVO, this.registerStateTransitionVO );
 	}
 	
 	#if macro

@@ -39,7 +39,7 @@ class AbstractXMLParser extends AbstractContextParser<Xml>
 				this._findApplicationContextClassName( data );
 				
 				var context = this._applicationAssembler.getApplicationContext( this._applicationContextName );
-				this._proxyFactory = new XmlProxyFactory( cast this._applicationAssembler.getContextFactory( context ) );
+				this._proxyFactory = this._applicationAssembler.getProxyFactory( context );
 			}
 			else
 			{

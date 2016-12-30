@@ -1,5 +1,6 @@
 package hex.ioc.core;
 
+import hex.factory.IProxyFactory;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
@@ -12,7 +13,7 @@ import hex.metadata.IAnnotationProvider;
 /**
  * @author Francis Bourre
  */
-interface IContextFactory 
+interface IContextFactory extends IProxyFactory
 {
 	function buildEverything() : Void;
 	

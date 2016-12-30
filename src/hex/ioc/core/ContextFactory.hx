@@ -12,6 +12,7 @@ import hex.domain.Domain;
 import hex.domain.DomainUtil;
 import hex.event.IDispatcher;
 import hex.event.IEvent;
+import hex.factory.ProxyFactory;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.ApplicationAssemblerMessage;
 import hex.ioc.assembler.ApplicationContext;
@@ -58,7 +59,9 @@ import hex.util.ClassUtil;
  * @author Francis Bourre
  */
 @:keepSub
-class ContextFactory implements IContextFactory implements ILocatorListener<String, Dynamic>
+class ContextFactory 
+	extends ProxyFactory
+	implements IContextFactory implements ILocatorListener<String, Dynamic>
 {
 	var _annotationProvider			: IAnnotationProvider;
 	var _contextDispatcher			: IDispatcher<{}>;
@@ -77,6 +80,8 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 
 	public function new( applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null  )
 	{
+		super();
+		
 		//build contextDispatcher
 		var domain : Domain = DomainUtil.getDomain( applicationContextName, Domain );
 		this._contextDispatcher = ApplicationDomainDispatcher.getInstance().getDomainDispatcher( domain );
@@ -413,7 +418,7 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 	function _init() : Void
 	{
 		this._factoryMap 				= new Map();
-		this._symbolTable 					= new SymbolTable();
+		this._symbolTable 				= new SymbolTable();
 		this._constructorVOLocator 		= new ConstructorVOLocator();
 		this._propertyVOLocator 		= new PropertyVOLocator();
 		this._methodCallVOLocator 		= new MethodCallVOLocator();
@@ -440,6 +445,12 @@ class ContextFactory implements IContextFactory implements ILocatorListener<Stri
 		this._factoryMap.set( ContextTypeList.MAPPING_CONFIG, MappingConfigurationFactory.build );
 		
 		this._coreFactory.addListener( this );
+		
+		this.registerFactoryMethod( PropertyVO, this.registerPropertyVO );
+		this.registerFactoryMethod( ConstructorVO, this.registerConstructorVO );
+		this.registerFactoryMethod( MethodCallVO, this.registerMethodCallVO );
+		this.registerFactoryMethod( DomainListenerVO, this.registerDomainListenerVO );
+		this.registerFactoryMethod( StateTransitionVO, this.registerStateTransitionVO );
 	}
 
 	function _build( constructorVO : ConstructorVO, ?id : String ) : Dynamic

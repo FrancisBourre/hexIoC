@@ -37,7 +37,7 @@ class AbstractExprParser extends DSLParser<Expr>
 			this._findApplicationContextClassName( data );
 			
 			var context = this._applicationAssembler.getApplicationContext( this._applicationContextName );
-			this._proxyFactory = new FlowProxyFactory( cast this._applicationAssembler.getContextFactory( context ) );
+			this._proxyFactory = this._applicationAssembler.getProxyFactory( context );
 		}
 		else
 		{

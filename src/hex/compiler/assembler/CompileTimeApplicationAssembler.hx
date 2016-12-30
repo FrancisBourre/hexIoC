@@ -1,4 +1,5 @@
 package hex.compiler.assembler;
+import hex.factory.IProxyFactory;
 import hex.ioc.assembler.ApplicationAssembler;
 import hex.util.MacroUtil;
 
@@ -46,6 +47,50 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 		}
 	}
 	
+	public function getProxyFactory( applicationContext : AbstractApplicationContext ) : IProxyFactory
+	{
+		return this._mContextFactories.get( applicationContext );
+	}
+	
+	public function getContextFactory( applicationContext : AbstractApplicationContext ) : IContextFactory
+	{
+		return this._mContextFactories.get( applicationContext );
+	}
+	
+	public function buildEverything() : Void
+	{
+		var itFactory = this._mContextFactories.iterator();
+		var contextFactories = [ while ( itFactory.hasNext() ) itFactory.next() ];
+		contextFactories.map( function( factory ) { factory.buildEverything(); } );
+	}
+	
+	public function release() : Void
+	{
+		this._mApplicationContext = new Map();
+		this._mContextFactories = new Map();
+		this._expressions = [ macro {} ];
+	}
+
+	public function getApplicationContext( applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null ) : AbstractApplicationContext
+	{
+		var applicationContext : AbstractApplicationContext;
+
+		if ( this._mApplicationContext.exists( applicationContextName ) )
+		{
+			applicationContext = this._mApplicationContext.get( applicationContextName );
+
+		} else
+		{
+			var builderFactory = new CompileTimeContextFactory( this._expressions, applicationContextName, applicationContextClass );
+			applicationContext = builderFactory.getApplicationContext();
+			
+			this._mApplicationContext.set( applicationContextName, applicationContext);
+			this._mContextFactories.set( applicationContext, builderFactory );
+		}
+
+		return applicationContext;
+	}
+	
 	public function addExpression( expr : Expr ) : Void
 	{
 		this._expressions.push( expr );
@@ -59,45 +104,6 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 	public function getAssemblerExpression() : Expr
 	{
 		return this._assemblerExpression;
-	}
-	
-	public function getContextFactory( applicationContext : AbstractApplicationContext ) : IContextFactory
-	{
-		return this._mContextFactories.get( applicationContext );
-	}
-
-	public function release() : Void
-	{
-		this._mApplicationContext = new Map();
-		this._mContextFactories = new Map();
-		this._expressions = [ macro {} ];
-	}
-
-	public function buildEverything() : Void
-	{
-		var itFactory = this._mContextFactories.iterator();
-		var contextFactories = [ while ( itFactory.hasNext() ) itFactory.next() ];
-		contextFactories.map( function( factory ) { factory.buildEverything(); } );
-	}
-
-	public function getApplicationContext( applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null ) : AbstractApplicationContext
-	{
-		var applicationContext : AbstractApplicationContext;
-
-		if ( this._mApplicationContext.exists( applicationContextName ) )
-		{
-			applicationContext = this._mApplicationContext.get( applicationContextName );
-
-		} else
-		{
-			var builderFactory : IContextFactory = new CompileTimeContextFactory( this._expressions, applicationContextName, applicationContextClass );
-			applicationContext = builderFactory.getApplicationContext();
-			
-			this._mApplicationContext.set( applicationContextName, applicationContext);
-			this._mContextFactories.set( applicationContext, builderFactory );
-		}
-
-		return applicationContext;
 	}
 	
 	function _registerID( applicationContext : AbstractApplicationContext, ID : String, filePosition : Position ) : Bool

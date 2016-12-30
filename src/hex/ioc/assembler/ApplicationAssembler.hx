@@ -1,5 +1,6 @@
 package hex.ioc.assembler;
 
+import hex.factory.IProxyFactory;
 import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.core.ContextFactory;
 import hex.ioc.core.IContextFactory;
@@ -19,9 +20,21 @@ class ApplicationAssembler implements IApplicationAssembler
 	var _mApplicationContext 			= new Map<String, AbstractApplicationContext>();
 	var _mContextFactories 				= new Map<AbstractApplicationContext, ContextFactory>();
 
+	public function getProxyFactory( applicationContext : AbstractApplicationContext ) : IProxyFactory
+	{
+		return this._mContextFactories.get( applicationContext );
+	}
+	
 	public function getContextFactory( applicationContext : AbstractApplicationContext ) : IContextFactory
 	{
 		return this._mContextFactories.get( applicationContext );
+	}
+	
+	public function buildEverything() : Void
+	{
+		var itFactory = this._mContextFactories.iterator();
+		var contextFactories = [ while ( itFactory.hasNext() ) itFactory.next() ];
+		contextFactories.map( function( factory ) { factory.buildEverything(); } );
 	}
 
 	public function release() : Void
@@ -34,13 +47,6 @@ class ApplicationAssembler implements IApplicationAssembler
 		AnnotationProvider.release();
 	}
 	
-	public function buildEverything() : Void
-	{
-		var itFactory = this._mContextFactories.iterator();
-		var contextFactories = [ while ( itFactory.hasNext() ) itFactory.next() ];
-		contextFactories.map( function( factory ) { factory.buildEverything(); } );
-	}
-
 	public function getApplicationContext( applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null ) : AbstractApplicationContext
 	{
 		var applicationContext : AbstractApplicationContext;
