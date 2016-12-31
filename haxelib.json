@@ -14,6 +14,7 @@
 	"hexreflection": "git:https://github.com/DoclerLabs/hexReflection.git",
     "hexannotation": "git:https://github.com/DoclerLabs/hexAnnotation.git",
     "hexinject": "git:https://github.com/DoclerLabs/hexInject.git",
+    "hexdsl": "git:https://github.com/DoclerLabs/hexDsl.git",
 	"hexmvc": "git:https://github.com/DoclerLabs/hexMVC.git",
 	"hexstate": "git:https://github.com/DoclerLabs/hexState.git",
 	"hexservice": "git:https://github.com/DoclerLabs/hexService.git"

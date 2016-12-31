@@ -59,7 +59,7 @@ class StateParser extends AbstractXmlParser
 		stateTransitionVO.ifNotList = XMLParserUtil.getIfNotList( xml );
 		
 		stateTransitionVO.filePosition 	= this._exceptionReporter.getPosition( xml );
-		this._requestFactory.build( STATE_TRANSITION( stateTransitionVO ) );
+		this._builder.build( STATE_TRANSITION( stateTransitionVO ) );
 	}
 	
 	function _getCommandList( xml : Xml, elementName : String ) : Array<CommandMappingVO>

@@ -56,7 +56,7 @@ class FlowCompilerTest
 	public function testBuildingStringWithAssembler() : Void
 	{
 		var assembler = new ApplicationAssembler();
-		assembler.getContextFactory( assembler.getApplicationContext( "applicationContext" ) ).getCoreFactory().register( "s2", "bonjour" );
+		assembler.getApplicationContext( "applicationContext" ).getCoreFactory().register( "s2", "bonjour" );
 		
 		this._applicationAssembler = FlowCompiler.compileWithAssembler( assembler, "context/flow/testBuildingString.flow" );
 
@@ -362,7 +362,7 @@ class FlowCompilerTest
 	public function testInjectorCreationAttribute() : Void
 	{
 		var assembler = new ApplicationAssembler();
-		var injector = assembler.getContextFactory( assembler.getApplicationContext( "applicationContext" ) ).getCoreFactory().getInjector();
+		var injector = assembler.getApplicationContext( "applicationContext" ).getCoreFactory().getInjector();
 		injector.mapToValue( String, 'hola mundo' );
 		
 		this._applicationAssembler = FlowCompiler.compileWithAssembler( assembler, "context/flow/injectorCreationAttribute.flow" );
@@ -377,7 +377,7 @@ class FlowCompilerTest
 	public function testInjectIntoAttribute() : Void
 	{
 		var assembler = new ApplicationAssembler();
-		var injector = assembler.getContextFactory( assembler.getApplicationContext( "applicationContext" ) ).getCoreFactory().getInjector();
+		var injector = assembler.getApplicationContext( "applicationContext" ).getCoreFactory().getInjector();
 		injector.mapToValue( String, 'hola mundo' );
 
 		this._applicationAssembler = FlowCompiler.compileWithAssembler( assembler, "context/flow/injectIntoAttribute.flow" );

@@ -1,11 +1,9 @@
 package hex.compiler.assembler;
 
 #if macro
-import haxe.macro.Context;
 import haxe.macro.Expr;
 import hex.compiler.core.CompileTimeContextFactory;
-import hex.factory.IRequestFactory;
-import hex.error.IllegalArgumentException;
+import hex.core.IBuilder;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.assembler.IApplicationAssembler;
@@ -41,14 +39,9 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 		}
 	}
 	
-	public function getRequestFactory<T>( applicationContext : AbstractApplicationContext ) : IRequestFactory<T>
+	public function getBuilder<T>( applicationContext : AbstractApplicationContext ) : IBuilder<T>
 	{
 		return cast this._mContextFactories.get( applicationContext );
-	}
-	
-	public function getContextFactory( applicationContext : AbstractApplicationContext ) : CompileTimeContextFactory
-	{
-		return this._mContextFactories.get( applicationContext );
 	}
 	
 	public function buildEverything() : Void
@@ -75,11 +68,11 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 
 		} else
 		{
-			var builderFactory = new CompileTimeContextFactory( this._expressions, applicationContextName, applicationContextClass );
-			applicationContext = builderFactory.getApplicationContext();
+			var contextFactory = new CompileTimeContextFactory( this._expressions, applicationContextName, applicationContextClass );
+			applicationContext = contextFactory.getApplicationContext();
 			
 			this._mApplicationContext.set( applicationContextName, applicationContext);
-			this._mContextFactories.set( applicationContext, builderFactory );
+			this._mContextFactories.set( applicationContext, contextFactory );
 		}
 
 		return applicationContext;
@@ -98,20 +91,6 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 	public function getAssemblerExpression() : Expr
 	{
 		return this._assemblerExpression;
-	}
-	
-	function _registerID( applicationContext : AbstractApplicationContext, ID : String, filePosition : Position ) : Bool
-	{
-		try
-		{
-			return this.getContextFactory( applicationContext ).registerID( ID );
-		}
-		catch ( e : IllegalArgumentException )
-		{
-			Context.error( "Id '" + ID + "' is already registered in applicationContext named '" + applicationContext.getName() + "'", filePosition );
-		}
-		
-		return false;
 	}
 }
 #end

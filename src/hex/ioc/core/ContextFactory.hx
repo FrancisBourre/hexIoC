@@ -4,6 +4,7 @@ import hex.collection.ILocatorListener;
 import hex.control.macro.IMacroExecutor;
 import hex.control.macro.MacroExecutor;
 import hex.core.HashCodeFactory;
+import hex.core.IBuilder;
 import hex.di.IBasicInjector;
 import hex.di.IDependencyInjector;
 import hex.di.Injector;
@@ -13,7 +14,6 @@ import hex.domain.DomainUtil;
 import hex.event.IDispatcher;
 import hex.event.IEvent;
 import hex.factory.BuildRequest;
-import hex.factory.IRequestFactory;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.ApplicationAssemblerMessage;
 import hex.ioc.assembler.ApplicationContext;
@@ -61,7 +61,7 @@ import hex.util.ClassUtil;
  */
 @:keepSub
 class ContextFactory 
-	implements IRequestFactory<BuildRequest>
+	implements IBuilder<BuildRequest>
 	implements IContextFactory 
 	implements ILocatorListener<String, Dynamic>
 {
@@ -98,6 +98,7 @@ class ContextFactory
 		//build annotation provider
 		this._annotationProvider = AnnotationProvider.getAnnotationProvider( DomainUtil.getDomain( applicationContextName, Domain ) );
 		this._annotationProvider.registerInjector( injector );
+		injector.mapToValue( IAnnotationProvider, this._annotationProvider );
 		
 		//build coreFactory
 		this._coreFactory = new CoreFactory( injector, this._annotationProvider );

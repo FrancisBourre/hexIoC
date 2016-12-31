@@ -53,6 +53,7 @@ import hex.ioc.parser.xml.mock.MockServiceProvider;
 import hex.ioc.parser.xml.mock.MockStubStatefulService;
 import hex.ioc.parser.xml.mock.MockTranslationModule;
 import hex.metadata.AnnotationProvider;
+import hex.metadata.IAnnotationProvider;
 import hex.structures.Point;
 import hex.structures.Size;
 import hex.unittest.assertion.Assert;
@@ -93,7 +94,7 @@ class XmlCompilerTest
 	public function testBuildingStringWithAssembler() : Void
 	{
 		var assembler = new ApplicationAssembler();
-		assembler.getContextFactory( assembler.getApplicationContext( "applicationContext" ) ).getCoreFactory().register( "s2", "bonjour" );
+		assembler.getApplicationContext( "applicationContext" ).getCoreFactory().register( "s2", "bonjour" );
 		
 		this._applicationAssembler = XmlCompiler.readXmlFileWithAssembler( assembler, "context/testBuildingString.xml" );
 
@@ -406,7 +407,7 @@ class XmlCompilerTest
 	public function testInjectorCreationAttribute() : Void
 	{
 		var assembler = new ApplicationAssembler();
-		var injector = assembler.getContextFactory( assembler.getApplicationContext( "applicationContext" ) ).getCoreFactory().getInjector();
+		var injector = assembler.getApplicationContext( "applicationContext" ).getCoreFactory().getInjector();
 		injector.mapToValue( String, 'hola mundo' );
 		
 		this._applicationAssembler = XmlCompiler.readXmlFileWithAssembler( assembler, "context/injectorCreationAttribute.xml" );
@@ -421,7 +422,7 @@ class XmlCompilerTest
 	public function testInjectIntoAttribute() : Void
 	{
 		var assembler = new ApplicationAssembler();
-		var injector = assembler.getContextFactory( assembler.getApplicationContext( "applicationContext" ) ).getCoreFactory().getInjector();
+		var injector = assembler.getApplicationContext( "applicationContext" ).getCoreFactory().getInjector();
 		injector.mapToValue( String, 'hola mundo' );
 
 		this._applicationAssembler = XmlCompiler.readXmlFileWithAssembler( assembler, "context/injectIntoAttribute.xml" );
@@ -962,7 +963,7 @@ class XmlCompilerTest
 	{
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/testMockObjectWithAnnotation.xml" );
 		
-		var annotationProvider = this._applicationAssembler.getContextFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) ).getAnnotationProvider();
+		var annotationProvider : IAnnotationProvider = this._applicationAssembler.getApplicationContext( "applicationContext" ).getInjector().getInstance( IAnnotationProvider );
 
 		annotationProvider.registerMetaData( "color", this.getColorByName );
 		annotationProvider.registerMetaData( "language", this.getText );
@@ -982,7 +983,7 @@ class XmlCompilerTest
 		
 		XmlCompiler.readXmlFileWithAssembler( assembler, "context/testMockObjectWithAnnotation.xml" );
 		
-		var annotationProvider = this._applicationAssembler.getContextFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) ).getAnnotationProvider();
+		var annotationProvider : IAnnotationProvider = this._applicationAssembler.getApplicationContext( "applicationContext" ).getInjector().getInstance( IAnnotationProvider );
 		annotationProvider.registerMetaData( "color", this.getColorByName );
 		annotationProvider.registerMetaData( "language", this.getText );
 		
@@ -1027,7 +1028,7 @@ class XmlCompilerTest
 		
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/macroWithAnnotation.xml" );
 		
-		var annotationProvider = this._applicationAssembler.getContextFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) ).getAnnotationProvider();
+		var annotationProvider : IAnnotationProvider = this._applicationAssembler.getApplicationContext( "applicationContext" ).getInjector().getInstance( IAnnotationProvider );
 
 		Assert.equals( "value", MockMacroWithAnnotation.lastResult, "text should be the same" );
 		Assert.equals( "value", MockCommandWithAnnotation.lastResult, "text should be the same" );

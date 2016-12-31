@@ -1,15 +1,13 @@
 package hex.ioc.assembler;
 
-import hex.factory.IRequestFactory;
-import hex.ioc.core.IContextFactory;
+import hex.core.IBuilder;
 
 /**
  * @author Francis Bourre
  */
 interface IApplicationAssembler
 {
-	function getRequestFactory<T>( applicationContext : AbstractApplicationContext ) : IRequestFactory<T>;
-	function getContextFactory( applicationContext : AbstractApplicationContext ) : IContextFactory;
+	function getBuilder<T>( applicationContext : AbstractApplicationContext ) : IBuilder<T>;
 	function buildEverything() : Void;
 	function release() : Void;
 	function getApplicationContext( applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null ) : AbstractApplicationContext;

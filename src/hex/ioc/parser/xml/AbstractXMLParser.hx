@@ -1,9 +1,9 @@
 package hex.ioc.parser.xml;
 
+import hex.core.IBuilder;
 import hex.error.IllegalArgumentException;
 import hex.error.NullPointerException;
 import hex.factory.BuildRequest;
-import hex.factory.IRequestFactory;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.error.ParsingException;
 import hex.ioc.parser.AbstractContextParser;
@@ -14,7 +14,7 @@ import hex.ioc.parser.AbstractContextParser;
  */
 class AbstractXMLParser extends AbstractContextParser<Xml>
 {
-	var _requestFactory 				: IRequestFactory<BuildRequest>;
+	var _builder 						: IBuilder<BuildRequest>;
 	var _applicationContextName 		: String;
 	var _applicationContextClassName 	: String;
 	var _applicationContextClass 		: Class<AbstractApplicationContext>;
@@ -42,7 +42,7 @@ class AbstractXMLParser extends AbstractContextParser<Xml>
 				this._findApplicationContextClassName( data );
 				
 				var context = this._applicationAssembler.getApplicationContext( this._applicationContextName );
-				this._requestFactory = this._applicationAssembler.getRequestFactory( context );
+				this._builder = this._applicationAssembler.getBuilder( context );
 			}
 			else
 			{

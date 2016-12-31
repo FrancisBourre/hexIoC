@@ -14,7 +14,6 @@ import hex.event.Dispatcher;
 import hex.event.EventProxy;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.ApplicationAssembler;
-import hex.ioc.core.IContextFactory;
 import hex.ioc.core.ICoreFactory;
 import hex.ioc.di.MappingConfiguration;
 import hex.ioc.parser.xml.mock.AnotherMockAmazonService;
@@ -60,7 +59,7 @@ class ObjectXMLParserTest
 {
 	var _contextParser 				: ApplicationXMLParser;
 	var _applicationContext 		: AbstractApplicationContext;
-	var _builderFactory 			: IContextFactory;
+	//var _builderFactory 			: IContextFactory;
 	var _applicationAssembler 		: ApplicationAssembler;
 		
 	@Before
@@ -68,8 +67,8 @@ class ObjectXMLParserTest
 	{
 		this._applicationAssembler 	= new ApplicationAssembler();
 		this._applicationContext 	= this._applicationAssembler.getApplicationContext( "applicationContext" );
-		this._builderFactory 		= this._applicationAssembler.getContextFactory( this._applicationContext );
-		this._builderFactory.getCoreFactory().addProxyFactoryMethod( "hex.structures.Point", PointFactory, PointFactory.build );
+		//this._builderFactory 		= this._applicationAssembler.getContextFactory( this._applicationContext );
+		this._applicationContext.getCoreFactory().addProxyFactoryMethod( "hex.structures.Point", PointFactory, PointFactory.build );
 	}
 
 	@After
@@ -77,6 +76,11 @@ class ObjectXMLParserTest
 	{
 		ApplicationDomainDispatcher.getInstance().clear();
 		this._applicationAssembler.release();
+	}
+	
+	function _locate( key : String ) : Dynamic
+	{
+		return this._applicationContext.getCoreFactory().locate( key );
 	}
 		
 	function _build( xml : Xml, applicationContext : AbstractApplicationContext = null ) : Void
@@ -96,9 +100,7 @@ class ObjectXMLParserTest
 	{
 		this._applicationAssembler 	= assembler;
 		this._applicationContext 	= this._applicationAssembler.getApplicationContext( "applicationContext" );
-		this._builderFactory 		= this._applicationAssembler.getContextFactory( this._applicationContext );
-		
-		return this._builderFactory.getCoreFactory();
+		return this._applicationContext.getCoreFactory();
 	}
 	
 	@Test( "test building String" )
@@ -147,7 +149,7 @@ class ObjectXMLParserTest
 		Assert.equals( 1.75, obj.height, "" );
 		Assert.isTrue( obj.isWorking, "" );
 		Assert.isFalse( obj.isSleeping, "" );
-		Assert.equals( 1.75, this._builderFactory.getCoreFactory().locate( "obj.height" ), "" );
+		Assert.equals( 1.75, this._locate( "obj.height" ), "" );
 	}
 	
 	@Test( "test building simple instance with arguments" )
@@ -166,12 +168,12 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/multipleInstancesWithArguments.xml" ) );
 
-		var size : Size = this._builderFactory.getCoreFactory().locate( "size" );
+		var size : Size = this._locate( "size" );
 		Assert.isInstanceOf( size, Size, "" );
 		Assert.equals( 15, size.width, "" );
 		Assert.equals( 25, size.height, "" );
 
-		var position : Point = this._builderFactory.getCoreFactory().locate( "position" );
+		var position : Point = this._locate( "position" );
 		//Assert.isInstanceOf( position, Point, "" );
 		Assert.equals( 35, position.x, "" );
 		Assert.equals( 45, position.y, "" );
@@ -182,13 +184,13 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/singleInstanceWithPrimReferences.xml" ) );
 		
-		var x : Int = this._builderFactory.getCoreFactory().locate( "x" );
+		var x : Int = this._locate( "x" );
 		Assert.equals( 1, x, "" );
 		
-		var y : Int = this._builderFactory.getCoreFactory().locate( "y" );
+		var y : Int = this._locate( "y" );
 		Assert.equals( 2, y, "" );
 
-		var position : Point = this._builderFactory.getCoreFactory().locate( "position" );
+		var position : Point = this._locate( "position" );
 		//Assert.isInstanceOf( position, Point, "" );
 		Assert.equals( 1, position.x, "" );
 		Assert.equals( 2, position.y, "" );
@@ -199,16 +201,16 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/singleInstanceWithObjectReferences.xml" ) );
 		
-		var chat : MockChatModule = this._builderFactory.getCoreFactory().locate( "chat" );
+		var chat : MockChatModule = this._locate( "chat" );
 		Assert.isInstanceOf( chat, MockChatModule, "" );
 		
-		var receiver : MockReceiverModule = this._builderFactory.getCoreFactory().locate( "receiver" );
+		var receiver : MockReceiverModule = this._locate( "receiver" );
 		Assert.isInstanceOf( receiver, MockReceiverModule, "" );
 		
-		var proxyChat : EventProxy = this._builderFactory.getCoreFactory().locate( "proxyChat" );
+		var proxyChat : EventProxy = this._locate( "proxyChat" );
 		Assert.isInstanceOf( proxyChat, EventProxy, "" );
 		
-		var proxyReceiver : EventProxy = this._builderFactory.getCoreFactory().locate( "proxyReceiver" );
+		var proxyReceiver : EventProxy = this._locate( "proxyReceiver" );
 		Assert.isInstanceOf( proxyReceiver, EventProxy, "" );
 
 		Assert.equals( chat, proxyChat.scope, "" );
@@ -224,18 +226,18 @@ class ObjectXMLParserTest
 	{
 		this.build( XmlReader.getXml( "context/instancePropertyWithReference.xml" ) );
 		
-		var width : Int = this._builderFactory.getCoreFactory().locate( "width" );
+		var width : Int = this._locate( "width" );
 		Assert.equals( 10, width, "" );
 		
-		var height : Int = this._builderFactory.getCoreFactory().locate( "height" );
+		var height : Int = this._locate( "height" );
 		Assert.equals( 20, height, "" );
 		
-		var size : Point = this._builderFactory.getCoreFactory().locate( "size" );
+		var size : Point = this._locate( "size" );
 		//Assert.isInstanceOf( size, Point, "" );
 		Assert.equals( width, size.x, "" );
 		Assert.equals( height, size.y, "" );
 		
-		var rect : MockRectangle = this._builderFactory.getCoreFactory().locate( "rect" );
+		var rect : MockRectangle = this._locate( "rect" );
 		Assert.equals( width, rect.size.x, "" );
 		Assert.equals( height, rect.size.y, "" );
 	}
@@ -245,18 +247,18 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/multipleInstancesWithReferences.xml" ) );
 
-		var rectSize : Point = this._builderFactory.getCoreFactory().locate( "rectSize" );
+		var rectSize : Point = this._locate( "rectSize" );
 		//Assert.isInstanceOf( rectSize, Point, "" );
 		Assert.equals( 30, rectSize.x, "" );
 		Assert.equals( 40, rectSize.y, "" );
 
-		var rectPosition : Point = this._builderFactory.getCoreFactory().locate( "rectPosition" );
+		var rectPosition : Point = this._locate( "rectPosition" );
 		//Assert.isInstanceOf( rectPosition, Point, "" );
 		Assert.equals( 10, rectPosition.x, "" );
 		Assert.equals( 20, rectPosition.y, "" );
 
 
-		var rect : MockRectangle = this._builderFactory.getCoreFactory().locate( "rect" );
+		var rect : MockRectangle = this._locate( "rect" );
 		Assert.isInstanceOf( rect, MockRectangle, "" );
 		Assert.equals( 10, rect.x, "" );
 		Assert.equals( 20, rect.y, "" );
@@ -269,25 +271,25 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/multipleInstancesWithMethodCall.xml" ) );
 
-		var rectSize : Point = this._builderFactory.getCoreFactory().locate( "rectSize" );
+		var rectSize : Point = this._locate( "rectSize" );
 		//Assert.isInstanceOf( rectSize, Point, "" );
 		Assert.equals( 30, rectSize.x, "" );
 		Assert.equals( 40, rectSize.y, "" );
 
-		var rectPosition : Point = this._builderFactory.getCoreFactory().locate( "rectPosition" );
+		var rectPosition : Point = this._locate( "rectPosition" );
 		//Assert.isInstanceOf( rectPosition, Point, "" );
 		Assert.equals( 10, rectPosition.x, "" );
 		Assert.equals( 20, rectPosition.y, "" );
 
 
-		var rect : MockRectangle = this._builderFactory.getCoreFactory().locate( "rect" );
+		var rect : MockRectangle = this._locate( "rect" );
 		Assert.isInstanceOf( rect, MockRectangle, "" );
 		Assert.equals( 10, rect.x, "" );
 		Assert.equals( 20, rect.y, "" );
 		Assert.equals( 30, rect.width, "" );
 		Assert.equals( 40, rect.height, "" );
 
-		var anotherRect : MockRectangle = this._builderFactory.getCoreFactory().locate( "anotherRect" );
+		var anotherRect : MockRectangle = this._locate( "anotherRect" );
 		Assert.isInstanceOf( anotherRect, MockRectangle, "" );
 		Assert.equals( 0, anotherRect.x, "" );
 		Assert.equals( 0, anotherRect.y, "" );
@@ -300,7 +302,7 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/instanceWithStaticMethod.xml" ) );
 
-		var service : MockServiceProvider = this._builderFactory.getCoreFactory().locate( "service" );
+		var service : MockServiceProvider = this._locate( "service" );
 		Assert.isInstanceOf( service, MockServiceProvider, "" );
 		Assert.equals( "http://localhost/amfphp/gateway.php", MockServiceProvider.getInstance().getGateway(), "" );
 	}
@@ -310,7 +312,7 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/instanceWithStaticMethodAndArguments.xml" ) );
 
-		var rect : MockRectangle = this._builderFactory.getCoreFactory().locate( "rect" );
+		var rect : MockRectangle = this._locate( "rect" );
 		Assert.isInstanceOf( rect, MockRectangle, "" );
 		Assert.equals( 10, rect.x, "" );
 		Assert.equals( 20, rect.y, "" );
@@ -323,7 +325,7 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/instanceWithStaticMethodAndFactoryMethod.xml" ) );
 
-		var point : Point = this._builderFactory.getCoreFactory().locate( "point" );
+		var point : Point = this._locate( "point" );
 		//Assert.isInstanceOf( point, Point, "" );
 		Assert.equals( 10, point.x, "" );
 		Assert.equals( 20, point.y, "" );
@@ -337,7 +339,7 @@ class ObjectXMLParserTest
 
 		this.build(  XmlReader.getXml( "context/injectorCreationAttribute.xml" ) );
 
-		var instance : MockClassWithInjectedProperty = this._builderFactory.getCoreFactory().locate( "instance" );
+		var instance : MockClassWithInjectedProperty = this._locate( "instance" );
 		Assert.isInstanceOf( instance, MockClassWithInjectedProperty, "" );
 		Assert.equals( "hola mundo", instance.property, "" );
 		Assert.isTrue( instance.postConstructWasCalled, "" );
@@ -351,7 +353,7 @@ class ObjectXMLParserTest
 
 		this.build(  XmlReader.getXml( "context/injectIntoAttribute.xml" ) );
 
-		var instance : MockClassWithInjectedProperty = this._builderFactory.getCoreFactory().locate( "instance" );
+		var instance : MockClassWithInjectedProperty = this._locate( "instance" );
 		Assert.isInstanceOf( instance, MockClassWithInjectedProperty, "" );
 		Assert.equals( "hola mundo", instance.property, "" );
 		Assert.isTrue( instance.postConstructWasCalled, "" );
@@ -362,7 +364,7 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/xmlWithParserClass.xml" ) );
 
-		var fruits : Array<MockFruitVO> = this._builderFactory.getCoreFactory().locate( "fruits" );
+		var fruits : Array<MockFruitVO> = this._locate( "fruits" );
 		Assert.equals( 3, fruits.length, "" );
 
 		var orange : MockFruitVO = fruits[0];
@@ -379,15 +381,15 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/arrayFilledWithReferences.xml" ) );
 		
-		var text : Array<String> = this._builderFactory.getCoreFactory().locate( "text" );
+		var text : Array<String> = this._locate( "text" );
 		Assert.equals( 2, text.length, "" );
 		Assert.equals( "hello", text[ 0 ], "" );
 		Assert.equals( "world", text[ 1 ], "" );
 		
-		var empty : Array<String> = this._builderFactory.getCoreFactory().locate( "empty" );
+		var empty : Array<String> = this._locate( "empty" );
 		Assert.equals( 0, empty.length, "" );
 
-		var fruits : Array<MockFruitVO> = this._builderFactory.getCoreFactory().locate( "fruits" );
+		var fruits : Array<MockFruitVO> = this._locate( "fruits" );
 		Assert.equals( 3, fruits.length, "" );
 
 		var orange 	: MockFruitVO = fruits[0];
@@ -404,10 +406,10 @@ class ObjectXMLParserTest
 	{
 		this.build( XmlReader.getXml( "context/hashmapFilledWithReferences.xml" ) );
 
-		var fruits : HashMap<Dynamic, MockFruitVO> = this._builderFactory.getCoreFactory().locate( "fruits" );
+		var fruits : HashMap<Dynamic, MockFruitVO> = this._locate( "fruits" );
 		Assert.isNotNull( fruits, "" );
 
-		var stubKey : Point = this._builderFactory.getCoreFactory().locate( "stubKey" );
+		var stubKey : Point = this._locate( "stubKey" );
 		Assert.isNotNull( stubKey, "" );
 
 		var orange 	: MockFruitVO = fruits.get( '0' );
@@ -424,7 +426,7 @@ class ObjectXMLParserTest
 	{
 		this.build( XmlReader.getXml( "context/hashmapWithMapType.xml" ) );
 
-		var fruits : HashMap<Dynamic, MockFruitVO> = this._builderFactory.getCoreFactory().locate( "fruits" );
+		var fruits : HashMap<Dynamic, MockFruitVO> = this._locate( "fruits" );
 		Assert.isNotNull( fruits, "" );
 
 		var orange 	: MockFruitVO = fruits.get( '0' );
@@ -433,36 +435,36 @@ class ObjectXMLParserTest
 		Assert.equals( "orange", orange.toString(), "" );
 		Assert.equals( "apple", apple.toString(), "" );
 		
-		var map = this._builderFactory.getCoreFactory().getInjector().getInstanceWithClassName( "hex.collection.HashMap<String,hex.ioc.parser.xml.mock.MockFruitVO>", "fruits" );
+		var map = this._applicationContext.getInjector().getInstanceWithClassName( "hex.collection.HashMap<String,hex.ioc.parser.xml.mock.MockFruitVO>", "fruits" );
 		Assert.equals( fruits, map );
 	}
 	
-	@Test( "testmap-type attribute with Array" )
+	@Test( "test map-type attribute with Array" )
 	public function testMapTypeWithArray() : Void
 	{
 		this.build( XmlReader.getXml( "context/testMapTypeWithArray.xml" ) );
 		
-		var intCollection = this._builderFactory.getCoreFactory().getInjector().getInstanceWithClassName( "Array<Int>", "intCollection" );
-		var intCollection = this._builderFactory.getCoreFactory().getInjector().getInstanceWithClassName( "Array<UInt>", "intCollection" );
-		var stringCollection = this._builderFactory.getCoreFactory().getInjector().getInstanceWithClassName( "Array<String>", "stringCollection" );
+		var intCollection = this._applicationContext.getInjector().getInstanceWithClassName( "Array<Int>", "intCollection" );
+		var intCollection = this._applicationContext.getInjector().getInstanceWithClassName( "Array<UInt>", "intCollection" );
+		var stringCollection = this._applicationContext.getInjector().getInstanceWithClassName( "Array<String>", "stringCollection" );
 		
 		Assert.isInstanceOf( intCollection, Array );
 		Assert.isInstanceOf( stringCollection, Array );
 		Assert.notEquals( intCollection, stringCollection );
 	}
 	
-	@Test( "testmap-type attribute with instance" )
+	@Ignore( "test map-type attribute with instance" )
 	public function testMapTypeWithInstance() : Void
 	{
 		this.build( XmlReader.getXml( "context/testMapTypeWithInstance.xml" ) );
 		
-		/*var intCollection = this._builderFactory.getCoreFactory().getInjector().getInstanceWithClassName( "Array<Int>", "intCollection" );
-		var intCollection = this._builderFactory.getCoreFactory().getInjector().getInstanceWithClassName( "Array<UInt>", "intCollection" );
-		var stringCollection = this._builderFactory.getCoreFactory().getInjector().getInstanceWithClassName( "Array<String>", "stringCollection" );
+		var intCollection = this._applicationContext.getInjector().getInstanceWithClassName( "Array<Int>", "intCollection" );
+		var intCollection = this._applicationContext.getInjector().getInstanceWithClassName( "Array<UInt>", "intCollection" );
+		var stringCollection = this._applicationContext.getInjector().getInstanceWithClassName( "Array<String>", "stringCollection" );
 		
 		Assert.isInstanceOf( intCollection, Array );
 		Assert.isInstanceOf( stringCollection, Array );
-		Assert.notEquals( intCollection, stringCollection );*/
+		Assert.notEquals( intCollection, stringCollection );
 	}
 	
 	@Test( "test building two modules listening each other" )
@@ -470,11 +472,11 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/twoModulesListeningEachOther.xml" ) );
 
-		var chat : MockChatModule = this._builderFactory.getCoreFactory().locate( "chat" );
+		var chat : MockChatModule = this._locate( "chat" );
 		Assert.isNotNull( chat, "" );
 		Assert.isNull( chat.translatedMessage, "" );
 
-		var translation : MockTranslationModule = this._builderFactory.getCoreFactory().locate( "translation" );
+		var translation : MockTranslationModule = this._locate( "translation" );
 		Assert.isNotNull( translation, "" );
 
 		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "Bonjour" ] );
@@ -486,11 +488,11 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/twoModulesListeningEachOtherWithAdapter.xml" ) );
 
-		var chat : MockChatModule = this._builderFactory.getCoreFactory().locate( "chat" );
+		var chat : MockChatModule = this._locate( "chat" );
 		Assert.isNotNull( chat, "" );
 		Assert.isNull( chat.translatedMessage, "" );
 
-		var translation : MockTranslationModule = this._builderFactory.getCoreFactory().locate( "translation" );
+		var translation : MockTranslationModule = this._locate( "translation" );
 		Assert.isNotNull( translation, "" );
 
 		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "Bonjour" ] );
@@ -503,13 +505,13 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/twoModulesListeningEachOtherWithAdapterAndInjection.xml" ) );
 
-		var chat : MockChatModule = this._builderFactory.getCoreFactory().locate( "chat" );
+		var chat : MockChatModule = this._locate( "chat" );
 		Assert.isNotNull( chat, "" );
 
-		var receiver : MockReceiverModule = this._builderFactory.getCoreFactory().locate( "receiver" );
+		var receiver : MockReceiverModule = this._locate( "receiver" );
 		Assert.isNotNull( receiver, "" );
 
-		var parser : MockMessageParserModule = this._builderFactory.getCoreFactory().locate( "parser" );
+		var parser : MockMessageParserModule = this._locate( "parser" );
 		Assert.isNotNull( parser, "" );
 
 		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "Bonjour" ] );
@@ -521,16 +523,16 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/domainDispatchAfterModuleInitialisation.xml" ) );
 
-		var sender : MockSenderModule = this._builderFactory.getCoreFactory().locate( "sender" );
+		var sender : MockSenderModule = this._locate( "sender" );
 		Assert.isNotNull( sender, "" );
 
-		var receiver : MockReceiverModule = this._builderFactory.getCoreFactory().locate( "receiver" );
+		var receiver : MockReceiverModule = this._locate( "receiver" );
 		Assert.isNotNull( receiver, "" );
 
 		Assert.equals( "hello receiver", receiver.message, "" );
 	}
 	
-	@Ignore( "test building different applicationContext" )
+	/*@Ignore( "test building different applicationContext" )
 	public function testBuildingDifferentApplicationContext() : Void
 	{
 		var parentSource : String = '
@@ -609,14 +611,14 @@ class ObjectXMLParserTest
 		Assert.equals( applicationContextChild, applicationContextParent.applicationContextChild, "" );
 		Assert.equals( childRectangle, applicationContextParent.applicationContextChild.rect0, "" );
 		Assert.equals( subChildRectangle, applicationContextParent.applicationContextChild.applicationContextSubChild.rect0, "" );
-	}
+	}*/
 	
 	@Test( "test target sub property" )
 	public function testTargetSubProperty() : Void
 	{
 		this.build(  XmlReader.getXml( "context/targetSubProperty.xml" ) );
 
-		var mockObject : MockObjectWithRegtangleProperty = this._builderFactory.getCoreFactory().locate( "mockObject" );
+		var mockObject : MockObjectWithRegtangleProperty = this._locate( "mockObject" );
 		Assert.isInstanceOf( mockObject, MockObjectWithRegtangleProperty, "" );
 		Assert.equals( 1.5, mockObject.rectangle.x, "" );
 	}
@@ -626,11 +628,11 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/classReference.xml" ) );
 
-		var rectangleClass : Class<MockRectangle> = this._builderFactory.getCoreFactory().locate( "RectangleClass" );
+		var rectangleClass : Class<MockRectangle> = this._locate( "RectangleClass" );
 		Assert.isInstanceOf( rectangleClass, Class, "" );
 		Assert.isInstanceOf( Type.createInstance( rectangleClass, [] ), MockRectangle, "" );
 
-		var classContainer = this._builderFactory.getCoreFactory().locate( "classContainer" );
+		var classContainer = this._locate( "classContainer" );
 
 		var anotherRectangleClass : Class<MockRectangle> = classContainer.AnotherRectangleClass;
 		Assert.isInstanceOf( anotherRectangleClass, Class, "" );
@@ -638,7 +640,7 @@ class ObjectXMLParserTest
 
 		Assert.equals( rectangleClass, anotherRectangleClass, "" );
 
-		var anotherRectangleClassRef : Class<MockRectangle> = this._builderFactory.getCoreFactory().locate( "classContainer.AnotherRectangleClass" );
+		var anotherRectangleClassRef : Class<MockRectangle> = this._locate( "classContainer.AnotherRectangleClass" );
 		Assert.isInstanceOf( anotherRectangleClassRef, Class, "" );
 		Assert.equals( anotherRectangleClass, anotherRectangleClassRef, "" );
 	}
@@ -648,7 +650,7 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/mappingConfiguration.xml" ) );
 
-		var config : MappingConfiguration = this._builderFactory.getCoreFactory().locate( "config" );
+		var config : MappingConfiguration = this._locate( "config" );
 		Assert.isInstanceOf( config, MappingConfiguration, "" );
 
 		var injector = new Injector();
@@ -656,7 +658,7 @@ class ObjectXMLParserTest
 
 		Assert.isInstanceOf( injector.getInstance( IMockAmazonService ), MockAmazonService, "" );
 		Assert.isInstanceOf( injector.getInstance( IMockFacebookService ), MockFacebookService, "" );
-		Assert.equals( this._builderFactory.getCoreFactory().locate( "facebookService" ), injector.getInstance( IMockFacebookService ), "" );
+		Assert.equals( this._locate( "facebookService" ), injector.getInstance( IMockFacebookService ), "" );
 	}
 	
 	@Test( "test building mapping configuration with map names" )
@@ -664,7 +666,7 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/mappingConfigurationWithMapNames.xml" ) );
 
-		var config : MappingConfiguration = this._builderFactory.getCoreFactory().locate( "config" );
+		var config : MappingConfiguration = this._locate( "config" );
 		Assert.isInstanceOf( config, MappingConfiguration, "" );
 
 		var injector = new Injector();
@@ -679,7 +681,7 @@ class ObjectXMLParserTest
 	{
 		this.build( XmlReader.getXml( "context/mappingConfigurationWithSingleton.xml" ) );
 
-		var config = this._builderFactory.getCoreFactory().locate( "config" );
+		var config = this._locate( "config" );
 		Assert.isInstanceOf( config, MappingConfiguration, "" );
 
 		var injector = new Injector();
@@ -705,7 +707,7 @@ class ObjectXMLParserTest
 	{
 		this.build( XmlReader.getXml( "context/mappingConfigurationWithInjectInto.xml" ) );
 
-		var config = this._builderFactory.getCoreFactory().locate( "config" );
+		var config = this._locate( "config" );
 		Assert.isInstanceOf( config, MappingConfiguration, "" );
 
 		var injector = new Injector();
@@ -728,7 +730,7 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/serviceLocator.xml" ) );
 
-		var serviceLocator : ServiceLocator = this._builderFactory.getCoreFactory().locate( "serviceLocator" );
+		var serviceLocator : ServiceLocator = this._locate( "serviceLocator" );
 		Assert.isInstanceOf( serviceLocator, ServiceLocator, "" );
 
 		var amazonService : IMockAmazonService = serviceLocator.getService( IMockAmazonService );
@@ -749,7 +751,7 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/serviceLocatorWithMapNames.xml" ) );
 
-		var serviceLocator : ServiceLocator = this._builderFactory.getCoreFactory().locate( "serviceLocator" );
+		var serviceLocator : ServiceLocator = this._locate( "serviceLocator" );
 		Assert.isInstanceOf( serviceLocator, ServiceLocator, "" );
 
 		var amazonService0 : IMockAmazonService = serviceLocator.getService( IMockAmazonService, "amazon0" );
@@ -770,14 +772,14 @@ class ObjectXMLParserTest
 		this.build(  XmlReader.getXml( "context/mockRectangle.xml" ) );
 		this.build(  XmlReader.getXml( "context/mockRectangleCopy.xml" ) );
 
-		var rect0 : MockRectangle = this._builderFactory.getCoreFactory().locate( "rect0" );
+		var rect0 : MockRectangle = this._locate( "rect0" );
 		Assert.isInstanceOf( rect0, MockRectangle, "" );
 		Assert.equals( 10, rect0.x, "" );
 		Assert.equals( 20, rect0.y, "" );
 		Assert.equals( 30, rect0.width, "" );
 		Assert.equals( 40, rect0.height, "" );
 
-		var rect1 : MockRectangle = this._builderFactory.getCoreFactory().locate( "rect1" );
+		var rect1 : MockRectangle = this._locate( "rect1" );
 		Assert.isInstanceOf( rect1, MockRectangle, "" );
 		Assert.equals( 50, rect1.x, "" );
 		Assert.equals( 60, rect1.y, "" );
@@ -790,10 +792,10 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/moduleListeningService.xml" ) );
 
-		var myService : IMockStubStatefulService = this._builderFactory.getCoreFactory().locate( "myService" );
+		var myService : IMockStubStatefulService = this._locate( "myService" );
 		Assert.isNotNull( myService, "" );
 
-		var myModule : MockModuleWithServiceCallback = this._builderFactory.getCoreFactory().locate( "myModule" );
+		var myModule : MockModuleWithServiceCallback = this._locate( "myModule" );
 		Assert.isNotNull( myModule, "" );
 
 		var booleanVO = new MockBooleanVO( true );
@@ -806,10 +808,10 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/moduleListeningServiceWithStrategyAndModuleInjection.xml" ) );
 
-		var myService : IMockStubStatefulService = this._builderFactory.getCoreFactory().locate( "myService" );
+		var myService : IMockStubStatefulService = this._locate( "myService" );
 		Assert.isNotNull( myService, "" );
 
-		var myModule : MockModuleWithServiceCallback = this._builderFactory.getCoreFactory().locate( "myModule" );
+		var myModule : MockModuleWithServiceCallback = this._locate( "myModule" );
 		Assert.isNotNull( myModule, "" );
 
 		var intVO = new MockIntVO( 7 );
@@ -822,16 +824,16 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/moduleListeningServiceWithStrategyAndContextInjection.xml" ) );
 
-		var mockDividerHelper : IMockDividerHelper = this._builderFactory.getCoreFactory().locate( "mockDividerHelper" );
+		var mockDividerHelper : IMockDividerHelper = this._locate( "mockDividerHelper" );
 		Assert.isNotNull( mockDividerHelper, "" );
 
-		var myService : IMockStubStatefulService = this._builderFactory.getCoreFactory().locate( "myService" );
+		var myService : IMockStubStatefulService = this._locate( "myService" );
 		Assert.isNotNull( myService, "" );
 
-		var myModuleA : MockModuleWithServiceCallback = this._builderFactory.getCoreFactory().locate( "myModuleA" );
+		var myModuleA : MockModuleWithServiceCallback = this._locate( "myModuleA" );
 		Assert.isNotNull( myModuleA, "" );
 
-		var myModuleB : AnotherMockModuleWithServiceCallback = this._builderFactory.getCoreFactory().locate( "myModuleB" );
+		var myModuleB : AnotherMockModuleWithServiceCallback = this._locate( "myModuleB" );
 		Assert.isNotNull( myModuleB, "" );
 
 		myService.setIntVO( new MockIntVO( 7 ) );
@@ -846,7 +848,7 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/staticRef.xml" ) );
 
-		var note : String = this._builderFactory.getCoreFactory().locate( "constant" );
+		var note : String = this._locate( "constant" );
 		Assert.isNotNull( note, "" );
 		Assert.equals( note, MockStubStatefulService.INT_VO_UPDATE, "" );
 	}
@@ -856,11 +858,11 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/staticRefProperty.xml" ) );
 
-		var object : Dynamic = this._builderFactory.getCoreFactory().locate( "object" );
+		var object : Dynamic = this._locate( "object" );
 		Assert.isNotNull( object );
 		Assert.equals( MockStubStatefulService.INT_VO_UPDATE, object.property );
 		
-		var object2 : Dynamic = this._builderFactory.getCoreFactory().locate( "object2" );
+		var object2 : Dynamic = this._locate( "object2" );
 		Assert.isNotNull( object2 );
 		Assert.equals( MockStubStatefulService, object2.property );
 	}
@@ -870,7 +872,7 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/staticRefArgument.xml" ) );
 
-		var instance : ClassWithConstantConstantArgument = this._builderFactory.getCoreFactory().locate( "instance" );
+		var instance : ClassWithConstantConstantArgument = this._locate( "instance" );
 		Assert.isNotNull( instance, "" );
 		Assert.equals( instance.constant, MockStubStatefulService.INT_VO_UPDATE, "" );
 	}
@@ -880,19 +882,19 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/eventProxy.xml" ) );
 
-		var eventProxy : EventProxy = this._builderFactory.getCoreFactory().locate( "eventProxy" );
+		var eventProxy : EventProxy = this._locate( "eventProxy" );
 		Assert.isNotNull( eventProxy, "" );
 
-		var chat : MockChatModule = this._builderFactory.getCoreFactory().locate( "chat" );
+		var chat : MockChatModule = this._locate( "chat" );
 		Assert.isNotNull( chat, "" );
 
-		var receiver : MockReceiverModule = this._builderFactory.getCoreFactory().locate( "receiver" );
+		var receiver : MockReceiverModule = this._locate( "receiver" );
 		Assert.isNotNull( receiver, "" );
 
-		var eventProxy : EventProxy = this._builderFactory.getCoreFactory().locate( "eventProxy" );
+		var eventProxy : EventProxy = this._locate( "eventProxy" );
 		Assert.isNotNull( eventProxy, "" );
 
-		var parser : MockMessageParserModule = this._builderFactory.getCoreFactory().locate( "parser" );
+		var parser : MockMessageParserModule = this._locate( "parser" );
 		Assert.isNotNull( parser, "" );
 
 		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandler ), 500 );
@@ -901,7 +903,7 @@ class ObjectXMLParserTest
 	
 	function _onCompleteHandler() : Void
 	{
-		var receiver : MockReceiverModule = this._builderFactory.getCoreFactory().locate( "receiver" );
+		var receiver : MockReceiverModule = this._locate( "receiver" );
 		Assert.equals( "BONJOUR:HTTP://GOOGLE.COM", receiver.message, "" );
 	}
 	
@@ -910,16 +912,16 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/eventTrigger.xml" ) );
 
-		var eventTrigger : Dynamic = this._builderFactory.getCoreFactory().locate( "eventTrigger" );
+		var eventTrigger : Dynamic = this._locate( "eventTrigger" );
 		Assert.isNotNull( eventTrigger, "" );
 		
-		var chat : MockChatModule = this._builderFactory.getCoreFactory().locate( "chat" );
+		var chat : MockChatModule = this._locate( "chat" );
 		Assert.isNotNull( chat, "" );
 
-		var receiver : MockReceiverModule = this._builderFactory.getCoreFactory().locate( "receiver" );
+		var receiver : MockReceiverModule = this._locate( "receiver" );
 		Assert.isNotNull( receiver, "" );
 
-		var parser : MockMessageParserModule = this._builderFactory.getCoreFactory().locate( "parser" );
+		var parser : MockMessageParserModule = this._locate( "parser" );
 		Assert.isNotNull( parser, "" );
 
 		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandler ), 500 );
@@ -931,7 +933,7 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/mapTypeAttribute.xml" ) );
 
-		var myModule : MockMappedModule = this._builderFactory.getCoreFactory().locate( "myModule" );
+		var myModule : MockMappedModule = this._locate( "myModule" );
 		Assert.isNotNull( myModule, "" );
 		Assert.isInstanceOf( myModule, MockMappedModule, "" );
 		
@@ -943,7 +945,7 @@ class ObjectXMLParserTest
 	{
 		this.build(  XmlReader.getXml( "context/multiMapTypeAttributes.xml" ) );
 
-		var myModule : MockMappedModule = this._builderFactory.getCoreFactory().locate( "myModule" );
+		var myModule : MockMappedModule = this._locate( "myModule" );
 		Assert.isNotNull( myModule, "" );
 		Assert.isInstanceOf( myModule, MockMappedModule, "" );
 		Assert.isInstanceOf( myModule, IAnotherMockMappedModule, "" );
@@ -956,7 +958,7 @@ class ObjectXMLParserTest
 	public function testStaticRefWithFactory() : Void
 	{
 		this.build(  XmlReader.getXml( "context/staticRefFactory.xml" ) );
-		var doc : MockDocument = this._builderFactory.getCoreFactory().locate( "div" );
+		var doc : MockDocument = this._locate( "div" );
 		Assert.isNotNull( doc, "" );
 		Assert.isInstanceOf( doc, MockDocument, "" );
 	}
@@ -965,7 +967,7 @@ class ObjectXMLParserTest
 	public function testIfAttribute() : Void
 	{
 		this.build(  XmlReader.getXml( "context/ifAttribute.xml", nuul, ["production" => true, "test" => false, "release" => false] ) );
-		Assert.equals( "hello production", this._builderFactory.getCoreFactory().locate( "message" ), "message value should equal 'hello production'" );
+		Assert.equals( "hello production", this._locate( "message" ), "message value should equal 'hello production'" );
 	}
 	
 	@Test( "test include with if attribute" )
@@ -973,7 +975,7 @@ class ObjectXMLParserTest
 	{
 		var variables = [ "production" => true, "test" => false, "release" => false ];
 		this.build( XmlReader.getXml( "context/includeWithIfAttribute.xml", null, [ "production" => true, "test" => false, "release" => false ] ) );
-		Assert.equals( "hello production", this._builderFactory.getCoreFactory().locate( "message" ), "message value should equal 'hello production'" );
+		Assert.equals( "hello production", this._locate( "message" ), "message value should equal 'hello production'" );
 	}
 	
 	@Test( "test include fails with if attribute" )
@@ -981,7 +983,7 @@ class ObjectXMLParserTest
 	{
 		var variables = [ "production" => false, "test" => true, "release" => true ];
 		this.build( XmlReader.getXml( "context/includeWithIfAttribute.xml", null,  [ "production" => false, "test" => true, "release" => true ] ) );
-		Assert.methodCallThrows( NoSuchElementException, this._builderFactory.getCoreFactory(), this._builderFactory.getCoreFactory().locate, [ "message" ], "message value should equal 'hello production'" );
+		Assert.methodCallThrows( NoSuchElementException, this._applicationContext.getCoreFactory(), this._locate, [ "message" ], "message value should equal 'hello production'" );
 	}
 	
 	@Test( "test file preprocessor with Xml" )
@@ -1004,7 +1006,7 @@ class ObjectXMLParserTest
 		var xml : Xml = Xml.parse( preprocessor.parse( source ) );
 		this._build( xml );
 
-		Assert.equals( "bonjour", this._builderFactory.getCoreFactory().locate( "message" ), "message value should equal 'bonjour'" );
+		Assert.equals( "bonjour", this._locate( "message" ), "message value should equal 'bonjour'" );
 	}
 
 	@Test( "test file preprocessor with Xml file" )
@@ -1015,7 +1017,7 @@ class ObjectXMLParserTest
 																					"context" 		=> 'name="${contextName}"',
 																					"node" 			=> '<msg id="message" value="${hello}"/>' ] ) );
 
-		Assert.equals( "bonjour", this._builderFactory.getCoreFactory().locate( "message" ), "message value should equal 'bonjour'" );
+		Assert.equals( "bonjour", this._locate( "message" ), "message value should equal 'bonjour'" );
 	}
 
 	@Test( "test file preprocessor with Xml file and include" )
@@ -1028,11 +1030,11 @@ class ObjectXMLParserTest
 
 		try
         {
-			Assert.equals( "bonjour", this._builderFactory.getCoreFactory().locate( "message" ), "message value should equal 'bonjour'" );
+			Assert.equals( "bonjour", this._locate( "message" ), "message value should equal 'bonjour'" );
 		}
 		catch ( e : Exception )
         {
-            Assert.fail( e.message, "Exception on this._builderFactory.getCoreFactory().locate( \"message\" ) call" );
+            Assert.fail( e.message, "Exception on this._locate( \"message\" ) call" );
         }
 	}
 }

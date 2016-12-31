@@ -4,6 +4,7 @@ package hex.compiler.core;
 import haxe.macro.Expr;
 import hex.collection.ILocatorListener;
 import hex.compiler.core.CompileTimeCoreFactory;
+import hex.core.IBuilder;
 import hex.compiler.factory.ArrayFactory;
 import hex.compiler.factory.BoolFactory;
 import hex.compiler.factory.ClassFactory;
@@ -26,7 +27,6 @@ import hex.core.HashCodeFactory;
 import hex.event.IDispatcher;
 import hex.event.IEvent;
 import hex.factory.BuildRequest;
-import hex.factory.IRequestFactory;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.core.IContextFactory;
@@ -54,7 +54,7 @@ import hex.util.MacroUtil;
  * @author Francis Bourre
  */
 class CompileTimeContextFactory 
-	implements IRequestFactory<BuildRequest>
+	implements IBuilder<BuildRequest>
 	implements IContextFactory 
 	implements ILocatorListener<String, Dynamic>
 {

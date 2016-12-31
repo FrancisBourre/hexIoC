@@ -1,9 +1,8 @@
 package hex.ioc.assembler;
 
-import hex.factory.IRequestFactory;
+import hex.core.IBuilder;
 import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.core.ContextFactory;
-import hex.ioc.core.IContextFactory;
 import hex.metadata.AnnotationProvider;
 
 /**
@@ -20,14 +19,9 @@ class ApplicationAssembler implements IApplicationAssembler
 	var _mApplicationContext 			= new Map<String, AbstractApplicationContext>();
 	var _mContextFactories 				= new Map<AbstractApplicationContext, ContextFactory>();
 	
-	public function getRequestFactory<T>( applicationContext : AbstractApplicationContext ) : IRequestFactory<T>
+	public function getBuilder<T>( applicationContext : AbstractApplicationContext ) : IBuilder<T>
 	{
 		return cast this._mContextFactories.get( applicationContext );
-	}
-	
-	public function getContextFactory( applicationContext : AbstractApplicationContext ) : ContextFactory
-	{
-		return this._mContextFactories.get( applicationContext );
 	}
 	
 	public function buildEverything() : Void
@@ -65,10 +59,5 @@ class ApplicationAssembler implements IApplicationAssembler
 		}
 
 		return applicationContext;
-	}
-	
-	inline function _registerID( applicationContext : AbstractApplicationContext, ID : String ) : Bool
-	{
-		return this.getContextFactory( applicationContext ).registerID( ID );
 	}
 }

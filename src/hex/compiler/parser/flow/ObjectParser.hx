@@ -35,14 +35,14 @@ class ObjectParser extends AbstractExprParser
 		{
 			case EBinop( OpAssign, _.expr => EConst(CIdent(ident)), value ):
 				var constructorVO = this._getConstructorVO( ident, value );
-				this._requestFactory.build( OBJECT( constructorVO ) );
+				this._builder.build( OBJECT( constructorVO ) );
 			
 			case EBinop( 	OpAssign, 
 							_.expr => EField( _.expr => EConst(CIdent(ident)), field ), 
 							assigned ):
 				
 				var propertyVO = ExpressionUtil.getProperty( ident, field, assigned );
-				this._requestFactory.build( PROPERTY( propertyVO ) );
+				this._builder.build( PROPERTY( propertyVO ) );
 			
 			case ECall( _.expr => EField( _.expr => EConst(CIdent(ident)), field ), params ):
 				
@@ -53,7 +53,7 @@ class ObjectParser extends AbstractExprParser
 					methodArguments.push( ExpressionUtil.getArgument( ident, it.next() ) );
 
 				var methodCallVO = new MethodCallVO( ident, field, methodArguments );
-				this._requestFactory.build( METHOD_CALL( methodCallVO ) );
+				this._builder.build( METHOD_CALL( methodCallVO ) );
 			
 			case EMeta( entry, e ):
 						
@@ -62,12 +62,12 @@ class ObjectParser extends AbstractExprParser
 					case [ 'inject_into', EBinop( OpAssign, _.expr => EConst(CIdent(ident)), value ) ]:
 						var constructorVO = this._getConstructorVO( ident, value );
 						constructorVO.injectInto = true;
-						this._requestFactory.build( OBJECT( constructorVO ) );
+						this._builder.build( OBJECT( constructorVO ) );
 						
 					case [ 'injector_creation', EBinop( OpAssign, _.expr => EConst(CIdent(ident)), value ) ]:
 						var constructorVO = this._getConstructorVO( ident, value );
 						constructorVO.injectorCreation = true;
-						this._requestFactory.build( OBJECT( constructorVO ) );
+						this._builder.build( OBJECT( constructorVO ) );
 						
 					case _:
 						//Context.error( "fuck", this._exceptionReporter.getPosition( e ) );
@@ -121,7 +121,7 @@ class ObjectParser extends AbstractExprParser
 				{
 					var argument = it.next();
 					var propertyVO = ExpressionUtil.getProperty( ident, argument.field, argument.expr );
-					this._requestFactory.build( PROPERTY( propertyVO ) );
+					this._builder.build( PROPERTY( propertyVO ) );
 				}
 				
 			case EArrayDecl( values ):
