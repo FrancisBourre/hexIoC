@@ -1,7 +1,7 @@
 package hex.compiler.parser.xml;
 
 import hex.ioc.assembler.ApplicationAssembler;
-import hex.ioc.assembler.IApplicationAssembler;
+import hex.core.IApplicationAssembler;
 
 /**
  * ...

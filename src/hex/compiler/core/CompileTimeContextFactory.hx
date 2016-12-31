@@ -4,6 +4,7 @@ package hex.compiler.core;
 import haxe.macro.Expr;
 import hex.collection.ILocatorListener;
 import hex.compiler.core.CompileTimeCoreFactory;
+import hex.core.IApplicationContext;
 import hex.core.IBuilder;
 import hex.compiler.factory.ArrayFactory;
 import hex.compiler.factory.BoolFactory;
@@ -75,7 +76,7 @@ class CompileTimeContextFactory
 	
 	var _transitions				: Array<TransitionVO>;
 	
-	public function new( expressions : Array<Expr>, applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null  )
+	public function new( expressions : Array<Expr>, applicationContextName : String, applicationContextClass : Class<IApplicationContext> = null  )
 	{
 		this._expressions = expressions;
 		

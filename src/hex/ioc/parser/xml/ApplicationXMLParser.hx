@@ -1,7 +1,7 @@
 package hex.ioc.parser.xml;
 
 import hex.error.NullPointerException;
-import hex.ioc.assembler.IApplicationAssembler;
+import hex.core.IApplicationAssembler;
 
 /**
  * ...

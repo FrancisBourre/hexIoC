@@ -4,6 +4,8 @@ import haxe.Timer;
 import hex.collection.HashMap;
 import hex.compiler.parser.preprocess.Preprocessor;
 import hex.config.stateful.ServiceLocator;
+import hex.core.IApplicationContext;
+import hex.core.ICoreFactory;
 import hex.di.Injector;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
@@ -12,9 +14,7 @@ import hex.error.Exception;
 import hex.error.NoSuchElementException;
 import hex.event.Dispatcher;
 import hex.event.EventProxy;
-import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.ApplicationAssembler;
-import hex.core.ICoreFactory;
 import hex.ioc.di.MappingConfiguration;
 import hex.ioc.parser.xml.mock.AnotherMockAmazonService;
 import hex.ioc.parser.xml.mock.AnotherMockModuleWithServiceCallback;
@@ -58,7 +58,7 @@ import hex.unittest.runner.MethodRunner;
 class ObjectXMLParserTest
 {
 	var _contextParser 				: ApplicationXMLParser;
-	var _applicationContext 		: AbstractApplicationContext;
+	var _applicationContext 		: IApplicationContext;
 	//var _builderFactory 			: IContextFactory;
 	var _applicationAssembler 		: ApplicationAssembler;
 		
@@ -83,7 +83,7 @@ class ObjectXMLParserTest
 		return this._applicationContext.getCoreFactory().locate( key );
 	}
 		
-	function _build( xml : Xml, applicationContext : AbstractApplicationContext = null ) : Void
+	function _build( xml : Xml, applicationContext : IApplicationContext = null ) : Void
 	{
 		this._contextParser = new ApplicationXMLParser();
 		//this._contextParser.parse( applicationContext != null ? applicationContext : this._applicationContext, this._applicationAssembler, xml );

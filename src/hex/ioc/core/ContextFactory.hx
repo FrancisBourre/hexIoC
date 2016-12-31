@@ -4,6 +4,7 @@ import hex.collection.ILocatorListener;
 import hex.control.macro.IMacroExecutor;
 import hex.control.macro.MacroExecutor;
 import hex.core.HashCodeFactory;
+import hex.core.IApplicationContext;
 import hex.core.IBuilder;
 import hex.core.ICoreFactory;
 import hex.di.IBasicInjector;
@@ -15,7 +16,6 @@ import hex.domain.DomainUtil;
 import hex.event.IDispatcher;
 import hex.event.IEvent;
 import hex.factory.BuildRequest;
-import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.ApplicationAssemblerMessage;
 import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.control.ArrayFactory;
@@ -69,7 +69,7 @@ class ContextFactory
 	var _annotationProvider			: IAnnotationProvider;
 	var _contextDispatcher			: IDispatcher<{}>;
 	var _moduleLocator				: ModuleLocator;
-	var _applicationContext 		: AbstractApplicationContext;
+	var _applicationContext 		: IApplicationContext;
 	var _factoryMap 				: Map<String, FactoryVO->Void>;
 	var _coreFactory 				: ICoreFactory;
 	var _symbolTable 				: SymbolTable;
@@ -81,7 +81,7 @@ class ContextFactory
 	
 	var _transitions				: Array<TransitionVO>;
 
-	public function new( applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null  )
+	public function new( applicationContextName : String, applicationContextClass : Class<IApplicationContext> = null  )
 	{
 		//build contextDispatcher
 		var domain : Domain = DomainUtil.getDomain( applicationContextName, Domain );
@@ -115,7 +115,7 @@ class ContextFactory
 		}
 		
 		//register applicationContext
-		injector.mapToValue( AbstractApplicationContext, this._applicationContext );
+		injector.mapToValue( IApplicationContext, this._applicationContext );
 		this._coreFactory.register( applicationContextName, this._applicationContext );
 		
 		
@@ -395,7 +395,7 @@ class ContextFactory
 		this._contextDispatcher.dispatch( ApplicationAssemblerMessage.MODULES_INITIALIZED );
 	}
 
-	public function getApplicationContext() : AbstractApplicationContext
+	public function getApplicationContext() : IApplicationContext
 	{
 		return this._applicationContext;
 	}

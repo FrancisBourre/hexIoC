@@ -1,5 +1,6 @@
 package hex.ioc.parser.xml;
 
+import hex.core.IApplicationContext;
 import hex.core.IBuilder;
 import hex.error.IllegalArgumentException;
 import hex.error.NullPointerException;
@@ -17,7 +18,7 @@ class AbstractXMLParser extends AbstractContextParser<Xml>
 	var _builder 						: IBuilder<BuildRequest>;
 	var _applicationContextName 		: String;
 	var _applicationContextClassName 	: String;
-	var _applicationContextClass 		: Class<AbstractApplicationContext>;
+	var _applicationContextClass 		: Class<IApplicationContext>;
 	
 	function new()
 	{
@@ -25,7 +26,7 @@ class AbstractXMLParser extends AbstractContextParser<Xml>
 	}
 	
 	@final
-	override public function getApplicationContext() : AbstractApplicationContext
+	override public function getApplicationContext() : IApplicationContext
 	{
 		return this._applicationAssembler.getApplicationContext( this._applicationContextName, this._applicationContextClass );
 	}

@@ -4,9 +4,9 @@ package hex.compiler.assembler;
 import haxe.macro.Expr;
 import hex.compiler.core.CompileTimeContextFactory;
 import hex.core.IBuilder;
-import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.ApplicationAssembler;
-import hex.ioc.assembler.IApplicationAssembler;
+import hex.core.IApplicationAssembler;
+import hex.core.IApplicationContext;
 import hex.util.MacroUtil;
 
 /**
@@ -15,8 +15,8 @@ import hex.util.MacroUtil;
  */
 class CompileTimeApplicationAssembler implements IApplicationAssembler
 {
-	var _mApplicationContext 	= new Map<String, AbstractApplicationContext>();
-	var _mContextFactories 		= new Map<AbstractApplicationContext, CompileTimeContextFactory>();
+	var _mApplicationContext 	= new Map<String, IApplicationContext>();
+	var _mContextFactories 		= new Map<IApplicationContext, CompileTimeContextFactory>();
 	var _expressions 			= [ macro { } ];
 	
 	var _assemblerExpression : Expr;
@@ -39,7 +39,7 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 		}
 	}
 	
-	public function getBuilder<T>( applicationContext : AbstractApplicationContext ) : IBuilder<T>
+	public function getBuilder<T>( applicationContext : IApplicationContext ) : IBuilder<T>
 	{
 		return cast this._mContextFactories.get( applicationContext );
 	}
@@ -58,9 +58,9 @@ class CompileTimeApplicationAssembler implements IApplicationAssembler
 		this._expressions = [ macro {} ];
 	}
 
-	public function getApplicationContext( applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null ) : AbstractApplicationContext
+	public function getApplicationContext( applicationContextName : String, applicationContextClass : Class<IApplicationContext> = null ) : IApplicationContext
 	{
-		var applicationContext : AbstractApplicationContext;
+		var applicationContext : IApplicationContext;
 
 		if ( this._mApplicationContext.exists( applicationContextName ) )
 		{

@@ -1,12 +1,7 @@
 package hex.ioc.core;
 
+import hex.core.IApplicationContext;
 import hex.core.ICoreFactory;
-import hex.ioc.assembler.AbstractApplicationContext;
-import hex.ioc.vo.ConstructorVO;
-import hex.ioc.vo.DomainListenerVO;
-import hex.ioc.vo.MethodCallVO;
-import hex.ioc.vo.PropertyVO;
-import hex.ioc.vo.StateTransitionVO;
 import hex.ioc.vo.TransitionVO;
 import hex.metadata.IAnnotationProvider;
 
@@ -27,7 +22,7 @@ interface IContextFactory
 	
 	function callMethod( id : String ) : Void;
 	
-	function getApplicationContext() : AbstractApplicationContext;
+	function getApplicationContext() : IApplicationContext;
 	
 	function getAnnotationProvider() : IAnnotationProvider;
 

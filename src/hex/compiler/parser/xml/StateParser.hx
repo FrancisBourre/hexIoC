@@ -1,8 +1,8 @@
 package hex.compiler.parser.xml;
 
 import haxe.macro.Context;
+import hex.core.IApplicationContext;
 import hex.factory.BuildRequest;
-import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.parser.xml.XMLParserUtil;
@@ -35,7 +35,7 @@ class StateParser extends AbstractXmlParser
 		}
 	}
 	
-	function _parseNode( applicationContext : AbstractApplicationContext, xml : Xml ) : Void
+	function _parseNode( applicationContext : IApplicationContext, xml : Xml ) : Void
 	{
 		var identifier = xml.get( ContextAttributeList.ID );
 		if ( identifier == null )

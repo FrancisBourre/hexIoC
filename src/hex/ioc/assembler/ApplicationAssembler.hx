@@ -1,7 +1,8 @@
 package hex.ioc.assembler;
 
+import hex.core.IApplicationAssembler;
+import hex.core.IApplicationContext;
 import hex.core.IBuilder;
-import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.core.ContextFactory;
 import hex.metadata.AnnotationProvider;
 
@@ -16,10 +17,10 @@ class ApplicationAssembler implements IApplicationAssembler
 		
 	}
 	
-	var _mApplicationContext 			= new Map<String, AbstractApplicationContext>();
-	var _mContextFactories 				= new Map<AbstractApplicationContext, ContextFactory>();
+	var _mApplicationContext 			= new Map<String, IApplicationContext>();
+	var _mContextFactories 				= new Map<IApplicationContext, ContextFactory>();
 	
-	public function getBuilder<T>( applicationContext : AbstractApplicationContext ) : IBuilder<T>
+	public function getBuilder<T>( applicationContext : IApplicationContext ) : IBuilder<T>
 	{
 		return cast this._mContextFactories.get( applicationContext );
 	}
@@ -41,9 +42,9 @@ class ApplicationAssembler implements IApplicationAssembler
 		AnnotationProvider.release();
 	}
 	
-	public function getApplicationContext( applicationContextName : String, applicationContextClass : Class<AbstractApplicationContext> = null ) : AbstractApplicationContext
+	public function getApplicationContext( applicationContextName : String, applicationContextClass : Class<IApplicationContext> = null ) : IApplicationContext
 	{
-		var applicationContext : AbstractApplicationContext;
+		var applicationContext : IApplicationContext;
 
 		if ( this._mApplicationContext.exists( applicationContextName ) )
 		{
@@ -51,11 +52,11 @@ class ApplicationAssembler implements IApplicationAssembler
 
 		} else
 		{
-			var builderFactory = new ContextFactory( applicationContextName, applicationContextClass );
-			applicationContext = builderFactory.getApplicationContext();
+			var contextFactory = new ContextFactory( applicationContextName, applicationContextClass );
+			applicationContext = contextFactory.getApplicationContext();
 			
 			this._mApplicationContext.set( applicationContextName, applicationContext);
-			this._mContextFactories.set( applicationContext, builderFactory );
+			this._mContextFactories.set( applicationContext, contextFactory );
 		}
 
 		return applicationContext;

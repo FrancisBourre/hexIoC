@@ -1,5 +1,6 @@
 package hex.ioc.control;
 
+import hex.core.IApplicationContext;
 import hex.di.IBasicInjector;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
@@ -10,7 +11,6 @@ import hex.event.EventProxy;
 import hex.event.IAdapterStrategy;
 import hex.event.IObservable;
 import hex.event.MessageType;
-import hex.ioc.assembler.AbstractApplicationContext;
 import hex.core.ICoreFactory;
 import hex.ioc.locator.DomainListenerVOLocator;
 import hex.ioc.vo.DomainListenerVO;
@@ -31,7 +31,7 @@ class DomainListenerFactory
 
 	}
 	
-	static public function build( id : String, domainListenerVOLocator : DomainListenerVOLocator, applicationContext : AbstractApplicationContext, annotationProvider : IAnnotationProvider ) : Bool
+	static public function build( id : String, domainListenerVOLocator : DomainListenerVOLocator, applicationContext : IApplicationContext, annotationProvider : IAnnotationProvider ) : Bool
 	{
 		var coreFactory 								= applicationContext.getCoreFactory();
 		var domainListener : DomainListenerVO			= domainListenerVOLocator.locate( id );
@@ -98,7 +98,7 @@ class DomainListenerFactory
 		}
 	}
 	
-	static function _getStrategyCallback( annotationProvider : IAnnotationProvider, applicationContext : AbstractApplicationContext, listener : Dynamic, method : String, strategyClassName : String, injectedInModule : Bool = false ) : Dynamic
+	static function _getStrategyCallback( annotationProvider : IAnnotationProvider, applicationContext : IApplicationContext, listener : Dynamic, method : String, strategyClassName : String, injectedInModule : Bool = false ) : Dynamic
 	{
 		var callback : Dynamic = null;
 		if ( method != null ) 

@@ -1,8 +1,8 @@
 package hex.ioc.parser;
 
+import hex.core.IApplicationAssembler;
+import hex.core.IApplicationContext;
 import hex.error.VirtualMethodException;
-import hex.ioc.assembler.AbstractApplicationContext;
-import hex.ioc.assembler.IApplicationAssembler;
 
 /**
  * ...
@@ -46,7 +46,7 @@ class AbstractContextParser<ContentType> implements IContextParser<ContentType>
 		throw new VirtualMethodException( "setContextData must be implemented in concrete class." );
 	}
 	
-	public function getApplicationContext() : AbstractApplicationContext
+	public function getApplicationContext() : IApplicationContext
 	{
 		throw new VirtualMethodException( "getApplicationContext must be implemented in concrete class." );
 	}

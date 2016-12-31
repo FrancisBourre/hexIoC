@@ -1,7 +1,7 @@
 package hex.ioc.parser;
 
-import hex.ioc.assembler.AbstractApplicationContext;
-import hex.ioc.assembler.IApplicationAssembler;
+import hex.core.IApplicationContext;
+import hex.core.IApplicationAssembler;
 
 /**
  * @author Francis Bourre
@@ -14,7 +14,7 @@ interface IContextParser<ContentType>
 	
 	function getContextData() : ContentType;
 	
-	function getApplicationContext() : AbstractApplicationContext;
+	function getApplicationContext() : IApplicationContext;
 
 	function getApplicationAssembler() : IApplicationAssembler;
 	

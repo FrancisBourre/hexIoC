@@ -1,9 +1,9 @@
 package hex.compiler.parser.xml;
 
 import haxe.macro.Context;
+import hex.core.IApplicationContext;
 import hex.core.IBuilder;
 import hex.factory.BuildRequest;
-import hex.ioc.assembler.AbstractApplicationContext;
 
 /**
  * ...
@@ -21,7 +21,7 @@ class AbstractXmlParser extends DSLParser<Xml>
 	}
 	
 	@final
-	override public function getApplicationContext() : AbstractApplicationContext
+	override public function getApplicationContext() : IApplicationContext
 	{
 		return this._applicationAssembler.getApplicationContext( this._applicationContextName );
 	}

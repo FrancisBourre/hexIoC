@@ -2,9 +2,9 @@ package hex.compiler.parser.flow;
 
 import haxe.macro.Context;
 import haxe.macro.Expr;
+import hex.core.IApplicationContext;
 import hex.core.IBuilder;
 import hex.factory.BuildRequest;
-import hex.ioc.assembler.AbstractApplicationContext;
 
 using hex.util.MacroUtil;
 using hex.compiler.parser.flow.ExpressionUtil;
@@ -25,7 +25,7 @@ class AbstractExprParser extends DSLParser<Expr>
 	}
 	
 	@final
-	override public function getApplicationContext() : AbstractApplicationContext
+	override public function getApplicationContext() : IApplicationContext
 	{
 		return this._applicationAssembler.getApplicationContext( this._applicationContextName );
 	}
