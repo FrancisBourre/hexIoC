@@ -115,7 +115,7 @@ class CompileTimeContextFactory
 		}
 	}
 	
-	public function buildEverything() : Void
+	public function finalize() : Void
 	{
 		this.buildAllStateTransitions();
 		this.dispatchAssemblingStart();
@@ -125,6 +125,22 @@ class CompileTimeContextFactory
 		this.callModuleInitialisation();
 		this.dispatchAssemblingEnd();
 		this.dispatchIdleMode();
+	}
+	
+	public function dispose() : Void
+	{
+		this._coreFactory.removeListener( this );
+		this._coreFactory.clear();
+		this._constructorVOLocator.release();
+		this._propertyVOLocator.release();
+		this._methodCallVOLocator.release();
+		this._domainListenerVOLocator.release();
+		this._stateTransitionVOLocator.release();
+		this._moduleLocator.release();
+		this._factoryMap = new Map();
+		this._symbolTable.clear();
+		
+		DomainListenerFactory.domainLocator = null;
 	}
 	
 	public function dispatchAssemblingStart() : Void
@@ -453,22 +469,6 @@ class CompileTimeContextFactory
 	public function getStateTransitionVOLocator() : StateTransitionVOLocator
 	{
 		return this._stateTransitionVOLocator;
-	}
-
-	public function release() : Void
-	{
-		this._coreFactory.removeListener( this );
-		this._coreFactory.clear();
-		this._constructorVOLocator.release();
-		this._propertyVOLocator.release();
-		this._methodCallVOLocator.release();
-		this._domainListenerVOLocator.release();
-		this._stateTransitionVOLocator.release();
-		this._moduleLocator.release();
-		this._factoryMap = new Map();
-		this._symbolTable.clear();
-		
-		DomainListenerFactory.domainLocator = null;
 	}
 
 	function _init() : Void

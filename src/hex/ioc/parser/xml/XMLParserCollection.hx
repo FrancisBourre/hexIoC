@@ -19,12 +19,12 @@ class XMLParserCollection extends AbstractParserCollection<AbstractXMLParser, Xm
 	
 	override function _buildParserList() : Void
 	{
-		this._parserCommandCollection.push( new StateXMLParser() );
-		this._parserCommandCollection.push( new ObjectXMLParser() );
+		this._parserCollection.push( new StateXMLParser() );
+		this._parserCollection.push( new ObjectXMLParser() );
 
 		if ( this._isAutoBuild )
 		{
-			this._parserCommandCollection.push( new AutoBuildLauncher() );
+			this._parserCollection.push( new AutoBuildLauncher() );
 		}
 	}
 }

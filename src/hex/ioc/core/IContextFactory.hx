@@ -1,9 +1,5 @@
 package hex.ioc.core;
 
-#if macro
-import haxe.macro.Expr;
-#end
-
 import hex.core.IApplicationContext;
 import hex.core.ICoreFactory;
 import hex.core.SymbolTable;
@@ -32,6 +28,4 @@ interface IContextFactory
 	function getCoreFactory() : ICoreFactory;
 	
 	function getSymbolTable() : SymbolTable;
-	
-	function init( applicationContextName : String, applicationContextClass : Class<IApplicationContext> = null ) : Void;
 }

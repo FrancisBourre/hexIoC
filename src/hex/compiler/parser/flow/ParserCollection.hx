@@ -17,9 +17,9 @@ class ParserCollection extends AbstractParserCollection<AbstractExprParser, Expr
 	
 	override function _buildParserList() : Void
 	{
-		this._parserCommandCollection.push( new ApplicationContextParser() );
-		this._parserCommandCollection.push( new StateParser() );
-		this._parserCommandCollection.push( new ObjectParser() );
-		this._parserCommandCollection.push( new Launcher() );
+		this._parserCollection.push( new ApplicationContextParser() );
+		this._parserCollection.push( new StateParser() );
+		this._parserCollection.push( new ObjectParser() );
+		this._parserCollection.push( new Launcher() );
 	}
 }
