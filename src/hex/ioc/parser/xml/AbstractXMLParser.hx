@@ -7,7 +7,7 @@ import hex.error.NullPointerException;
 import hex.factory.BuildRequest;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.error.ParsingException;
-import hex.ioc.parser.AbstractContextParser;
+import hex.parser.AbstractContextParser;
 
 /**
  * ...

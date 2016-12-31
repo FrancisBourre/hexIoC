@@ -4,7 +4,7 @@ import haxe.macro.Context;
 import hex.compiler.parser.xml.ClassImportHelper;
 import hex.core.IApplicationAssembler;
 import hex.ioc.error.IAssemblingExceptionReporter;
-import hex.ioc.parser.AbstractParserCollection;
+import hex.parser.AbstractParserCollection;
 
 /**
  * ...

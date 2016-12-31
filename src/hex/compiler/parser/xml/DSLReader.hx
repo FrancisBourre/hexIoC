@@ -6,7 +6,7 @@ import hex.compiler.parser.DSLData;
 import hex.compiler.parser.xml.XmlParser;
 import hex.ioc.assembler.ConditionalVariablesChecker;
 import haxe.macro.Expr;
-import hex.compiler.parser.preprocess.MacroPreprocessor;
+import hex.preprocess.MacroPreprocessor;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.parser.xml.XMLParserUtil;
 import haxe.macro.Context;

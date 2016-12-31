@@ -5,7 +5,7 @@ import hex.util.MacroUtil;
 
 #if macro
 import haxe.macro.Context;
-import hex.compiler.parser.preprocess.MacroConditionalVariablesProcessor;
+import hex.preprocess.MacroConditionalVariablesProcessor;
 import hex.compiler.parser.xml.ClassImportHelper;
 import hex.ioc.assembler.ConditionalVariablesChecker;
 import hex.ioc.core.ContextAttributeList;

@@ -6,7 +6,7 @@ import hex.ioc.assembler.ApplicationAssembler;
 #if macro
 import haxe.macro.Expr;
 import hex.compiler.assembler.CompileTimeApplicationAssembler;
-import hex.compiler.parser.preprocess.MacroConditionalVariablesProcessor;
+import hex.preprocess.MacroConditionalVariablesProcessor;
 import hex.ioc.assembler.ConditionalVariablesChecker;
 #end
 

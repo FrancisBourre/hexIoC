@@ -2,7 +2,7 @@ package hex.ioc.parser.xml;
 
 import haxe.Timer;
 import hex.collection.HashMap;
-import hex.compiler.parser.preprocess.Preprocessor;
+import hex.preprocess.Preprocessor;
 import hex.config.stateful.ServiceLocator;
 import hex.core.IApplicationContext;
 import hex.core.ICoreFactory;
