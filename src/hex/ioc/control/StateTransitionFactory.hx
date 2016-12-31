@@ -4,7 +4,7 @@ import hex.control.command.CommandMapping;
 import hex.control.command.ICommand;
 import hex.di.IContextOwner;
 import hex.ioc.core.IContextFactory;
-import hex.ioc.core.ICoreFactory;
+import hex.core.ICoreFactory;
 import hex.ioc.di.ContextOwnerWrapper;
 import hex.ioc.error.BuildingException;
 import hex.ioc.vo.CommandMappingVO;

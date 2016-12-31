@@ -5,7 +5,7 @@ import haxe.macro.Expr;
 #end
 
 import hex.ioc.core.IContextFactory;
-import hex.ioc.core.ICoreFactory;
+import hex.core.ICoreFactory;
 import hex.ioc.locator.ModuleLocator;
 
 /**

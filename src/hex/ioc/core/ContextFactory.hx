@@ -5,6 +5,7 @@ import hex.control.macro.IMacroExecutor;
 import hex.control.macro.MacroExecutor;
 import hex.core.HashCodeFactory;
 import hex.core.IBuilder;
+import hex.core.ICoreFactory;
 import hex.di.IBasicInjector;
 import hex.di.IDependencyInjector;
 import hex.di.Injector;

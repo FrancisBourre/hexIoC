@@ -3,8 +3,8 @@ package hex.util;
 import hex.collection.ILocatorListener;
 import hex.di.IDependencyInjector;
 import hex.event.MessageType;
-import hex.ioc.core.ICoreFactory;
-import hex.ioc.vo.ConstructorVODef;
+import hex.core.ICoreFactory;
+import hex.core.CoreFactoryVODef;
 import hex.metadata.IAnnotationProvider;
 import hex.structures.Size;
 import hex.unittest.assertion.Assert;
@@ -61,7 +61,7 @@ private class MockCoreFactory implements ICoreFactory
 		//
 	}
 	
-	public function buildInstance( constructorVO : ConstructorVODef ) : Dynamic
+	public function buildInstance( constructorVO : CoreFactoryVODef ) : Dynamic
 	{
 		return null;
 	}

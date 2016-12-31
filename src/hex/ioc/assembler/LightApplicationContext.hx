@@ -1,7 +1,7 @@
 package hex.ioc.assembler;
 
 import hex.event.MessageType;
-import hex.ioc.core.ICoreFactory;
+import hex.core.ICoreFactory;
 
 /**
  * ...

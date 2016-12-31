@@ -7,7 +7,7 @@ import hex.domain.ApplicationDomainDispatcher;
 import hex.event.EventProxy;
 import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.core.IContextFactory;
-import hex.ioc.core.ICoreFactory;
+import hex.core.ICoreFactory;
 import hex.ioc.parser.xml.ApplicationXMLParser;
 import hex.ioc.parser.xml.mock.ClassWithConstantConstantArgument;
 import hex.ioc.parser.xml.mock.MockCaller;

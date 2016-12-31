@@ -2,7 +2,7 @@ package hex.ioc.parser.xml.context.mock;
 
 import hex.event.IDispatcher;
 import hex.ioc.assembler.ApplicationContext;
-import hex.ioc.core.ICoreFactory;
+import hex.core.ICoreFactory;
 
 /**
  * ...

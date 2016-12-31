@@ -1,6 +1,7 @@
 package hex.compiler.parser.flow;
 
 import hex.compiler.assembler.CompileTimeApplicationAssembler;
+import hex.metadata.IAnnotationProvider;
 import hex.util.MacroUtil;
 
 /**
@@ -29,7 +30,8 @@ class Launcher extends AbstractExprParser
 		assembler.addExpression( macro @:mergeBlock { var coreFactory = applicationContext.getCoreFactory(); } );
 		
 		//Create runtime AnnotationProvider
-		assembler.addExpression( macro @:mergeBlock { var __annotationProvider = applicationContext.getCoreFactory().getAnnotationProvider(); } );
+		var pack = MacroUtil.getPack( Type.getClassName( IAnnotationProvider ) );
+		assembler.addExpression( macro @:mergeBlock { var __annotationProvider = __applicationContextInjector.getInstance( $p { pack } ); } );
 
 		//build
 		assembler.buildEverything();

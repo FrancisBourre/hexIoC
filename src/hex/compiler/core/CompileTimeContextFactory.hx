@@ -30,7 +30,7 @@ import hex.factory.BuildRequest;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.core.IContextFactory;
-import hex.ioc.core.ICoreFactory;
+import hex.core.ICoreFactory;
 import hex.ioc.core.SymbolTable;
 import hex.ioc.locator.ConstructorVOLocator;
 import hex.ioc.locator.DomainListenerVOLocator;

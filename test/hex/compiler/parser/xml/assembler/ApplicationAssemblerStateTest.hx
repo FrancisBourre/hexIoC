@@ -6,7 +6,7 @@ import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.ApplicationAssembler;
 import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.core.IContextFactory;
-import hex.ioc.core.ICoreFactory;
+import hex.core.ICoreFactory;
 import hex.ioc.parser.xml.assembler.mock.MockApplicationContext;
 import hex.ioc.parser.xml.assembler.mock.MockExitStateCommand;
 import hex.ioc.parser.xml.assembler.mock.MockModule;

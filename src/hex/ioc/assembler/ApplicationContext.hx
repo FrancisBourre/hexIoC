@@ -2,7 +2,7 @@ package hex.ioc.assembler;
 
 import hex.event.IDispatcher;
 import hex.event.MessageType;
-import hex.ioc.core.ICoreFactory;
+import hex.core.ICoreFactory;
 import hex.state.State;
 import hex.state.StateMachine;
 import hex.state.control.StateController;

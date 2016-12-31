@@ -11,7 +11,7 @@ import hex.event.IAdapterStrategy;
 import hex.event.IObservable;
 import hex.event.MessageType;
 import hex.ioc.assembler.AbstractApplicationContext;
-import hex.ioc.core.ICoreFactory;
+import hex.core.ICoreFactory;
 import hex.ioc.locator.DomainListenerVOLocator;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.DomainListenerVOArguments;
@@ -33,7 +33,7 @@ class DomainListenerFactory
 	
 	static public function build( id : String, domainListenerVOLocator : DomainListenerVOLocator, applicationContext : AbstractApplicationContext, annotationProvider : IAnnotationProvider ) : Bool
 	{
-		var coreFactory : ICoreFactory 					= applicationContext.getCoreFactory();
+		var coreFactory 								= applicationContext.getCoreFactory();
 		var domainListener : DomainListenerVO			= domainListenerVOLocator.locate( id );
 		var listener : Dynamic 							= coreFactory.locate( domainListener.ownerID );
 		var args : Array<DomainListenerVOArguments> 	= domainListener.arguments;

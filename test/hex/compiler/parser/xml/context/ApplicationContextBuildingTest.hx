@@ -2,7 +2,7 @@ package hex.compiler.parser.xml.context;
 
 import hex.domain.ApplicationDomainDispatcher;
 import hex.ioc.assembler.ApplicationAssembler;
-import hex.ioc.core.ICoreFactory;
+import hex.core.ICoreFactory;
 import hex.ioc.parser.xml.context.mock.MockApplicationContext;
 import hex.unittest.assertion.Assert;
 
