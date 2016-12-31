@@ -7,6 +7,7 @@ import hex.core.HashCodeFactory;
 import hex.core.IApplicationContext;
 import hex.core.IBuilder;
 import hex.core.ICoreFactory;
+import hex.core.SymbolTable;
 import hex.di.IBasicInjector;
 import hex.di.IDependencyInjector;
 import hex.di.Injector;
@@ -66,6 +67,8 @@ class ContextFactory
 	implements IContextFactory 
 	implements ILocatorListener<String, Dynamic>
 {
+	var _isInitialized				: Bool;
+	
 	var _annotationProvider			: IAnnotationProvider;
 	var _contextDispatcher			: IDispatcher<{}>;
 	var _moduleLocator				: ModuleLocator;
@@ -81,46 +84,54 @@ class ContextFactory
 	
 	var _transitions				: Array<TransitionVO>;
 
-	public function new( applicationContextName : String, applicationContextClass : Class<IApplicationContext> = null  )
+	public function new()
 	{
-		//build contextDispatcher
-		var domain : Domain = DomainUtil.getDomain( applicationContextName, Domain );
-		this._contextDispatcher = ApplicationDomainDispatcher.getInstance().getDomainDispatcher( domain );
-		
-		//build injector
-		var injector = new Injector();
-		injector.mapToValue( IBasicInjector, injector );
-		injector.mapToValue( IDependencyInjector, injector );
-		injector.mapToType( IMacroExecutor, MacroExecutor );
-		
-		var logger = new DomainLogger( domain );
-		injector.mapToValue( ILogger, logger );
-		
-		//build annotation provider
-		this._annotationProvider = AnnotationProvider.getAnnotationProvider( DomainUtil.getDomain( applicationContextName, Domain ) );
-		this._annotationProvider.registerInjector( injector );
-		injector.mapToValue( IAnnotationProvider, this._annotationProvider );
-		
-		//build coreFactory
-		this._coreFactory = new CoreFactory( injector, this._annotationProvider );
-		
-		if ( applicationContextClass != null )
+		this._isInitialized = false;
+	}
+	
+	public function init( applicationContextName : String, applicationContextClass : Class<IApplicationContext> = null ) : Void
+	{
+		if ( !this._isInitialized )
 		{
-			this._applicationContext = Type.createInstance( applicationContextClass, [ this._contextDispatcher, this._coreFactory, applicationContextName ] );
-		} 
-		else
-		{
-			//ApplicationContext instantiation
-			this._applicationContext = new ApplicationContext( this._contextDispatcher, this._coreFactory, applicationContextName );
+			//build contextDispatcher
+			var domain : Domain = DomainUtil.getDomain( applicationContextName, Domain );
+			this._contextDispatcher = ApplicationDomainDispatcher.getInstance().getDomainDispatcher( domain );
+			
+			//build injector
+			var injector = new Injector();
+			injector.mapToValue( IBasicInjector, injector );
+			injector.mapToValue( IDependencyInjector, injector );
+			injector.mapToType( IMacroExecutor, MacroExecutor );
+			
+			var logger = new DomainLogger( domain );
+			injector.mapToValue( ILogger, logger );
+			
+			//build annotation provider
+			this._annotationProvider = AnnotationProvider.getAnnotationProvider( DomainUtil.getDomain( applicationContextName, Domain ) );
+			this._annotationProvider.registerInjector( injector );
+			injector.mapToValue( IAnnotationProvider, this._annotationProvider );
+			
+			//build coreFactory
+			this._coreFactory = new CoreFactory( injector, this._annotationProvider );
+			
+			if ( applicationContextClass != null )
+			{
+				this._applicationContext = Type.createInstance( applicationContextClass, [ this._contextDispatcher, this._coreFactory, applicationContextName ] );
+			} 
+			else
+			{
+				//ApplicationContext instantiation
+				this._applicationContext = new ApplicationContext( this._contextDispatcher, this._coreFactory, applicationContextName );
+			}
+			
+			//register applicationContext
+			injector.mapToValue( IApplicationContext, this._applicationContext );
+			this._coreFactory.register( applicationContextName, this._applicationContext );
+			
+			
+			this._contextDispatcher.dispatch( ApplicationAssemblerMessage.CONTEXT_PARSED );
+			this._init();
 		}
-		
-		//register applicationContext
-		injector.mapToValue( IApplicationContext, this._applicationContext );
-		this._coreFactory.register( applicationContextName, this._applicationContext );
-		
-		
-		this._contextDispatcher.dispatch( ApplicationAssemblerMessage.CONTEXT_PARSED );
-		this._init();
 	}
 	
 	public function build( request : BuildRequest ) : Void

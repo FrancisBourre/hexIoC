@@ -134,7 +134,7 @@ class ObjectParser extends AbstractXmlParser
 						
 						if ( arg.staticRef != null )
 						{
-							var type = this._importHelper.getClassFullyQualifiedNameFromStaticRef( arg.staticRef );
+							var type = this._importHelper.getClassFullyQualifiedNameFromStaticVariable( arg.staticRef );
 							try 
 							{
 								this._importHelper.forceCompilation( type.split( '<' )[ 0 ] );
@@ -185,7 +185,7 @@ class ObjectParser extends AbstractXmlParser
 			}
 			else
 			{
-				var t = this._importHelper.getClassFullyQualifiedNameFromStaticRef( staticRef );
+				var t = this._importHelper.getClassFullyQualifiedNameFromStaticVariable( staticRef );
 				
 				try
 				{
@@ -213,7 +213,7 @@ class ObjectParser extends AbstractXmlParser
 				
 				if ( staticRef != null )
 				{
-					var type = this._importHelper.getClassFullyQualifiedNameFromStaticRef( staticRef );
+					var type = this._importHelper.getClassFullyQualifiedNameFromStaticVariable( staticRef );
 
 					try
 					{
@@ -257,10 +257,10 @@ class ObjectParser extends AbstractXmlParser
 					
 					if ( arg.staticRef != null )
 					{
-						var type = this._importHelper.getClassFullyQualifiedNameFromStaticRef( arg.staticRef );
+						var type = this._importHelper.getClassFullyQualifiedNameFromStaticVariable( arg.staticRef );
 						try 
 						{
-							var type = this._importHelper.getClassFullyQualifiedNameFromStaticRef( staticRef );
+							var type = this._importHelper.getClassFullyQualifiedNameFromStaticVariable( staticRef );
 							this._importHelper.forceCompilation( type.split( '<' )[ 0 ] );
 							
 						} catch ( e : String ) 
@@ -316,7 +316,7 @@ class ObjectParser extends AbstractXmlParser
 						var staticRef = listenerArg.staticRef;
 						if ( staticRef != null )
 						{
-							var type = this._importHelper.getClassFullyQualifiedNameFromStaticRef( staticRef );
+							var type = this._importHelper.getClassFullyQualifiedNameFromStaticVariable( staticRef );
 							
 							try
 							{

@@ -3,7 +3,7 @@ package hex.compiler.parser.xml.assembler;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.event.MessageType;
 import hex.ioc.assembler.AbstractApplicationContext;
-import hex.ioc.assembler.ApplicationAssembler;
+import hex.runtime.ApplicationAssembler;
 import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.core.IContextFactory;
 import hex.core.ICoreFactory;

@@ -2,7 +2,7 @@ package hex.ioc.assembler;
 
 import hex.di.IDependencyInjector;
 import hex.di.Injector;
-import hex.ioc.assembler.ApplicationAssembler;
+import hex.runtime.ApplicationAssembler;
 import hex.ioc.assembler.ApplicationContext;
 import hex.unittest.assertion.Assert;
 

@@ -58,7 +58,7 @@ class ClassImportHelper
 		return false;
 	}
 
-	public function getClassFullyQualifiedNameFromStaticRef( staticRef : String ) : String
+	public function getClassFullyQualifiedNameFromStaticVariable( staticRef : String ) : String
 	{
 		var a : Array<String> = staticRef.split( "." );
 		var type : String = a[ a.length - 1 ];
@@ -70,7 +70,7 @@ class ClassImportHelper
 	{
 		if ( staticRef != null )
 		{
-			this.forceCompilation( this.getClassFullyQualifiedNameFromStaticRef( staticRef ) );
+			this.forceCompilation( this.getClassFullyQualifiedNameFromStaticVariable( staticRef ) );
 			return true;
 		}
 		else

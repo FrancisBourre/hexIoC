@@ -2,7 +2,7 @@ package hex.ioc.parser.xml.assembler;
 
 import hex.domain.ApplicationDomainDispatcher;
 import hex.event.MessageType;
-import hex.ioc.assembler.ApplicationAssembler;
+import hex.runtime.ApplicationAssembler;
 import hex.ioc.core.IContextFactory;
 import hex.ioc.parser.xml.assembler.mock.MockApplicationContext;
 import hex.ioc.parser.xml.assembler.mock.MockExitStateCommand;

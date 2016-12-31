@@ -1,6 +1,6 @@
 package hex.compiler.parser.xml;
 
-import hex.ioc.assembler.ApplicationAssembler;
+import hex.runtime.ApplicationAssembler;
 import hex.core.IApplicationAssembler;
 
 /**

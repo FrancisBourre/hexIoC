@@ -17,10 +17,3 @@ enum BuildRequest
 	DOMAIN_LISTENER( vo : DomainListenerVO );
 	STATE_TRANSITION( vo : StateTransitionVO );
 }
-
- /*enum Foo<T> {
-          A;
-          B;
-          C;
-          SUB_TYPE(value:T); // Use with custom values to extend.
-     }*/

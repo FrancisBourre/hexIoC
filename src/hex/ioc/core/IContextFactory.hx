@@ -1,7 +1,12 @@
 package hex.ioc.core;
 
+#if macro
+import haxe.macro.Expr;
+#end
+
 import hex.core.IApplicationContext;
 import hex.core.ICoreFactory;
+import hex.core.SymbolTable;
 import hex.ioc.vo.TransitionVO;
 import hex.metadata.IAnnotationProvider;
 
@@ -10,8 +15,6 @@ import hex.metadata.IAnnotationProvider;
  */
 interface IContextFactory
 {
-	function buildEverything() : Void;
-	
 	function registerID( id : String ) : Bool;
 	
 	function buildStateTransition( key : String ) : Array<TransitionVO>;
@@ -27,8 +30,8 @@ interface IContextFactory
 	function getAnnotationProvider() : IAnnotationProvider;
 
 	function getCoreFactory() : ICoreFactory;
-
-	function release() : Void;
 	
 	function getSymbolTable() : SymbolTable;
+	
+	function init( applicationContextName : String, applicationContextClass : Class<IApplicationContext> = null ) : Void;
 }

@@ -1,6 +1,6 @@
 package hex.ioc.parser.xml;
 
-import hex.ioc.assembler.ApplicationAssembler;
+import hex.runtime.ApplicationAssembler;
 import hex.util.MacroUtil;
 
 #if macro

@@ -6,6 +6,7 @@ import hex.error.IllegalArgumentException;
 import hex.error.NullPointerException;
 import hex.factory.BuildRequest;
 import hex.ioc.assembler.AbstractApplicationContext;
+import hex.ioc.core.ContextFactory;
 import hex.ioc.error.ParsingException;
 import hex.parser.AbstractContextParser;
 

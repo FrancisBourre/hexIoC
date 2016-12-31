@@ -1,6 +1,6 @@
 package hex.compiler.parser.flow;
 
-import hex.compiler.assembler.CompileTimeApplicationAssembler;
+import hex.compiletime.ICompileTimeApplicationAssembler;
 import hex.metadata.IAnnotationProvider;
 import hex.util.MacroUtil;
 
@@ -17,7 +17,7 @@ class Launcher extends AbstractExprParser
 	
 	override public function parse() : Void
 	{
-		var assembler : CompileTimeApplicationAssembler = cast this._applicationAssembler;
+		var assembler : ICompileTimeApplicationAssembler = cast this._applicationAssembler;
 		
 		//Dispatch CONTEXT_PARSED message
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.CONTEXT_PARSED" );

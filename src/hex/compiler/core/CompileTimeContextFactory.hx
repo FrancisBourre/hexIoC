@@ -32,7 +32,7 @@ import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.core.IContextFactory;
 import hex.core.ICoreFactory;
-import hex.ioc.core.SymbolTable;
+import hex.core.SymbolTable;
 import hex.ioc.locator.ConstructorVOLocator;
 import hex.ioc.locator.DomainListenerVOLocator;
 import hex.ioc.locator.MethodCallVOLocator;
@@ -59,6 +59,7 @@ class CompileTimeContextFactory
 	implements IContextFactory 
 	implements ILocatorListener<String, Dynamic>
 {
+	var _isInitialized				: Bool;
 	var _expressions 				: Array<Expr>;
 	
 	var _annotationProvider			: IAnnotationProvider;
@@ -76,23 +77,30 @@ class CompileTimeContextFactory
 	
 	var _transitions				: Array<TransitionVO>;
 	
-	public function new( expressions : Array<Expr>, applicationContextName : String, applicationContextClass : Class<IApplicationContext> = null  )
+	public function new( expressions : Array<Expr> )
 	{
 		this._expressions = expressions;
-		
-		//build coreFactory
-		this._coreFactory = new CompileTimeCoreFactory( this._expressions );
-		
-		if ( applicationContextClass != null )
+		this._isInitialized = false;
+	}
+	
+	public function init( applicationContextName : String, applicationContextClass : Class<IApplicationContext> = null ) : Void
+	{
+		if ( !this._isInitialized )
 		{
-			this._applicationContext = new AbstractApplicationContext( this._coreFactory, applicationContextName );
-		} 
-		else
-		{
-			this._applicationContext = new AbstractApplicationContext( this._coreFactory, applicationContextName );
-		}
+			//build coreFactory
+			this._coreFactory = new CompileTimeCoreFactory( this._expressions );
+			
+			if ( applicationContextClass != null )
+			{
+				this._applicationContext = new AbstractApplicationContext( this._coreFactory, applicationContextName );
+			} 
+			else
+			{
+				this._applicationContext = new AbstractApplicationContext( this._coreFactory, applicationContextName );
+			}
 
-		this._init();
+			this._init();
+		}
 	}
 	
 	public function build( request : BuildRequest ) : Void

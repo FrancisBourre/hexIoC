@@ -1,11 +1,11 @@
 package hex.compiler.parser.flow;
 
 import hex.compiler.parser.xml.ClassImportHelper;
-import hex.ioc.assembler.ApplicationAssembler;
+import hex.runtime.ApplicationAssembler;
 
 #if macro
 import haxe.macro.Expr;
-import hex.compiler.assembler.CompileTimeApplicationAssembler;
+import hex.compiletime.CompileTimeApplicationAssembler;
 import hex.preprocess.MacroConditionalVariablesProcessor;
 import hex.ioc.assembler.ConditionalVariablesChecker;
 #end

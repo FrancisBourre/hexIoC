@@ -5,7 +5,7 @@ import hex.compiler.parser.flow.FlowCompiler;
 import hex.control.command.BasicCommand;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.event.EventProxy;
-import hex.ioc.assembler.ApplicationAssembler;
+import hex.runtime.ApplicationAssembler;
 import hex.ioc.core.IContextFactory;
 import hex.core.ICoreFactory;
 import hex.ioc.parser.xml.ApplicationXMLParser;

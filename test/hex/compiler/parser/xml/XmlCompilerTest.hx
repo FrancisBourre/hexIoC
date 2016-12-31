@@ -13,7 +13,7 @@ import hex.error.NoSuchElementException;
 import hex.event.Dispatcher;
 import hex.event.EventProxy;
 import hex.ioc.assembler.AbstractApplicationContext;
-import hex.ioc.assembler.ApplicationAssembler;
+import hex.runtime.ApplicationAssembler;
 import hex.ioc.core.IContextFactory;
 import hex.core.ICoreFactory;
 import hex.ioc.di.MappingConfiguration;
