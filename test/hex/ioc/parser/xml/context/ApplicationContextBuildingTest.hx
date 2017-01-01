@@ -1,7 +1,7 @@
 package hex.ioc.parser.xml.context;
 
+import hex.core.IApplicationAssembler;
 import hex.domain.ApplicationDomainDispatcher;
-import hex.runtime.ApplicationAssembler;
 import hex.ioc.parser.xml.context.mock.MockApplicationContext;
 import hex.unittest.assertion.Assert;
 
@@ -11,7 +11,7 @@ import hex.unittest.assertion.Assert;
  */
 class ApplicationContextBuildingTest
 {
-	var _applicationAssembler 		: ApplicationAssembler;
+	var _applicationAssembler : IApplicationAssembler;
 
 	@After
 	public function tearDown() : Void

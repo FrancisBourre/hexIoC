@@ -4,6 +4,7 @@ import haxe.Timer;
 import hex.collection.HashMap;
 import hex.config.stateful.ServiceLocator;
 import hex.control.command.BasicCommand;
+import hex.core.IApplicationAssembler;
 import hex.di.Injector;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
@@ -68,9 +69,9 @@ class XmlCompilerTest
 	var _contextParser 				: ApplicationXMLParser;
 	var _applicationContext 		: AbstractApplicationContext;
 	var _contextFactory 			: IContextFactory;
-	var _applicationAssembler 		: ApplicationAssembler;
+	var _applicationAssembler 		: IApplicationAssembler;
 	
-	static var applicationAssembler : ApplicationAssembler;
+	static var applicationAssembler : IApplicationAssembler;
 
 	@Before
 	public function setUp() : Void

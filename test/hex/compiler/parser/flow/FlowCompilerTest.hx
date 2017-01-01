@@ -3,6 +3,7 @@ package hex.compiler.parser.flow;
 import hex.collection.HashMap;
 import hex.compiler.parser.flow.FlowCompiler;
 import hex.control.command.BasicCommand;
+import hex.core.IApplicationAssembler;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.event.EventProxy;
 import hex.runtime.ApplicationAssembler;
@@ -30,9 +31,9 @@ import hex.unittest.assertion.Assert;
 class FlowCompilerTest 
 {
 	var _contextFactory 			: IContextFactory;
-	var _applicationAssembler 		: ApplicationAssembler;
+	var _applicationAssembler 		: IApplicationAssembler;
 	
-	static var applicationAssembler : ApplicationAssembler;
+	static var applicationAssembler : IApplicationAssembler;
 
 	@Before
 	public function setUp() : Void

@@ -1,5 +1,6 @@
 package hex.compiler.parser.xml.assembler;
 
+import hex.core.IApplicationAssembler;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.event.MessageType;
 import hex.ioc.assembler.AbstractApplicationContext;
@@ -22,7 +23,7 @@ import hex.unittest.assertion.Assert;
 class ApplicationAssemblerStateTest
 {
 	var _builderFactory 			: IContextFactory;
-	var _applicationAssembler 		: ApplicationAssembler;
+	var _applicationAssembler 		: IApplicationAssembler;
 		
 	@Before
 	public function setUp() : Void

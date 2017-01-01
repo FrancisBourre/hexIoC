@@ -1,8 +1,8 @@
 package hex.ioc.parser.xml.assembler;
 
+import hex.core.IApplicationAssembler;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.event.MessageType;
-import hex.runtime.ApplicationAssembler;
 import hex.ioc.core.IContextFactory;
 import hex.ioc.parser.xml.assembler.mock.MockApplicationContext;
 import hex.ioc.parser.xml.assembler.mock.MockExitStateCommand;
@@ -19,7 +19,7 @@ import hex.unittest.assertion.Assert;
 class ApplicationAssemblerStateTest
 {
 	var _builderFactory 			: IContextFactory;
-	var _applicationAssembler 		: ApplicationAssembler;
+	var _applicationAssembler 		: IApplicationAssembler;
 
 	@After
 	public function tearDown() : Void

@@ -1,5 +1,6 @@
 package hex.ioc.parser.xml;
 
+import hex.core.IApplicationAssembler;
 import hex.runtime.ApplicationAssembler;
 import hex.util.MacroUtil;
 
@@ -240,7 +241,7 @@ class XmlReader
 		return macro @:pos( Context.currentPos() ){ $p { tp }.parse( $data ); }
 	}
 	
-	macro public static function readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<ApplicationAssembler>
+	macro public static function readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
 	{
 		var xmlPack = MacroUtil.getPack( Type.getClassName( Xml ) );
 		var applicationAssemblerTypePath = MacroUtil.getTypePath( Type.getClassName( ApplicationAssembler ) );

@@ -3,6 +3,7 @@ package hex.ioc.parser.xml;
 import haxe.Timer;
 import hex.collection.HashMap;
 import hex.config.stateful.ServiceLocator;
+import hex.core.IApplicationAssembler;
 import hex.core.IApplicationContext;
 import hex.di.Injector;
 import hex.domain.ApplicationDomainDispatcher;
@@ -58,7 +59,7 @@ class ObjectXMLParserTest
 {
 	var _contextParser 				: ApplicationXMLParser;
 	var _applicationContext 		: IApplicationContext;
-	var _applicationAssembler 		: ApplicationAssembler;
+	var _applicationAssembler 		: IApplicationAssembler;
 		
 	@Before
 	public function setUp() : Void

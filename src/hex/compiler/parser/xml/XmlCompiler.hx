@@ -1,6 +1,6 @@
 package hex.compiler.parser.xml;
 
-import hex.runtime.ApplicationAssembler;
+import hex.core.IApplicationAssembler;
 
 #if macro
 import haxe.macro.Expr;
@@ -19,7 +19,7 @@ using StringTools;
 class XmlCompiler
 {
 	#if macro
-	static function _readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr, ?applicationAssemblerExpr : Expr ) : ExprOf<ApplicationAssembler>
+	static function _readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr, ?applicationAssemblerExpr : Expr ) : ExprOf<IApplicationAssembler>
 	{
 		var conditionalVariablesMap 	= MacroConditionalVariablesProcessor.parse( conditionalVariables );
 		var conditionalVariablesChecker = new ConditionalVariablesChecker( conditionalVariablesMap );
@@ -39,12 +39,12 @@ class XmlCompiler
 	}
 	#end
 	
-	macro public static function readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<ApplicationAssembler>
+	macro public static function readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
 	{
 		return _readXmlFile( fileName, preprocessingVariables, conditionalVariables );
 	}
 	
-	macro public static function readXmlFileWithAssembler( assemblerExpr : Expr, fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<ApplicationAssembler>
+	macro public static function readXmlFileWithAssembler( assemblerExpr : Expr, fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
 	{
 		return _readXmlFile( fileName, preprocessingVariables, conditionalVariables, assemblerExpr );
 	}

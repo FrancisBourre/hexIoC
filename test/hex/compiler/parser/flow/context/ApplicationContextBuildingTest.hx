@@ -1,6 +1,7 @@
 package hex.compiler.parser.flow.context;
 
 import hex.compiler.parser.flow.FlowCompiler;
+import hex.core.IApplicationAssembler;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.runtime.ApplicationAssembler;
 import hex.core.ICoreFactory;
@@ -13,7 +14,7 @@ import hex.unittest.assertion.Assert;
  */
 class ApplicationContextBuildingTest
 {
-	var _applicationAssembler 		: ApplicationAssembler;
+	var _applicationAssembler : IApplicationAssembler;
 		
 	@Before
 	public function setUp() : Void
