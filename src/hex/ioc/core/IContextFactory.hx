@@ -11,8 +11,6 @@ import hex.metadata.IAnnotationProvider;
  */
 interface IContextFactory
 {
-	function registerID( id : String ) : Bool;
-	
 	function buildStateTransition( key : String ) : Array<TransitionVO>;
 	
 	function buildObject( id : String ) : Void;
@@ -26,6 +24,4 @@ interface IContextFactory
 	function getAnnotationProvider() : IAnnotationProvider;
 
 	function getCoreFactory() : ICoreFactory;
-	
-	function getSymbolTable() : SymbolTable;
 }

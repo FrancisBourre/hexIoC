@@ -99,7 +99,37 @@ class CompileTimeContextFactory
 				this._applicationContext = new AbstractApplicationContext( this._coreFactory, applicationContextName );
 			}
 
-			this._init();
+			//
+			this._factoryMap 						= new Map();
+			this._symbolTable 						= new SymbolTable();
+			this._constructorVOLocator 				= new ConstructorVOLocator();
+			this._propertyVOLocator 				= new PropertyVOLocator();
+			this._methodCallVOLocator 				= new MethodCallVOLocator();
+			this._domainListenerVOLocator 			= new DomainListenerVOLocator();
+			this._stateTransitionVOLocator 			= new StateTransitionVOLocator( this );
+			this._moduleLocator 					= new ModuleLocator( this );
+			
+			DomainListenerFactory.domainLocator = new Map();
+			
+			this._factoryMap.set( ContextTypeList.ARRAY, ArrayFactory.build );
+			this._factoryMap.set( ContextTypeList.BOOLEAN, BoolFactory.build );
+			this._factoryMap.set( ContextTypeList.INT, IntFactory.build );
+			this._factoryMap.set( ContextTypeList.NULL, NullFactory.build );
+			this._factoryMap.set( ContextTypeList.FLOAT, FloatFactory.build );
+			this._factoryMap.set( ContextTypeList.OBJECT, DynamicObjectFactory.build );
+			this._factoryMap.set( ContextTypeList.STRING, StringFactory.build );
+			this._factoryMap.set( ContextTypeList.UINT, UIntFactory.build );
+			this._factoryMap.set( ContextTypeList.DEFAULT, StringFactory.build );
+			this._factoryMap.set( ContextTypeList.HASHMAP, HashMapFactory.build );
+			this._factoryMap.set( ContextTypeList.SERVICE_LOCATOR, ServiceLocatorFactory.build );
+			this._factoryMap.set( ContextTypeList.CLASS, ClassFactory.build );
+			this._factoryMap.set( ContextTypeList.XML, XmlFactory.build );
+			this._factoryMap.set( ContextTypeList.FUNCTION, FunctionFactory.build );
+			this._factoryMap.set( ContextTypeList.STATIC_VARIABLE, StaticVariableFactory.build );
+			this._factoryMap.set( ContextTypeList.MAPPING_CONFIG, MappingConfigurationFactory.build );
+			
+			this._coreFactory.addListener( this );
+			//
 		}
 	}
 	
@@ -159,16 +189,6 @@ class CompileTimeContextFactory
 	{
 		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.IDLE_MODE" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
-	}
-	
-	public function registerID( id : String ) : Bool
-	{
-		return this._symbolTable.register( id );
-	}
-	
-	public function getSymbolTable() : SymbolTable
-	{
-		return this._symbolTable;
 	}
 	
 	public function registerStateTransitionVO( stateTransitionVO : StateTransitionVO ) : Void
@@ -471,39 +491,6 @@ class CompileTimeContextFactory
 		return this._stateTransitionVOLocator;
 	}
 
-	function _init() : Void
-	{
-		this._factoryMap 						= new Map();
-		this._symbolTable 						= new SymbolTable();
-		this._constructorVOLocator 				= new ConstructorVOLocator();
-		this._propertyVOLocator 				= new PropertyVOLocator();
-		this._methodCallVOLocator 				= new MethodCallVOLocator();
-		this._domainListenerVOLocator 			= new DomainListenerVOLocator();
-		this._stateTransitionVOLocator 			= new StateTransitionVOLocator( this );
-		this._moduleLocator 					= new ModuleLocator( this );
-		
-		DomainListenerFactory.domainLocator = new Map();
-		
-		this._factoryMap.set( ContextTypeList.ARRAY, ArrayFactory.build );
-		this._factoryMap.set( ContextTypeList.BOOLEAN, BoolFactory.build );
-		this._factoryMap.set( ContextTypeList.INT, IntFactory.build );
-		this._factoryMap.set( ContextTypeList.NULL, NullFactory.build );
-		this._factoryMap.set( ContextTypeList.FLOAT, FloatFactory.build );
-		this._factoryMap.set( ContextTypeList.OBJECT, DynamicObjectFactory.build );
-		this._factoryMap.set( ContextTypeList.STRING, StringFactory.build );
-		this._factoryMap.set( ContextTypeList.UINT, UIntFactory.build );
-		this._factoryMap.set( ContextTypeList.DEFAULT, StringFactory.build );
-		this._factoryMap.set( ContextTypeList.HASHMAP, HashMapFactory.build );
-		this._factoryMap.set( ContextTypeList.SERVICE_LOCATOR, ServiceLocatorFactory.build );
-		this._factoryMap.set( ContextTypeList.CLASS, ClassFactory.build );
-		this._factoryMap.set( ContextTypeList.XML, XmlFactory.build );
-		this._factoryMap.set( ContextTypeList.FUNCTION, FunctionFactory.build );
-		this._factoryMap.set( ContextTypeList.STATIC_VARIABLE, StaticVariableFactory.build );
-		this._factoryMap.set( ContextTypeList.MAPPING_CONFIG, MappingConfigurationFactory.build );
-		
-		this._coreFactory.addListener( this );
-	}
-	
 	function _build( constructorVO : ConstructorVO, ?id : String ) : Dynamic
 	{
 		constructorVO.isProperty 	= id == null;
