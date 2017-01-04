@@ -4,35 +4,19 @@ package hex.compiler.core;
 import haxe.macro.Expr;
 import hex.collection.ILocatorListener;
 import hex.compiler.core.CompileTimeCoreFactory;
+import hex.compiler.factory.DomainListenerFactory;
+import hex.compiler.factory.StateTransitionFactory;
+import hex.core.HashCodeFactory;
 import hex.core.IApplicationContext;
 import hex.core.IBuilder;
-import hex.compiler.factory.ArrayFactory;
-import hex.compiler.factory.BoolFactory;
-import hex.compiler.factory.ClassFactory;
-import hex.compiler.factory.ClassInstanceFactory;
-import hex.compiler.factory.DomainListenerFactory;
-import hex.compiler.factory.DynamicObjectFactory;
-import hex.compiler.factory.FloatFactory;
-import hex.compiler.factory.FunctionFactory;
-import hex.compiler.factory.HashMapFactory;
-import hex.compiler.factory.IntFactory;
-import hex.compiler.factory.MappingConfigurationFactory;
-import hex.compiler.factory.NullFactory;
-import hex.compiler.factory.ServiceLocatorFactory;
-import hex.compiler.factory.StateTransitionFactory;
-import hex.compiler.factory.StaticVariableFactory;
-import hex.compiler.factory.StringFactory;
-import hex.compiler.factory.UIntFactory;
-import hex.compiler.factory.XmlFactory;
-import hex.core.HashCodeFactory;
+import hex.core.ICoreFactory;
+import hex.core.SymbolTable;
 import hex.event.IDispatcher;
 import hex.event.IEvent;
 import hex.factory.BuildRequest;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.core.IContextFactory;
-import hex.core.ICoreFactory;
-import hex.core.SymbolTable;
 import hex.ioc.locator.ConstructorVOLocator;
 import hex.ioc.locator.DomainListenerVOLocator;
 import hex.ioc.locator.MethodCallVOLocator;
@@ -42,7 +26,6 @@ import hex.ioc.locator.StateTransitionVOLocator;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.FactoryVO;
-import hex.ioc.vo.MapVO;
 import hex.ioc.vo.MethodCallVO;
 import hex.ioc.vo.PropertyVO;
 import hex.ioc.vo.StateTransitionVO;
@@ -111,28 +94,28 @@ class CompileTimeContextFactory
 			
 			DomainListenerFactory.domainLocator = new Map();
 			
-			this._factoryMap.set( ContextTypeList.ARRAY, ArrayFactory.build );
-			this._factoryMap.set( ContextTypeList.BOOLEAN, BoolFactory.build );
-			this._factoryMap.set( ContextTypeList.INT, IntFactory.build );
-			this._factoryMap.set( ContextTypeList.NULL, NullFactory.build );
-			this._factoryMap.set( ContextTypeList.FLOAT, FloatFactory.build );
-			this._factoryMap.set( ContextTypeList.OBJECT, DynamicObjectFactory.build );
-			this._factoryMap.set( ContextTypeList.STRING, StringFactory.build );
-			this._factoryMap.set( ContextTypeList.UINT, UIntFactory.build );
-			this._factoryMap.set( ContextTypeList.DEFAULT, StringFactory.build );
-			this._factoryMap.set( ContextTypeList.HASHMAP, HashMapFactory.build );
-			this._factoryMap.set( ContextTypeList.SERVICE_LOCATOR, ServiceLocatorFactory.build );
-			this._factoryMap.set( ContextTypeList.CLASS, ClassFactory.build );
-			this._factoryMap.set( ContextTypeList.XML, XmlFactory.build );
-			this._factoryMap.set( ContextTypeList.FUNCTION, FunctionFactory.build );
-			this._factoryMap.set( ContextTypeList.STATIC_VARIABLE, StaticVariableFactory.build );
-			this._factoryMap.set( ContextTypeList.MAPPING_CONFIG, MappingConfigurationFactory.build );
+			this._factoryMap.set( ContextTypeList.ARRAY, 			hex.compiler.factory.ArrayFactory.build );
+			this._factoryMap.set( ContextTypeList.BOOLEAN, 			hex.compiler.factory.BoolFactory.build );
+			this._factoryMap.set( ContextTypeList.INT, 				hex.compiler.factory.IntFactory.build );
+			this._factoryMap.set( ContextTypeList.NULL, 			hex.compiler.factory.NullFactory.build );
+			this._factoryMap.set( ContextTypeList.FLOAT, 			hex.compiler.factory.FloatFactory.build );
+			this._factoryMap.set( ContextTypeList.OBJECT, 			hex.compiler.factory.DynamicObjectFactory.build );
+			this._factoryMap.set( ContextTypeList.STRING, 			hex.compiler.factory.StringFactory.build );
+			this._factoryMap.set( ContextTypeList.UINT, 			hex.compiler.factory.UIntFactory.build );
+			this._factoryMap.set( ContextTypeList.DEFAULT, 			hex.compiler.factory.StringFactory.build );
+			this._factoryMap.set( ContextTypeList.HASHMAP, 			hex.compiler.factory.HashMapFactory.build );
+			this._factoryMap.set( ContextTypeList.SERVICE_LOCATOR, 	hex.compiler.factory.ServiceLocatorFactory.build );
+			this._factoryMap.set( ContextTypeList.CLASS, 			hex.compiler.factory.ClassFactory.build );
+			this._factoryMap.set( ContextTypeList.XML, 				hex.compiler.factory.XmlFactory.build );
+			this._factoryMap.set( ContextTypeList.FUNCTION, 		hex.compiler.factory.FunctionFactory.build );
+			this._factoryMap.set( ContextTypeList.STATIC_VARIABLE, 	hex.compiler.factory.StaticVariableFactory.build );
+			this._factoryMap.set( ContextTypeList.MAPPING_CONFIG, 	hex.compiler.factory.MappingConfigurationFactory.build );
 			
 			this._coreFactory.addListener( this );
 			//
 		}
 	}
-	
+
 	public function build( request : BuildRequest ) : Void
 	{
 		switch( request )
@@ -294,9 +277,9 @@ class CompileTimeContextFactory
 		}
 		else
 		{
-			var props : Array<String> = propertyName.split( "." );
+			var props = propertyName.split( "." );
 			propertyName = props.pop();
-			var target : Dynamic = this._coreFactory.fastEvalFromTarget( target, props.join(".") );
+			var target = this._coreFactory.fastEvalFromTarget( target, props.join(".") );
 			Reflect.setProperty( target, propertyName, this._getPropertyValue( property, id ) );
 		}
 	}
@@ -327,50 +310,7 @@ class CompileTimeContextFactory
 	{
 		if ( this._constructorVOLocator.isRegisteredWithKey( id ) )
 		{
-			var cons = this._constructorVOLocator.locate( id );	
-			var args = cons.arguments;
-			if ( args != null )
-			{
-				if ( cons.className == ContextTypeList.HASHMAP || cons.className == ContextTypeList.SERVICE_LOCATOR || cons.className == ContextTypeList.MAPPING_CONFIG )
-				{
-					var result = [];
-					for ( obj in args )
-					{
-						var mapVO : MapVO = cast obj;
-						mapVO.key = this._build( mapVO.getPropertyKey() );
-						mapVO.value = this._build( mapVO.getPropertyValue() );
-						result.push( mapVO );
-					}
-					cons.arguments = result;
-				}
-				//TODO please remove that shit
-				else if ( 
-							cons.className == ContextTypeList.STRING ||
-							cons.className == ContextTypeList.INT ||
-							cons.className == ContextTypeList.UINT || 
-							cons.className == ContextTypeList.FLOAT || 
-							cons.className == ContextTypeList.BOOLEAN || 
-							cons.className == ContextTypeList.NULL ||
-							cons.className == ContextTypeList.CLASS ||
-							cons.className == ContextTypeList.OBJECT
-						)
-				{
-					//Do nothing for these types
-				}
-				else
-				{
-					var args = [];
-					var arguments = cons.arguments;
-					var l : Int = arguments.length;
-					for ( i in 0...l )
-					{
-						args.push( this._build( arguments[ i ] ) );
-					}
-					cons.constructorArgs = args;
-				}
-			}
-
-			this._build( cons, id );
+			this._build( this._constructorVOLocator.locate( id ), id );
 			this._constructorVOLocator.unregister( id );
 		}
 	}
@@ -489,12 +429,12 @@ class CompileTimeContextFactory
 		return this._stateTransitionVOLocator;
 	}
 
-	function _build( constructorVO : ConstructorVO, ?id : String ) : Dynamic
+	public function _build( constructorVO : ConstructorVO, ?id : String ) : Dynamic
 	{
 		constructorVO.isProperty 	= id == null;
 		//TODO better type checking with Context.typeof
 		var type 					= constructorVO.className;
-		var buildMethod 			= ( this._factoryMap.exists( type ) ) ? this._factoryMap.get( type ) : ClassInstanceFactory.build;
+		var buildMethod 			= ( this._factoryMap.exists( type ) ) ? this._factoryMap.get( type ) : hex.compiler.factory.ClassInstanceFactory.build;
 		var result 					= buildMethod( this._getFactoryVO( constructorVO ) );
 
 		if ( id != null )

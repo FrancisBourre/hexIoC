@@ -460,7 +460,7 @@ class ContextFactory
 		return this._stateTransitionVOLocator;
 	}
 
-	function _build( constructorVO : ConstructorVO, ?id : String ) : Dynamic
+	public function _build( constructorVO : ConstructorVO, ?id : String ) : Dynamic
 	{
 		//TODO better type checking
 		var type 								= constructorVO.className.split( "<" )[ 0 ];

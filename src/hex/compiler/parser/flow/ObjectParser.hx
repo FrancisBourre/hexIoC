@@ -119,7 +119,7 @@ class ObjectParser extends AbstractExprParser
 			case EField( e, field ):
 				
 				var className = ExpressionUtil.compressField( e.expr, field );
-				var exp = Context.parse( '(null: ${className})', Context.currentPos() );
+				var exp = Context.parse( '(null: ${className})', e.pos );
 
 				switch( exp.expr )
 				{

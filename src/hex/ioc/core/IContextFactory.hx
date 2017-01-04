@@ -3,6 +3,7 @@ package hex.ioc.core;
 import hex.core.IApplicationContext;
 import hex.core.ICoreFactory;
 import hex.core.SymbolTable;
+import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.TransitionVO;
 import hex.metadata.IAnnotationProvider;
 
@@ -11,6 +12,8 @@ import hex.metadata.IAnnotationProvider;
  */
 interface IContextFactory
 {
+	function _build( constructorVO : ConstructorVO, ?id : String ) : Dynamic;
+	
 	function buildStateTransition( key : String ) : Array<TransitionVO>;
 	
 	function buildObject( id : String ) : Void;

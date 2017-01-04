@@ -20,6 +20,9 @@ class ArrayFactory
 	#if macro
 	static public function build( factoryVO : FactoryVO ) : Dynamic
 	{
+		//build arguments
+		ArgumentFactory.build( factoryVO );
+		
 		var constructorVO = factoryVO.constructorVO;
 
 		if ( !constructorVO.isProperty )

@@ -22,6 +22,9 @@ class HashMapFactory
 	#if macro
 	static public function build( factoryVO : FactoryVO ) : Dynamic
 	{
+		//build arguments
+		MapArgumentFactory.build( factoryVO );
+		
 		var constructorVO : ConstructorVO = factoryVO.constructorVO;
 		var args : Array<MapVO> = cast constructorVO.arguments;
 		

@@ -49,6 +49,9 @@ class ClassInstanceFactory
 		}
 		else
 		{
+			//build arguments
+			ArgumentFactory.build( factoryVO );
+		
 			var idVar = constructorVO.ID;
 			var tp : Array<String> = MacroUtil.getPack( constructorVO.className, constructorVO.filePosition );
 			var typePath : TypePath = MacroUtil.getTypePath( constructorVO.className, constructorVO.filePosition );
