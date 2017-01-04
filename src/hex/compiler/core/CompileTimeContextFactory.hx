@@ -343,21 +343,19 @@ class CompileTimeContextFactory
 					}
 					cons.arguments = result;
 				}
-				else if ( 	cons.className == ContextTypeList.STRING || 
-							cons.className == ContextTypeList.INT || 
+				//TODO please remove that shit
+				else if ( 
+							cons.className == ContextTypeList.STRING ||
+							cons.className == ContextTypeList.INT ||
 							cons.className == ContextTypeList.UINT || 
 							cons.className == ContextTypeList.FLOAT || 
 							cons.className == ContextTypeList.BOOLEAN || 
-							cons.className == ContextTypeList.NULL || 
-							cons.className == ContextTypeList.CLASS || 
-							cons.className == ContextTypeList.OBJECT )
+							cons.className == ContextTypeList.NULL ||
+							cons.className == ContextTypeList.CLASS ||
+							cons.className == ContextTypeList.OBJECT
+						)
 				{
-					var arguments = cons.arguments;
-					var l : Int = arguments.length;
-					for ( i in 0...l )
-					{
-						arguments[ i ] = arguments[ i ].arguments[ 0 ];
-					}
+					//Do nothing for these types
 				}
 				else
 				{

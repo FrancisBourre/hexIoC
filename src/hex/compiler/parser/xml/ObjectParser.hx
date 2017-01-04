@@ -163,11 +163,28 @@ class ObjectParser extends AbstractXmlParser
 				}
 				else
 				{
+					//TODO please remove that shit
 					var value : String = XMLAttributeUtil.getValue( xml );
 					if ( value != null ) 
 					{
-						var arg = new ConstructorVO( identifier, ContextTypeList.STRING, [ xml.get( ContextAttributeList.VALUE ) ] );
-						args.push( arg ); 
+						if 
+						( 
+							type == ContextTypeList.STRING ||
+							type == ContextTypeList.INT ||
+							type == ContextTypeList.UINT || 
+							type == ContextTypeList.FLOAT || 
+							type == ContextTypeList.BOOLEAN || 
+							type == ContextTypeList.NULL ||
+							type == ContextTypeList.CLASS
+						)
+						{
+							args = [ xml.get( ContextAttributeList.VALUE ) ];
+						}
+						else 
+						{
+							var arg = new ConstructorVO( identifier, ContextTypeList.STRING, [ xml.get( ContextAttributeList.VALUE ) ] );
+							args.push( arg ); 
+						}
 					}
 				}
 			}

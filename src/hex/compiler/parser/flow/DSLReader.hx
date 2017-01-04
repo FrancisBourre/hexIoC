@@ -21,7 +21,10 @@ class DSLReader
 		var dsl = this._readFile( fileName );
 
 		//parse
-		var expr = Context.parse( dsl.data, Context.currentPos() );
+		var expr = Context.parseInlineString
+		( 
+			dsl.data, Context.makePosition( { file: dsl.path, min: 0, max: dsl.length } ) 
+		);
 		
 		return expr;
 	}
@@ -41,7 +44,7 @@ class DSLReader
 			var result = 	{ 	
 								data: 				data,
 								length: 			data.length, 
-								path: 				path,
+								path: 				path
 							};
 			
 			return result;

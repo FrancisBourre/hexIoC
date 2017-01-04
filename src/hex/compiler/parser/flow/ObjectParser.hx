@@ -31,20 +31,17 @@ class ObjectParser extends AbstractExprParser
 	#if macro
 	private function _parseExpression( e : Expr ) : Void
 	{
-		switch ( e.expr )
+		switch ( e )
 		{
-			case EBinop( OpAssign, _.expr => EConst(CIdent(ident)), value ):
+			case macro $i { ident } = $value:
 				var constructorVO = this._getConstructorVO( ident, value );
 				this._builder.build( OBJECT( constructorVO ) );
 			
-			case EBinop( 	OpAssign, 
-							_.expr => EField( _.expr => EConst(CIdent(ident)), field ), 
-							assigned ):
-				
+			case macro $i{ident}.$field = $assigned:	
 				var propertyVO = ExpressionUtil.getProperty( ident, field, assigned );
 				this._builder.build( PROPERTY( propertyVO ) );
 			
-			case ECall( _.expr => EField( _.expr => EConst(CIdent(ident)), field ), params ):
+			case macro $i{ident}.$field( $a{params} ):
 				
 				var it = params.iterator();
 				var methodArguments = [];
@@ -55,25 +52,17 @@ class ObjectParser extends AbstractExprParser
 				var methodCallVO = new MethodCallVO( ident, field, methodArguments );
 				this._builder.build( METHOD_CALL( methodCallVO ) );
 			
-			case EMeta( entry, e ):
+			case macro @inject_into($a{args}) $i{ident} = $value:
+				var constructorVO = this._getConstructorVO( ident, value );
+				constructorVO.injectInto = true;
+				this._builder.build( OBJECT( constructorVO ) );
 						
-				switch[ entry.name, e.expr ]
-				{
-					case [ 'inject_into', EBinop( OpAssign, _.expr => EConst(CIdent(ident)), value ) ]:
-						var constructorVO = this._getConstructorVO( ident, value );
-						constructorVO.injectInto = true;
-						this._builder.build( OBJECT( constructorVO ) );
-						
-					case [ 'injector_creation', EBinop( OpAssign, _.expr => EConst(CIdent(ident)), value ) ]:
-						var constructorVO = this._getConstructorVO( ident, value );
-						constructorVO.injectorCreation = true;
-						this._builder.build( OBJECT( constructorVO ) );
-						
-					case _:
-						//Context.error( "fuck", this._exceptionReporter.getPosition( e ) );
-						//this._exceptionReporter.
-				}
+			case macro @injector_creation $i{ident} = $value:	
+				var constructorVO = this._getConstructorVO( ident, value );
+				constructorVO.injectorCreation = true;
+				this._builder.build( OBJECT( constructorVO ) );
 				
+
 			case _:
 				trace( e.expr );
 		}
@@ -86,24 +75,20 @@ class ObjectParser extends AbstractExprParser
 		switch( value.expr )
 		{
 			case EConst(CString(v)):
-				var arg = new ConstructorVO( ident, ContextTypeList.STRING, [ v ] );
-				arg.filePosition = value.pos;
-				constructorVO = new ConstructorVO( ident, ContextTypeList.STRING, [ arg ] );
+				constructorVO = new ConstructorVO( ident, ContextTypeList.STRING, [ v ] );
 			
 			case EConst(CInt(v)):
-				var arg = new ConstructorVO( ident, ContextTypeList.INT, [ v ] );
-				arg.filePosition = value.pos;
-				constructorVO = new ConstructorVO( ident, ContextTypeList.INT, [ arg ] );
+				constructorVO = new ConstructorVO( ident, ContextTypeList.INT, [ v ] );
 				
 			case EConst(CIdent(v)):
 				
 				switch( v )
 				{
 					case "null":
-						constructorVO = new ConstructorVO( ident, ContextTypeList.NULL, [ new ConstructorVO( ident, ContextTypeList.NULL, [ v ] ) ] );
+						constructorVO = new ConstructorVO( ident, ContextTypeList.NULL, [ v ] );
 						
 					case "true" | "false":
-						constructorVO = new ConstructorVO( ident, ContextTypeList.BOOLEAN, [ new ConstructorVO( ident, ContextTypeList.BOOLEAN, [ v ] ) ] );
+						constructorVO = new ConstructorVO( ident, ContextTypeList.BOOLEAN, [ v ] );
 						
 					case _:
 						trace( v );
@@ -147,7 +132,7 @@ class ObjectParser extends AbstractExprParser
 						}
 						else
 						{
-							constructorVO = new ConstructorVO( ident, ContextTypeList.CLASS, [ new ConstructorVO( ident, ContextTypeList.CLASS, [ className ] ) ] );
+							constructorVO = new ConstructorVO( ident, ContextTypeList.CLASS, [ className ] );
 						}
 						
 					case _:
