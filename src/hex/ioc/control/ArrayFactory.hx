@@ -16,7 +16,10 @@ class ArrayFactory
 	
 	static public function build( factoryVO : FactoryVO ) : Void
 	{
-		var constructorVO : ConstructorVO = factoryVO.constructorVO;
+		//build arguments
+		ArgumentFactory.build( factoryVO );
+		
+		var constructorVO = factoryVO.constructorVO;
 
 		var array : Array<Dynamic> = [];
 		var args : Array<Dynamic> = constructorVO.arguments;

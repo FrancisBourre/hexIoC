@@ -1,4 +1,4 @@
-package hex.compiler.factory;
+package hex.ioc.control;
 
 import hex.error.PrivateConstructorException;
 import hex.ioc.vo.FactoryVO;
@@ -16,7 +16,6 @@ class MapArgumentFactory
         throw new PrivateConstructorException( "This class can't be instantiated." );
     }
 
-	#if macro
 	static public function build( factoryVO : FactoryVO ) : Void
 	{
 		var factory 			= factoryVO.contextFactory;
@@ -29,5 +28,4 @@ class MapArgumentFactory
 			mapVO.value 		= factory.buildVO( mapVO.getPropertyValue() );
 		}
 	}
-	#end
 }

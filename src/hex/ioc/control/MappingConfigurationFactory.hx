@@ -18,7 +18,10 @@ class MappingConfigurationFactory
 
 	static public function build( factoryVO : FactoryVO ) : Void
 	{
-		var constructorVO : ConstructorVO = factoryVO.constructorVO;
+		//build arguments
+		MapArgumentFactory.build( factoryVO );
+		
+		var constructorVO = factoryVO.constructorVO;
 
 		var config = new MappingConfiguration();
 		var args : Array<MapVO> = cast constructorVO.arguments;

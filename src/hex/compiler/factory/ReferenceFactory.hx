@@ -1,7 +1,5 @@
 package hex.compiler.factory;
 
-import haxe.macro.Context;
-import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.FactoryVO;
 
 /**
@@ -18,7 +16,7 @@ class ReferenceFactory
 	#if macro
 	static public function build( factoryVO : FactoryVO ) : Dynamic
 	{
-		var constructorVO : ConstructorVO = factoryVO.constructorVO;
+		var constructorVO = factoryVO.constructorVO;
 
 		var key : String = constructorVO.ref;
 

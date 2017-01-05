@@ -113,7 +113,7 @@ class XmlReader
 			
 			if ( type == ContextTypeList.CLASS )
 			{
-				XmlReader._importHelper.forceCompilation( args[ 0 ].arguments[ 0 ] );
+				XmlReader._importHelper.forceCompilation( args[ 0 ] );
 			}
 
 			// Build property.

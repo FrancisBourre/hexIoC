@@ -1,6 +1,5 @@
 package hex.ioc.parser.xml;
 
-import haxe.macro.ExprTools.ExprArrayTools;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.core.ContextTypeList;
@@ -21,10 +20,10 @@ class XMLParserUtil
 		
 	}
 
-	public static function getArguments( ownerID : String, xml : Xml, type : String ) : Array<ConstructorVO>
+	public static function getArguments( ownerID : String, xml : Xml, type : String ) : Array<Dynamic>
 	{
-		var args : Array<ConstructorVO> = [];
-		var iterator = xml.elementsNamed( ContextNameList.ARGUMENT );
+		var args : Array<Dynamic> 	= [];
+		var iterator 				= xml.elementsNamed( ContextNameList.ARGUMENT );
 
 		if ( iterator.hasNext() )
 		{
@@ -35,10 +34,28 @@ class XMLParserUtil
 		}
 		else
 		{
+			//TODO please remove that shit
 			var value : String = XMLAttributeUtil.getValue( xml );
 			if ( value != null ) 
 			{
-				args.push( new ConstructorVO( ownerID, ContextTypeList.STRING, [ xml.get( ContextAttributeList.VALUE ) ] ) );
+				if 
+				( 
+					type == null ||
+					type == ContextTypeList.STRING ||
+					type == ContextTypeList.INT ||
+					type == ContextTypeList.UINT || 
+					type == ContextTypeList.FLOAT || 
+					type == ContextTypeList.BOOLEAN || 
+					type == ContextTypeList.NULL ||
+					type == ContextTypeList.CLASS
+				)
+				{
+					args = [ xml.get( ContextAttributeList.VALUE ) ];
+				}
+				else 
+				{
+					args.push( new ConstructorVO( ownerID, ContextTypeList.STRING, [ xml.get( ContextAttributeList.VALUE ) ] ) );
+				}
 			}
 		}
 

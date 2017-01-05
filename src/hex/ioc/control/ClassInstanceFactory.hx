@@ -30,6 +30,9 @@ class ClassInstanceFactory
 		}
 		else
 		{
+			//build arguments
+			ArgumentFactory.build( factoryVO );
+			
 			//TODO Allows proxy classes
 			if ( !factoryVO.coreFactory.hasProxyFactoryMethod( constructorVO.className ) )
 			{

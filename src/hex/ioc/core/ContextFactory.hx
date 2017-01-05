@@ -46,7 +46,6 @@ import hex.ioc.locator.StateTransitionVOLocator;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.FactoryVO;
-import hex.ioc.vo.MapVO;
 import hex.ioc.vo.MethodCallVO;
 import hex.ioc.vo.PropertyVO;
 import hex.ioc.vo.StateTransitionVO;
@@ -326,35 +325,7 @@ class ContextFactory
 	{
 		if ( this._constructorVOLocator.isRegisteredWithKey( id ) )
 		{
-			var cons = this._constructorVOLocator.locate( id );
-			var args = cons.arguments;
-			
-			if ( args != null )
-			{
-				if ( cons.className == ContextTypeList.HASHMAP || cons.className == ContextTypeList.SERVICE_LOCATOR || cons.className == ContextTypeList.MAPPING_CONFIG )
-				{
-					var result = [];
-					for ( obj in args )
-					{
-						var mapVO : MapVO = cast obj;
-						mapVO.key = this.buildVO( mapVO.getPropertyKey() );
-						mapVO.value = this.buildVO( mapVO.getPropertyValue() );
-						result.push( mapVO );
-					}
-					cons.arguments = result;
-				}
-				else
-				{
-					var arguments = cons.arguments;
-					var l : Int = arguments.length;
-					for ( i in 0...l )
-					{
-						arguments[ i ] = this.buildVO( arguments[ i ] );
-					}
-				}
-			}
-
-			this.buildVO( cons, id );
+			this.buildVO( this._constructorVOLocator.locate( id ), id );
 			this._constructorVOLocator.unregister( id );
 		}
 	}

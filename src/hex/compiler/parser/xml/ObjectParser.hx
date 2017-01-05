@@ -129,7 +129,7 @@ class ObjectParser extends AbstractXmlParser
 					while ( iterator.hasNext() )
 					{
 						var node = iterator.next();
-						var arg = XMLParserUtil._getConstructorVOFromXML( identifier, node );
+						var arg = ObjectParser._getConstructorVOFromXML( identifier, node );
 						arg.filePosition = this._exceptionReporter.getPosition( node );
 						
 						if ( arg.staticRef != null )
@@ -269,7 +269,7 @@ class ObjectParser extends AbstractXmlParser
 				while ( iterator.hasNext() )
 				{
 					var node 			= iterator.next();
-					var arg 			= XMLParserUtil._getConstructorVOFromXML( identifier, node );
+					var arg 			= ObjectParser._getConstructorVOFromXML( identifier, node );
 					arg.filePosition 	= this._exceptionReporter.getPosition( node );
 					
 					if ( arg.staticRef != null )
@@ -397,5 +397,37 @@ class ObjectParser extends AbstractXmlParser
 		}
 
 		return args;
+	}
+	
+	static function _getConstructorVOFromXML( ownerID : String, item : Xml ) : ConstructorVO
+	{
+		var method 		= item.get( ContextAttributeList.METHOD );
+		var ref 		= item.get( ContextAttributeList.REF );
+		var staticRef 	= item.get( ContextAttributeList.STATIC_REF );
+		var factory 	= item.get( ContextAttributeList.FACTORY_METHOD );
+		
+		if ( method != null )
+		{
+			return new ConstructorVO( null, ContextTypeList.FUNCTION, [ method ] );
+
+		} else if ( ref != null )
+		{
+			return new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, item.get( ContextAttributeList.REF ) );
+
+		} else if ( staticRef != null /*&& factory == null*/ )
+		{
+			return new ConstructorVO( null, ContextTypeList.STATIC_VARIABLE, null, null, null, false, null, null, item.get( ContextAttributeList.STATIC_REF ) );
+
+		} else
+		{
+			var type : String = item.get( ContextAttributeList.TYPE );
+			
+			if ( type == null )
+			{
+				type = ContextTypeList.STRING;
+			}
+
+			return new ConstructorVO( ownerID, type, [ item.get( ContextAttributeList.VALUE ) ] );
+		}
 	}
 }

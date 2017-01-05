@@ -25,7 +25,7 @@ class HashMapFactory
 		//build arguments
 		MapArgumentFactory.build( factoryVO );
 		
-		var constructorVO : ConstructorVO = factoryVO.constructorVO;
+		var constructorVO 		= factoryVO.constructorVO;
 		var args : Array<MapVO> = cast constructorVO.arguments;
 		
 		var idVar 	= constructorVO.ID;
