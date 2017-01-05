@@ -77,7 +77,7 @@ class XMLParserUtil
 		{
 			return new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, item.get( ContextAttributeList.REF ) );
 
-		} else if ( staticRef != null /*&& factory == null*/ )
+		} else if ( staticRef != null )
 		{
 			return new ConstructorVO( null, ContextTypeList.STATIC_VARIABLE, null, null, null, false, null, null, item.get( ContextAttributeList.STATIC_REF ) );
 
@@ -111,7 +111,7 @@ class XMLParserUtil
 		{
 			return new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, ref );
 
-		} else if ( staticRef != null /*&& factory == null*/ )
+		} else if ( staticRef != null )
 		{
 			return new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, null, null, staticRef );
 
@@ -154,11 +154,11 @@ class XMLParserUtil
 	
 	public static function getEventArgument( item : Xml ) : DomainListenerVOArguments
 	{
-		var domainListenerVOArguments = new DomainListenerVOArguments();
-		domainListenerVOArguments.staticRef 						= item.get( ContextAttributeList.STATIC_REF );
-		domainListenerVOArguments.method 							= item.get( ContextAttributeList.METHOD );
-		domainListenerVOArguments.strategy 							= item.get( ContextAttributeList.STRATEGY );
-		domainListenerVOArguments.injectedInModule 					= item.get( ContextAttributeList.INJECTED_IN_MODULE ) == "true";
+		var domainListenerVOArguments 				= new DomainListenerVOArguments();
+		domainListenerVOArguments.staticRef 		= item.get( ContextAttributeList.STATIC_REF );
+		domainListenerVOArguments.method 			= item.get( ContextAttributeList.METHOD );
+		domainListenerVOArguments.strategy 			= item.get( ContextAttributeList.STRATEGY );
+		domainListenerVOArguments.injectedInModule 	= item.get( ContextAttributeList.INJECTED_IN_MODULE ) == "true";
 		return domainListenerVOArguments;
 	}
 	

@@ -31,6 +31,7 @@ import hex.ioc.control.HashMapFactory;
 import hex.ioc.control.IntFactory;
 import hex.ioc.control.MappingConfigurationFactory;
 import hex.ioc.control.NullFactory;
+import hex.ioc.control.PropertyFactory;
 import hex.ioc.control.ServiceLocatorFactory;
 import hex.ioc.control.StateTransitionFactory;
 import hex.ioc.control.StaticVariableFactory;
@@ -262,53 +263,14 @@ class ContextFactory
 		}
 	}
 	
-	function _getPropertyValue( property : PropertyVO ) : Dynamic
-	{
-		if ( property.method != null )
-		{
-			return this.buildVO( new ConstructorVO( null, ContextTypeList.FUNCTION, [ property.method ] ) );
-
-		} else if ( property.ref != null )
-		{
-			return this.buildVO( new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, property.ref ) );
-
-		} else if ( property.staticRef != null )
-		{
-			return ClassUtil.getStaticVariableReference( property.staticRef );
-
-		} else
-		{
-			var type : String = property.type != null ? property.type : ContextTypeList.STRING;
-			return this.buildVO( new ConstructorVO( property.ownerID, type, [ property.value ] ) );
-		}
-	}
-
-	function _setPropertyValue( property : PropertyVO, target : Dynamic, id : String ) : Void
-	{
-		var propertyName : String = property.name;
-		if ( propertyName.indexOf(".") == -1 )
-		{
-			Reflect.setProperty( target, propertyName, this._getPropertyValue( property ) );
-		}
-		else
-		{
-			var props : Array<String> = propertyName.split( "." );
-			propertyName = props.pop();
-			var target : Dynamic = this._coreFactory.fastEvalFromTarget( target, props.join(".") );
-			Reflect.setProperty( target, propertyName, this._getPropertyValue( property ) );
-		}
-	}
-	
 	//listen to CoreFactory
 	public function onRegister( key : String, instance : Dynamic ) : Void
 	{
 		if ( this._propertyVOLocator.isRegisteredWithKey( key ) )
 		{
-			var properties : Array<PropertyVO> = this._propertyVOLocator.locate( key );
-			for ( p in properties )
-			{
-				this._setPropertyValue( p, instance, key );
-			}
+			var properties = this._propertyVOLocator.locate( key );
+			for ( p in properties ) 
+				PropertyFactory.build( this, p, instance );
 		}
 	}
 
