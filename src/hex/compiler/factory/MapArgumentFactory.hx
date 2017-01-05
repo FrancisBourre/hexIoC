@@ -26,8 +26,8 @@ class MapArgumentFactory
 		
 		for ( mapVO in args )
 		{
-			mapVO.key = factory._build( mapVO.getPropertyKey() );
-			mapVO.value = factory._build( mapVO.getPropertyValue() );
+			mapVO.key = factory.buildVO( mapVO.getPropertyKey() );
+			mapVO.value = factory.buildVO( mapVO.getPropertyValue() );
 		}
 	}
 	#end

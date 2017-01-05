@@ -232,7 +232,7 @@ class CompileTimeContextFactory
 		{
 			var constructorVO = new ConstructorVO( null, ContextTypeList.FUNCTION, [ property.method ], null, null, false, null, null, null );
 			constructorVO.filePosition = property.filePosition;
-			value = this._build( constructorVO );
+			value = this.buildVO( constructorVO );
 			var extVar = macro $i{ id };
 			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $value; } );
 
@@ -240,7 +240,7 @@ class CompileTimeContextFactory
 		{
 			var constructorVO = new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, property.ref, null, null );
 			constructorVO.filePosition = property.filePosition;
-			value = this._build( constructorVO );
+			value = this.buildVO( constructorVO );
 			var extVar = macro $i{ id };
 			var refVar = macro $i{ property.ref };
 			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $refVar; } );
@@ -249,7 +249,7 @@ class CompileTimeContextFactory
 		{
 			var constructorVO = new ConstructorVO( null, ContextTypeList.STATIC_VARIABLE, null, null, null, false, null, null,  property.staticRef );
 			constructorVO.filePosition = property.filePosition;
-			value = this._build( constructorVO );
+			value = this.buildVO( constructorVO );
 			var extVar = macro $i{ id };
 			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $value; } );
 
@@ -258,7 +258,7 @@ class CompileTimeContextFactory
 			var type : String = property.type != null ? property.type : ContextTypeList.STRING;
 			var constructorVO = new ConstructorVO( property.ownerID, type, [ property.value ], null, null, false, null, null, null );
 			constructorVO.filePosition = property.filePosition;
-			value = this._build( constructorVO );
+			value = this.buildVO( constructorVO );
 			
 			var extVar = macro $i{ id };
 			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $value; } );
@@ -310,7 +310,7 @@ class CompileTimeContextFactory
 	{
 		if ( this._constructorVOLocator.isRegisteredWithKey( id ) )
 		{
-			this._build( this._constructorVOLocator.locate( id ), id );
+			this.buildVO( this._constructorVOLocator.locate( id ), id );
 			this._constructorVOLocator.unregister( id );
 		}
 	}
@@ -363,7 +363,7 @@ class CompileTimeContextFactory
 		var method 			= this._methodCallVOLocator.locate( id );
 		var methodName 		= method.name;
 		var cons 			= new ConstructorVO( null, ContextTypeList.FUNCTION, [ method.ownerID + "." + methodName ] );
-		var func : Dynamic 	= this._build( cons );
+		var func : Dynamic 	= this.buildVO( cons );
 		var arguments 		= method.arguments;
 
 		var idArgs = method.ownerID + "_" + method.name + "Args";
@@ -373,7 +373,7 @@ class CompileTimeContextFactory
 		var l : Int = arguments.length;
 		for ( i in 0...l )
 		{
-			args.push( this._build( arguments[ i ] ) );
+			args.push( this.buildVO( arguments[ i ] ) );
 		}
 		
 		var varOwner = macro $i{ method.ownerID };
@@ -429,7 +429,7 @@ class CompileTimeContextFactory
 		return this._stateTransitionVOLocator;
 	}
 
-	public function _build( constructorVO : ConstructorVO, ?id : String ) : Dynamic
+	public function buildVO( constructorVO : ConstructorVO, ?id : String ) : Dynamic
 	{
 		constructorVO.isProperty 	= id == null;
 		//TODO better type checking with Context.typeof

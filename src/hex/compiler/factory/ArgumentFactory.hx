@@ -25,7 +25,7 @@ class ArgumentFactory
 		var arguments 		= cons.arguments;
 		var l : Int = arguments.length;
 		for ( i in 0...l )
-			args.push( factory._build( arguments[ i ] ) );
+			args.push( factory.buildVO( arguments[ i ] ) );
 
 		cons.constructorArgs = args;
 	}

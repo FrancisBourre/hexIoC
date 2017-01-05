@@ -267,11 +267,11 @@ class ContextFactory
 	{
 		if ( property.method != null )
 		{
-			return this._build( new ConstructorVO( null, ContextTypeList.FUNCTION, [ property.method ] ) );
+			return this.buildVO( new ConstructorVO( null, ContextTypeList.FUNCTION, [ property.method ] ) );
 
 		} else if ( property.ref != null )
 		{
-			return this._build( new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, property.ref ) );
+			return this.buildVO( new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, property.ref ) );
 
 		} else if ( property.staticRef != null )
 		{
@@ -280,7 +280,7 @@ class ContextFactory
 		} else
 		{
 			var type : String = property.type != null ? property.type : ContextTypeList.STRING;
-			return this._build( new ConstructorVO( property.ownerID, type, [ property.value ] ) );
+			return this.buildVO( new ConstructorVO( property.ownerID, type, [ property.value ] ) );
 		}
 	}
 
@@ -337,8 +337,8 @@ class ContextFactory
 					for ( obj in args )
 					{
 						var mapVO : MapVO = cast obj;
-						mapVO.key = this._build( mapVO.getPropertyKey() );
-						mapVO.value = this._build( mapVO.getPropertyValue() );
+						mapVO.key = this.buildVO( mapVO.getPropertyKey() );
+						mapVO.value = this.buildVO( mapVO.getPropertyValue() );
 						result.push( mapVO );
 					}
 					cons.arguments = result;
@@ -349,12 +349,12 @@ class ContextFactory
 					var l : Int = arguments.length;
 					for ( i in 0...l )
 					{
-						arguments[ i ] = this._build( arguments[ i ] );
+						arguments[ i ] = this.buildVO( arguments[ i ] );
 					}
 				}
 			}
 
-			this._build( cons, id );
+			this.buildVO( cons, id );
 			this._constructorVOLocator.unregister( id );
 		}
 	}
@@ -404,13 +404,13 @@ class ContextFactory
 	{
 		var method : MethodCallVO 	= this._methodCallVOLocator.locate( id );
 		var cons = new ConstructorVO( null, ContextTypeList.FUNCTION, [ method.ownerID + "." + method.name ] );
-		var func : Dynamic 			= this._build( cons );
+		var func : Dynamic 			= this.buildVO( cons );
 		
 		var arguments = method.arguments;
 		var l : Int = arguments.length;
 		for ( i in 0...l )
 		{
-			arguments[ i ] = this._build( arguments[ i ] );
+			arguments[ i ] = this.buildVO( arguments[ i ] );
 		}
 		
 		Reflect.callMethod( this._coreFactory.locate( method.ownerID ), func, arguments );
@@ -460,7 +460,7 @@ class ContextFactory
 		return this._stateTransitionVOLocator;
 	}
 
-	public function _build( constructorVO : ConstructorVO, ?id : String ) : Dynamic
+	public function buildVO( constructorVO : ConstructorVO, ?id : String ) : Dynamic
 	{
 		//TODO better type checking
 		var type 								= constructorVO.className.split( "<" )[ 0 ];

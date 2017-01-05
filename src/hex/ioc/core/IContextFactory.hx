@@ -12,7 +12,7 @@ import hex.metadata.IAnnotationProvider;
  */
 interface IContextFactory
 {
-	function _build( constructorVO : ConstructorVO, ?id : String ) : Dynamic;
+	function buildVO( constructorVO : ConstructorVO, ?id : String ) : Dynamic;
 	
 	function buildStateTransition( key : String ) : Array<TransitionVO>;
 	
