@@ -411,10 +411,10 @@ class ContextFactory
 
 		if ( id != null )
 		{
+			//keep track of Module instances for initializing them
 			if ( Std.is( result, IModule ) )
-			{
 				this._moduleLocator.register( id, result );
-			}
+
 			this._coreFactory.register( id, result );
 		}
 

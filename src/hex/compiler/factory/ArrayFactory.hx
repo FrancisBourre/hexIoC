@@ -21,7 +21,7 @@ class ArrayFactory
 	static public function build( factoryVO : FactoryVO ) : Dynamic
 	{
 		//build arguments
-		ArgumentFactory.build( factoryVO );
+		var constructorArgs = ArgumentFactory.build( factoryVO );
 		
 		var constructorVO = factoryVO.constructorVO;
 
@@ -31,7 +31,7 @@ class ArrayFactory
 			var exp 	= Context.parseInlineString( "new " + constructorVO.className + "()", constructorVO.filePosition );
 			var varType = TypeTools.toComplexType( Context.typeof( exp ) );
 			
-			factoryVO.expressions.push( macro @:mergeBlock @:pos( constructorVO.filePosition ) { var $idVar : $varType = $a { constructorVO.constructorArgs }; } );
+			factoryVO.expressions.push( macro @:mergeBlock @:pos( constructorVO.filePosition ) { var $idVar : $varType = $a { constructorArgs }; } );
 		}
 		
 		if ( constructorVO.mapTypes != null )
@@ -57,7 +57,7 @@ class ArrayFactory
 			}
 		}
 		
-		return macro @:pos( constructorVO.filePosition ) { $a{ constructorVO.constructorArgs } };
+		return macro @:pos( constructorVO.filePosition ) { $a{ constructorArgs } };
 	}
 	#end
 }

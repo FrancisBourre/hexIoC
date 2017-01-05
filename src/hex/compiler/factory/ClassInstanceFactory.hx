@@ -51,7 +51,7 @@ class ClassInstanceFactory
 		else
 		{
 			//build arguments
-			ArgumentFactory.build( factoryVO );
+			var constructorArgs = ArgumentFactory.build( factoryVO );
 		
 			var idVar = constructorVO.ID;
 			var tp : Array<String> = MacroUtil.getPack( constructorVO.className, constructorVO.filePosition );
@@ -73,12 +73,12 @@ class ClassInstanceFactory
 				//TODO implement the same behavior @runtime issue#1
 				if ( staticRef != null )//static variable - with factory method
 				{
-					e = macro @:pos( constructorVO.filePosition ) { $p { tp } .$staticRef.$factoryMethod( $a { constructorVO.constructorArgs } ); };
+					e = macro @:pos( constructorVO.filePosition ) { $p { tp } .$staticRef.$factoryMethod( $a { constructorArgs } ); };
 					factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
 				}
 				else if ( staticCall != null )//static method call - with factory method
 				{
-					e = macro @:pos( constructorVO.filePosition ) { $p { tp }.$staticCall().$factoryMethod( $a{ constructorVO.constructorArgs } ); };
+					e = macro @:pos( constructorVO.filePosition ) { $p { tp }.$staticCall().$factoryMethod( $a{ constructorArgs } ); };
 						factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
 				}
 				else//factory method error
@@ -89,7 +89,7 @@ class ClassInstanceFactory
 			}
 			else if ( staticCall != null )//simple static method call
 			{
-				e = macro @:pos( constructorVO.filePosition ) { $p { tp }.$staticCall( $a{ constructorVO.constructorArgs } ); };
+				e = macro @:pos( constructorVO.filePosition ) { $p { tp }.$staticCall( $a{ constructorArgs } ); };
 				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
 			}
 			else//Standard instantiation
@@ -119,7 +119,7 @@ class ClassInstanceFactory
 						Context.typeof( 
 							Context.parseInlineString( '( null : ${constructorVO.type})', constructorVO.filePosition ) ) );
 				
-				e = macro @:pos( constructorVO.filePosition ) { new $typePath( $a { constructorVO.constructorArgs } ); };
+				e = macro @:pos( constructorVO.filePosition ) { new $typePath( $a { constructorArgs } ); };
 				factoryVO.expressions.push( macro @:mergeBlock { var $idVar : $varType = $e; } );
 				
 				if ( constructorVO.injectInto && MacroUtil.implementsInterface( classType, _injectorContainerInterface ) )

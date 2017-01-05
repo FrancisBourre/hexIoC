@@ -1,6 +1,8 @@
 package hex.ioc.vo;
 
+#if macro
 import haxe.macro.Expr;
+#end
 
 /**
  * ...
@@ -23,7 +25,6 @@ class ConstructorVO extends AssemblerVO
 	
 	#if macro
 	public var 				isProperty			: Bool = false;
-	public var 				constructorArgs		: Array<Expr>;
 	#end
 		
 	public function new(  	id 					: String,

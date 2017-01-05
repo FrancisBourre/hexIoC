@@ -1,5 +1,6 @@
 package hex.compiler.factory;
 
+import haxe.macro.Expr;
 import hex.error.PrivateConstructorException;
 import hex.ioc.vo.FactoryVO;
 
@@ -16,7 +17,7 @@ class ArgumentFactory
     }
 
 	#if macro
-	static public function build( factoryVO : FactoryVO ) : Void
+	static public function build( factoryVO : FactoryVO ) : Dynamic
 	{
 		var factory 		= factoryVO.contextFactory;
 		var cons 			= factoryVO.constructorVO;
@@ -27,7 +28,7 @@ class ArgumentFactory
 		for ( i in 0...l )
 			args.push( factory.buildVO( arguments[ i ] ) );
 
-		cons.constructorArgs = args;
+		return args;
 	}
 	#end
 }
