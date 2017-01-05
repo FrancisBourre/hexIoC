@@ -1,8 +1,8 @@
 package hex.ioc.control;
 
 import hex.error.IllegalArgumentException;
-import hex.ioc.vo.FactoryVO;
 import hex.ioc.vo.ConstructorVO;
+import hex.ioc.vo.FactoryVO;
 import hex.unittest.assertion.Assert;
 
 /**
@@ -16,8 +16,7 @@ class BoolFactoryTest
     {
 		var helper = new FactoryVO();
 		helper.constructorVO 			= new ConstructorVO( "test", "Bool", ["true"] );
-		BoolFactory.build( helper );
-		Assert.isTrue( helper.constructorVO.result, "constructorVO.result should be true" );
+		Assert.isTrue( BoolFactory.build( helper ), "constructorVO.result should be true" );
 	}
 	
 	@Test( "Test execute with false argument" )
@@ -25,15 +24,14 @@ class BoolFactoryTest
     {
 		var helper = new FactoryVO();
 		helper.constructorVO 			= new ConstructorVO( "test", "Bool", ["false"] );
-		BoolFactory.build( helper );
-		Assert.isFalse( helper.constructorVO.result, "constructorVO.result should be false" );
+		Assert.isFalse( BoolFactory.build( helper ), "constructorVO.result should be false" );
 	}
 	
 	@Test( "Test execute with invalid argument" )
     public function testExecuteWithInvalidArgument() : Void
     {
 		var helper = new FactoryVO();
-		helper.constructorVO 			= new ConstructorVO( "test", "Bool", ["a"] );
+		helper.constructorVO = new ConstructorVO( "test", "Bool", ["a"] );
 		Assert.methodCallThrows( IllegalArgumentException, BoolFactory, BoolFactory.build, [ helper ], "command execution should throw IllegalArgumentException" );
 	}
 	

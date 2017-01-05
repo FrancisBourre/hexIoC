@@ -1,9 +1,8 @@
 package hex.ioc.control;
 
+import hex.error.PrivateConstructorException;
 import hex.ioc.di.MappingConfiguration;
-import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.FactoryVO;
-import hex.ioc.vo.MapVO;
 
 /**
  * ...
@@ -11,20 +10,16 @@ import hex.ioc.vo.MapVO;
  */
 class MappingConfigurationFactory
 {
-	function new()
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
+
+	static public function build( factoryVO : FactoryVO ) : MappingConfiguration
 	{
-
-	}
-
-	static public function build( factoryVO : FactoryVO ) : Void
-	{
-		//build arguments
-		MapArgumentFactory.build( factoryVO );
-		
-		var constructorVO = factoryVO.constructorVO;
-
-		var config = new MappingConfiguration();
-		var args : Array<MapVO> = cast constructorVO.arguments;
+		var result = new MappingConfiguration();
+		var args = MapArgumentFactory.build( factoryVO );
 
 		if ( args.length <= 0 )
 		{
@@ -36,7 +31,7 @@ class MappingConfigurationFactory
 			{
 				if ( item.key != null )
 				{
-					config.addMapping( item.key, item.value, item.mapName, item.asSingleton, item.injectInto );
+					result.addMapping( item.key, item.value, item.mapName, item.asSingleton, item.injectInto );
 
 				} else
 				{
@@ -45,6 +40,6 @@ class MappingConfigurationFactory
 			}
 		}
 
-		constructorVO.result = config;
+		return result;
 	}
 }

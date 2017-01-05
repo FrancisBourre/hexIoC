@@ -15,17 +15,15 @@ class ArgumentFactory
         throw new PrivateConstructorException( "This class can't be instantiated." );
     }
 
-	static public function build( factoryVO : FactoryVO ) : Void
+	static public function build( factoryVO : FactoryVO ) : Array<Dynamic>
 	{
 		var factory 		= factoryVO.contextFactory;
 		var cons 			= factoryVO.constructorVO;
-		var args 			= [];
+		var result 			= [];
 		
-		var arguments 		= cons.arguments;
-		var l : Int = arguments.length;
-		for ( i in 0...l )
-			args.push( factory.buildVO( arguments[ i ] ) );
-			
-		cons.arguments = args;
+		for ( arg in cons.arguments )
+			result.push( factory.buildVO( arg ) );
+
+		return result;
 	}
 }

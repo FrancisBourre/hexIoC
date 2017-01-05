@@ -1,9 +1,8 @@
 package hex.ioc.control;
 
-import hex.ioc.vo.FactoryVO;
 import hex.config.stateful.ServiceLocator;
-import hex.ioc.vo.ConstructorVO;
-import hex.ioc.vo.MapVO;
+import hex.error.PrivateConstructorException;
+import hex.ioc.vo.FactoryVO;
 
 /**
  * ...
@@ -11,22 +10,18 @@ import hex.ioc.vo.MapVO;
  */
 class ServiceLocatorFactory
 {
-	function new()
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
+
+	static public function build( factoryVO : FactoryVO ) : ServiceLocator
 	{
+		var result = new ServiceLocator();
+		var args = MapArgumentFactory.build( factoryVO );
 
-	}
-
-	static public function build( factoryVO : FactoryVO ) : Void
-	{
-		//build arguments
-		MapArgumentFactory.build( factoryVO );
-		
-		var constructorVO = factoryVO.constructorVO;
-
-		var serviceLocator = new ServiceLocator();
-		var args : Array<MapVO> = cast constructorVO.arguments;
-
-		if ( args.length <= 0 )
+		if ( args.length == 0 )
 		{
 			trace( "ServiceLocatorFactory.build(" + args + ") returns an empty ServiceConfig." );
 
@@ -36,7 +31,7 @@ class ServiceLocatorFactory
 			{
 				if ( item.key != null )
 				{
-					serviceLocator.addService( item.key, item.value, item.mapName );
+					result.addService( item.key, item.value, item.mapName );
 
 				} else
 				{
@@ -45,6 +40,6 @@ class ServiceLocatorFactory
 			}
 		}
 
-		constructorVO.result = serviceLocator;
+		return result;
 	}
 }

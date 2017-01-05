@@ -15,7 +15,7 @@ import hex.unittest.assertion.Assert;
  */
 class ArrayFactoryTest
 {
-	@Test( "Test executet" )
+	@Test( "Test execute" )
     public function testExecute() : Void
     {
 		var helper = new FactoryVO();
@@ -23,13 +23,13 @@ class ArrayFactoryTest
 		
 		helper.constructorVO = new ConstructorVO( "test", "Array", 
 			[ 
-				new ConstructorVO( '', "Int", [3] ), 
-				new ConstructorVO( '', 'String', ['hello world'] )
+				new ConstructorVO( "test", "Int", [3] ), 
+				new ConstructorVO( "test", 'String', ['hello world'] )
 			] );
 		
-		ArrayFactory.build( helper );
-		Assert.isInstanceOf( helper.constructorVO.result, Array, "constructorVO.result should be an instance of Array class" );
-		Assert.deepEquals( [3, "hello world"], helper.constructorVO.result, "constructorVO.result should agregate the same elements" );
+		var result = ArrayFactory.build( helper );
+		Assert.isInstanceOf( result, Array, "constructorVO.result should be an instance of Array class" );
+		Assert.deepEquals( [3, "hello world"], result, "constructorVO.result should agregate the same elements" );
 	}
 	
 	@Test( "Test execute with no argument array" )
@@ -39,8 +39,8 @@ class ArrayFactoryTest
 		helper.contextFactory = new MockContextFactory();
 		
 		helper.constructorVO = new ConstructorVO( "test", "Array", [] );
-		ArrayFactory.build( helper );
-		Assert.isInstanceOf( helper.constructorVO.result, Array, "constructorVO.result should be an instance of Array class" );
+		var result = ArrayFactory.build( helper );
+		Assert.isInstanceOf( result, Array, "constructorVO.result should be an instance of Array class" );
 	}
 	
 	@Test( "Test execute with empty argument array" )
@@ -50,8 +50,8 @@ class ArrayFactoryTest
 		helper.contextFactory = new MockContextFactory();
 		
 		helper.constructorVO = new ConstructorVO( "test", "Array", [] );
-		ArrayFactory.build( helper );
-		Assert.isInstanceOf( helper.constructorVO.result, Array, "constructorVO.result should be an instance of Array class" );
+		var result = ArrayFactory.build( helper );
+		Assert.isInstanceOf( result, Array, "constructorVO.result should be an instance of Array class" );
 	}
 	
 	@Test( "Test execute with null argument" )
@@ -61,9 +61,9 @@ class ArrayFactoryTest
 		helper.contextFactory = new MockContextFactory();
 
 		helper.constructorVO = new ConstructorVO( "test", "Array", [ new ConstructorVO( '', "null" ) ] );
-		ArrayFactory.build( helper );
-		Assert.isInstanceOf( helper.constructorVO.result, Array, "constructorVO.result should be an instance of Array class" );
-		Assert.deepEquals( [null], helper.constructorVO.result, "constructorVO.result should agregate the same elements" );
+		var result = ArrayFactory.build( helper );
+		Assert.isInstanceOf( result, Array, "constructorVO.result should be an instance of Array class" );
+		Assert.deepEquals( [null], result, "constructorVO.result should agregate the same elements" );
 	}
 }
 

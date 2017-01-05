@@ -16,8 +16,9 @@ class MapArgumentFactory
         throw new PrivateConstructorException( "This class can't be instantiated." );
     }
 
-	static public function build( factoryVO : FactoryVO ) : Void
+	static public function build( factoryVO : FactoryVO ) : Array<MapVO>
 	{
+		var result 				= [];
 		var factory 			= factoryVO.contextFactory;
 		var constructorVO 		= factoryVO.constructorVO;
 		var args : Array<MapVO>	= cast constructorVO.arguments;
@@ -26,6 +27,9 @@ class MapArgumentFactory
 		{
 			mapVO.key 			= factory.buildVO( mapVO.getPropertyKey() );
 			mapVO.value 		= factory.buildVO( mapVO.getPropertyValue() );
+			result.push( mapVO );
 		}
+		
+		return result;
 	}
 }

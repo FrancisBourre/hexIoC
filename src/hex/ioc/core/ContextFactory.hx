@@ -72,7 +72,7 @@ class ContextFactory
 	var _contextDispatcher			: IDispatcher<{}>;
 	var _moduleLocator				: ModuleLocator;
 	var _applicationContext 		: IApplicationContext;
-	var _factoryMap 				: Map<String, FactoryVO->Void>;
+	var _factoryMap 				: Map<String, FactoryVO->Dynamic>;
 	var _coreFactory 				: ICoreFactory;
 	var _symbolTable 				: SymbolTable;
 	var _constructorVOLocator 		: ConstructorVOLocator;
@@ -406,13 +406,14 @@ class ContextFactory
 		builderHelperVO.constructorVO 			= constructorVO;
 		builderHelperVO.moduleLocator 			= this._moduleLocator;
 
-		buildMethod( builderHelperVO );
+		//build instance with the expected factory method
+		var result 	= buildMethod( builderHelperVO );
 
 		if ( id != null )
 		{
-			this._coreFactory.register( id, constructorVO.result );
+			this._coreFactory.register( id, result );
 		}
 
-		return constructorVO.result;
+		return result;
 	}
 }

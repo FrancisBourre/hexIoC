@@ -1,8 +1,8 @@
 package hex.ioc.control;
 
-import hex.ioc.vo.FactoryVO;
 import hex.error.IllegalArgumentException;
-import hex.ioc.vo.ConstructorVO;
+import hex.error.PrivateConstructorException;
+import hex.ioc.vo.FactoryVO;
 import hex.log.Logger;
 
 /**
@@ -11,35 +11,35 @@ import hex.log.Logger;
  */
 class StringFactory
 {
-	function new()
-	{
-
-	}
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
 	
-	static public function build( factoryVO : FactoryVO ) : Void
+	static public function build( factoryVO : FactoryVO ) : String
 	{
-		var constructorVO : ConstructorVO = factoryVO.constructorVO;
-
-		var value : String 	= null;
-		var args 			= constructorVO.arguments;
+		var result : String 	= null;
+		var constructorVO 		= factoryVO.constructorVO;
+		var args 				= constructorVO.arguments;
 
 		if ( args != null && args.length > 0 && args[ 0 ] != null )
 		{
-			value = Std.string( args[0] );
+			result = Std.string( args[0] );
 		}
 		else
 		{
-			throw new IllegalArgumentException( "StringFactory.build(" + value + ") returns empty String." );
+			throw new IllegalArgumentException( "StringFactory.build(" + result + ") returns empty String." );
 		}
 
-		if ( value == null )
+		if ( result == null )
 		{
-			value = "";
+			result = "";
 			#if debug
-			Logger.warn( "StringFactory.build(" + value + ") returns empty String." );
+			Logger.warn( "StringFactory.build(" + result + ") returns empty String." );
 			#end
 		}
 
-		constructorVO.result = value;
+		return result;
 	}
 }

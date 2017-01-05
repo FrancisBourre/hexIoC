@@ -1,6 +1,6 @@
 package hex.ioc.control;
 
-import hex.ioc.vo.ConstructorVO;
+import hex.error.PrivateConstructorException;
 import hex.ioc.vo.FactoryVO;
 
 /**
@@ -9,16 +9,17 @@ import hex.ioc.vo.FactoryVO;
  */
 class ReferenceFactory
 {
-	function new() 
-	{
-		
-	}
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
 	
-	static public function build( factoryVO : FactoryVO ) : Void
+	static public function build( factoryVO : FactoryVO ) : Dynamic
 	{
-		var constructorVO : ConstructorVO = factoryVO.constructorVO;
-
-		var key : String = constructorVO.ref;
+		var result : Dynamic 	= null;
+		var constructorVO 		= factoryVO.constructorVO;
+		var key 				= constructorVO.ref;
 
 		if ( key.indexOf(".") != -1 )
 		{
@@ -30,17 +31,17 @@ class ReferenceFactory
 			factoryVO.contextFactory.buildObject( key );
 		}
 		
-		var result = factoryVO.coreFactory.locate( key );
-		
 		if ( constructorVO.ref.indexOf( "." ) != -1 )
 		{
 			var args = constructorVO.ref.split( "." );
 			args.shift();
-			constructorVO.result = factoryVO.coreFactory.fastEvalFromTarget( result, args.join( "." )  );
+			result = factoryVO.coreFactory.fastEvalFromTarget( factoryVO.coreFactory.locate( key ), args.join( "." )  );
 		}
 		else 
 		{
-			constructorVO.result = result;
+			result = factoryVO.coreFactory.locate( key );
 		}
+		
+		return result; 
 	}
 }
