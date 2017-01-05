@@ -55,7 +55,6 @@ import hex.log.DomainLogger;
 import hex.log.ILogger;
 import hex.metadata.AnnotationProvider;
 import hex.metadata.IAnnotationProvider;
-import hex.util.ClassUtil;
 
 /**
  * ...

@@ -14,6 +14,7 @@ import hex.error.NoSuchElementException;
 import hex.event.Dispatcher;
 import hex.event.EventProxy;
 import hex.ioc.assembler.AbstractApplicationContext;
+import hex.ioc.parser.xml.mock.MockObjectWithRegtangleProperty;
 import hex.runtime.ApplicationAssembler;
 import hex.ioc.core.IContextFactory;
 import hex.core.ICoreFactory;
@@ -624,6 +625,16 @@ class XmlCompilerTest
 		var amazonServiceClass : Class<MockAmazonService> = map.get( IMockAmazonService );
 		Assert.equals( IMockAmazonService, map.getKeys()[ 0 ], "" );
 		Assert.equals( MockAmazonService, amazonServiceClass, "" );
+	}
+	
+	@Test( "test target sub property" )
+	public function testTargetSubProperty() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/targetSubProperty.xml" );
+
+		var mockObject : MockObjectWithRegtangleProperty = this._getCoreFactory().locate( "mockObject" );
+		Assert.isInstanceOf( mockObject, MockObjectWithRegtangleProperty );
+		Assert.equals( 1.5, mockObject.rectangle.x );
 	}
 	
 	@Test( "test building class reference" )

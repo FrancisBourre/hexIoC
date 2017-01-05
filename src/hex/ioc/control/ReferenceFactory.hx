@@ -34,7 +34,7 @@ class ReferenceFactory
 		
 		if ( constructorVO.ref.indexOf( "." ) != -1 )
 		{
-			var args : Array<String> = constructorVO.ref.split( "." );
+			var args = constructorVO.ref.split( "." );
 			args.shift();
 			constructorVO.result = factoryVO.coreFactory.fastEvalFromTarget( result, args.join( "." )  );
 		}

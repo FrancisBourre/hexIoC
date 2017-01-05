@@ -5,6 +5,7 @@ import haxe.macro.Expr;
 import hex.collection.ILocatorListener;
 import hex.compiler.core.CompileTimeCoreFactory;
 import hex.compiler.factory.DomainListenerFactory;
+import hex.compiler.factory.PropertyFactory;
 import hex.compiler.factory.StateTransitionFactory;
 import hex.core.HashCodeFactory;
 import hex.core.IApplicationContext;
@@ -223,77 +224,14 @@ class CompileTimeContextFactory
 		}
 	}
 	
-	function _getPropertyValue( property : PropertyVO, id : String ) : Dynamic
-	{
-		var value 			: Dynamic 	= null;
-		var propertyName 	: String 	= property.name;
-		
-		if ( property.method != null )
-		{
-			var constructorVO = new ConstructorVO( null, ContextTypeList.FUNCTION, [ property.method ], null, null, false, null, null, null );
-			constructorVO.filePosition = property.filePosition;
-			value = this.buildVO( constructorVO );
-			var extVar = macro $i{ id };
-			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $value; } );
-
-		} else if ( property.ref != null )
-		{
-			var constructorVO = new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, property.ref, null, null );
-			constructorVO.filePosition = property.filePosition;
-			value = this.buildVO( constructorVO );
-			var extVar = macro $i{ id };
-			var refVar = macro $i{ property.ref };
-			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $refVar; } );
-
-		} else if ( property.staticRef != null )
-		{
-			var constructorVO = new ConstructorVO( null, ContextTypeList.STATIC_VARIABLE, null, null, null, false, null, null,  property.staticRef );
-			constructorVO.filePosition = property.filePosition;
-			value = this.buildVO( constructorVO );
-			var extVar = macro $i{ id };
-			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $value; } );
-
-		} else
-		{
-			var type : String = property.type != null ? property.type : ContextTypeList.STRING;
-			var constructorVO = new ConstructorVO( property.ownerID, type, [ property.value ], null, null, false, null, null, null );
-			constructorVO.filePosition = property.filePosition;
-			value = this.buildVO( constructorVO );
-			
-			var extVar = macro $i{ id };
-			this._expressions.push( macro @:mergeBlock { $extVar.$propertyName = $value; } );
-		}
-		
-		return value;
-	}
-
-	function _setPropertyValue( property : PropertyVO, target : Dynamic, id : String ) : Void
-	{
-		var propertyName : String = property.name;
-		if ( propertyName.indexOf(".") == -1 )
-		{
-			var value = this._getPropertyValue( property, id );
-			Reflect.setProperty( target, propertyName, value );
-		}
-		else
-		{
-			var props = propertyName.split( "." );
-			propertyName = props.pop();
-			var target = this._coreFactory.fastEvalFromTarget( target, props.join(".") );
-			Reflect.setProperty( target, propertyName, this._getPropertyValue( property, id ) );
-		}
-	}
-	
 	//listen to CoreFactory
 	public function onRegister( key : String, instance : Dynamic ) : Void
 	{
 		if ( this._propertyVOLocator.isRegisteredWithKey( key ) )
 		{
-			var properties : Array<PropertyVO> = this._propertyVOLocator.locate( key );
-			for ( p in properties )
-			{
-				this._setPropertyValue( p, instance, key );
-			}
+			var properties = this._propertyVOLocator.locate( key );
+			for ( property in properties )
+				this._expressions.push( macro @:mergeBlock ${ PropertyFactory.build( this, property ) } );
 		}
 	}
 
