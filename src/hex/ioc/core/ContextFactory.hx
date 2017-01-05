@@ -55,6 +55,7 @@ import hex.log.DomainLogger;
 import hex.log.ILogger;
 import hex.metadata.AnnotationProvider;
 import hex.metadata.IAnnotationProvider;
+import hex.module.IModule;
 
 /**
  * ...
@@ -404,13 +405,16 @@ class ContextFactory
 		builderHelperVO.contextFactory 			= this;
 		builderHelperVO.coreFactory 			= this._coreFactory;
 		builderHelperVO.constructorVO 			= constructorVO;
-		builderHelperVO.moduleLocator 			= this._moduleLocator;
 
 		//build instance with the expected factory method
 		var result 	= buildMethod( builderHelperVO );
 
 		if ( id != null )
 		{
+			if ( Std.is( result, IModule ) )
+			{
+				this._moduleLocator.register( id, result );
+			}
 			this._coreFactory.register( id, result );
 		}
 

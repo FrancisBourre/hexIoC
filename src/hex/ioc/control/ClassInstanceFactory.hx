@@ -51,11 +51,6 @@ class ClassInstanceFactory
 			
 			result = factoryVO.coreFactory.buildInstance( constructorVO );
 
-			if ( Std.is( result, IModule ) )
-			{
-				factoryVO.moduleLocator.register( constructorVO.ID, result );
-			}
-
 			if ( constructorVO.mapTypes != null )
 			{
 				var mapTypes = constructorVO.mapTypes;
