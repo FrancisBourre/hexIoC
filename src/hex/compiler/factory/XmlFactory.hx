@@ -21,80 +21,52 @@ class XmlFactory
 	#if macro
 	static public function build( factoryVO : FactoryVO ) : Expr
 	{
+		var result : Expr 	= null;
 		var constructorVO 	= factoryVO.constructorVO;
+		var idVar 			= constructorVO.ID;
 		var args 			= constructorVO.arguments;
-		var factory 		= constructorVO.factory;
+		var factory			= constructorVO.factory;
 
 		if ( args != null ||  args.length > 0 )
 		{
+			//TODO simplify
 			var source : String = args[ 0 ].arguments[ 0 ];
 			
 			if ( source.length > 0 )
 			{
 				if ( factory == null )
 				{
-					if ( constructorVO.shouldAssign )
-					{
-						var idVar = constructorVO.ID;
-						factoryVO.expressions.push
-						( 
-							macro 	@:pos( constructorVO.filePosition ) 
-									@:mergeBlock 
-									{ 
-										var $idVar = Xml.parse( $v { source } ); 
-									} 
-						);
-					}
+					result = macro @:pos( constructorVO.filePosition ) Xml.parse( $v { source } ); 
 				}
 				else
 				{
-					if ( constructorVO.shouldAssign )
-					{
-						var idVar 		= constructorVO.ID;
-						var typePath 	= MacroUtil.getTypePath( factory, constructorVO.filePosition );
-						var parser 		= 'factory_' + constructorVO.ID;
-						
-						factoryVO.expressions.push
-						( 
-							macro 	@:pos( constructorVO.filePosition ) 
-									@:mergeBlock 
-									{ 
-										var $parser = new $typePath();
-									} 
-						);
-						
-						factoryVO.expressions.push
-						( 
-							macro 	@:pos( constructorVO.filePosition ) 
-									@:mergeBlock 
-									{ 
-										var $idVar = $i{ parser }.parse( Xml.parse( $v { source } ) ); 
-									} 
-						);
-					}
+					var typePath 	= MacroUtil.getTypePath( factory, constructorVO.filePosition );
+					result = macro 	@:pos( constructorVO.filePosition ) 
+									( new $typePath() ).parse( Xml.parse( $v { source } ) );
 				}
 			}
 			else
 			{
 				#if debug
-				Context.warning( "XmlFactory.build() returns an empty XML.", constructorVO.filePosition );
+				Context.warning( "Empty XML.", constructorVO.filePosition );
 				#end
 				
-				var idVar = constructorVO.ID;
-				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = Xml.parse( '' ); } );
+				result = macro Xml.parse( '' );
 			}
 		}
 		else
 		{
 			#if debug
-			Context.warning( "XmlFactory.build() returns an empty XML.", constructorVO.filePosition );
+			Context.warning( "Empty XML.", constructorVO.filePosition );
 			#end
 
-			var idVar = constructorVO.ID;
-			factoryVO.expressions.push( macro @:mergeBlock { var $idVar = Xml.parse( '' ); } );
+			result = macro Xml.parse( '' );
 		}
 		
-		return null;
+		//Building result
+		return constructorVO.shouldAssign ?
+			macro @:pos( constructorVO.filePosition ) var $idVar = $result:	
+			macro @:pos( constructorVO.filePosition ) $result;
 	}
 	#end
 }

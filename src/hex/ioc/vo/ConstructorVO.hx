@@ -1,9 +1,5 @@
 package hex.ioc.vo;
 
-#if macro
-import haxe.macro.Expr;
-#end
-
 /**
  * ...
  * @author Francis Bourre
@@ -23,9 +19,7 @@ class ConstructorVO extends AssemblerVO
 	public var 				staticRef			: String;
 	public var              injectorCreation 	: Bool;
 	
-	#if macro
 	public var 				shouldAssign		= true;
-	#end
 		
 	public function new(  	id 					: String,
 							?type 				: String,

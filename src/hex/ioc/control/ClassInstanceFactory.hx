@@ -23,8 +23,8 @@ class ClassInstanceFactory
 
 	static public function build( factoryVO : FactoryVO ) : Dynamic
 	{
-		var result : Dynamic = null;
-		var constructorVO = factoryVO.constructorVO;
+		var result : Dynamic 	= null;
+		var constructorVO 		= factoryVO.constructorVO;
 
 		if ( constructorVO.ref != null )
 		{

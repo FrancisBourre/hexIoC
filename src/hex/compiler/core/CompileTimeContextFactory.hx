@@ -377,26 +377,7 @@ class CompileTimeContextFactory
 
 		if ( id != null )
 		{
-			//don't worry, will remove this shit soon
-			if ( 
-					type == ContextTypeList.ARRAY ||
-					type == ContextTypeList.CLASS ||
-					type == ContextTypeList.OBJECT ||
-					type == ContextTypeList.STRING ||
-					type == ContextTypeList.BOOLEAN ||
-					type == ContextTypeList.INT ||
-					type == ContextTypeList.FLOAT ||
-					type == ContextTypeList.NULL ||
-					type == ContextTypeList.HASHMAP ||
-					type == ContextTypeList.MAPPING_CONFIG ||
-					type == ContextTypeList.STATIC_VARIABLE ||
-					type == ContextTypeList.SERVICE_LOCATOR ||
-					type == ContextTypeList.UINT
-				)
-			{
-				//this._expressions.push( macro @:mergeBlock { var $id = $result; } );
-				this._expressions.push( macro @:mergeBlock $result );
-			}
+			this._expressions.push( macro @:mergeBlock $result );
 			this._expressions.push( macro @:mergeBlock { coreFactory.register( $v{ id }, $i{ id } ); } );
 			this._coreFactory.register( id, result );
 		}

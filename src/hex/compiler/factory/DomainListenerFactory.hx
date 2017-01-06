@@ -57,27 +57,36 @@ class DomainListenerFactory
 		}
 	}
 	
+	//TODO refactor with reification
 	static function _getClassTypeFromNewBlockExpression( e : Expr ) : ClassType
 	{
 		var className : String = "";
-		
+
 		if ( e != null )
 		{
 			switch ( e.expr )
 			{
-				case EBlock( expr ):
+				case EMeta( s, _.expr => EBlock( exprs ) ):
+				switch( exprs[ 0 ].expr )
+				{
+					case EVars( vars ):
 					
-					switch( expr[0].expr )
+					switch( vars[ 0 ].expr.expr )
 					{
 						case ENew( t, params ):
 							className = t.pack.join( "." ) + "." + t.name;
-							
+
 						default:
 							return null;
 					}
 					
+					default:
+						return null;
+					}
+					
 				default:
-					return null;
+					return null;	
+				
 			}
 
 			return MacroUtil.getClassType( className );
