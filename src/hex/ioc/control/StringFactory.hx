@@ -25,7 +25,7 @@ class StringFactory
 
 		if ( args != null && args.length > 0 && args[ 0 ] != null )
 		{
-			result = Std.string( args[0] );
+			result = Std.string( args[ 0 ] );
 		}
 		else
 		{

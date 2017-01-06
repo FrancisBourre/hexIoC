@@ -1,9 +1,9 @@
 package hex.compiler.factory;
 
 import haxe.macro.Context;
+import haxe.macro.Expr;
+import hex.error.PrivateConstructorException;
 import hex.ioc.vo.FactoryVO;
-import hex.ioc.error.ParsingException;
-import hex.ioc.vo.ConstructorVO;
 import hex.util.MacroUtil;
 
 /**
@@ -12,13 +12,14 @@ import hex.util.MacroUtil;
  */
 class XmlFactory
 {
-	function new()
-	{
-
-	}
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
 
 	#if macro
-	static public function build( factoryVO : FactoryVO ) : Dynamic
+	static public function build( factoryVO : FactoryVO ) : Expr
 	{
 		var constructorVO 	= factoryVO.constructorVO;
 		var args 			= constructorVO.arguments;
@@ -32,47 +33,65 @@ class XmlFactory
 			{
 				if ( factory == null )
 				{
-					if ( !constructorVO.isProperty )
+					if ( constructorVO.shouldAssign )
 					{
 						var idVar = constructorVO.ID;
-						factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { var $idVar = Xml.parse( $v { source } ); } );
+						factoryVO.expressions.push
+						( 
+							macro 	@:pos( constructorVO.filePosition ) 
+									@:mergeBlock 
+									{ 
+										var $idVar = Xml.parse( $v { source } ); 
+									} 
+						);
 					}
 				}
 				else
 				{
-					if ( !constructorVO.isProperty )
+					if ( constructorVO.shouldAssign )
 					{
-						var idVar = constructorVO.ID;
-						var typePath = null;
+						var idVar 		= constructorVO.ID;
+						var typePath 	= MacroUtil.getTypePath( factory, constructorVO.filePosition );
+						var parser 		= 'factory_' + constructorVO.ID;
 						
-						typePath = MacroUtil.getTypePath( factory, constructorVO.filePosition );
-
-						var parser = "factory_" + constructorVO.ID;
-						factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { var $parser = new $typePath(); } );
+						factoryVO.expressions.push
+						( 
+							macro 	@:pos( constructorVO.filePosition ) 
+									@:mergeBlock 
+									{ 
+										var $parser = new $typePath();
+									} 
+						);
 						
-						var parserVar = macro $i{ parser };
-						factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { var $idVar = $parserVar.parse( Xml.parse( $v { source } ) ); } );
+						factoryVO.expressions.push
+						( 
+							macro 	@:pos( constructorVO.filePosition ) 
+									@:mergeBlock 
+									{ 
+										var $idVar = $i{ parser }.parse( Xml.parse( $v { source } ) ); 
+									} 
+						);
 					}
 				}
 			}
 			else
 			{
 				#if debug
-				trace( "XmlFactory.build() returns an empty XML." );
+				Context.warning( "XmlFactory.build() returns an empty XML.", constructorVO.filePosition );
 				#end
 				
 				var idVar = constructorVO.ID;
-				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = Xml.parse( "" ); } );
+				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = Xml.parse( '' ); } );
 			}
 		}
 		else
 		{
 			#if debug
-			trace( "XmlFactory.build() returns an empty XML." );
+			Context.warning( "XmlFactory.build() returns an empty XML.", constructorVO.filePosition );
 			#end
 
 			var idVar = constructorVO.ID;
-			factoryVO.expressions.push( macro @:mergeBlock { var $idVar = Xml.parse( "" ); } );
+			factoryVO.expressions.push( macro @:mergeBlock { var $idVar = Xml.parse( '' ); } );
 		}
 		
 		return null;

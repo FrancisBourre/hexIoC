@@ -17,18 +17,16 @@ class ArgumentFactory
     }
 
 	#if macro
-	static public function build( factoryVO : FactoryVO ) : Dynamic
+	static public function build( factoryVO : FactoryVO ) : Array<Expr>
 	{
+		var result 			= [];
 		var factory 		= factoryVO.contextFactory;
-		var cons 			= factoryVO.constructorVO;
-		var args 			= [];
+		var constructorVO 	= factoryVO.constructorVO;
 		
-		var arguments 		= cons.arguments;
-		var l : Int = arguments.length;
-		for ( i in 0...l )
-			args.push( factory.buildVO( arguments[ i ] ) );
+		for ( arg in constructorVO.arguments )
+			result.push( factory.buildVO( arg ) );
 
-		return args;
+		return result;
 	}
 	#end
 }

@@ -1,7 +1,8 @@
 package hex.compiler.factory;
 
+import haxe.macro.Expr;
+import hex.error.PrivateConstructorException;
 import hex.ioc.vo.FactoryVO;
-import hex.ioc.vo.ConstructorVO;
 
 /**
  * ...
@@ -9,24 +10,22 @@ import hex.ioc.vo.ConstructorVO;
  */
 class DynamicObjectFactory
 {
-	function new()
-	{
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
 
-	}
-
-	static public function build( factoryVO : FactoryVO ) : Dynamic
+	#if macro
+	static public function build( factoryVO : FactoryVO ) : Expr
 	{
-		var constructorVO = factoryVO.constructorVO;
-		factoryVO.constructorVO.result = { };
+		var constructorVO 		= factoryVO.constructorVO;
+		var idVar 				= constructorVO.ID;
 		
-		#if macro
-		if ( !constructorVO.isProperty )
-		{
-			var idVar = constructorVO.ID;
-			factoryVO.expressions.push( macro @:mergeBlock { var $idVar : Dynamic = $v { {} }; } );
-		}
-		#end
-		
-		return null;
+		//Building result
+		return constructorVO.shouldAssign ?
+			macro @:pos( constructorVO.filePosition ) var $idVar : Dynamic = {}:
+			macro @:pos( constructorVO.filePosition ) {};
 	}
+	#end
 }

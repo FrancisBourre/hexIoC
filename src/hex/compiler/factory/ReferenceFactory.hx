@@ -33,7 +33,7 @@ class ReferenceFactory
 		if ( constructorVO.ref.indexOf( "." ) != -1 )
 		{
 			var refs = constructorVO.ref.split(".");
-			if ( !constructorVO.isProperty )
+			if ( constructorVO.shouldAssign )
 			{
 				var p = macro @:pos( constructorVO.filePosition ) $p { refs };
 				var idVar = constructorVO.ID;
@@ -46,7 +46,7 @@ class ReferenceFactory
 		}
 		else 
 		{
-			if ( !constructorVO.isProperty )
+			if ( constructorVO.shouldAssign )
 			{
 				var idVar = constructorVO.ID;
 				var extVar = macro @:pos( constructorVO.filePosition ) $i{ key };

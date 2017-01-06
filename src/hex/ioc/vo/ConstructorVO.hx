@@ -24,7 +24,7 @@ class ConstructorVO extends AssemblerVO
 	public var              injectorCreation 	: Bool;
 	
 	#if macro
-	public var 				isProperty			: Bool = false;
+	public var 				shouldAssign		= true;
 	#end
 		
 	public function new(  	id 					: String,
