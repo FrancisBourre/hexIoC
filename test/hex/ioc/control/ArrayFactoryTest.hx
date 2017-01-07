@@ -76,7 +76,7 @@ private class MockContextFactory implements IContextFactory
 	
 	public function buildVO( constructorVO : ConstructorVO, ?id : String ) : Dynamic
 	{
-		return constructorVO.arguments[ 0 ];
+		return constructorVO.arguments != null ? constructorVO.arguments[ 0 ] : null;
 	}
 	
 	public function buildStateTransition( key : String ) : Array<TransitionVO>
