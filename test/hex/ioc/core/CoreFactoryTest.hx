@@ -118,7 +118,7 @@ class CoreFactoryTest
 	@Test( "Test buildInstance with static method call" )
     public function testBuildInstanceWithStaticMethodCall() : Void
     {
-		var instance : MockClassForCoreFactoryTest = this._coreFactory.buildInstance( new ConstructorVO( null, "hex.ioc.core.MockClassForCoreFactoryTest", null, null, "getInstance" ) );
+		var instance : MockClassForCoreFactoryTest = this._coreFactory.buildInstance( new ConstructorVO( null, "hex.ioc.core.MockClassForCoreFactoryTest", [], null, "getInstance" ) );
 		Assert.isInstanceOf( instance, MockClassForCoreFactoryTest, "should be instance of 'MockClassForCoreFactoryTest'" );
 	}
 	

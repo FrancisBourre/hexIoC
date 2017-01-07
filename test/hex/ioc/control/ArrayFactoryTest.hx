@@ -28,10 +28,8 @@ class ArrayFactoryTest
 			] );
 		
 		var result = ArrayFactory.build( helper );
-		Assert.isInstanceOf( result, Array );
-		Assert.equals( 2, result.length );
-		Assert.equals( 3, result[ 0 ] );
-		Assert.equals( "hello world", result[ 1 ] );
+		Assert.isInstanceOf( result, Array, "constructorVO.result should be an instance of Array class" );
+		Assert.deepEquals( [3, "hello world"], result, "constructorVO.result should agregate the same elements" );
 	}
 	
 	@Test( "Test execute with no argument array" )
@@ -42,7 +40,7 @@ class ArrayFactoryTest
 		
 		helper.constructorVO = new ConstructorVO( "test", "Array", [] );
 		var result = ArrayFactory.build( helper );
-		Assert.isInstanceOf( result, Array );
+		Assert.isInstanceOf( result, Array, "constructorVO.result should be an instance of Array class" );
 	}
 	
 	@Test( "Test execute with empty argument array" )
@@ -53,7 +51,7 @@ class ArrayFactoryTest
 		
 		helper.constructorVO = new ConstructorVO( "test", "Array", [] );
 		var result = ArrayFactory.build( helper );
-		Assert.isInstanceOf( result, Array );
+		Assert.isInstanceOf( result, Array, "constructorVO.result should be an instance of Array class" );
 	}
 	
 	@Test( "Test execute with null argument" )
@@ -64,8 +62,8 @@ class ArrayFactoryTest
 
 		helper.constructorVO = new ConstructorVO( "test", "Array", [ new ConstructorVO( '', "null" ) ] );
 		var result = ArrayFactory.build( helper );
-		Assert.isInstanceOf( result, Array );
-		Assert.deepEquals( [null], result );
+		Assert.isInstanceOf( result, Array, "constructorVO.result should be an instance of Array class" );
+		Assert.deepEquals( [null], result, "constructorVO.result should agregate the same elements" );
 	}
 }
 
@@ -78,7 +76,7 @@ private class MockContextFactory implements IContextFactory
 	
 	public function buildVO( constructorVO : ConstructorVO, ?id : String ) : Dynamic
 	{
-		return constructorVO.arguments;
+		return constructorVO.arguments[ 0 ];
 	}
 	
 	public function buildStateTransition( key : String ) : Array<TransitionVO>
