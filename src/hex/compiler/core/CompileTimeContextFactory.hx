@@ -377,8 +377,7 @@ class CompileTimeContextFactory
 
 		if ( id != null )
 		{
-			this._expressions.push( macro @:mergeBlock $result );
-			this._expressions.push( macro @:mergeBlock { coreFactory.register( $v{ id }, $i{ id } ); } );
+			this._expressions.push( macro @:mergeBlock { $result;  coreFactory.register( $v{ id }, $i{ id } ); } );
 			this._coreFactory.register( id, result );
 		}
 
