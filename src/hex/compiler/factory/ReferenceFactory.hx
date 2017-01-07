@@ -1,5 +1,6 @@
 package hex.compiler.factory;
 
+import haxe.macro.Expr;
 import hex.ioc.vo.FactoryVO;
 
 /**
@@ -14,7 +15,7 @@ class ReferenceFactory
 	}
 	
 	#if macro
-	static public function build( factoryVO : FactoryVO ) : Dynamic
+	static public function build( factoryVO : FactoryVO ) : Expr
 	{
 		var constructorVO = factoryVO.constructorVO;
 
@@ -37,7 +38,7 @@ class ReferenceFactory
 			{
 				var p = macro @:pos( constructorVO.filePosition ) $p { refs };
 				var idVar = constructorVO.ID;
-				factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { var $idVar = $p; } );
+				return macro @:pos( constructorVO.filePosition ) @:mergeBlock { var $idVar = $p; };
 			}
 			
 			var e = macro $p { refs };
@@ -50,7 +51,7 @@ class ReferenceFactory
 			{
 				var idVar = constructorVO.ID;
 				var extVar = macro @:pos( constructorVO.filePosition ) $i{ key };
-				factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { var $idVar = $extVar; } );
+				return macro @:pos( constructorVO.filePosition ) @:mergeBlock { var $idVar = $extVar; };
 				
 			}
 			

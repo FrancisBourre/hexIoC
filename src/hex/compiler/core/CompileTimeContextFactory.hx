@@ -287,7 +287,7 @@ class CompileTimeContextFactory
 
 	public function assignDomainListener( id : String ) : Bool
 	{
-		return DomainListenerFactory.build( this._getFactoryVO( null ), this._domainListenerVOLocator.locate( id ) );
+		return DomainListenerFactory.build( this._expressions, this._getFactoryVO( null ), this._domainListenerVOLocator.locate( id ) );
 	}
 	
 	public function registerMethodCallVO( methodCallVO : MethodCallVO ) : Void
@@ -387,9 +387,8 @@ class CompileTimeContextFactory
 	
 	function _getFactoryVO( ?constructorVO : ConstructorVO ) : FactoryVO
 	{
-		var factoryVO 				= new FactoryVO();
-		factoryVO.expressions 		= this._expressions;
-		
+		var factoryVO = new FactoryVO();
+
 		if ( constructorVO != null )
 		{
 			factoryVO.type 			= constructorVO.className;
