@@ -1,6 +1,7 @@
 package hex.compiler.factory;
 
 import haxe.macro.Expr;
+import hex.error.PrivateConstructorException;
 import hex.ioc.vo.FactoryVO;
 
 /**
@@ -9,17 +10,19 @@ import hex.ioc.vo.FactoryVO;
  */
 class ReferenceFactory
 {
-	function new() 
-	{
-		
-	}
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
 	
 	#if macro
 	static public function build( factoryVO : FactoryVO ) : Expr
 	{
-		var constructorVO = factoryVO.constructorVO;
-
-		var key : String = constructorVO.ref;
+		var result : Expr 	= null;
+		var constructorVO 	= factoryVO.constructorVO;
+		var idVar 			= constructorVO.ID;
+		var key 			= constructorVO.ref;
 
 		if ( key.indexOf( "." ) != -1 )
 		{
@@ -33,30 +36,17 @@ class ReferenceFactory
 		
 		if ( constructorVO.ref.indexOf( "." ) != -1 )
 		{
-			var refs = constructorVO.ref.split(".");
-			if ( constructorVO.shouldAssign )
-			{
-				var p = macro @:pos( constructorVO.filePosition ) $p { refs };
-				var idVar = constructorVO.ID;
-				return macro @:pos( constructorVO.filePosition ) @:mergeBlock { var $idVar = $p; };
-			}
-			
-			var e = macro $p { refs };
-			e.pos = constructorVO.filePosition;
-			return e;
+			result = macro @:pos( constructorVO.filePosition ) $p { constructorVO.ref.split( '.' ) };
 		}
 		else 
 		{
-			if ( constructorVO.shouldAssign )
-			{
-				var idVar = constructorVO.ID;
-				var extVar = macro @:pos( constructorVO.filePosition ) $i{ key };
-				return macro @:pos( constructorVO.filePosition ) @:mergeBlock { var $idVar = $extVar; };
-				
-			}
-			
-			return macro @:pos( constructorVO.filePosition ) $i{ key };
+			result = macro @:pos( constructorVO.filePosition ) $i{ key };
 		}
+		
+		//Building result
+		return constructorVO.shouldAssign ?
+			macro var $idVar = $v{ result }:
+			macro $result;
 	}
 	#end
 }

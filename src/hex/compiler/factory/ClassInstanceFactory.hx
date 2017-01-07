@@ -11,7 +11,6 @@ import hex.domain.DomainExpert;
 import hex.domain.DomainUtil;
 import hex.error.PrivateConstructorException;
 import hex.event.MessageType;
-import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.FactoryVO;
 import hex.log.ILogger;
 import hex.metadata.AnnotationProvider;
@@ -42,8 +41,9 @@ class ClassInstanceFactory
 					
 	static public function build( factoryVO : FactoryVO ) : Expr
 	{
-		var result : Expr = null;
-		var constructorVO = factoryVO.constructorVO;
+		var result : Expr 	= null;
+		var constructorVO 	= factoryVO.constructorVO;
+		var idVar 			= constructorVO.ID;
 		
 		if ( constructorVO.ref != null )
 		{
@@ -54,7 +54,7 @@ class ClassInstanceFactory
 			//build arguments
 			var constructorArgs = ArgumentFactory.build( factoryVO );
 		
-			var idVar 			= constructorVO.ID;
+			
 			var tp 				= MacroUtil.getPack( constructorVO.className, constructorVO.filePosition );
 			var typePath 		= MacroUtil.getTypePath( constructorVO.className, constructorVO.filePosition );
 
