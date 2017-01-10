@@ -35,6 +35,7 @@ import hex.ioc.parser.xml.mock.MockInjectee;
 import hex.ioc.parser.xml.mock.MockIntVO;
 import hex.ioc.parser.xml.mock.MockMappedModule;
 import hex.ioc.parser.xml.mock.MockMessageParserModule;
+import hex.ioc.parser.xml.mock.MockMethodCaller;
 import hex.ioc.parser.xml.mock.MockModuleWithServiceCallback;
 import hex.ioc.parser.xml.mock.MockObjectWithRegtangleProperty;
 import hex.ioc.parser.xml.mock.MockReceiverModule;
@@ -43,6 +44,7 @@ import hex.ioc.parser.xml.mock.MockSenderModule;
 import hex.ioc.parser.xml.mock.MockServiceProvider;
 import hex.ioc.parser.xml.mock.MockStubStatefulService;
 import hex.ioc.parser.xml.mock.MockTranslationModule;
+import hex.ioc.parser.xml.state.mock.MockStateMessage;
 import hex.preprocess.Preprocessor;
 import hex.runtime.ApplicationAssembler;
 import hex.structures.Point;
@@ -859,6 +861,16 @@ class ObjectXMLParserTest
 		var instance : ClassWithConstantConstantArgument = this._locate( "instance" );
 		Assert.isNotNull( instance );
 		Assert.equals( instance.constant, MockStubStatefulService.INT_VO_UPDATE );
+	}
+	
+	@Test( "test static-ref argument on method-call" )
+	public function testStaticArgumentOnMethodCall() : Void
+	{
+		this.build(  XmlReader.getXml( "context/staticRefArgumentOnMethodCall.xml" ) );
+
+		var instance : MockMethodCaller = this._locate( "instance" );
+		Assert.isNotNull( instance, "" );
+		Assert.equals( MockMethodCaller.staticVar, instance.argument, "" );
 	}
 	
 	@Async( "test EventProxy" )

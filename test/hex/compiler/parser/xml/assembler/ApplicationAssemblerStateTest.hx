@@ -110,8 +110,8 @@ class ApplicationAssemblerStateTest
 		
 		var messageType : MessageType = coreFactory.locate( "messageID" );
 		var anotherMessageType : MessageType = coreFactory.locate( "anotherMessageID" );
-		Assert.equals( 'messageName', messageType.name, "name property should be 'messageName'" );
-		Assert.equals( 'anotherMessageName', anotherMessageType.name, "name property should be 'anotherMessageName'" );
+		Assert.equals( 'messageName', messageType, "name property should be 'messageName'" );
+		Assert.equals( 'anotherMessageName', anotherMessageType, "name property should be 'anotherMessageName'" );
 		
 		var customState : State = coreFactory.locate( "customState" );
 		var anotherCustomState : State = coreFactory.locate( "anotherCustomState" );

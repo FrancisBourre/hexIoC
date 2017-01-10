@@ -763,6 +763,16 @@ class FlowCompilerTest
 		Assert.equals( instance.constant, MockStubStatefulService.INT_VO_UPDATE, "" );
 	}
 	
+	/*@Test( "test static-ref argument on method-call" )
+	public function testStaticArgumentOnMethodCall() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/staticRefArgumentOnMethodCall.xml" );
+
+		var instance : MockMethodCaller = this._getCoreFactory().locate( "instance" );
+		Assert.isNotNull( instance, "" );
+		Assert.equals( MockMethodCaller.staticVar, instance.argument, "" );
+	}*/
+	
 	/*@Ignore( "test map-type attribute" )
 	public function testMapTypeAttribute() : Void
 	{

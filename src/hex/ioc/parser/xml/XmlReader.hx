@@ -139,6 +139,10 @@ class XmlReader
 					{
 						XmlReader._importHelper.forceCompilation( arg.value );
 					}
+					else if( arg.staticRef != null )
+					{
+						XmlReader._importHelper.includeStaticRef( arg.staticRef );
+					}
 				}
 			}
 

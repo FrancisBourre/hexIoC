@@ -14,7 +14,9 @@ import hex.error.NoSuchElementException;
 import hex.event.Dispatcher;
 import hex.event.EventProxy;
 import hex.ioc.assembler.AbstractApplicationContext;
+import hex.ioc.parser.xml.mock.MockMethodCaller;
 import hex.ioc.parser.xml.mock.MockObjectWithRegtangleProperty;
+import hex.ioc.parser.xml.state.mock.MockStateMessage;
 import hex.runtime.ApplicationAssembler;
 import hex.ioc.core.IContextFactory;
 import hex.core.ICoreFactory;
@@ -812,6 +814,16 @@ class XmlCompilerTest
 		var instance : ClassWithConstantConstantArgument = this._getCoreFactory().locate( "instance" );
 		Assert.isNotNull( instance, "" );
 		Assert.equals( instance.constant, MockStubStatefulService.INT_VO_UPDATE, "" );
+	}
+	
+	@Test( "test static-ref argument on method-call" )
+	public function testStaticArgumentOnMethodCall() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/staticRefArgumentOnMethodCall.xml" );
+
+		var instance : MockMethodCaller = this._getCoreFactory().locate( "instance" );
+		Assert.isNotNull( instance, "" );
+		Assert.equals( MockMethodCaller.staticVar, instance.argument, "" );
 	}
 	
 	@Test( "test map-type attribute" )

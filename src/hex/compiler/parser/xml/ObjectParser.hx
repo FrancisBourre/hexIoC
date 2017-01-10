@@ -277,8 +277,7 @@ class ObjectParser extends AbstractXmlParser
 						var type = this._importHelper.getClassFullyQualifiedNameFromStaticVariable( arg.staticRef );
 						try 
 						{
-							var type = this._importHelper.getClassFullyQualifiedNameFromStaticVariable( staticRef );
-							this._importHelper.forceCompilation( type.split( '<' )[ 0 ] );
+							this._importHelper.forceCompilation( type );
 							
 						} catch ( e : String ) 
 						{

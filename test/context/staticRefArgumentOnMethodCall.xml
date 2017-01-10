@@ -1,0 +1,9 @@
+<root name="applicationContext">
+
+    <instance id="instance" type="hex.ioc.parser.xml.mock.MockMethodCaller">
+		<method-call name="call">
+			<argument static-ref="hex.ioc.parser.xml.mock.MockMethodCaller.staticVar"/>
+		</method-call>
+    </instance>
+
+</root>
