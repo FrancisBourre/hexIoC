@@ -1,7 +1,6 @@
 package hex.ioc.parser.xml;
 
 import hex.core.IApplicationAssembler;
-import hex.runtime.ApplicationAssembler;
 import hex.util.MacroUtil;
 
 #if macro
@@ -244,7 +243,7 @@ class XmlReader
 	macro public static function readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
 	{
 		var xmlPack = MacroUtil.getPack( Type.getClassName( Xml ) );
-		var applicationAssemblerTypePath = MacroUtil.getTypePath( Type.getClassName( ApplicationAssembler ) );
+		var applicationAssemblerTypePath = MacroUtil.getTypePath( "hex.runtime.ApplicationAssembler" );
 		var applicationXMLParserTypePath = MacroUtil.getTypePath( Type.getClassName( ApplicationXMLParser ) );
 		var data = XmlReader._readXmlFile( fileName, preprocessingVariables, conditionalVariables );
 		

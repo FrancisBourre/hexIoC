@@ -1,5 +1,9 @@
 package hex.ioc.core;
 
+#if macro
+//skip this class
+#else
+
 import hex.collection.ILocatorListener;
 import hex.control.macro.IMacroExecutor;
 import hex.control.macro.MacroExecutor;
@@ -421,3 +425,4 @@ class ContextFactory
 		return result;
 	}
 }
+#end
