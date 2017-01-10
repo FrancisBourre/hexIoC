@@ -19,7 +19,6 @@ import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
 import hex.domain.DomainUtil;
 import hex.event.IDispatcher;
-import hex.event.IEvent;
 import hex.factory.BuildRequest;
 import hex.ioc.assembler.ApplicationAssemblerMessage;
 import hex.ioc.assembler.ApplicationContext;
@@ -279,7 +278,6 @@ class ContextFactory
 	}
 
     public function onUnregister( key : String ) : Void  { }
-	public function handleEvent( e : IEvent ) : Void {}	
 	
 	//
 	public function registerConstructorVO( constructorVO : ConstructorVO ) : Void

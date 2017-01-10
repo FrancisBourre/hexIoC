@@ -13,7 +13,6 @@ import hex.core.IBuilder;
 import hex.core.ICoreFactory;
 import hex.core.SymbolTable;
 import hex.event.IDispatcher;
-import hex.event.IEvent;
 import hex.factory.BuildRequest;
 import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.core.ContextTypeList;
@@ -236,7 +235,6 @@ class CompileTimeContextFactory
 	}
 
     public function onUnregister( key : String ) : Void  { }
-	public function handleEvent( e : IEvent ) : Void {}	
 	
 	//
 	public function registerConstructorVO( constructorVO : ConstructorVO ) : Void

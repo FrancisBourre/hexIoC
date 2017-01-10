@@ -4,7 +4,6 @@ import hex.MockDependencyInjector;
 import hex.collection.ILocatorListener;
 import hex.di.IDependencyInjector;
 import hex.error.IllegalArgumentException;
-import hex.event.IEvent;
 import hex.ioc.vo.ConstructorVO;
 import hex.metadata.IAnnotationProvider;
 import hex.structures.Point;
@@ -241,11 +240,6 @@ private class MockCoreFactoryListener implements ILocatorListener<String, Dynami
 	{
 		this.lastUnregisterKeyReceived = key;
 		this.unregisterEventCount++;
-	}
-	
-	public function handleEvent( e : IEvent ) : Void 
-	{
-		
 	}
 }
 
