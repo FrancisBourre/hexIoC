@@ -4,7 +4,7 @@ package hex.ioc.parser.xml.mock;
  * ...
  * @author Francis Bourre
  */
-class MockFruitVO
+class MockFruitVO implements IMockFruit
 {
 	var _name : String;
 

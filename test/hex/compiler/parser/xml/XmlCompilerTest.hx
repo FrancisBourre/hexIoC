@@ -29,6 +29,7 @@ import hex.ioc.parser.xml.mock.IAnotherMockMappedModule;
 import hex.ioc.parser.xml.mock.IMockAmazonService;
 import hex.ioc.parser.xml.mock.IMockDividerHelper;
 import hex.ioc.parser.xml.mock.IMockFacebookService;
+import hex.ioc.parser.xml.mock.IMockFruit;
 import hex.ioc.parser.xml.mock.IMockInjectee;
 import hex.ioc.parser.xml.mock.IMockMappedModule;
 import hex.ioc.parser.xml.mock.IMockStubStatefulService;
@@ -340,6 +341,16 @@ class XmlCompilerTest
 		var caller : MockCaller = this._getCoreFactory().locate( "caller" );
 		Assert.isInstanceOf( caller, MockCaller, "" );
 		Assert.deepEquals( [ "hello", "world" ], MockCaller.passedArguments, "" );
+	}
+	
+	@Test( "test method call with type params" )
+	public function testCallWithTypeParams() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/methodCallWithTypeParams.xml" );
+
+		var caller : MockCaller = this._getCoreFactory().locate( "caller" );
+		Assert.isInstanceOf( caller, MockCaller, "" );
+		Assert.equals( 3, MockCaller.passedArray.length, "" );
 	}
 	
 	@Test( "test building multiple instances with method calls" )
