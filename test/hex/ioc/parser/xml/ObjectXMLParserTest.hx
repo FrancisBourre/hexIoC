@@ -26,6 +26,7 @@ import hex.ioc.parser.xml.mock.IMockMappedModule;
 import hex.ioc.parser.xml.mock.IMockStubStatefulService;
 import hex.ioc.parser.xml.mock.MockAmazonService;
 import hex.ioc.parser.xml.mock.MockBooleanVO;
+import hex.ioc.parser.xml.mock.MockCaller;
 import hex.ioc.parser.xml.mock.MockChatModule;
 import hex.ioc.parser.xml.mock.MockClassWithInjectedProperty;
 import hex.ioc.parser.xml.mock.MockDocument;
@@ -250,6 +251,26 @@ class ObjectXMLParserTest
 		Assert.equals( 20, rect.y );
 		Assert.equals( 30, rect.size.x );
 		Assert.equals( 40, rect.size.y );
+	}
+	
+	@Test( "test simple method call" )
+	public function testSimpleMethodCall() : Void
+	{
+		this.build( XmlReader.getXml( "context/simpleMethodCall.xml" ) );
+
+		var caller : MockCaller = this._locate( "caller" );
+		Assert.isInstanceOf( caller, MockCaller, "" );
+		Assert.deepEquals( [ "hello", "world" ], MockCaller.passedArguments, "" );
+	}
+	
+	@Test( "test method call with type params" )
+	public function testCallWithTypeParams() : Void
+	{
+		this.build( XmlReader.getXml( "context/methodCallWithTypeParams.xml" ) );
+
+		var caller : MockCaller = this._locate( "caller" );
+		Assert.isInstanceOf( caller, MockCaller, "" );
+		Assert.equals( 3, MockCaller.passedArray.length, "" );
 	}
 	
 	@Test( "test building multiple instances with method calls" )

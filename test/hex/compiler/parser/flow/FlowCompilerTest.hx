@@ -4,22 +4,21 @@ import hex.collection.HashMap;
 import hex.compiler.parser.flow.FlowCompiler;
 import hex.control.command.BasicCommand;
 import hex.core.IApplicationAssembler;
+import hex.core.ICoreFactory;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.event.EventProxy;
-import hex.runtime.ApplicationAssembler;
 import hex.ioc.core.IContextFactory;
-import hex.core.ICoreFactory;
 import hex.ioc.parser.xml.ApplicationXMLParser;
 import hex.ioc.parser.xml.mock.ClassWithConstantConstantArgument;
 import hex.ioc.parser.xml.mock.MockCaller;
 import hex.ioc.parser.xml.mock.MockChatModule;
 import hex.ioc.parser.xml.mock.MockClassWithInjectedProperty;
 import hex.ioc.parser.xml.mock.MockFruitVO;
-import hex.ioc.parser.xml.mock.MockMappedModule;
 import hex.ioc.parser.xml.mock.MockReceiverModule;
 import hex.ioc.parser.xml.mock.MockRectangle;
 import hex.ioc.parser.xml.mock.MockServiceProvider;
 import hex.ioc.parser.xml.mock.MockStubStatefulService;
+import hex.runtime.ApplicationAssembler;
 import hex.structures.Point;
 import hex.structures.Size;
 import hex.unittest.assertion.Assert;
@@ -294,6 +293,16 @@ class FlowCompilerTest
 		var caller : MockCaller = this._getCoreFactory().locate( "caller" );
 		Assert.isInstanceOf( caller, MockCaller );
 		Assert.deepEquals( [ "hello", "world" ], MockCaller.passedArguments );
+	}
+	
+	@Test( "test method call with type params" )
+	public function testCallWithTypeParams() : Void
+	{
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/methodCallWithTypeParams.flow" );
+
+		var caller : MockCaller = this._getCoreFactory().locate( "caller" );
+		Assert.isInstanceOf( caller, MockCaller, "" );
+		Assert.equals( 3, MockCaller.passedArray.length, "" );
 	}
 	
 	@Test( "test building multiple instances with method calls" )

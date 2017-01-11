@@ -2,6 +2,8 @@ package hex.compiler.parser.flow;
 
 import haxe.macro.Context;
 import haxe.macro.Expr;
+import haxe.macro.ExprTools;
+import haxe.macro.TypeTools;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.MethodCallVO;
@@ -96,8 +98,8 @@ class ObjectParser extends AbstractExprParser
 				
 			case ENew( t, params ):
 				constructorVO = this._getVOFromNewExpr( ident, t, params );
+				constructorVO.type = ExprTools.toString( value ).split( 'new' )[ 1 ].split( '(' )[ 0 ];
 				
-
 			case EObjectDecl( fields ):
 				constructorVO = new ConstructorVO( ident, ContextTypeList.OBJECT, [] );
 				
