@@ -27,7 +27,7 @@ class ArrayFactory
 
 		if ( constructorVO.shouldAssign )
 		{
-			var exp 	= Context.parseInlineString( "new " + constructorVO.className + "()", constructorVO.filePosition );
+			var exp 	= Context.parseInlineString( "new " + constructorVO.type + "()", constructorVO.filePosition );
 			var varType = TypeTools.toComplexType( Context.typeof( exp ) );
 			var result 	= macro @:pos( constructorVO.filePosition ) var $idVar : $varType = $a{ args };
 			
