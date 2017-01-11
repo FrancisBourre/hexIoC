@@ -4,7 +4,6 @@ import hex.MockDependencyInjector;
 import hex.collection.ILocatorListener;
 import hex.di.IDependencyInjector;
 import hex.error.IllegalArgumentException;
-import hex.event.IEvent;
 import hex.ioc.vo.ConstructorVO;
 import hex.metadata.IAnnotationProvider;
 import hex.structures.Point;
@@ -118,7 +117,7 @@ class CoreFactoryTest
 	@Test( "Test buildInstance with static method call" )
     public function testBuildInstanceWithStaticMethodCall() : Void
     {
-		var instance : MockClassForCoreFactoryTest = this._coreFactory.buildInstance( new ConstructorVO( null, "hex.ioc.core.MockClassForCoreFactoryTest", null, null, "getInstance" ) );
+		var instance : MockClassForCoreFactoryTest = this._coreFactory.buildInstance( new ConstructorVO( null, "hex.ioc.core.MockClassForCoreFactoryTest", [], null, "getInstance" ) );
 		Assert.isInstanceOf( instance, MockClassForCoreFactoryTest, "should be instance of 'MockClassForCoreFactoryTest'" );
 	}
 	
@@ -241,11 +240,6 @@ private class MockCoreFactoryListener implements ILocatorListener<String, Dynami
 	{
 		this.lastUnregisterKeyReceived = key;
 		this.unregisterEventCount++;
-	}
-	
-	public function handleEvent( e : IEvent ) : Void 
-	{
-		
 	}
 }
 

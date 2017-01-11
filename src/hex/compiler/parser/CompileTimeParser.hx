@@ -2,15 +2,15 @@ package hex.compiler.parser;
 
 import haxe.macro.Context;
 import hex.compiler.parser.xml.ClassImportHelper;
-import hex.ioc.assembler.IApplicationAssembler;
+import hex.core.IApplicationAssembler;
 import hex.ioc.error.IAssemblingExceptionReporter;
-import hex.ioc.parser.AbstractParserCollection;
+import hex.parser.AbstractParserCollection;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class CompileTimeParser<ContentType, ParserType:DSLParser<ContentType>> 
+class CompileTimeParser<ContentType, ParserType:DSLParser<ContentType>, RequestType> 
 {
 	var _contextData 		: ContentType;
 	var _assembler 			: IApplicationAssembler;

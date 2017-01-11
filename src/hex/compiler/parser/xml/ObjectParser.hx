@@ -1,6 +1,8 @@
 package hex.compiler.parser.xml;
 
-import hex.ioc.assembler.AbstractApplicationContext;
+import haxe.macro.Context;
+import hex.core.IApplicationContext;
+import hex.factory.BuildRequest;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.core.ContextTypeList;
@@ -27,7 +29,7 @@ class ObjectParser extends AbstractXmlParser
 	
 	override public function parse() : Void
 	{
-		var applicationContext 	= this.getApplicationAssembler().getApplicationContext( this._getRootApplicationContextName() );
+		var applicationContext 	= this.getApplicationAssembler().getApplicationContext( this._applicationContextName );
 		var iterator 			= this.getContextData().firstElement().elements();
 		
 		while ( iterator.hasNext() )
@@ -36,14 +38,17 @@ class ObjectParser extends AbstractXmlParser
 		}
 	}
 	
-	public function _parseNode( xml : Xml, applicationContext :  AbstractApplicationContext ) : Void
+	public function _parseNode( xml : Xml, applicationContext :  IApplicationContext ) : Void
 	{
-		var assembler = this.getApplicationAssembler();
-		
 		var identifier = xml.get( ContextAttributeList.ID );
 		if ( identifier == null )
 		{
-			this._exceptionReporter.throwMissingIDException( xml );
+			Context.error
+			( 
+				"Parsing error with '" + xml.nodeName + 
+				"' node, 'id' attribute not found.", 
+				this._exceptionReporter.getPosition( xml ) );
+
 		}
 
 		var type 				: String;
@@ -72,7 +77,7 @@ class ObjectParser extends AbstractXmlParser
 			constructorVO.ifList 		= XMLParserUtil.getIfList( xml );
 			constructorVO.ifNotList 	= XMLParserUtil.getIfNotList( xml );
 
-			assembler.buildObject( applicationContext, constructorVO );
+			this._builder.build( OBJECT( constructorVO ) );
 		}
 		else
 		{
@@ -124,19 +129,19 @@ class ObjectParser extends AbstractXmlParser
 					while ( iterator.hasNext() )
 					{
 						var node = iterator.next();
-						var arg = XMLParserUtil._getConstructorVOFromXML( identifier, node );
+						var arg = ObjectParser._getConstructorVOFromXML( identifier, node );
 						arg.filePosition = this._exceptionReporter.getPosition( node );
 						
 						if ( arg.staticRef != null )
 						{
-							var type = this._importHelper.getClassFullyQualifiedNameFromStaticRef( arg.staticRef );
+							var type = this._importHelper.getClassFullyQualifiedNameFromStaticVariable( arg.staticRef );
 							try 
 							{
 								this._importHelper.forceCompilation( type.split( '<' )[ 0 ] );
 								
 							} catch ( e : String ) 
 							{
-								this._exceptionReporter.throwMissingTypeException( type.length > 0 ? type : arg.staticRef, node, ContextAttributeList.STATIC_REF );
+								this._throwMissingTypeException( type.length > 0 ? type : arg.staticRef, node, ContextAttributeList.STATIC_REF );
 							}
 						}
 						else
@@ -149,7 +154,7 @@ class ObjectParser extends AbstractXmlParser
 									
 								} catch ( e : String ) 
 								{
-									this._exceptionReporter.throwMissingTypeException( arg.arguments[ 0 ], node, ContextAttributeList.VALUE );
+									this._throwMissingTypeException( arg.arguments[ 0 ], node, ContextAttributeList.VALUE );
 								}
 							}
 						}
@@ -158,11 +163,28 @@ class ObjectParser extends AbstractXmlParser
 				}
 				else
 				{
+					//TODO please remove that shit
 					var value : String = XMLAttributeUtil.getValue( xml );
 					if ( value != null ) 
 					{
-						var arg = new ConstructorVO( identifier, ContextTypeList.STRING, [ xml.get( ContextAttributeList.VALUE ) ] );
-						args.push( arg ); 
+						if 
+						( 
+							type == ContextTypeList.STRING ||
+							type == ContextTypeList.INT ||
+							type == ContextTypeList.UINT || 
+							type == ContextTypeList.FLOAT || 
+							type == ContextTypeList.BOOLEAN || 
+							type == ContextTypeList.NULL ||
+							type == ContextTypeList.CLASS
+						)
+						{
+							args = [ xml.get( ContextAttributeList.VALUE ) ];
+						}
+						else 
+						{
+							var arg = new ConstructorVO( identifier, ContextTypeList.STRING, [ xml.get( ContextAttributeList.VALUE ) ] );
+							args.push( arg ); 
+						}
 					}
 				}
 			}
@@ -175,12 +197,12 @@ class ObjectParser extends AbstractXmlParser
 				}
 				catch ( e : String )
 				{
-					this._exceptionReporter.throwMissingTypeException( type, xml, ContextAttributeList.TYPE );
+					this._throwMissingTypeException( type, xml, ContextAttributeList.TYPE );
 				}
 			}
 			else
 			{
-				var t = this._importHelper.getClassFullyQualifiedNameFromStaticRef( staticRef );
+				var t = this._importHelper.getClassFullyQualifiedNameFromStaticVariable( staticRef );
 				
 				try
 				{
@@ -188,7 +210,7 @@ class ObjectParser extends AbstractXmlParser
 				}
 				catch ( e : String )
 				{
-					this._exceptionReporter.throwMissingTypeException( t, xml, ContextAttributeList.STATIC_REF );
+					this._throwMissingTypeException( t, xml, ContextAttributeList.STATIC_REF );
 				}
 			}
 
@@ -197,7 +219,7 @@ class ObjectParser extends AbstractXmlParser
 			constructorVO.ifNotList 	= ifNotList;
 			constructorVO.filePosition 	= constructorVO.ref == null ? this._exceptionReporter.getPosition( xml ) : this._exceptionReporter.getPosition( xml, ContextAttributeList.REF );
 
-			assembler.buildObject( applicationContext, constructorVO );
+			this._builder.build( OBJECT( constructorVO ) );
 
 			// Build property.
 			var propertyIterator = xml.elementsNamed( ContextNameList.PROPERTY );
@@ -208,7 +230,7 @@ class ObjectParser extends AbstractXmlParser
 				
 				if ( staticRef != null )
 				{
-					var type = this._importHelper.getClassFullyQualifiedNameFromStaticRef( staticRef );
+					var type = this._importHelper.getClassFullyQualifiedNameFromStaticVariable( staticRef );
 
 					try
 					{
@@ -216,7 +238,7 @@ class ObjectParser extends AbstractXmlParser
 					}
 					catch ( e : String )
 					{
-						this._exceptionReporter.throwMissingTypeException( type, property, ContextAttributeList.STATIC_REF );
+						this._throwMissingTypeException( type, property, ContextAttributeList.STATIC_REF );
 					}
 				}
 				
@@ -231,8 +253,8 @@ class ObjectParser extends AbstractXmlParser
 				propertyVO.filePosition = propertyVO.ref == null ? this._exceptionReporter.getPosition( property ) : this._exceptionReporter.getPosition( property, ContextAttributeList.REF );
 				propertyVO.ifList 		= XMLParserUtil.getIfList( xml );
 				propertyVO.ifNotList 	= XMLParserUtil.getIfNotList( xml );
-				
-				assembler.buildProperty( applicationContext, propertyVO );
+
+				this._builder.build( PROPERTY( propertyVO ) );
 			}
 
 			// Build method call.
@@ -247,20 +269,19 @@ class ObjectParser extends AbstractXmlParser
 				while ( iterator.hasNext() )
 				{
 					var node 			= iterator.next();
-					var arg 			= XMLParserUtil._getConstructorVOFromXML( identifier, node );
+					var arg 			= ObjectParser._getConstructorVOFromXML( identifier, node );
 					arg.filePosition 	= this._exceptionReporter.getPosition( node );
 					
 					if ( arg.staticRef != null )
 					{
-						var type = this._importHelper.getClassFullyQualifiedNameFromStaticRef( arg.staticRef );
+						var type = this._importHelper.getClassFullyQualifiedNameFromStaticVariable( arg.staticRef );
 						try 
 						{
-							var type = this._importHelper.getClassFullyQualifiedNameFromStaticRef( staticRef );
-							this._importHelper.forceCompilation( type.split( '<' )[ 0 ] );
+							this._importHelper.forceCompilation( type );
 							
 						} catch ( e : String ) 
 						{
-							this._exceptionReporter.throwMissingTypeException( type.length > 0 ? type : arg.staticRef, node, ContextAttributeList.STATIC_REF );
+							this._throwMissingTypeException( type.length > 0 ? type : arg.staticRef, node, ContextAttributeList.STATIC_REF );
 						}
 					}
 					else
@@ -273,7 +294,7 @@ class ObjectParser extends AbstractXmlParser
 								
 							} catch ( e : String ) 
 							{
-								this._exceptionReporter.throwMissingTypeException( arg.arguments[ 0 ], node, ContextAttributeList.VALUE );
+								this._throwMissingTypeException( arg.arguments[ 0 ], node, ContextAttributeList.VALUE );
 							}
 						}
 					}
@@ -286,7 +307,7 @@ class ObjectParser extends AbstractXmlParser
 				methodCallVO.ifList 		= XMLParserUtil.getIfList( methodCallItem );
 				methodCallVO.ifNotList 		= XMLParserUtil.getIfNotList( methodCallItem );
 				
-				assembler.buildMethodCall( applicationContext, methodCallVO );
+				this._builder.build( METHOD_CALL( methodCallVO ) );
 			}
 
 			// Build channel listener.
@@ -311,7 +332,7 @@ class ObjectParser extends AbstractXmlParser
 						var staticRef = listenerArg.staticRef;
 						if ( staticRef != null )
 						{
-							var type = this._importHelper.getClassFullyQualifiedNameFromStaticRef( staticRef );
+							var type = this._importHelper.getClassFullyQualifiedNameFromStaticVariable( staticRef );
 							
 							try
 							{
@@ -319,7 +340,7 @@ class ObjectParser extends AbstractXmlParser
 							}
 							catch ( e : String )
 							{
-								this._exceptionReporter.throwMissingTypeException( type, node, ContextAttributeList.STATIC_REF );
+								this._throwMissingTypeException( type, node, ContextAttributeList.STATIC_REF );
 							}
 						}
 						
@@ -330,17 +351,22 @@ class ObjectParser extends AbstractXmlParser
 					domainListenerVO.filePosition 	= this._exceptionReporter.getPosition( listener );
 					domainListenerVO.ifList 		= XMLParserUtil.getIfList( listener );
 					domainListenerVO.ifNotList 		= XMLParserUtil.getIfNotList( listener );
-					
-					assembler.buildDomainListener( applicationContext, domainListenerVO );
+
+					this._builder.build( DOMAIN_LISTENER( domainListenerVO ) );
 				}
 				else
 				{
-					this._exceptionReporter.throwMissingListeningReferenceException( xml, listener );
+					Context.error
+					( 
+						"Parsing error with '" + xml.nodeName + 
+							"' node, 'ref' attribute is mandatory in a 'listen' node.", 
+						this._exceptionReporter.getPosition( listener ) );
+	
 				}
 			}
 		}
 	}
-	
+
 	function _getMapArguments( ownerID : String, xml : Xml, exceptionReporter : IAssemblingExceptionReporter<Xml> ) : Array<MapVO>
 	{
 		var args : Array<MapVO> = [];
@@ -370,5 +396,37 @@ class ObjectParser extends AbstractXmlParser
 		}
 
 		return args;
+	}
+	
+	static function _getConstructorVOFromXML( ownerID : String, item : Xml ) : ConstructorVO
+	{
+		var method 		= item.get( ContextAttributeList.METHOD );
+		var ref 		= item.get( ContextAttributeList.REF );
+		var staticRef 	= item.get( ContextAttributeList.STATIC_REF );
+		var factory 	= item.get( ContextAttributeList.FACTORY_METHOD );
+		
+		if ( method != null )
+		{
+			return new ConstructorVO( null, ContextTypeList.FUNCTION, [ method ] );
+
+		} else if ( ref != null )
+		{
+			return new ConstructorVO( null, ContextTypeList.INSTANCE, null, null, null, false, item.get( ContextAttributeList.REF ) );
+
+		} else if ( staticRef != null /*&& factory == null*/ )
+		{
+			return new ConstructorVO( null, ContextTypeList.STATIC_VARIABLE, null, null, null, false, null, null, item.get( ContextAttributeList.STATIC_REF ) );
+
+		} else
+		{
+			var type : String = item.get( ContextAttributeList.TYPE );
+			
+			if ( type == null )
+			{
+				type = ContextTypeList.STRING;
+			}
+
+			return new ConstructorVO( ownerID, type, [ item.get( ContextAttributeList.VALUE ) ] );
+		}
 	}
 }

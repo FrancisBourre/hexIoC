@@ -1,11 +1,13 @@
 package hex.ioc.assembler;
 
+import hex.core.ICoreFactory;
 import hex.event.IDispatcher;
 import hex.event.MessageType;
-import hex.ioc.core.ICoreFactory;
 import hex.state.State;
 import hex.state.StateMachine;
 import hex.state.control.StateController;
+
+using hex.di.util.InjectionUtil;
 
 /**
  * ...
@@ -23,6 +25,8 @@ class ApplicationContext extends AbstractApplicationContext
 	function new( dispatcher : IDispatcher<{}>, coreFactory : ICoreFactory, name : String )
 	{
 		super( coreFactory, name );
+		
+		coreFactory.getInjector().mapClassNameToValue( "hex.event.IDispatcher<{}>", dispatcher, name );
 		this._dispatcher = dispatcher;
 		this._initStateMachine();
 	}

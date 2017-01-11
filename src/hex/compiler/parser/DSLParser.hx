@@ -2,7 +2,7 @@ package hex.compiler.parser;
 
 import hex.compiler.parser.xml.ClassImportHelper;
 import hex.ioc.error.IAssemblingExceptionReporter;
-import hex.ioc.parser.AbstractContextParser;
+import hex.parser.AbstractContextParser;
 
 /**
  * ...

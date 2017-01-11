@@ -1,12 +1,12 @@
 package hex.compiler.parser.flow;
 
 import hex.compiler.parser.xml.ClassImportHelper;
-import hex.ioc.assembler.ApplicationAssembler;
+import hex.core.IApplicationAssembler;
 
 #if macro
 import haxe.macro.Expr;
-import hex.compiler.assembler.CompileTimeApplicationAssembler;
-import hex.compiler.parser.preprocess.MacroConditionalVariablesProcessor;
+import hex.compiletime.CompileTimeApplicationAssembler;
+import hex.preprocess.MacroConditionalVariablesProcessor;
 import hex.ioc.assembler.ConditionalVariablesChecker;
 #end
 
@@ -17,7 +17,7 @@ import hex.ioc.assembler.ConditionalVariablesChecker;
 class FlowCompiler 
 {
 	#if macro
-	static function _readFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr, ?applicationAssemblerExpr : Expr ) : ExprOf<ApplicationAssembler>
+	static function _readFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr, ?applicationAssemblerExpr : Expr ) : ExprOf<IApplicationAssembler>
 	{
 		var conditionalVariablesMap 	= MacroConditionalVariablesProcessor.parse( conditionalVariables );
 		var conditionalVariablesChecker = new ConditionalVariablesChecker( conditionalVariablesMap );
@@ -30,19 +30,19 @@ class FlowCompiler
 		var parser 						= new CompileTimeParser( new ParserCollection() );
 		
 		parser.setImportHelper( new ClassImportHelper() );
-		//parser.setExceptionReporter( new XmlAssemblingExceptionReporter( positionTracker ) );
+		parser.setExceptionReporter( new FlowAssemblingExceptionReporter( /*positionTracker*/ ) );
 		parser.parse( assembler, document );
 		
 		return assembler.getMainExpression();
 	}
 	#end
 
-	macro public static function compile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<ApplicationAssembler>
+	macro public static function compile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
 	{
 		return FlowCompiler._readFile( fileName, preprocessingVariables, conditionalVariables );
 	}
 	
-	macro public static function compileWithAssembler( assemblerExpr : Expr, fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<ApplicationAssembler>
+	macro public static function compileWithAssembler( assemblerExpr : Expr, fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
 	{
 		return FlowCompiler._readFile( fileName, preprocessingVariables, conditionalVariables, assemblerExpr );
 	}

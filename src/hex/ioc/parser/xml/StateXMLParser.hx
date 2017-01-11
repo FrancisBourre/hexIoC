@@ -31,9 +31,6 @@ class StateXMLParser extends AbstractXMLParser
 	
 	function _parseNode( xml : Xml ) : Void
 	{
-		var applicationContext = this.getApplicationContext();
-		var applicationAssembler = this.getApplicationAssembler();
-
 		var identifier : String = XMLAttributeUtil.getID( xml );
 		if ( identifier == null )
 		{
@@ -50,7 +47,7 @@ class StateXMLParser extends AbstractXMLParser
 		stateTransitionVO.ifList 	= XMLParserUtil.getIfList( xml );
 		stateTransitionVO.ifNotList = XMLParserUtil.getIfNotList( xml );
 		
-		applicationAssembler.configureStateTransition( applicationContext, stateTransitionVO );
+		this._builder.build( STATE_TRANSITION( stateTransitionVO ) );
 	}
 	
 	function _buildList( xml : Xml, nodeName : String ) : Array<CommandMappingVO>

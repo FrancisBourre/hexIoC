@@ -10,8 +10,8 @@ import hex.error.IllegalArgumentException;
 import hex.error.NoSuchElementException;
 import hex.event.ClosureDispatcher;
 import hex.event.MessageType;
-import hex.ioc.core.ICoreFactory;
-import hex.ioc.vo.ConstructorVODef;
+import hex.core.ICoreFactory;
+import hex.core.CoreFactoryVODef;
 import hex.log.Stringifier;
 import hex.metadata.IAnnotationProvider;
 import hex.service.IService;
@@ -188,7 +188,7 @@ class CompileTimeCoreFactory implements ICoreFactory
 		return this._dispatcher.removeHandler( LocatorMessage.UNREGISTER, listener.onUnregister ) || b;
     }
 	
-	public function buildInstance( constructorVO : ConstructorVODef ) : Dynamic
+	public function buildInstance( constructorVO : CoreFactoryVODef ) : Dynamic
 	{
 		return null;
 	}

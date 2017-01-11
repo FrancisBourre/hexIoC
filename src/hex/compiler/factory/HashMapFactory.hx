@@ -1,11 +1,10 @@
 package hex.compiler.factory;
 
 import haxe.macro.Context;
+import haxe.macro.Expr;
 import haxe.macro.TypeTools;
 import hex.error.PrivateConstructorException;
-import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.FactoryVO;
-import hex.ioc.vo.MapVO;
 
 /**
  * ...
@@ -20,39 +19,50 @@ class HashMapFactory
     }
 
 	#if macro
-	static public function build( factoryVO : FactoryVO ) : Dynamic
+	static public function build( factoryVO : FactoryVO ) : Expr
 	{
-		var constructorVO : ConstructorVO = factoryVO.constructorVO;
-		var args : Array<MapVO> = cast constructorVO.arguments;
+		var constructorVO 		= factoryVO.constructorVO;
+		var idVar 				= constructorVO.ID;
+		var args 				= MapArgumentFactory.build( factoryVO );
 		
-		var idVar 	= constructorVO.ID;
-		var e 	= Context.parseInlineString( "new " + constructorVO.type + "()", constructorVO.filePosition );
-		var varType = TypeTools.toComplexType( Context.typeof( e ) );
-		factoryVO.expressions.push( macro @:mergeBlock { var $idVar : $varType = $e; } );
-		
-		/*var params = [ TPType( macro:Dynamic ), TPType( macro:Dynamic ) ];
-		var typePath = MacroUtil.getTypePath( Type.getClassName( HashMap ), params );*/
-	
-		var extVar = macro $i{ idVar };
-		if ( args.length == 0 )
+		var e = Context.parseInlineString( "new " + constructorVO.type + "()", constructorVO.filePosition );
+		if ( constructorVO.shouldAssign )
 		{
-			Context.warning( "HashMapFactory.build(" + args + ") returns an empty HashMap.", constructorVO.filePosition );
-
-		} else
-		{
-			for ( item in args )
+			var varType = TypeTools.toComplexType( Context.typeof( e ) );
+			var result 	= macro @:pos( constructorVO.filePosition ) var $idVar : $varType = $e;
+			
+			if ( args.length == 0 )
 			{
-				if ( item.key != null )
+				#if debug
+				Context.warning( "Empty HashMap built.", constructorVO.filePosition );
+				#end
+
+			} else
+			{
+				for ( item in args )
 				{
-					var a = [ item.key, item.value ];
-					factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { $extVar.put( $a{ a } ); } );
-					
-				} else
-				{
-					Context.warning( "HashMapFactory.build() adds item with a 'null' key for '"  + item.value +"' value.", constructorVO.filePosition );
+					if ( item.key != null )
+					{
+						var a = [ item.key, item.value ];
+						
+						//Fill with arguments
+						result = macro 	@:pos( constructorVO.filePosition ) 
+						@:mergeBlock 
+						{
+							$result; 
+							$i{ idVar }.put( $a{ a } ); 
+						};
+						
+					} else
+					{
+						#if debug
+						Context.warning( "'null' key for '"  + item.value +"' value added.", constructorVO.filePosition );
+						#end
+					}
 				}
 			}
 			
+			//Mapping
 			if ( constructorVO.mapTypes != null )
 			{
 				var mapTypes = constructorVO.mapTypes;
@@ -65,17 +75,23 @@ class HashMapFactory
 					mapType = mapType.split( ' ' ).join( '' );
 					
 					//Map it
-					factoryVO.expressions.push
-					( 
-						macro @:pos( constructorVO.filePosition ) 
-							@:mergeBlock { __applicationContextInjector
-								.mapClassNameToValue( $v { mapType }, $extVar, $v { idVar } ); } 
-					);
+					result = macro 	@:pos( constructorVO.filePosition ) 
+					@:mergeBlock 
+					{
+						$result; 
+						__applicationContextInjector.mapClassNameToValue
+						( $v { mapType }, $i{ idVar }, $v{ idVar } 
+						);
+					};
 				}
 			}
+			
+			return result;
 		}
-		
-		return e;
+		else
+		{
+			return macro @:pos( constructorVO.filePosition ) $e;
+		}
 	}
 	#end
 }

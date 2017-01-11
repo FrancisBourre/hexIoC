@@ -4,6 +4,7 @@ import haxe.Timer;
 import hex.collection.HashMap;
 import hex.config.stateful.ServiceLocator;
 import hex.control.command.BasicCommand;
+import hex.core.IApplicationAssembler;
 import hex.di.Injector;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
@@ -13,9 +14,12 @@ import hex.error.NoSuchElementException;
 import hex.event.Dispatcher;
 import hex.event.EventProxy;
 import hex.ioc.assembler.AbstractApplicationContext;
-import hex.ioc.assembler.ApplicationAssembler;
+import hex.ioc.parser.xml.mock.MockMethodCaller;
+import hex.ioc.parser.xml.mock.MockObjectWithRegtangleProperty;
+import hex.ioc.parser.xml.state.mock.MockStateMessage;
+import hex.runtime.ApplicationAssembler;
 import hex.ioc.core.IContextFactory;
-import hex.ioc.core.ICoreFactory;
+import hex.core.ICoreFactory;
 import hex.ioc.di.MappingConfiguration;
 import hex.ioc.parser.xml.ApplicationXMLParser;
 import hex.ioc.parser.xml.mock.AnotherMockAmazonService;
@@ -54,6 +58,7 @@ import hex.ioc.parser.xml.mock.MockServiceProvider;
 import hex.ioc.parser.xml.mock.MockStubStatefulService;
 import hex.ioc.parser.xml.mock.MockTranslationModule;
 import hex.metadata.AnnotationProvider;
+import hex.metadata.IAnnotationProvider;
 import hex.structures.Point;
 import hex.structures.Size;
 import hex.unittest.assertion.Assert;
@@ -68,9 +73,9 @@ class XmlCompilerTest
 	var _contextParser 				: ApplicationXMLParser;
 	var _applicationContext 		: AbstractApplicationContext;
 	var _contextFactory 			: IContextFactory;
-	var _applicationAssembler 		: ApplicationAssembler;
+	var _applicationAssembler 		: IApplicationAssembler;
 	
-	static var applicationAssembler : ApplicationAssembler;
+	static var applicationAssembler : IApplicationAssembler;
 
 	@Before
 	public function setUp() : Void
@@ -94,7 +99,7 @@ class XmlCompilerTest
 	public function testBuildingStringWithAssembler() : Void
 	{
 		var assembler = new ApplicationAssembler();
-		assembler.getContextFactory( assembler.getApplicationContext( "applicationContext" ) ).getCoreFactory().register( "s2", "bonjour" );
+		assembler.getApplicationContext( "applicationContext" ).getCoreFactory().register( "s2", "bonjour" );
 		
 		this._applicationAssembler = XmlCompiler.readXmlFileWithAssembler( assembler, "context/testBuildingString.xml" );
 
@@ -417,7 +422,7 @@ class XmlCompilerTest
 	public function testInjectorCreationAttribute() : Void
 	{
 		var assembler = new ApplicationAssembler();
-		var injector = assembler.getContextFactory( assembler.getApplicationContext( "applicationContext" ) ).getCoreFactory().getInjector();
+		var injector = assembler.getApplicationContext( "applicationContext" ).getCoreFactory().getInjector();
 		injector.mapToValue( String, 'hola mundo' );
 		
 		this._applicationAssembler = XmlCompiler.readXmlFileWithAssembler( assembler, "context/injectorCreationAttribute.xml" );
@@ -432,7 +437,7 @@ class XmlCompilerTest
 	public function testInjectIntoAttribute() : Void
 	{
 		var assembler = new ApplicationAssembler();
-		var injector = assembler.getContextFactory( assembler.getApplicationContext( "applicationContext" ) ).getCoreFactory().getInjector();
+		var injector = assembler.getApplicationContext( "applicationContext" ).getCoreFactory().getInjector();
 		injector.mapToValue( String, 'hola mundo' );
 
 		this._applicationAssembler = XmlCompiler.readXmlFileWithAssembler( assembler, "context/injectIntoAttribute.xml" );
@@ -635,6 +640,16 @@ class XmlCompilerTest
 		Assert.equals( MockAmazonService, amazonServiceClass, "" );
 	}
 	
+	@Test( "test target sub property" )
+	public function testTargetSubProperty() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/targetSubProperty.xml" );
+
+		var mockObject : MockObjectWithRegtangleProperty = this._getCoreFactory().locate( "mockObject" );
+		Assert.isInstanceOf( mockObject, MockObjectWithRegtangleProperty );
+		Assert.equals( 1.5, mockObject.rectangle.x );
+	}
+	
 	@Test( "test building class reference" )
 	public function testBuildingClassReference() : Void
 	{
@@ -812,6 +827,16 @@ class XmlCompilerTest
 		Assert.equals( instance.constant, MockStubStatefulService.INT_VO_UPDATE, "" );
 	}
 	
+	@Test( "test static-ref argument on method-call" )
+	public function testStaticArgumentOnMethodCall() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/staticRefArgumentOnMethodCall.xml" );
+
+		var instance : MockMethodCaller = this._getCoreFactory().locate( "instance" );
+		Assert.isNotNull( instance, "" );
+		Assert.equals( MockMethodCaller.staticVar, instance.argument, "" );
+	}
+	
 	@Test( "test map-type attribute" )
 	public function testMapTypeAttribute() : Void
 	{
@@ -973,7 +998,7 @@ class XmlCompilerTest
 	{
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/testMockObjectWithAnnotation.xml" );
 		
-		var annotationProvider = this._applicationAssembler.getContextFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) ).getAnnotationProvider();
+		var annotationProvider : IAnnotationProvider = this._applicationAssembler.getApplicationContext( "applicationContext" ).getInjector().getInstance( IAnnotationProvider );
 
 		annotationProvider.registerMetaData( "color", this.getColorByName );
 		annotationProvider.registerMetaData( "language", this.getText );
@@ -993,7 +1018,7 @@ class XmlCompilerTest
 		
 		XmlCompiler.readXmlFileWithAssembler( assembler, "context/testMockObjectWithAnnotation.xml" );
 		
-		var annotationProvider = this._applicationAssembler.getContextFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) ).getAnnotationProvider();
+		var annotationProvider : IAnnotationProvider = this._applicationAssembler.getApplicationContext( "applicationContext" ).getInjector().getInstance( IAnnotationProvider );
 		annotationProvider.registerMetaData( "color", this.getColorByName );
 		annotationProvider.registerMetaData( "language", this.getText );
 		
@@ -1038,7 +1063,7 @@ class XmlCompilerTest
 		
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/macroWithAnnotation.xml" );
 		
-		var annotationProvider = this._applicationAssembler.getContextFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) ).getAnnotationProvider();
+		var annotationProvider : IAnnotationProvider = this._applicationAssembler.getApplicationContext( "applicationContext" ).getInjector().getInstance( IAnnotationProvider );
 
 		Assert.equals( "value", MockMacroWithAnnotation.lastResult, "text should be the same" );
 		Assert.equals( "value", MockCommandWithAnnotation.lastResult, "text should be the same" );

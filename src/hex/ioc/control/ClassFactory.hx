@@ -1,8 +1,8 @@
 package hex.ioc.control;
 
-import hex.ioc.vo.FactoryVO;
 import hex.error.IllegalArgumentException;
-import hex.ioc.vo.ConstructorVO;
+import hex.error.PrivateConstructorException;
+import hex.ioc.vo.FactoryVO;
 
 /**
  * ...
@@ -10,16 +10,17 @@ import hex.ioc.vo.ConstructorVO;
  */
 class ClassFactory
 {
-	function new()
-	{
-
-	}
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
 	
-	static public function build( factoryVO : FactoryVO ) : Void
+	static public function build( factoryVO : FactoryVO ) : Class<Dynamic>
 	{
-		var constructorVO 		: ConstructorVO = factoryVO.constructorVO;
-		var clazz 				: Class<Dynamic>;
-		var qualifiedClassName 	: String = "";
+		var constructorVO 		= factoryVO.constructorVO;
+		var result 				: Class<Dynamic>;
+		var qualifiedClassName 	= "";
 		
 		var args = constructorVO.arguments;
 
@@ -30,18 +31,18 @@ class ClassFactory
 
 		try
 		{
-			clazz = Type.resolveClass( qualifiedClassName );
+			result = Type.resolveClass( qualifiedClassName );
 		}
 		catch ( e : Dynamic )
 		{
-			clazz = null;
+			result = null;
 		}
 		
-		if ( clazz == null )
+		if ( result == null )
 		{
 			throw new IllegalArgumentException( "'" + qualifiedClassName + "' is not available" );
 		}
 
-		constructorVO.result = clazz;
+		return result;
 	}
 }

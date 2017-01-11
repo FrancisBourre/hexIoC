@@ -1,6 +1,8 @@
 package hex.compiler.parser.xml;
 
-import hex.ioc.assembler.AbstractApplicationContext;
+import haxe.macro.Context;
+import hex.core.IApplicationContext;
+import hex.factory.BuildRequest;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.parser.xml.XMLParserUtil;
@@ -22,7 +24,7 @@ class StateParser extends AbstractXmlParser
 	
 	override public function parse() : Void
 	{
-		var applicationContext 	= this.getApplicationAssembler().getApplicationContext( this._getRootApplicationContextName() );
+		var applicationContext 	= this.getApplicationAssembler().getApplicationContext( this._applicationContextName );
 		var iterator 			= this.getContextData().firstElement().elementsNamed( "state" );
 		
 		while ( iterator.hasNext() )
@@ -33,12 +35,16 @@ class StateParser extends AbstractXmlParser
 		}
 	}
 	
-	function _parseNode( applicationContext : AbstractApplicationContext, xml : Xml ) : Void
+	function _parseNode( applicationContext : IApplicationContext, xml : Xml ) : Void
 	{
 		var identifier = xml.get( ContextAttributeList.ID );
 		if ( identifier == null )
 		{
-			this._exceptionReporter.throwMissingIDException( xml );
+			Context.error
+			( 
+				"Parsing error with '" + xml.nodeName + 
+				"' node, 'id' attribute not found.", 
+				this._exceptionReporter.getPosition( xml ) );
 		}
 		
 		var staticReference 		= xml.get( ContextAttributeList.STATIC_REF );
@@ -53,7 +59,7 @@ class StateParser extends AbstractXmlParser
 		stateTransitionVO.ifNotList = XMLParserUtil.getIfNotList( xml );
 		
 		stateTransitionVO.filePosition 	= this._exceptionReporter.getPosition( xml );
-		this._applicationAssembler.configureStateTransition( applicationContext, stateTransitionVO );
+		this._builder.build( STATE_TRANSITION( stateTransitionVO ) );
 	}
 	
 	function _getCommandList( xml : Xml, elementName : String ) : Array<CommandMappingVO>
@@ -71,7 +77,7 @@ class StateParser extends AbstractXmlParser
 			}
 			catch ( e : String )
 			{
-				this._exceptionReporter.throwMissingTypeException( commandClass, item, ContextAttributeList.COMMAND_CLASS );
+				this._throwMissingTypeException( commandClass, item, ContextAttributeList.COMMAND_CLASS );
 			}
 
 			var commandMappingVO = 	{ 	commandClassName: commandClass, 

@@ -2,7 +2,7 @@ package hex.util;
 
 import hex.error.IllegalArgumentException;
 import hex.ioc.assembler.ApplicationContext;
-import hex.ioc.core.ICoreFactory;
+import hex.core.ICoreFactory;
 
 /**
  * ...

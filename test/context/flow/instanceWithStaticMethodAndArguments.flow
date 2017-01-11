@@ -1,13 +1,4 @@
 @context( name = 'applicationContext' )
 {
-	/*
-	factory = hex.ioc.parser.xml.mock.MockRectangleFactory;
-	rect = factory.getRectangle( 10, 20, 30, 40 );
-	*/
-	
-
 	rect = hex.ioc.parser.xml.mock.MockRectangleFactory.getRectangle( 10, 20, 30, 40 );
-	
-	
-	//rect = @Factory hex.ioc.parser.xml.mock.MockRectangleFactor.getRectangle( 10, 20, 30, 40 );
 }

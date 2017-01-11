@@ -17,15 +17,14 @@ class ClassFactoryTest
     {
 		var helper = new FactoryVO();
 		helper.constructorVO 			= new ConstructorVO( "test", "Class", ["hex.structures.Size"] );
-		ClassFactory.build( helper );
-		Assert.equals( helper.constructorVO.result, Size, "constructorVO.result should be an instance of 'Size' class" );
+		Assert.equals( ClassFactory.build( helper ), Size, "constructorVO.result should be an instance of 'Size' class" );
 	}
 	
 	@Test( "Test execute with invalid argument" )
     public function testExecuteWithInvalidArgument() : Void
     {
 		var helper = new FactoryVO();
-		helper.constructorVO 			= new ConstructorVO( "test", "Class", ["a"] );
+		helper.constructorVO = new ConstructorVO( "test", "Class", ["a"] );
 		Assert.methodCallThrows( IllegalArgumentException, ClassFactory, ClassFactory.build, [ helper ], "command execution should throw IllegalArgumentException" );
 	}
 	

@@ -2,8 +2,8 @@ package hex.ioc.control;
 
 import hex.error.IllegalArgumentException;
 import hex.ioc.control.IntFactory;
-import hex.ioc.vo.FactoryVO;
 import hex.ioc.vo.ConstructorVO;
+import hex.ioc.vo.FactoryVO;
 import hex.unittest.assertion.Assert;
 
 /**
@@ -16,9 +16,8 @@ class IntFactoryTest
     public function testExecuteWithPositiveValue() : Void
     {
 		var helper = new FactoryVO();
-		helper.constructorVO 		= new ConstructorVO( "test", "Int", ["4"] );
-		IntFactory.build( helper );
-		Assert.equals( 4, helper.constructorVO.result, "constructorVO.result should equal 4" );
+		helper.constructorVO = new ConstructorVO( "test", "Int", ["4"] );
+		Assert.equals( 4, IntFactory.build( helper ), "constructorVO.result should equal 4" );
 	}
 	
 	@Test( "Test execute with negative value" )
@@ -26,15 +25,14 @@ class IntFactoryTest
     {
 		var helper = new FactoryVO();
 		helper.constructorVO = new ConstructorVO( "test", "Int", ["-4"] );
-		IntFactory.build( helper );
-		Assert.equals( -4, helper.constructorVO.result, "constructorVO.result should equal -4" );
+		Assert.equals( -4, IntFactory.build( helper ), "constructorVO.result should equal -4" );
 	}
 	
 	@Test( "Test execute with invalid argument" )
     public function testExecuteWithInvalidArgument() : Void
     {
 		var helper = new FactoryVO();
-		helper.constructorVO 		= new ConstructorVO( "test", "Int", ["a"] );
+		helper.constructorVO = new ConstructorVO( "test", "Int", ["a"] );
 		Assert.methodCallThrows( IllegalArgumentException, IntFactory, IntFactory.build, [ helper ], "command execution should throw IllegalArgumentException" );
 	}
 	
@@ -42,7 +40,7 @@ class IntFactoryTest
     public function testExecuteWithNoArgumentArray() : Void
     {
 		var helper = new FactoryVO();
-		helper.constructorVO 			= new ConstructorVO( "test", "Int", null );
+		helper.constructorVO = new ConstructorVO( "test", "Int", null );
 		Assert.methodCallThrows( IllegalArgumentException, IntFactory, IntFactory.build, [ helper ], "command execution should throw IllegalArgumentException" );
 	}
 	
@@ -50,7 +48,7 @@ class IntFactoryTest
     public function testExecuteWithEmptyArgumentArray() : Void
     {
 		var helper = new FactoryVO();
-		helper.constructorVO 			= new ConstructorVO( "test", "Int", [] );
+		helper.constructorVO = new ConstructorVO( "test", "Int", [] );
 		Assert.methodCallThrows( IllegalArgumentException, IntFactory, IntFactory.build, [ helper ], "command execution should throw IllegalArgumentException" );
 	}
 	
@@ -58,7 +56,7 @@ class IntFactoryTest
     public function testExecuteWithNullArgument() : Void
     {
 		var helper = new FactoryVO();
-		helper.constructorVO 			= new ConstructorVO( "test", "Int", [ null ] );
+		helper.constructorVO = new ConstructorVO( "test", "Int", [ null ] );
 		Assert.methodCallThrows( IllegalArgumentException, IntFactory, IntFactory.build, [ helper ], "command execution should throw IllegalArgumentException" );
 	}
 }

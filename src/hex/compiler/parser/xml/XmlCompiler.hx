@@ -1,11 +1,11 @@
 package hex.compiler.parser.xml;
 
-import hex.ioc.assembler.ApplicationAssembler;
+import hex.core.IApplicationAssembler;
 
 #if macro
 import haxe.macro.Expr;
-import hex.compiler.assembler.CompileTimeApplicationAssembler;
-import hex.compiler.parser.preprocess.MacroConditionalVariablesProcessor;
+import hex.compiletime.CompileTimeApplicationAssembler;
+import hex.preprocess.MacroConditionalVariablesProcessor;
 import hex.ioc.assembler.ConditionalVariablesChecker;
 import hex.ioc.parser.xml.XmlAssemblingExceptionReporter;
 #end
@@ -19,7 +19,7 @@ using StringTools;
 class XmlCompiler
 {
 	#if macro
-	static function _readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr, ?applicationAssemblerExpr : Expr ) : ExprOf<ApplicationAssembler>
+	static function _readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr, ?applicationAssemblerExpr : Expr ) : ExprOf<IApplicationAssembler>
 	{
 		var conditionalVariablesMap 	= MacroConditionalVariablesProcessor.parse( conditionalVariables );
 		var conditionalVariablesChecker = new ConditionalVariablesChecker( conditionalVariablesMap );
@@ -39,12 +39,12 @@ class XmlCompiler
 	}
 	#end
 	
-	macro public static function readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<ApplicationAssembler>
+	macro public static function readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
 	{
 		return _readXmlFile( fileName, preprocessingVariables, conditionalVariables );
 	}
 	
-	macro public static function readXmlFileWithAssembler( assemblerExpr : Expr, fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<ApplicationAssembler>
+	macro public static function readXmlFileWithAssembler( assemblerExpr : Expr, fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
 	{
 		return _readXmlFile( fileName, preprocessingVariables, conditionalVariables, assemblerExpr );
 	}

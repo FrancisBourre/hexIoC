@@ -1,8 +1,8 @@
 package hex.ioc.control;
 
-import hex.ioc.vo.FactoryVO;
 import hex.error.IllegalArgumentException;
-import hex.ioc.vo.ConstructorVO;
+import hex.error.PrivateConstructorException;
+import hex.ioc.vo.FactoryVO;
 
 /**
  * ...
@@ -10,16 +10,17 @@ import hex.ioc.vo.ConstructorVO;
  */
 class BoolFactory
 {
-	function new()
-	{
-
-	}
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
 	
-	static public function build( factoryVO : FactoryVO ) : Void
+	static public function build( factoryVO : FactoryVO ) : Bool
 	{
-		var constructorVO : ConstructorVO = factoryVO.constructorVO;
-
-		var value : String 	= "";
+		var result 			= false;
+		var constructorVO 	= factoryVO.constructorVO;
+		var value 			= "";
 		var args 			= constructorVO.arguments;
 
 		if ( args != null && args.length > 0 ) 
@@ -29,15 +30,17 @@ class BoolFactory
 		
 		if ( value == "true" )
 		{
-			constructorVO.result = true;
+			result = true;
 		}
 		else if ( value == "false" )
 		{
-			constructorVO.result = false;
+			result = false;
 		}
 		else
 		{
 			throw new IllegalArgumentException( "BoolFactory.build(" + value + ") failed." );
 		}
+		
+		return result;
 	}
 }

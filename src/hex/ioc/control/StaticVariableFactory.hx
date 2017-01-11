@@ -1,6 +1,6 @@
 package hex.ioc.control;
 
-import hex.ioc.vo.ConstructorVO;
+import hex.error.PrivateConstructorException;
 import hex.ioc.vo.FactoryVO;
 import hex.util.ClassUtil;
 
@@ -10,14 +10,14 @@ import hex.util.ClassUtil;
  */
 class StaticVariableFactory
 {
-	function new()
-	{
-
-	}
-
-	static public function build( factoryVO : FactoryVO ) : Void
-	{
-		var constructorVO : ConstructorVO = factoryVO.constructorVO;
-		constructorVO.result = ClassUtil.getStaticVariableReference( constructorVO.staticRef );
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
+	
+	static public function build( factoryVO : FactoryVO ) : Dynamic
+	{ 
+		return ClassUtil.getStaticVariableReference( factoryVO.constructorVO.staticRef );
 	}
 }

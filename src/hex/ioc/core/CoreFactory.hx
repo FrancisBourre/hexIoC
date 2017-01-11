@@ -2,17 +2,17 @@ package hex.ioc.core;
 
 import hex.collection.ILocatorListener;
 import hex.collection.LocatorMessage;
+import hex.core.CoreFactoryVODef;
 import hex.core.IAnnotationParsable;
+import hex.core.ICoreFactory;
 import hex.di.IDependencyInjector;
 import hex.error.IllegalArgumentException;
 import hex.error.NoSuchElementException;
 import hex.event.ClosureDispatcher;
 import hex.event.MessageType;
-import hex.ioc.vo.ConstructorVODef;
 import hex.log.Stringifier;
 import hex.metadata.IAnnotationProvider;
 import hex.service.IService;
-import hex.util.ArrayUtil;
 import hex.util.ClassUtil;
 import hex.util.FastEval;
 
@@ -37,11 +37,13 @@ class CoreFactory implements ICoreFactory
 		this._dispatcher 			= new ClosureDispatcher();
 		this._map 					= new Map();
 		this._classPaths 			= new Map();
+		
+		this.addProxyFactoryMethod( 'hex.event.MessageType', this, this._makeMessageType );
 	}
 	
-	public function getAnnotationProvider() : IAnnotationProvider 
+	function _makeMessageType( s : String ) : String
 	{
-		return this._annotationProvider;
+		return s;
 	}
 	
 	public function addHandler( messageType : MessageType, callback : Dynamic ) : Bool
@@ -181,7 +183,7 @@ class CoreFactory implements ICoreFactory
         }
 	}
 	
-	public function buildInstance( constructorVO : ConstructorVODef ) : Dynamic
+	public function buildInstance( constructorVO : CoreFactoryVODef ) : Dynamic
 	{
 		var qualifiedClassName 	= constructorVO.className;
 		var args 				= constructorVO.arguments;

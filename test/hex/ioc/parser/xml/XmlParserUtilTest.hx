@@ -14,7 +14,7 @@ class XmlParserUtilTest
 	{
 		var xml : String = '<size id="rectSize" type="flash.geom.Point"><argument type="Int" value="30"/><argument type="Bool" value="true"/></size>';
 		var argXML : Xml = Xml.parse( xml );
-		var args : Array<ConstructorVO> = XMLParserUtil.getArguments( "ownerID", argXML.firstElement(), "" );
+		var args = XMLParserUtil.getArguments( "ownerID", argXML.firstElement(), "" );
 
 		Assert.equals( 2, args.length, "Arguments length should be 2" );
 		Assert.equals( "Int", args[0].className, "Type should be 'Int'" );
@@ -28,7 +28,7 @@ class XmlParserUtilTest
 	{
 		var xml : String = '<class id="userInfoServiceNoteClass" type="Class" value="service.userinfo.note.UserInfoServiceNote"/>';
 		var argXML : Xml = Xml.parse( xml );
-		var args : Array<ConstructorVO> = XMLParserUtil.getArguments( "ownerID", argXML.firstElement(), "" );
+		var args = XMLParserUtil.getArguments( "ownerID", argXML.firstElement(), "" );
 		
 		Assert.equals( 1, args.length, "Arguments length should be 1" );
 		Assert.equals( "String", args[0].className, "Type should be 'Class'" );

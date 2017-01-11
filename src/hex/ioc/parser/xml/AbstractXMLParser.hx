@@ -1,10 +1,14 @@
 package hex.ioc.parser.xml;
 
+import hex.core.IApplicationContext;
+import hex.core.IBuilder;
 import hex.error.IllegalArgumentException;
 import hex.error.NullPointerException;
+import hex.factory.BuildRequest;
 import hex.ioc.assembler.AbstractApplicationContext;
+import hex.ioc.core.ContextFactory;
 import hex.ioc.error.ParsingException;
-import hex.ioc.parser.AbstractContextParser;
+import hex.parser.AbstractContextParser;
 
 /**
  * ...
@@ -12,21 +16,20 @@ import hex.ioc.parser.AbstractContextParser;
  */
 class AbstractXMLParser extends AbstractContextParser<Xml>
 {
+	var _builder 						: IBuilder<BuildRequest>;
+	var _applicationContextName 		: String;
+	var _applicationContextClassName 	: String;
+	var _applicationContextClass 		: Class<IApplicationContext>;
+	
 	function new()
 	{
 		super();
 	}
 	
 	@final
-	override public function getApplicationContext( applicationContextClass : Class<AbstractApplicationContext> = null ) : AbstractApplicationContext
+	override public function getApplicationContext() : IApplicationContext
 	{
-		var applicationContextName : String = this.getContextData().firstElement().get( "name" );
-		if ( applicationContextName == null )
-		{
-			throw new ParsingException( this + " failed to retrieve applicationContext name. You should add 'name' attribute to the root of your xml context" );
-		}
-		
-		return this._applicationAssembler.getApplicationContext( applicationContextName, applicationContextClass );
+		return this._applicationAssembler.getApplicationContext( this._applicationContextName, this._applicationContextClass );
 	}
 	
 	@final
@@ -36,8 +39,12 @@ class AbstractXMLParser extends AbstractContextParser<Xml>
 		{
 			if ( Std.is( data, Xml ) )
 			{
-				this._contextData 			= data;
-
+				this._contextData = data;
+				this._findApplicationContextName( data );
+				this._findApplicationContextClassName( data );
+				
+				var context = this._applicationAssembler.getApplicationContext( this._applicationContextName );
+				this._builder = this._applicationAssembler.getBuilder( BuildRequest, context );
 			}
 			else
 			{
@@ -47,6 +54,34 @@ class AbstractXMLParser extends AbstractContextParser<Xml>
 		else
 		{
 			throw new NullPointerException( this + ".setContext() failed. Data was null." );
+		}
+	}
+	
+	function _findApplicationContextName( xml : Xml ) : Void
+	{
+		this._applicationContextName = xml.firstElement().get( "name" );
+		if ( this._applicationContextName == null )
+		{
+			throw new ParsingException( this + " failed to retrieve applicationContext name. You should add 'name' attribute to the root of your xml context" );
+		}
+	}
+	
+	function _findApplicationContextClassName( xml : Xml ) : Void
+	{
+		//Build applicationContext class for the 1st time
+		this._applicationContextClassName = this.getContextData().firstElement().get( "type" );
+
+		if ( this._applicationContextClassName != null )
+		{
+			try
+			{
+				this._applicationContextClass = cast Type.resolveClass( this._applicationContextClassName );
+				this._applicationAssembler.getApplicationContext( this._applicationContextName, this._applicationContextClass );
+			}
+			catch ( error : Dynamic )
+			{
+				throw new ParsingException( this + " failed to instantiate applicationContext class named '" + this._applicationContextClassName + "'" );
+			}
 		}
 	}
 }

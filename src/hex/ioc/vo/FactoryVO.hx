@@ -1,12 +1,11 @@
 package hex.ioc.vo;
 
 #if macro
-import haxe.macro.Expr;
+import hex.ioc.locator.ModuleLocator;
 #end
 
+import hex.core.ICoreFactory;
 import hex.ioc.core.IContextFactory;
-import hex.ioc.core.ICoreFactory;
-import hex.ioc.locator.ModuleLocator;
 
 /**
  * ...
@@ -18,10 +17,9 @@ class FactoryVO
 	public var contextFactory 			: IContextFactory;
 	public var coreFactory				: ICoreFactory;
 	public var constructorVO 			: ConstructorVO;
-	public var moduleLocator			: ModuleLocator;
-	
+
 	#if macro
-	public var expressions 				: Array<Expr>;
+	public var moduleLocator			: ModuleLocator;
 	#end
 
 	public function new() 

@@ -9,6 +9,8 @@
 -cp hexannotation/test
 -cp hexinject/src
 -cp hexinject/test
+-cp hexdsl/src
+-cp hexdsl/test
 -cp hexmvc/src
 -cp hexmvc/test
 -cp hexservice/src

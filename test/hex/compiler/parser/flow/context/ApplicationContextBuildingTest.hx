@@ -1,11 +1,10 @@
 package hex.compiler.parser.flow.context;
 
 import hex.compiler.parser.flow.FlowCompiler;
+import hex.core.IApplicationAssembler;
 import hex.domain.ApplicationDomainDispatcher;
-import hex.ioc.assembler.ApplicationAssembler;
-import hex.ioc.assembler.ApplicationContext;
-import hex.ioc.core.IContextFactory;
-import hex.ioc.core.ICoreFactory;
+import hex.runtime.ApplicationAssembler;
+import hex.core.ICoreFactory;
 import hex.ioc.parser.xml.context.mock.MockApplicationContext;
 import hex.unittest.assertion.Assert;
 
@@ -15,7 +14,7 @@ import hex.unittest.assertion.Assert;
  */
 class ApplicationContextBuildingTest
 {
-	var _applicationAssembler 		: ApplicationAssembler;
+	var _applicationAssembler : IApplicationAssembler;
 		
 	@Before
 	public function setUp() : Void
@@ -39,12 +38,10 @@ class ApplicationContextBuildingTest
 	public function testApplicationContextBuilding() : Void
 	{
 		this._applicationAssembler = FlowCompiler.compile( "context/flow/applicationContextBuildingTest.flow" );
-		
-		var builderFactory : IContextFactory = this._applicationAssembler.getContextFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
-		
-		var applicationContext : ApplicationContext = builderFactory.getCoreFactory().locate( "applicationContext" );
+
+		var applicationContext = this._applicationAssembler.getApplicationContext( "applicationContext" );
 		Assert.isNotNull( applicationContext, "applicationContext shouldn't be null" );
 		Assert.isInstanceOf( applicationContext, MockApplicationContext, "applicationContext shouldn't be an instance of 'MockApplicationContext'" );
-		Assert.equals( "Hola Mundo", builderFactory.getCoreFactory().locate( "test" ), "String values should be the same" );
+		Assert.equals( "Hola Mundo", applicationContext.getCoreFactory().locate( "test" ), "String values should be the same" );
 	}
 }

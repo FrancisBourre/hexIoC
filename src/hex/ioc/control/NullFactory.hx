@@ -1,7 +1,7 @@
 package hex.ioc.control;
 
+import hex.error.PrivateConstructorException;
 import hex.ioc.vo.FactoryVO;
-import hex.ioc.vo.ConstructorVO;
 
 /**
  * ...
@@ -9,14 +9,14 @@ import hex.ioc.vo.ConstructorVO;
  */
 class NullFactory
 {
-	function new()
-	{
-
-	}
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
 	
-	static public function build( factoryVO : FactoryVO ) : Void
+	static public function build( factoryVO : FactoryVO ) : Dynamic
 	{
-		var constructorVO : ConstructorVO = factoryVO.constructorVO;
-		constructorVO.result = null;
+		return null;
 	}
 }

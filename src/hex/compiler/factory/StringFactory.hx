@@ -1,7 +1,8 @@
 package hex.compiler.factory;
 
 import haxe.macro.Context;
-import hex.ioc.vo.ConstructorVO;
+import haxe.macro.Expr;
+import hex.error.PrivateConstructorException;
 import hex.ioc.vo.FactoryVO;
 
 /**
@@ -10,45 +11,42 @@ import hex.ioc.vo.FactoryVO;
  */
 class StringFactory
 {
-	function new()
-	{
-
-	}
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
 	
 	#if macro
-	static public function build( factoryVO : FactoryVO ) : Dynamic
+	static public function build( factoryVO : FactoryVO ) : Expr
 	{
-		var constructorVO : ConstructorVO = factoryVO.constructorVO;
-
-		var value : String 	= null;
-		var args 			= constructorVO.arguments;
+		var result : String 	= null;
+		
+		var constructorVO 		= factoryVO.constructorVO;
+		var idVar 				= constructorVO.ID;
+		var args 				= constructorVO.arguments;
 
 		if ( args != null && args.length > 0 && args[ 0 ] != null )
 		{
-			value = Std.string( args[0] );
+			result = Std.string( args[ 0 ] );
 		}
 		else
 		{
-			Context.error( "String instance cannot returns empty String.", constructorVO.filePosition );
+			Context.error( "String instance cannot returns an empty String.", constructorVO.filePosition );
 		}
 
-		if ( value == null )
+		if ( result == null )
 		{
-			value = "";
+			result = "";
 			#if debug
-			Context.warning( "String instance cannot returns empty String.", constructorVO.filePosition );
+			Context.warning( "String instance cannot returns an empty String.", constructorVO.filePosition );
 			#end
 		}
 
-		constructorVO.result = value;
-		
-		if ( !constructorVO.isProperty )
-		{
-			var idVar = constructorVO.ID;
-			factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $v { value }; } );
-		}
-
-		return macro @:pos( constructorVO.filePosition ) { $v { value } };
+		//Building result
+		return constructorVO.shouldAssign ?
+			macro @:pos( constructorVO.filePosition ) var $idVar = $v{ result }:
+			macro @:pos( constructorVO.filePosition ) $v{ result };	
 	}
 	#end
 }

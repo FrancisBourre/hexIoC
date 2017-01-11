@@ -1,8 +1,9 @@
 package hex.compiler.factory;
 
 import haxe.macro.Context;
+import haxe.macro.Expr;
+import hex.error.PrivateConstructorException;
 import hex.ioc.vo.FactoryVO;
-import hex.ioc.vo.ConstructorVO;
 
 /**
  * ...
@@ -10,40 +11,36 @@ import hex.ioc.vo.ConstructorVO;
  */
 class FloatFactory
 {
-	function new()
-	{
-
-	}
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
 	
 	#if macro
-	static public function build( factoryVO : FactoryVO ) : Dynamic
+	static public function build( factoryVO : FactoryVO ) : Expr
 	{
-		var constructorVO : ConstructorVO = factoryVO.constructorVO;
-
-		var args : Array<Dynamic> 	= constructorVO.arguments;
-		var number : Float 	= Math.NaN;
+		var result : Float 		= Math.NaN;
+		
+		var constructorVO 		= factoryVO.constructorVO;
+		var idVar 				= constructorVO.ID;
+		var args 				= constructorVO.arguments;
+		
 
 		if ( args != null && args.length > 0 ) 
 		{
-			number = Std.parseFloat( args[ 0 ] );
+			result = Std.parseFloat( args[ 0 ] );
 		}
 
-		if ( !Math.isNaN( number ) && "" + number == args[0] )
-		{
-			constructorVO.result = number;
-			
-			if ( !constructorVO.isProperty )
-			{
-				var idVar = constructorVO.ID;
-				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $v { number }; } );
-			}
-		}
-		else
+		if ( Math.isNaN( result ) || "" + result != args[ 0 ] )
 		{
 			Context.error( "Value is not a Float", constructorVO.filePosition );
 		}
 		
-		return macro @:pos( constructorVO.filePosition ) { $v { number } };
+		//Building result
+		return constructorVO.shouldAssign ?
+			macro @:pos( constructorVO.filePosition ) var $idVar = $v{ result }:
+			macro @:pos( constructorVO.filePosition ) $v{ result };	
 	}
 	#end
 }

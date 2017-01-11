@@ -1,0 +1,4 @@
+@context( name = 'applicationContext' )
+{
+	@inject_into(a, b, c) instance = new hex.ioc.parser.xml.mock.MockClassWithInjectedProperty();
+}
