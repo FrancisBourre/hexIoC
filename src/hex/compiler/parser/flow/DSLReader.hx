@@ -19,11 +19,9 @@ class DSLReader
 	{
 		//read file
 		var dsl = this._readFile( fileName );
-		trace( dsl );
 		
 		//preprocess
 		dsl.data = MacroPreprocessor.parse( dsl.data, preprocessingVariables );
-		trace( dsl.data );
 
 		//parse
 		var expr = Context.parseInlineString
