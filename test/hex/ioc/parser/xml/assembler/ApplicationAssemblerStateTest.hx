@@ -25,7 +25,10 @@ class ApplicationAssemblerStateTest
 	public function tearDown() : Void
 	{
 		ApplicationDomainDispatcher.getInstance().clear();
-		this._applicationAssembler.release();
+		if ( this._applicationAssembler != null )
+		{
+			this._applicationAssembler.release();
+		}
 		
 		MockStateCommand.callCount 						= 0;
 		MockStateCommand.lastInjecteContext 			= null;

@@ -17,7 +17,10 @@ class ApplicationContextBuildingTest
 	public function tearDown() : Void
 	{
 		ApplicationDomainDispatcher.getInstance().clear();
-		this._applicationAssembler.release();
+		if ( this._applicationAssembler != null )
+		{
+			this._applicationAssembler.release();
+		}
 	}
 	
 	@Test( "test applicationContext building" )
