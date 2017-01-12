@@ -398,10 +398,20 @@ class FlowCompilerTest
 		Assert.isTrue( instance.postConstructWasCalled, "" );
 	}
 	
-	/*@Ignore( "test building XML with parser class" )
+	@Test( "test building XML without parser class" )
+	public function testBuildingXMLWithoutParserClass() : Void
+	{
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/xmlWithoutParserClass.flow" );
+
+		var fruits : Xml = this._getCoreFactory().locate( "fruits" );
+		Assert.isNotNull( fruits );
+		Assert.isInstanceOf( fruits, Xml );
+	}
+	
+	@Test( "test building XML with parser class" )
 	public function testBuildingXMLWithParserClass() : Void
 	{
-		this._applicationAssembler = XmlCompiler.readXmlFile( "context/xmlWithParserClass.xml" );
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/xmlWithParserClass.flow" );
 
 		var fruits : Array<MockFruitVO> = this._getCoreFactory().locate( "fruits" );
 		Assert.equals( 3, fruits.length, "" );
@@ -414,7 +424,6 @@ class FlowCompilerTest
 		Assert.equals( "apple", apple.toString(), "" );
 		Assert.equals( "banana", banana.toString(), "" );
 	}
-	*/
 	
 	@Test( "test building Arrays" )
 	public function testBuildingArrays() : Void

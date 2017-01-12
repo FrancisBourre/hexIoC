@@ -366,6 +366,16 @@ class ObjectXMLParserTest
 		Assert.isTrue( instance.postConstructWasCalled );
 	}
 	
+	@Test( "test building XML without parser class" )
+	public function testBuildingXMLWithoutParserClass() : Void
+	{
+		this.build(  XmlReader.getXml( "context/xmlWithoutParserClass.xml" ) );
+
+		var fruits : Xml = this._locate( "fruits" );
+		Assert.isNotNull( fruits );
+		Assert.isInstanceOf( fruits, Xml );
+	}
+	
 	@Test( "test building XML with parser class" )
 	public function testBuildingXMLWithParserClass() : Void
 	{

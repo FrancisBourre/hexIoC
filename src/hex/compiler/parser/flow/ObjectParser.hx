@@ -157,6 +157,34 @@ class ObjectParser extends AbstractExprParser
 						var type = a.join( '.' );
 						
 						constructorVO = new ConstructorVO( ident, type, [], factory, staticCall );
+					
+					case EConst(CIdent('Xml')) if ( field == 'parse' ):
+						if ( params.length > 0 )
+						{
+							switch( params[ 0 ].expr )
+							{
+								case EConst(CString(xml)):
+									if ( params.length == 1 )
+									{
+										constructorVO = new ConstructorVO( ident, ContextTypeList.XML, [xml]  );
+									}
+									else if ( params.length == 2 )
+									{
+										switch( params[ 1 ].expr )
+										{
+											case EField( ee, ff ):
+												var factory = ExpressionUtil.compressField( params[ 1 ].expr );
+												constructorVO = new ConstructorVO( ident, ContextTypeList.XML, [xml], factory  );
+
+											case _:
+										}
+									}
+									
+									
+								case _:
+									trace( params[ 0 ].expr );
+							}
+						}
 						
 					case _:
 						trace( e.expr );

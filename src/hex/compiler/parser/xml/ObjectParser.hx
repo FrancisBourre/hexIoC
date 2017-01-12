@@ -68,11 +68,8 @@ class ObjectParser extends AbstractXmlParser
 
 		if ( type == ContextTypeList.XML )
 		{
-			factory 			= xml.get( ContextAttributeList.PARSER_CLASS );
-			var arg 			= new ConstructorVO( identifier, ContextTypeList.STRING, [ xml.firstElement().toString() ] );
-			arg.filePosition 	= this._exceptionReporter.getPosition( xml.firstElement() );
-			
-			var constructorVO 			= new ConstructorVO( identifier, type, [ arg ], factory );
+			factory 					= xml.get( ContextAttributeList.PARSER_CLASS );
+			var constructorVO 			= new ConstructorVO( identifier, type, [ xml.firstElement().toString() ], factory );
 			constructorVO.filePosition 	= this._exceptionReporter.getPosition( xml );
 			constructorVO.ifList 		= XMLParserUtil.getIfList( xml );
 			constructorVO.ifNotList 	= XMLParserUtil.getIfNotList( xml );

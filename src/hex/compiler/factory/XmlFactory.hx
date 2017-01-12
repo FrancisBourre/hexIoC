@@ -30,7 +30,7 @@ class XmlFactory
 		if ( args != null ||  args.length > 0 )
 		{
 			//TODO simplify
-			var source : String = args[ 0 ].arguments[ 0 ];
+			var source : String = args[ 0 ];
 			
 			if ( source.length > 0 )
 			{
