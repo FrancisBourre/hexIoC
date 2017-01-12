@@ -9,7 +9,11 @@ import hex.module.IModule;
  * ...
  * @author Francis Bourre
  */
+#if flash
+class ModuleLocator extends Locator<String, Dynamic>
+#else
 class ModuleLocator extends Locator<String, IModule>
+#end
 {
 	var _contextFactory : IContextFactory;
 
@@ -19,7 +23,11 @@ class ModuleLocator extends Locator<String, IModule>
 		this._contextFactory = contextFactory;
 	}
 	
+	#if flash
+	override function _dispatchRegisterEvent( key : String, element : Dynamic ) : Void 
+	#else
 	override function _dispatchRegisterEvent( key : String, element : IModule ) : Void 
+	#end
 	{
 		this._dispatcher.dispatch( LocatorMessage.REGISTER, [ key, element ] );
 	}

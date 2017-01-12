@@ -1,7 +1,7 @@
 package hex.compiler.factory;
 
+import hex.error.PrivateConstructorException;
 import hex.ioc.vo.FactoryVO;
-import hex.ioc.vo.ConstructorVO;
 
 /**
  * ...
@@ -9,25 +9,22 @@ import hex.ioc.vo.ConstructorVO;
  */
 class NullFactory
 {
-	function new()
-	{
-
-	}
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
 	
 	#if macro
 	static public function build( factoryVO : FactoryVO ) : Dynamic
 	{
-		var constructorVO : ConstructorVO = factoryVO.constructorVO;
-		constructorVO.result = null;
+		var constructorVO 		= factoryVO.constructorVO;
+		var idVar 				= constructorVO.ID;
 		
-		if ( !constructorVO.isProperty )
-		{
-			var idVar = constructorVO.ID;
-			factoryVO.expressions.push( macro @:mergeBlock { var $idVar = null; } );
-		}
-		
-		
-		return macro @:pos( constructorVO.filePosition ) { null; };
+		//Building result
+		return constructorVO.shouldAssign ?
+			macro @:pos( constructorVO.filePosition ) var $idVar = null:
+			macro @:pos( constructorVO.filePosition ) null;
 	}
 	#end
 }

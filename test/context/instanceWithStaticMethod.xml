@@ -1,0 +1,9 @@
+<root name="applicationContext">
+    <gateway id="gateway" value="http://localhost/amfphp/gateway.php"/>
+
+    <service id="service" type="hex.ioc.parser.xml.mock.MockServiceProvider" static-call="getInstance">
+        <method-call name="setGateway">
+            <argument ref="gateway" />
+        </method-call>
+    </service>
+</root>

@@ -1,8 +1,8 @@
 package hex.compiler.factory;
 
 import haxe.macro.Context;
+import hex.error.PrivateConstructorException;
 import hex.ioc.vo.FactoryVO;
-import hex.ioc.vo.ConstructorVO;
 
 /**
  * ...
@@ -10,44 +10,39 @@ import hex.ioc.vo.ConstructorVO;
  */
 class UIntFactory
 {
-	function new()
-	{
-
-	}
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
 	
 	#if macro
 	static public function build( factoryVO : FactoryVO ) : Dynamic
 	{
-		var constructorVO : ConstructorVO 	= factoryVO.constructorVO;
-
-		var args 	: Array<Dynamic> 		= constructorVO.arguments;
-		var number 	: UInt 					= 0;
-
+		var result 	: UInt 		= 0;
+		
+		var constructorVO 		= factoryVO.constructorVO;
+		var idVar 				= constructorVO.ID;
+		var args 				= constructorVO.arguments;
+		
 		if ( args != null && args.length > 0 ) 
 		{
-			number = Std.parseInt( Std.string( args[0] ) );
+			result = Std.parseInt( Std.string( args[ 0 ] ) );
 		}
 		else
 		{
-			Context.error( "UIntFactory.build(" + ( args != null && args.length > 0 ? args[0] : "" ) + ") failed.", constructorVO.filePosition );
+			Context.error( "Invalid arguments.", constructorVO.filePosition );
 		}
 
-		if ( "" + number != args[0] && number >=0 )
+		if ( "" + result != args[ 0 ] && result >= 0 )
 		{
 			Context.error( "Value is not a UInt", constructorVO.filePosition );
 		}
-		else
-		{
-			constructorVO.result = number;
-			
-			if ( !constructorVO.isProperty )
-			{
-				var idVar = constructorVO.ID;
-				factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $v { number }; } );
-			}
-		}
-		
-		return macro @:pos( constructorVO.filePosition ) { $v { number } };
+
+		//Building result
+		return constructorVO.shouldAssign ?
+			macro @:pos( constructorVO.filePosition ) var $idVar = $v{ result }:
+			macro @:pos( constructorVO.filePosition ) $v{ result };	
 	}
 	#end
 }

@@ -1,9 +1,8 @@
 package hex.ioc.control;
 
 import hex.collection.HashMap;
-import hex.ioc.vo.ConstructorVO;
+import hex.error.PrivateConstructorException;
 import hex.ioc.vo.FactoryVO;
-import hex.ioc.vo.MapVO;
 import hex.log.Logger;
 
 /**
@@ -12,17 +11,17 @@ import hex.log.Logger;
  */
 class HashMapFactory
 {
-	function new()
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
+
+	static public function build( factoryVO : FactoryVO ) : HashMap<Dynamic, Dynamic>
 	{
-
-	}
-
-	static public function build( factoryVO : FactoryVO ) : Void
-	{
-		var constructorVO : ConstructorVO = factoryVO.constructorVO;
-
-		var map = new HashMap<Dynamic, Dynamic>();
-		var args : Array<MapVO> = cast constructorVO.arguments;
+		var constructorVO 	= factoryVO.constructorVO;
+		var result 			= new HashMap<Dynamic, Dynamic>();
+		var args 			= MapArgumentFactory.build( factoryVO );
 
 		if ( args.length == 0 )
 		{
@@ -36,7 +35,7 @@ class HashMapFactory
 			{
 				if ( item.key != null )
 				{
-					map.put( item.key, item.value );
+					result.put( item.key, item.value );
 
 				} else
 				{
@@ -53,11 +52,11 @@ class HashMapFactory
 					mapType = mapType.split( ' ' ).join( '' );
 					
 					factoryVO.contextFactory.getApplicationContext().getInjector()
-						.mapClassNameToValue( mapType, map, constructorVO.ID );
+						.mapClassNameToValue( mapType, result, constructorVO.ID );
 				}
 			}
 		}
 
-		constructorVO.result = map;
+		return result;
 	}
 }

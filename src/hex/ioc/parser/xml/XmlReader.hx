@@ -1,11 +1,11 @@
 package hex.ioc.parser.xml;
 
-import hex.ioc.assembler.ApplicationAssembler;
+import hex.core.IApplicationAssembler;
 import hex.util.MacroUtil;
 
 #if macro
 import haxe.macro.Context;
-import hex.compiler.parser.preprocess.MacroConditionalVariablesProcessor;
+import hex.preprocess.MacroConditionalVariablesProcessor;
 import hex.compiler.parser.xml.ClassImportHelper;
 import hex.ioc.assembler.ConditionalVariablesChecker;
 import hex.ioc.core.ContextAttributeList;
@@ -13,9 +13,9 @@ import hex.ioc.core.ContextNameList;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.vo.DomainListenerVOArguments;
 import haxe.macro.Expr;
-import hex.compiler.parser.xml.IXmlPositionTracker;
+import hex.compiler.parser.xml.IPositionTracker;
 import hex.compiler.parser.xml.PositionTracker;
-import hex.compiler.parser.xml.XmlDSLParser;
+import hex.compiler.parser.xml.DSLReader;
 
 using StringTools;
 #end
@@ -29,7 +29,7 @@ class XmlReader
 	#if macro
 	static var _importHelper : ClassImportHelper;
 	
-	static function _parseNode( xml : Xml, positionTracker : IXmlPositionTracker ) : Void
+	static function _parseNode( xml : Xml, positionTracker : IPositionTracker ) : Void
 	{
 		var identifier : String = xml.get( ContextAttributeList.ID );
 		if ( identifier == null )
@@ -105,14 +105,14 @@ class XmlReader
 				}
 			}
 	
-			if ( xml.get( ContextAttributeList.FACTORY ) == null ) 
+			if ( xml.get( ContextAttributeList.FACTORY_METHOD ) == null ) 
 			{
 				XmlReader._importHelper.includeStaticRef( xml.get( ContextAttributeList.STATIC_REF ) );
 			}
 			
 			if ( type == ContextTypeList.CLASS )
 			{
-				XmlReader._importHelper.forceCompilation( args[ 0 ].arguments[ 0 ] );
+				XmlReader._importHelper.forceCompilation( args[ 0 ] );
 			}
 
 			// Build property.
@@ -138,6 +138,10 @@ class XmlReader
 					else if ( arg.type == ContextTypeList.CLASS )
 					{
 						XmlReader._importHelper.forceCompilation( arg.value );
+					}
+					else if( arg.staticRef != null )
+					{
+						XmlReader._importHelper.includeStaticRef( arg.staticRef );
 					}
 				}
 			}
@@ -166,7 +170,7 @@ class XmlReader
 		}
 	}
 	
-	static function _parseStateNodes( xml : Xml, positionTracker : IXmlPositionTracker ) : Void
+	static function _parseStateNodes( xml : Xml, positionTracker : IPositionTracker ) : Void
 	{
 		var identifier : String = xml.get( ContextAttributeList.ID );
 		if ( identifier == null )
@@ -202,8 +206,8 @@ class XmlReader
 		var conditionalVariablesChecker = new ConditionalVariablesChecker( conditionalVariablesMap );
 		
 		var positionTracker				= new PositionTracker() ;
-		var parser						= new XmlDSLParser( positionTracker );
-		var document 					= parser.parse( fileName, preprocessingVariables, conditionalVariablesChecker );
+		var reader						= new DSLReader( positionTracker );
+		var document 					= reader.read( fileName, preprocessingVariables, conditionalVariablesChecker );
 		var data 						= document.toString();
 		
 		XmlReader._importHelper 		= new ClassImportHelper();
@@ -240,10 +244,10 @@ class XmlReader
 		return macro @:pos( Context.currentPos() ){ $p { tp }.parse( $data ); }
 	}
 	
-	macro public static function readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<ApplicationAssembler>
+	macro public static function readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
 	{
 		var xmlPack = MacroUtil.getPack( Type.getClassName( Xml ) );
-		var applicationAssemblerTypePath = MacroUtil.getTypePath( Type.getClassName( ApplicationAssembler ) );
+		var applicationAssemblerTypePath = MacroUtil.getTypePath( "hex.runtime.ApplicationAssembler" );
 		var applicationXMLParserTypePath = MacroUtil.getTypePath( Type.getClassName( ApplicationXMLParser ) );
 		var data = XmlReader._readXmlFile( fileName, preprocessingVariables, conditionalVariables );
 		

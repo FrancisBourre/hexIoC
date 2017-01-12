@@ -3,7 +3,7 @@ package hex.ioc.control;
 import hex.domain.Domain;
 import hex.domain.DomainExpert;
 import hex.domain.DomainUtil;
-import hex.ioc.vo.ConstructorVO;
+import hex.error.PrivateConstructorException;
 import hex.ioc.vo.FactoryVO;
 import hex.metadata.AnnotationProvider;
 import hex.module.IModule;
@@ -15,21 +15,26 @@ import hex.util.ClassUtil;
  */
 class ClassInstanceFactory
 {
-	function new()
-	{
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
 
-	}
-
-	static public function build( factoryVO : FactoryVO ) : Void
+	static public function build( factoryVO : FactoryVO ) : Dynamic
 	{
-		var constructorVO : ConstructorVO = factoryVO.constructorVO;
+		var result : Dynamic 	= null;
+		var constructorVO 		= factoryVO.constructorVO;
 
 		if ( constructorVO.ref != null )
 		{
-			ReferenceFactory.build( factoryVO );
+			result = ReferenceFactory.build( factoryVO );
 		}
 		else
 		{
+			//build arguments
+			constructorVO.arguments = ArgumentFactory.build( factoryVO );
+			
 			//TODO Allows proxy classes
 			if ( !factoryVO.coreFactory.hasProxyFactoryMethod( constructorVO.className ) )
 			{
@@ -44,12 +49,7 @@ class ClassInstanceFactory
 				}
 			}
 			
-			constructorVO.result = factoryVO.coreFactory.buildInstance( constructorVO );
-
-			if ( Std.is( constructorVO.result, IModule ) )
-			{
-				factoryVO.moduleLocator.register( constructorVO.ID, constructorVO.result );
-			}
+			result = factoryVO.coreFactory.buildInstance( constructorVO );
 
 			if ( constructorVO.mapTypes != null )
 			{
@@ -60,9 +60,11 @@ class ClassInstanceFactory
 					mapType = mapType.split( ' ' ).join( '' );
 					
 					factoryVO.contextFactory.getApplicationContext().getInjector()
-						.mapClassNameToValue( mapType, constructorVO.result, constructorVO.ID );
+						.mapClassNameToValue( mapType, result, constructorVO.ID );
 				}
 			}
 		}
+		
+		return result;
 	}
 }

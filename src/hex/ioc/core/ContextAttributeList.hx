@@ -13,8 +13,8 @@ class ContextAttributeList
 	static public inline var NAME 					: String = "name";
 	static public inline var REF 					: String = "ref";
 	static public inline var VALUE 					: String = "value";
-	static public inline var FACTORY 				: String = "factory";
-	static public inline var SINGLETON_ACCESS 		: String = "singleton-access";
+	static public inline var FACTORY_METHOD 		: String = "factory-method";
+	static public inline var STATIC_CALL 			: String = "static-call";
 	static public inline var INJECTOR_CREATION 		: String = "injector-creation";
 	static public inline var INJECT_INTO 			: String = "inject-into";
 	static public inline var METHOD 				: String = "method";

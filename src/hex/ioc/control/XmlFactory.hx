@@ -1,6 +1,7 @@
 package hex.ioc.control;
 
 import hex.data.IParser;
+import hex.error.PrivateConstructorException;
 import hex.ioc.error.ParsingException;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.FactoryVO;
@@ -11,37 +12,35 @@ import hex.ioc.vo.FactoryVO;
  */
 class XmlFactory
 {
-	function new()
-	{
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
 
-	}
-
-	static public function build( factoryVO : FactoryVO ) : Void
+	static public function build( factoryVO : FactoryVO ) : Xml
 	{
+		var result : Xml 	= null;
 		var constructorVO 	= factoryVO.constructorVO;
 		var args 			= constructorVO.arguments;
 		var factory 		= constructorVO.factory;
 
 		if ( args != null ||  args.length > 0 )
 		{
-			#if macro
-			var source : String = args[ 0 ].arguments[ 0 ];
-			#else
 			var source : String = args[ 0 ];
-			#end
-			
+
 			if ( source.length > 0 )
 			{
 				if ( factory == null )
 				{
-					constructorVO.result = Xml.parse( source );
+					result = Xml.parse( source );
 				}
 				else
 				{
 					try
 					{
 						var parser : IParser<Dynamic> = factoryVO.coreFactory.buildInstance( new ConstructorVO( null, factory ) );
-						constructorVO.result = parser.parse( Xml.parse( source ) );
+						result = parser.parse( Xml.parse( source ) );
 					}
 					catch ( error : Dynamic )
 					{
@@ -55,7 +54,7 @@ class XmlFactory
 				trace( "XmlFactory.build() returns an empty XML." );
 				#end
 
-				constructorVO.result = Xml.parse( "" );
+				result = Xml.parse( "" );
 			}
 		}
 		else
@@ -64,7 +63,9 @@ class XmlFactory
 			trace( "XmlFactory.build() returns an empty XML." );
 			#end
 
-			constructorVO.result = Xml.parse( "" );
+			result = Xml.parse( "" );
 		}
+		
+		return result;
 	}
 }

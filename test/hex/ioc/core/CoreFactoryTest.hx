@@ -4,7 +4,6 @@ import hex.MockDependencyInjector;
 import hex.collection.ILocatorListener;
 import hex.di.IDependencyInjector;
 import hex.error.IllegalArgumentException;
-import hex.event.IEvent;
 import hex.ioc.vo.ConstructorVO;
 import hex.metadata.IAnnotationProvider;
 import hex.structures.Point;
@@ -115,24 +114,24 @@ class CoreFactoryTest
 		Assert.equals( 3, size.height, "'size.height' should return 3" );
 	}
 	
-	@Test( "Test buildInstance with singleton access" )
-    public function testBuildInstanceWithSingletonAccess() : Void
+	@Test( "Test buildInstance with static method call" )
+    public function testBuildInstanceWithStaticMethodCall() : Void
     {
-		var instance : MockClassForCoreFactoryTest = this._coreFactory.buildInstance( new ConstructorVO( null, "hex.ioc.core.MockClassForCoreFactoryTest", null, null, "getInstance" ) );
+		var instance : MockClassForCoreFactoryTest = this._coreFactory.buildInstance( new ConstructorVO( null, "hex.ioc.core.MockClassForCoreFactoryTest", [], null, "getInstance" ) );
 		Assert.isInstanceOf( instance, MockClassForCoreFactoryTest, "should be instance of 'MockClassForCoreFactoryTest'" );
 	}
 	
-	@Test( "Test buildInstance with factory access" )
-    public function testBuildInstanceWithFactoryAccess() : Void
+	@Test( "Test buildInstance with static method call and arguments" )
+    public function testBuildInstanceWithStaticMethodCallAndArguments() : Void
     {
-		var size : Size = this._coreFactory.buildInstance( new ConstructorVO( null, "hex.ioc.core.MockClassForCoreFactoryTest", [ 20.0, 30.0 ], "getSize", null ) );
+		var size : Size = this._coreFactory.buildInstance( new ConstructorVO( null, "hex.ioc.core.MockClassForCoreFactoryTest", [ 20.0, 30.0 ], null, "getSize" ) );
 		Assert.isNotNull( size, "'size' should not be null" );
 		Assert.equals( 20.0, size.width, "'size.width' should return 20.0" );
 		Assert.equals( 30.0, size.height, "'size.height' should return 30.0" );
 	}
 	
-	@Test( "Test buildInstance with factory and singleton access" )
-    public function testBuildInstanceWithFactoryAndSingletonAccess() : Void
+	@Test( "Test buildInstance with static method call and factory method call" )
+    public function testBuildInstanceWithStaticMethodCallAndFactoryMethodCall() : Void
     {
 		var p : Point = this._coreFactory.buildInstance( new ConstructorVO( null, "hex.ioc.core.MockClassForCoreFactoryTest", [2, 3], "getPoint", "getInstance" ) );
 		Assert.isNotNull( p, "'p' should not be null" );
@@ -241,11 +240,6 @@ private class MockCoreFactoryListener implements ILocatorListener<String, Dynami
 	{
 		this.lastUnregisterKeyReceived = key;
 		this.unregisterEventCount++;
-	}
-	
-	public function handleEvent( e : IEvent ) : Void 
-	{
-		
 	}
 }
 

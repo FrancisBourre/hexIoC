@@ -1,8 +1,7 @@
 package hex.ioc.parser.xml;
 
 import hex.error.NullPointerException;
-import hex.ioc.assembler.ApplicationContext;
-import hex.ioc.assembler.IApplicationAssembler;
+import hex.core.IApplicationAssembler;
 
 /**
  * ...
@@ -10,9 +9,9 @@ import hex.ioc.assembler.IApplicationAssembler;
  */
 class ApplicationXMLParser
 {
-	var _contextData 		: Dynamic;
+	var _contextData 		: Xml;
 	var _assembler 			: IApplicationAssembler;
-	var _parserCollection 	: IParserCollection;
+	var _parserCollection 	: XMLParserCollection;
 	
 	public function new( ?parserCollection : XMLParserCollection )
 	{
@@ -44,20 +43,20 @@ class ApplicationXMLParser
 
 	public function getApplicationAssembler() : IApplicationAssembler
 	{
-		return this._contextData;
+		return this._assembler;
 	}
 
-	public function setContextData( context : Dynamic ) : Void
+	public function setContextData( context : Xml ) : Void
 	{
 		this._contextData = context;
 	}
 
-	public function getContextData() : Dynamic
+	public function getContextData() : Xml
 	{
 		return this._contextData;
 	}
 
-	public function parse( applicationAssembler : IApplicationAssembler, context : Dynamic ) : Void
+	public function parse( applicationAssembler : IApplicationAssembler, context : Xml ) : Void
 	{
 		if ( applicationAssembler != null )
 		{
@@ -84,9 +83,9 @@ class ApplicationXMLParser
 
 		while ( this._parserCollection.hasNext() )
 		{
-			var parser : IParserCommand = this._parserCollection.next();
-			parser.setContextData( this._contextData );
+			var parser = this._parserCollection.next();
 			parser.setApplicationAssembler( this._assembler );
+			parser.setContextData( this._contextData );
 			parser.parse();
 
 			this._contextData = parser.getContextData();

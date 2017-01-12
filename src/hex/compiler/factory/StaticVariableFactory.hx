@@ -1,7 +1,7 @@
 package hex.compiler.factory;
 
 import haxe.macro.Expr;
-import hex.ioc.vo.ConstructorVO;
+import hex.error.PrivateConstructorException;
 import hex.ioc.vo.FactoryVO;
 import hex.util.MacroUtil;
 
@@ -11,24 +11,24 @@ import hex.util.MacroUtil;
  */
 class StaticVariableFactory
 {
-	function new()
-	{
-
-	}
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
 
 	#if macro
-	static public function build( factoryVO : FactoryVO ) : Dynamic
+	static public function build( factoryVO : FactoryVO ) : Expr
 	{
-		var constructorVO : ConstructorVO = factoryVO.constructorVO;
-		var e : Expr = MacroUtil.getStaticVariable( constructorVO.staticRef, constructorVO.filePosition );
+		var constructorVO 		= factoryVO.constructorVO;
+		var idVar 				= constructorVO.ID;
 		
-		if ( !constructorVO.isProperty )
-		{
-			var idVar = constructorVO.ID;
-			factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { var $idVar = $e; } );
-		}
+		//Building result
+		var result	= MacroUtil.getStaticVariable( constructorVO.staticRef, constructorVO.filePosition );
 		
-		return e;
+		return constructorVO.shouldAssign ?
+			macro @:pos( constructorVO.filePosition ) var $idVar = $result:
+			macro @:pos( constructorVO.filePosition ) $result;
 	}
 	#end
 }

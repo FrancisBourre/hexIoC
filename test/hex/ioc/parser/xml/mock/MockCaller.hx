@@ -7,6 +7,8 @@ package hex.ioc.parser.xml.mock;
 class MockCaller
 {
 	public static var passedArguments : Array<String>;
+	public static var passedArray : Array<IMockFruit>;
+	
 	
 	public function new() 
 	{
@@ -17,4 +19,11 @@ class MockCaller
 	{
 		MockCaller.passedArguments = [ a, b ];
 	}
+	
+	public function callArray( callArray:Array<IMockFruit> ) : Void
+	{
+		MockCaller.passedArray = callArray;
+	}
+	
+	
 }

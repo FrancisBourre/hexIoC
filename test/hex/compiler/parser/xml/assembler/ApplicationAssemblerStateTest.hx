@@ -1,12 +1,13 @@
 package hex.compiler.parser.xml.assembler;
 
+import hex.core.IApplicationAssembler;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.event.MessageType;
 import hex.ioc.assembler.AbstractApplicationContext;
-import hex.ioc.assembler.ApplicationAssembler;
+import hex.runtime.ApplicationAssembler;
 import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.core.IContextFactory;
-import hex.ioc.core.ICoreFactory;
+import hex.core.ICoreFactory;
 import hex.ioc.parser.xml.assembler.mock.MockApplicationContext;
 import hex.ioc.parser.xml.assembler.mock.MockExitStateCommand;
 import hex.ioc.parser.xml.assembler.mock.MockModule;
@@ -22,7 +23,7 @@ import hex.unittest.assertion.Assert;
 class ApplicationAssemblerStateTest
 {
 	var _builderFactory 			: IContextFactory;
-	var _applicationAssembler 		: ApplicationAssembler;
+	var _applicationAssembler 		: IApplicationAssembler;
 		
 	@Before
 	public function setUp() : Void
@@ -51,8 +52,6 @@ class ApplicationAssemblerStateTest
 	public function testBuildingStateTransitions() : Void
 	{
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/testBuildingStateTransitions.xml" );
-		
-		this._builderFactory = this._applicationAssembler.getContextFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
 	}
 	
 	@Test( "test extending state transitions" )
@@ -62,17 +61,15 @@ class ApplicationAssemblerStateTest
 		MockStateCommand.lastInjecteContext = null;
 		
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/testExtendingStateTransitions.xml" );
-		
-		var builderFactory : IContextFactory = this._applicationAssembler.getContextFactory( this._applicationAssembler.getApplicationContext( "applicationContext" ) );
 
-		var coreFactory = builderFactory.getCoreFactory();
+		var coreFactory = this._applicationAssembler.getApplicationContext( "applicationContext" ).getCoreFactory();
 		var module : MockModule = coreFactory.locate( "module" );
 		var anotherModule : MockModule = coreFactory.locate( "anotherModule" );
 
 		Assert.isNotNull( module, "'module' shouldn't be null" );
 		Assert.isNotNull( anotherModule, "'anotherModule' shouldn't be null" );
 		
-		var applicationContext : MockApplicationContext = builderFactory.getCoreFactory().locate( "applicationContext" );
+		var applicationContext : MockApplicationContext = coreFactory.locate( "applicationContext" );
 		Assert.isNotNull( applicationContext, "applicationContext shouldn't be null" );
 		Assert.isInstanceOf( applicationContext, MockApplicationContext, "applicationContext shouldn't be an instance of 'MockApplicationContext'" );
 
@@ -107,17 +104,14 @@ class ApplicationAssemblerStateTest
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/testCustomStateTransition.xml" );
 		
 		var context : ApplicationContext = cast this._applicationAssembler.getApplicationContext( "applicationContext" );
-		
-		var builderFactory : IContextFactory = this._applicationAssembler.getContextFactory( context );
-
-		var coreFactory = builderFactory.getCoreFactory();
+		var coreFactory = this._applicationAssembler.getApplicationContext( "applicationContext" ).getCoreFactory();
 		var module : MockModule = coreFactory.locate( "module" );
 		Assert.isNotNull( module, "'module' shouldn't be null" );
 		
 		var messageType : MessageType = coreFactory.locate( "messageID" );
 		var anotherMessageType : MessageType = coreFactory.locate( "anotherMessageID" );
-		Assert.equals( 'messageName', messageType.name, "name property should be 'messageName'" );
-		Assert.equals( 'anotherMessageName', anotherMessageType.name, "name property should be 'anotherMessageName'" );
+		Assert.equals( 'messageName', messageType, "name property should be 'messageName'" );
+		Assert.equals( 'anotherMessageName', anotherMessageType, "name property should be 'anotherMessageName'" );
 		
 		var customState : State = coreFactory.locate( "customState" );
 		var anotherCustomState : State = coreFactory.locate( "anotherCustomState" );

@@ -18,7 +18,7 @@ class ApplicationContextXMLParser extends AbstractXMLParser
 	override public function parse() : Void
 	{
 		//Build applicationContext class for the 1st time
-		var applicationContextClassName : String = this.getXMLContext().firstElement().get( "type" );
+		var applicationContextClassName : String = this.getContextData().firstElement().get( "type" );
 
 		if ( applicationContextClassName != null )
 		{
@@ -36,7 +36,5 @@ class ApplicationContextXMLParser extends AbstractXMLParser
 		{
 			this.getApplicationContext();
 		}
-		
-		this._handleComplete();
 	}
 }

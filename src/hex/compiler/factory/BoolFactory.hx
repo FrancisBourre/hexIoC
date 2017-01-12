@@ -1,9 +1,9 @@
 package hex.compiler.factory;
 
 import haxe.macro.Context;
+import haxe.macro.Expr;
+import hex.error.PrivateConstructorException;
 import hex.ioc.vo.FactoryVO;
-import hex.error.IllegalArgumentException;
-import hex.ioc.vo.ConstructorVO;
 
 /**
  * ...
@@ -11,44 +11,44 @@ import hex.ioc.vo.ConstructorVO;
  */
 class BoolFactory
 {
-	function new()
-	{
-
-	}
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
 	
 	#if macro
-	static public function build( factoryVO : FactoryVO ) : Dynamic
+	static public function build( factoryVO : FactoryVO ) : Expr
 	{
-		var constructorVO : ConstructorVO = factoryVO.constructorVO;
-
-		var value : String 	= "";
-		var args 			= constructorVO.arguments;
-
+		var result : Bool 		= false;
+		
+		var constructorVO 		= factoryVO.constructorVO;
+		var idVar 				= constructorVO.ID;
+		var args 				= constructorVO.arguments;
+		
+		var value = "";
 		if ( args != null && args.length > 0 ) 
 		{
-			value = args[0];
+			value = args[ 0 ];
 		}
 		
 		if ( value == "true" )
 		{
-			constructorVO.result = true;
+			result = true;
 		}
 		else if ( value == "false" )
 		{
-			constructorVO.result = false;
+			result = false;
 		}
 		else
 		{
 			Context.error( "Value is not a Bool", constructorVO.filePosition );
 		}
 		
-		if ( !constructorVO.isProperty )
-		{
-			var idVar = constructorVO.ID;
-			factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $v { constructorVO.result }; } );
-		}
-		
-		return macro @:pos( constructorVO.filePosition ) { $v { constructorVO.result } };
+		//Building result
+		return constructorVO.shouldAssign ?
+			macro @:pos( constructorVO.filePosition ) var $idVar = $v{ result }:
+			macro @:pos( constructorVO.filePosition ) $v{ result };	
 	}
 	#end
 }

@@ -1,0 +1,6 @@
+<root name="applicationContext">
+    <point id="point" type="hex.ioc.parser.xml.mock.MockPointFactory" static-call="getInstance" factory-method="getPoint">
+        <argument type="Int" value="10"/>
+        <argument type="Int" value="20"/>
+    </point>
+</root>

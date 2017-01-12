@@ -2,7 +2,7 @@ package hex.ioc.parser.xml.assembler.mock;
 
 import hex.control.Request;
 import hex.control.command.BasicCommand;
-import hex.ioc.assembler.AbstractApplicationContext;
+import hex.core.IApplicationContext;
 
 /**
  * ...
@@ -11,10 +11,10 @@ import hex.ioc.assembler.AbstractApplicationContext;
 class MockStateCommand extends BasicCommand
 {
 	static public var callCount : Int = 0;
-	static public var lastInjecteContext : AbstractApplicationContext;
+	static public var lastInjecteContext : IApplicationContext;
 	
 	@Inject
-	public var context : AbstractApplicationContext;
+	public var context : IApplicationContext;
 	
 	public function execute( ?request : Request ) : Void 
 	{

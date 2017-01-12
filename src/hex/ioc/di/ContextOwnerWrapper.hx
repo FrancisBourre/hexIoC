@@ -2,7 +2,7 @@ package hex.ioc.di;
 
 import hex.di.IContextOwner;
 import hex.di.IDependencyInjector;
-import hex.ioc.core.ICoreFactory;
+import hex.core.ICoreFactory;
 
 /**
  * ...

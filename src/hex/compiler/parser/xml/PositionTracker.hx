@@ -8,7 +8,7 @@ import haxe.macro.Expr.Position;
  * ...
  * @author Francis Bourre
  */
-class PositionTracker implements IXmlPositionTracker
+class PositionTracker implements IPositionTracker
 {
 	public var nodeMap( default, never ) : Map<Xml, DSLPosition> = new Map<Xml, DSLPosition>();
 	public var attributeMap( default, never ) : Map<Xml, Map<String, DSLPosition>> = new Map<Xml, Map<String, DSLPosition>>();

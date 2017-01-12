@@ -1,11 +1,11 @@
 package hex.ioc.error;
 
-import hex.ioc.vo.AssemblerVO;
+import haxe.macro.Expr.Position;
+
 /**
  * @author Francis Bourre
  */
-
-interface IAssemblingExceptionReporter 
+interface IAssemblingExceptionReporter<T> 
 {
-	
+	function getPosition( content : T, ?additionalInformations : Dynamic ) : Position;
 }

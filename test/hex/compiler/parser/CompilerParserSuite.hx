@@ -1,5 +1,6 @@
 package hex.compiler.parser;
 
+import hex.compiler.parser.flow.CompilerFlowSuite;
 import hex.compiler.parser.preprocess.PreprocessSuite;
 import hex.compiler.parser.xml.CompilerXmlSuite;
 
@@ -10,5 +11,5 @@ import hex.compiler.parser.xml.CompilerXmlSuite;
 class CompilerParserSuite
 {
 	@Suite( "Parser" )
-    public var list : Array<Class<Dynamic>> = [ PreprocessSuite, CompilerXmlSuite ];
+    public var list : Array<Class<Dynamic>> = [ PreprocessSuite, CompilerFlowSuite, CompilerXmlSuite ];
 }

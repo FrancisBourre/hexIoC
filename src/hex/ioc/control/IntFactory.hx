@@ -1,8 +1,8 @@
 package hex.ioc.control;
 
-import hex.ioc.vo.FactoryVO;
 import hex.error.IllegalArgumentException;
-import hex.ioc.vo.ConstructorVO;
+import hex.error.PrivateConstructorException;
+import hex.ioc.vo.FactoryVO;
 
 /**
  * ...
@@ -10,20 +10,21 @@ import hex.ioc.vo.ConstructorVO;
  */
 class IntFactory
 {
-	function new()
-	{
-
-	}
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
 	
-	static public function build( factoryVO : FactoryVO ) : Void
+	static public function build( factoryVO : FactoryVO ) : Int
 	{
-		var constructorVO : ConstructorVO = factoryVO.constructorVO;
-		var args 	: Array<Dynamic> 	= constructorVO.arguments;
-		var number 	: Int = 0;
+		var constructorVO 	= factoryVO.constructorVO;
+		var args 			= constructorVO.arguments;
+		var result 	: Int 	= 0;
 
 		if ( args != null && args.length > 0 ) 
 		{
-			number = Std.parseInt( Std.string( args[ 0 ] ) );
+			result = Std.parseInt( Std.string( args[ 0 ] ) );
 		}
 		else
 		{
@@ -31,16 +32,14 @@ class IntFactory
 		}
 
 		#if js
-		if ( number == null )
+		if ( result == null )
 		#else
-		if ( "" + number != args[ 0 ] )
+		if ( "" + result != args[ 0 ] )
 		#end
 		{
-			throw new IllegalArgumentException( "IntFactory.build(" + number + ") failed." );
+			throw new IllegalArgumentException( "IntFactory.build(" + result + ") failed." );
 		}
-		else
-		{
-			constructorVO.result = number;
-		}
+		
+		return result;
 	}
 }

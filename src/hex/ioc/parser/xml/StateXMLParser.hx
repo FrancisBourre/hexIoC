@@ -1,7 +1,5 @@
 package hex.ioc.parser.xml;
 
-import hex.ioc.assembler.AbstractApplicationContext;
-import hex.ioc.assembler.IApplicationAssembler;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.error.ParsingException;
@@ -22,22 +20,17 @@ class StateXMLParser extends AbstractXMLParser
 	
 	override public function parse() : Void
 	{
-		var iterator = this.getXMLContext().firstElement().elementsNamed( "state" );
+		var iterator = this.getContextData().firstElement().elementsNamed( "state" );
 		while ( iterator.hasNext() )
 		{
 			var node = iterator.next();
 			this._parseNode( node );
-			this.getXMLContext().firstElement().removeChild( node );
+			this.getContextData().firstElement().removeChild( node );
 		}
-
-		this._handleComplete();
 	}
 	
 	function _parseNode( xml : Xml ) : Void
 	{
-		var applicationContext = this.getApplicationContext();
-		var applicationAssembler = this.getApplicationAssembler();
-
 		var identifier : String = XMLAttributeUtil.getID( xml );
 		if ( identifier == null )
 		{
@@ -54,7 +47,7 @@ class StateXMLParser extends AbstractXMLParser
 		stateTransitionVO.ifList 	= XMLParserUtil.getIfList( xml );
 		stateTransitionVO.ifNotList = XMLParserUtil.getIfNotList( xml );
 		
-		applicationAssembler.configureStateTransition( applicationContext, stateTransitionVO );
+		this._builder.build( STATE_TRANSITION( stateTransitionVO ) );
 	}
 	
 	function _buildList( xml : Xml, nodeName : String ) : Array<CommandMappingVO>

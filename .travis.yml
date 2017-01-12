@@ -38,6 +38,7 @@ install:
   - git clone --recursive -b $DEPENDENCIES_BRANCH https://github.com/DoclerLabs/hexReflection.git ./hexreflection
   - git clone --recursive -b $DEPENDENCIES_BRANCH https://github.com/DoclerLabs/hexAnnotation.git ./hexannotation
   - git clone --recursive -b $DEPENDENCIES_BRANCH https://github.com/DoclerLabs/hexInject.git ./hexinject
+  - git clone --recursive -b $DEPENDENCIES_BRANCH https://github.com/DoclerLabs/hexDsl.git ./hexdsl
   - git clone --recursive -b $DEPENDENCIES_BRANCH https://github.com/DoclerLabs/hexMVC.git ./hexmvc
   - git clone --recursive -b $DEPENDENCIES_BRANCH https://github.com/DoclerLabs/hexService.git ./hexservice
   - git clone --recursive -b $DEPENDENCIES_BRANCH https://github.com/DoclerLabs/hexState.git ./hexstate

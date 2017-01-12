@@ -1,7 +1,7 @@
 package hex.ioc.control;
 
+import hex.error.PrivateConstructorException;
 import hex.ioc.vo.FactoryVO;
-import hex.ioc.vo.ConstructorVO;
 
 /**
  * ...
@@ -9,25 +9,24 @@ import hex.ioc.vo.ConstructorVO;
  */
 class ArrayFactory
 {
-	function new()
-	{
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
 
-	}
 	
-	static public function build( factoryVO : FactoryVO ) : Void
+	static public function build( factoryVO : FactoryVO ) : Array<Dynamic>
 	{
-		var constructorVO : ConstructorVO = factoryVO.constructorVO;
-
-		var array : Array<Dynamic> = [];
-		var args : Array<Dynamic> = constructorVO.arguments;
+		var constructorVO 		= factoryVO.constructorVO;
+		var result 				= [];
+		var args 				= ArgumentFactory.build( factoryVO );
 
 		if ( args != null )
 		{
-			array = args.copy();
+			result = args.copy();
 		}
 
-		constructorVO.result = array;
-		
 		if ( constructorVO.mapTypes != null )
 		{
 			var mapTypes = constructorVO.mapTypes;
@@ -37,8 +36,10 @@ class ArrayFactory
 				mapType = mapType.split( ' ' ).join( '' );
 					
 				factoryVO.contextFactory.getApplicationContext().getInjector()
-					.mapClassNameToValue( mapType, constructorVO.result, constructorVO.ID );
+					.mapClassNameToValue( mapType, result, constructorVO.ID );
 			}
 		}
+		
+		return result;
 	}
 }

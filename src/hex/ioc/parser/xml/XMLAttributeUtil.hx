@@ -9,10 +9,11 @@ import hex.ioc.core.ContextAttributeList;
  */
 class XMLAttributeUtil
 {
-	function new() 
-	{
-		throw new PrivateConstructorException( "'XMLAttributeUtil' class can't be instantiated." );
-	}
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
 	
 	static public function getID( xml : Xml ) : String
 	{
@@ -41,12 +42,12 @@ class XMLAttributeUtil
 
 	static public function getFactoryMethod( xml : Xml ) : String
 	{
-		return xml.get( ContextAttributeList.FACTORY );
+		return xml.get( ContextAttributeList.FACTORY_METHOD );
 	}
 
-	static public function getSingletonAccess( xml : Xml ) : String
+	static public function getStaticCall( xml : Xml ) : String
 	{
-		return xml.get( ContextAttributeList.SINGLETON_ACCESS );
+		return xml.get( ContextAttributeList.STATIC_CALL );
 	}
 	
 	static public function getInjectInto( xml : Xml ) : Bool

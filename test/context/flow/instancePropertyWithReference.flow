@@ -1,0 +1,12 @@
+@context( name = 'applicationContext' )
+{
+	rect = new hex.ioc.parser.xml.mock.MockRectangle();
+	rect.size = size;
+	
+	size = new hex.structures.Point();
+	size.x = width;
+	size.y = height;
+	
+	width = 10;
+	height = 20;
+}

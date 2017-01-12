@@ -1,0 +1,4 @@
+@context( name = 'applicationContext' )
+{
+	value = null;
+}

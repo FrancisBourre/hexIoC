@@ -1,10 +1,10 @@
 package hex.compiler.factory;
 
 import haxe.macro.Context;
+import haxe.macro.Expr;
 import hex.config.stateful.ServiceLocator;
-import hex.ioc.vo.ConstructorVO;
+import hex.error.PrivateConstructorException;
 import hex.ioc.vo.FactoryVO;
-import hex.ioc.vo.MapVO;
 import hex.util.MacroUtil;
 
 /**
@@ -13,44 +13,87 @@ import hex.util.MacroUtil;
  */
 class ServiceLocatorFactory
 {
-	function new()
-	{
-
-	}
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
 
 	#if macro
-	static public function build( factoryVO : FactoryVO ) : Dynamic
+	static public function build( factoryVO : FactoryVO ) : Expr
 	{
-		var constructorVO : ConstructorVO = factoryVO.constructorVO;
-		var args : Array<MapVO> = cast constructorVO.arguments;
+		var constructorVO 		= factoryVO.constructorVO;
+		var idVar 				= constructorVO.ID;
+		var args 				= MapArgumentFactory.build( factoryVO );
 		
-		var idVar = constructorVO.ID;
-		var typePath = MacroUtil.getTypePath( Type.getClassName( ServiceLocator ) );
-		var e = macro @:pos( constructorVO.filePosition ) { new $typePath(); };
-		factoryVO.expressions.push( macro @:mergeBlock { var $idVar = $e; } );
-		
-		var extVar = macro $i{ idVar };
-		if ( args.length <= 0 )
-		{
-			Context.warning( "ServiceLocatorFactory.build(" + args + ") returns an empty ServiceConfig.", constructorVO.filePosition );
+		var typePath 			= MacroUtil.getTypePath( Type.getClassName( ServiceLocator ) );
+		var e 					= macro @:pos( constructorVO.filePosition ) { new $typePath(); };
 
-		} else
+		if ( constructorVO.shouldAssign )
 		{
-			for ( item in args )
+			var result 	= macro @:pos( constructorVO.filePosition ) var $idVar = $e;
+			
+			if ( args.length <= 0 )
 			{
-				if ( item.key != null )
+				#if debug
+				Context.warning( "Empty ServiceLocator built.", constructorVO.filePosition );
+				#end
+
+			} else
+			{
+				for ( item in args )
 				{
-					var a = [ item.key, item.value, macro { $v { item.mapName } } ];
-					factoryVO.expressions.push( macro @:pos( constructorVO.filePosition ) @:mergeBlock { $extVar.addService( $a{ a } ); } );
-					
-				} else
-				{
-					Context.warning( "ServiceLocatorFactory.build() adds item with a 'null' key for '"  + item.value +"' value.", constructorVO.filePosition );
+					if ( item.key != null )
+					{
+						var a = [ item.key, item.value, macro { $v{ item.mapName } } ];
+						
+						//Fill with arguments
+						result = macro 	@:pos( constructorVO.filePosition ) 
+						@:mergeBlock 
+						{
+							$result; 
+							$i{ idVar }.addService( $a{ a } );
+						}
+
+					} else
+					{
+						#if debug
+						Context.warning( "'null' key for value '"  + item.value +"' added.", constructorVO.filePosition );
+						#end
+					}
 				}
 			}
+			
+			//Mapping
+			if ( constructorVO.mapTypes != null )
+			{
+				var mapTypes = constructorVO.mapTypes;
+				for ( mapType in mapTypes )
+				{
+					//Check if class exists
+					FactoryUtil.checkTypeParamsExist( mapType, constructorVO.filePosition );
+					
+					//Remove whitespaces
+					mapType = mapType.split( ' ' ).join( '' );
+					
+					//Map it
+					result = macro 	@:pos( constructorVO.filePosition ) 
+					@:mergeBlock 
+					{
+						$result; 
+						__applicationContextInjector.mapClassNameToValue
+						( $v{ mapType }, $i{ idVar }, $v{ idVar } 
+						);
+					};
+				}
+			}
+			
+			return result;
 		}
-		
-		return e;
+		else
+		{
+			return macro @:pos( constructorVO.filePosition ) $e;
+		}
 	}
 	#end
 }

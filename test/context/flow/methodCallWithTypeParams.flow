@@ -1,0 +1,11 @@
+@context( name = 'applicationContext' )
+{
+	fruitsInterfaces = new Array<hex.ioc.parser.xml.mock.IMockFruit>( fruit0, fruit1, fruit2 );
+	
+	fruit0 = new hex.ioc.parser.xml.mock.MockFruitVO( "orange" );
+	fruit1 = new hex.ioc.parser.xml.mock.MockFruitVO( "apple" );
+	fruit2 = new hex.ioc.parser.xml.mock.MockFruitVO( "banana" );
+	
+	caller = new hex.ioc.parser.xml.mock.MockCaller();
+	caller.callArray( fruitsInterfaces );
+}

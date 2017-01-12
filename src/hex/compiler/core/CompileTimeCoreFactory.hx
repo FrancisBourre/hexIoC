@@ -10,8 +10,8 @@ import hex.error.IllegalArgumentException;
 import hex.error.NoSuchElementException;
 import hex.event.ClosureDispatcher;
 import hex.event.MessageType;
-import hex.ioc.core.ICoreFactory;
-import hex.ioc.vo.ConstructorVODef;
+import hex.core.ICoreFactory;
+import hex.core.CoreFactoryVODef;
 import hex.log.Stringifier;
 import hex.metadata.IAnnotationProvider;
 import hex.service.IService;
@@ -188,107 +188,9 @@ class CompileTimeCoreFactory implements ICoreFactory
 		return this._dispatcher.removeHandler( LocatorMessage.UNREGISTER, listener.onUnregister ) || b;
     }
 	
-	public function buildInstance( constructorVO : ConstructorVODef ) : Dynamic
+	public function buildInstance( constructorVO : CoreFactoryVODef ) : Dynamic
 	{
-		var qualifiedClassName 	= constructorVO.className;
-		var args 				= constructorVO.arguments;
-		var factoryMethod 		= constructorVO.factory;
-		var singletonAccess 	= constructorVO.singleton;
-		var staticRef 			= constructorVO.staticRef;
-		var instantiateUnmapped = constructorVO.injectInto;
-		
-		var classReference 	: Class<Dynamic>;
-
-		try
-		{
-			classReference = ClassUtil.getClassReference( qualifiedClassName );
-		}
-		catch ( e : IllegalArgumentException )
-		{
-			throw new IllegalArgumentException( "'" + qualifiedClassName + "' class is not available in current domain" );
-		}
-
-		var obj : Dynamic = null;
-		
-		if ( instantiateUnmapped )
-		{
-//			obj = this._injector.instantiateUnmapped( classReference );
-		}
-		else if ( factoryMethod != null )
-		{
-			if ( singletonAccess != null )
-			{
-				var inst : Dynamic = null;
-
-				var singletonCall : Dynamic = Reflect.field( classReference, singletonAccess );
-				if ( singletonCall != null )
-				{
-					inst = singletonCall();
-				}
-				else
-				{
-					throw new IllegalArgumentException( qualifiedClassName + "." + singletonAccess + "()' singleton access failed." );
-				}
-
-				var methodReference : Dynamic = Reflect.field( inst, factoryMethod );
-				if ( methodReference != null )
-				{
-					obj = Reflect.callMethod( inst, methodReference, args );
-				}
-				else 
-				{
-					throw new IllegalArgumentException( qualifiedClassName + "." + singletonAccess + "()." + factoryMethod + "()' factory method call failed." );
-				}
-			}
-			else
-			{
-				var methodReference : Dynamic = Reflect.field( classReference, factoryMethod );
-				
-				if ( methodReference != null )
-				{
-					obj = Reflect.callMethod( classReference, methodReference, args );
-				}
-				else 
-				{
-					throw new IllegalArgumentException( qualifiedClassName + "." + factoryMethod + "()' factory method call failed." );
-				}
-			}
-
-		} else if ( singletonAccess != null )
-		{
-			var singletonCall : Dynamic = Reflect.field( classReference, singletonAccess );
-			if ( singletonCall != null )
-			{
-				obj = singletonCall();
-			}
-			else
-			{
-				throw new IllegalArgumentException( qualifiedClassName + "." + singletonAccess + "()' singleton call failed." );
-			}
-		}
-		else
-		{
-			try
-			{
-				obj = Type.createInstance( classReference, args != null ? args : [] );
-			}
-			catch ( e : Dynamic )
-			{
-				throw new IllegalArgumentException( "Instantiation of class '" + qualifiedClassName + "' failed with arguments: " + args + " : " + e);
-			}
-
-			if ( Std.is( obj, IAnnotationParsable ) )
-			{
-//				this._annotationProvider.parse( obj );
-			}
-
-			if ( Std.is( obj, IService ) )
-			{
-				( cast obj ).createConfiguration();
-			}
-		}
-
-		return obj;
+		return null;
 	}
 	
 	public function addProxyFactoryMethod( className : String, socpe : Dynamic, factoryMethod : Dynamic ) : Void

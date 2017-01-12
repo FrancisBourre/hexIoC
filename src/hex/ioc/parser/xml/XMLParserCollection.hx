@@ -1,12 +1,13 @@
 package hex.ioc.parser.xml;
 
-import hex.ioc.parser.AbstractParserCollection;
+import hex.factory.BuildRequest;
+import hex.parser.AbstractParserCollection;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class XMLParserCollection extends AbstractParserCollection
+class XMLParserCollection extends AbstractParserCollection<AbstractXMLParser, Xml>
 {
 	private var _isAutoBuild : Bool = false;
 	
@@ -18,13 +19,12 @@ class XMLParserCollection extends AbstractParserCollection
 	
 	override function _buildParserList() : Void
 	{
-		this._parserCommandCollection.push( new ApplicationContextXMLParser() );
-		this._parserCommandCollection.push( new StateXMLParser() );
-		this._parserCommandCollection.push( new ObjectXMLParser() );
+		this._parserCollection.push( new StateXMLParser() );
+		this._parserCollection.push( new ObjectXMLParser() );
 
 		if ( this._isAutoBuild )
 		{
-			this._parserCommandCollection.push( new AutoBuildLauncher() );
+			this._parserCollection.push( new AutoBuildLauncher() );
 		}
 	}
 }

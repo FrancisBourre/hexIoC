@@ -1,8 +1,8 @@
 package hex.ioc.control;
 
-import hex.ioc.vo.FactoryVO;
 import hex.error.Exception;
-import hex.ioc.vo.ConstructorVO;
+import hex.error.PrivateConstructorException;
+import hex.ioc.vo.FactoryVO;
 
 /**
  * ...
@@ -10,21 +10,19 @@ import hex.ioc.vo.ConstructorVO;
  */
 class FunctionFactory
 {
-	function new()
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
+
+	static public function build( factoryVO : FactoryVO ) : Dynamic
 	{
-
-	}
-
-	static public function build( factoryVO : FactoryVO ) : Void
-	{
-		var constructorVO : ConstructorVO = factoryVO.constructorVO;
-
-		var method : Dynamic;
-		var msg : String;
-
-		var args : Array<String> = constructorVO.arguments[ 0 ].split(".");
-		var targetID : String = args[ 0 ];
-		var path : String = args.slice( 1 ).join( "." );
+		var result : Dynamic 	= null;
+		var constructorVO 		= factoryVO.constructorVO;
+		var args 				= constructorVO.arguments[ 0 ].split(".");
+		var targetID 			= args[ 0 ];
+		var path 				= args.slice( 1 ).join( "." );
 
 		if ( !factoryVO.coreFactory.isRegisteredWithKey( targetID ) )
 		{
@@ -35,15 +33,15 @@ class FunctionFactory
 
 		try
 		{
-			method = factoryVO.coreFactory.fastEvalFromTarget( target, path );
+			result = factoryVO.coreFactory.fastEvalFromTarget( target, path );
 
 		} catch ( error : Dynamic )
 		{
-			msg = "FunctionFactory.build() failed on " + target + " with id '" + targetID + "'. ";
+			var msg = "FunctionFactory.build() failed on " + target + " with id '" + targetID + "'. ";
 			msg += path + " method can't be found.";
 			throw new Exception( msg );
 		}
 
-		constructorVO.result = method;
+		return result;
 	}
 }

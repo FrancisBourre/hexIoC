@@ -1,8 +1,8 @@
 package hex.ioc.control;
 
-import hex.ioc.vo.FactoryVO;
 import hex.error.IllegalArgumentException;
-import hex.ioc.vo.ConstructorVO;
+import hex.error.PrivateConstructorException;
+import hex.ioc.vo.FactoryVO;
 
 /**
  * ...
@@ -10,30 +10,28 @@ import hex.ioc.vo.ConstructorVO;
  */
 class FloatFactory
 {
-	function new()
-	{
-
-	}
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException( "This class can't be instantiated." );
+    }
 	
-	static public function build( factoryVO : FactoryVO ) : Void
+	static public function build( factoryVO : FactoryVO ) : Float
 	{
-		var constructorVO : ConstructorVO = factoryVO.constructorVO;
-
-		var args : Array<Dynamic> 	= constructorVO.arguments;
-		var number : Float 	= Math.NaN;
+		var result : Dynamic 	= Math.NaN;
+		var constructorVO 		= factoryVO.constructorVO;
+		var args 				= constructorVO.arguments;
 
 		if ( args != null && args.length > 0 ) 
 		{
-			number = Std.parseFloat( args[ 0 ] );
+			result = Std.parseFloat( args[ 0 ] );
 		}
 
-		if ( !Math.isNaN( number ) )
+		if ( Math.isNaN( result ) )
 		{
-			constructorVO.result = number;
+			throw new IllegalArgumentException( "FloatFactory.build(" + result + ") failed." );
 		}
-		else
-		{
-			throw new IllegalArgumentException( "FloatFactory.build(" + number + ") failed." );
-		}
+		
+		return result;
 	}
 }

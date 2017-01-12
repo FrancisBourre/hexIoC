@@ -1,20 +1,19 @@
 package hex.ioc.assembler;
 
-import hex.di.IContextOwner;
+import hex.core.IApplicationContext;
 import hex.di.IDependencyInjector;
 import hex.domain.Domain;
 import hex.domain.DomainUtil;
-import hex.error.IllegalArgumentException;
 import hex.error.VirtualMethodException;
 import hex.event.MessageType;
-import hex.ioc.core.ICoreFactory;
+import hex.core.ICoreFactory;
 import hex.log.Stringifier;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class AbstractApplicationContext implements Dynamic<AbstractApplicationContext> implements IContextOwner
+class AbstractApplicationContext implements IApplicationContext
 {
 	var _name 					: String;
 	var _coreFactory 			: ICoreFactory;
@@ -35,26 +34,6 @@ class AbstractApplicationContext implements Dynamic<AbstractApplicationContext> 
 	public function getDomain() : Domain
 	{
 		return this._domain;
-	}
-	
-	function resolve( field : String )
-	{
-		return this._coreFactory.locate( field );
-	}
-
-	public function addChild( applicationContext : AbstractApplicationContext ) : Bool
-	{
-		try
-		{
-			return this._coreFactory.register( applicationContext.getName(), applicationContext );
-		}
-		catch ( ex : IllegalArgumentException )
-		{
-			#if debug
-			hex.log.Logger.error( "addChild failed with applicationContext named '" + applicationContext.getName() + "'" );
-			#end
-			return false;
-		}
 	}
 
 	public function dispatch( messageType : MessageType, ?data : Array<Dynamic> ) : Void

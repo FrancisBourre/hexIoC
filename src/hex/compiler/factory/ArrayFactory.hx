@@ -1,6 +1,7 @@
 package hex.compiler.factory;
 
 import haxe.macro.Context;
+import haxe.macro.Expr;
 import haxe.macro.TypeTools;
 import hex.error.PrivateConstructorException;
 import hex.ioc.vo.FactoryVO;
@@ -18,43 +19,50 @@ class ArrayFactory
     }
 	
 	#if macro
-	static public function build( factoryVO : FactoryVO ) : Dynamic
+	static public function build( factoryVO : FactoryVO ) : Expr
 	{
-		var constructorVO = factoryVO.constructorVO;
+		var constructorVO 		= factoryVO.constructorVO;
+		var idVar 				= constructorVO.ID;
+		var args 				= ArgumentFactory.build( factoryVO );
 
-		if ( !constructorVO.isProperty )
+		if ( constructorVO.shouldAssign )
 		{
-			var idVar 	= constructorVO.ID;
-			var exp 	= Context.parseInlineString( "new " + constructorVO.className + "()", constructorVO.filePosition );
+			var exp 	= Context.parseInlineString( "new " + constructorVO.type + "()", constructorVO.filePosition );
 			var varType = TypeTools.toComplexType( Context.typeof( exp ) );
+			var result 	= macro @:pos( constructorVO.filePosition ) var $idVar : $varType = $a{ args };
 			
-			factoryVO.expressions.push( macro @:mergeBlock @:pos( constructorVO.filePosition ) { var $idVar : $varType = $a { constructorVO.constructorArgs }; } );
-		}
-		
-		if ( constructorVO.mapTypes != null )
-		{
-			var instanceVar = macro $i { constructorVO.ID };
-			
-			var mapTypes = constructorVO.mapTypes;
-			for ( mapType in mapTypes )
+			if ( constructorVO.mapTypes != null )
 			{
-				//Check if class exists
-				FactoryUtil.checkTypeParamsExist( mapType, constructorVO.filePosition );
-				
-				//Remove whitespaces
-				mapType = mapType.split( ' ' ).join( '' );
-				
-				//Map it
-				factoryVO.expressions.push
-				( 
-					macro @:pos( constructorVO.filePosition ) 
-						@:mergeBlock { __applicationContextInjector
-							.mapClassNameToValue( $v { mapType }, $instanceVar, $v { constructorVO.ID } ); } 
-				);
+				var mapTypes = constructorVO.mapTypes;
+				for ( mapType in mapTypes )
+				{
+					//Check if class exists
+					FactoryUtil.checkTypeParamsExist( mapType, constructorVO.filePosition );
+					
+					//Remove whitespaces
+					mapType = mapType.split( ' ' ).join( '' );
+					
+					//Map it
+					result = macro 	@:pos( constructorVO.filePosition ) 
+					@:mergeBlock 
+					{
+						$result; 
+						__applicationContextInjector.mapClassNameToValue
+						( 
+							$v{ mapType }, 
+							$i{ constructorVO.ID }, 
+							$v{ constructorVO.ID } 
+						); 
+					};
+				}
 			}
+			
+			return result;
 		}
-		
-		return macro @:pos( constructorVO.filePosition ) { $a{ constructorVO.constructorArgs } };
+		else
+		{
+			return macro @:pos( constructorVO.filePosition ) $a{ args };
+		}
 	}
 	#end
 }

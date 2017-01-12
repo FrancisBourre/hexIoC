@@ -1,0 +1,11 @@
+@context( name = 'applicationContext' )
+{
+	fruits = Xml.parse
+	(
+		'<root>
+			<node>orange</node>
+			<node>apple</node>
+			<node>banana</node>
+		</root>'
+	);
+}
