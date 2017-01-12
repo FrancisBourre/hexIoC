@@ -815,4 +815,23 @@ class FlowCompilerTest
 		Assert.isNotNull( doc );
 		Assert.isInstanceOf( doc, MockDocument );
 	}*/
+	
+	@Test( "test file preprocessor with flow file" )
+	public function testFilePreprocessorWithFlowFile() : Void
+	{
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/preprocessor.flow", 
+															[	"hello" 		=> "bonjour",
+																"contextName" 	=> 'applicationContext',
+																"context" 		=> 'name="${contextName}"',
+																"node" 			=> 'message = "${hello}"' ] );
+
+		Assert.equals( "bonjour", this._getCoreFactory().locate( "message" ), "message value should equal 'bonjour'" );
+	}
+	
+	@Test( "test if attribute" )
+	public function testIfAttribute() : Void
+	{
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/ifAttribute.flow" );
+		Assert.equals( "hello message", this._getCoreFactory().locate( "message" ), "message value should equal 'hello production'" );
+	}
 }

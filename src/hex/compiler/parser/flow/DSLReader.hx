@@ -2,7 +2,7 @@ package hex.compiler.parser.flow;
 
 import haxe.macro.Context;
 import haxe.macro.Expr;
-import hex.ioc.assembler.ConditionalVariablesChecker;
+import hex.preprocess.MacroPreprocessor;
 
 /**
  * ...
@@ -15,10 +15,15 @@ class DSLReader
 		
 	}
 	
-	public function read( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariablesChecker : ConditionalVariablesChecker ) : Expr
+	public function read( fileName : String, ?preprocessingVariables : Expr ) : Expr
 	{
 		//read file
 		var dsl = this._readFile( fileName );
+		trace( dsl );
+		
+		//preprocess
+		dsl.data = MacroPreprocessor.parse( dsl.data, preprocessingVariables );
+		trace( dsl.data );
 
 		//parse
 		var expr = Context.parseInlineString

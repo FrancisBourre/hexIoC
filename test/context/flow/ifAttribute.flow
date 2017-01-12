@@ -1,0 +1,10 @@
+@context( name = 'applicationContext' )
+{
+	#if ( test || release )
+	message = "hello debug";
+	#elseif production
+	message = "hello production";
+	#else
+	message = "hello message";
+	#end
+}
