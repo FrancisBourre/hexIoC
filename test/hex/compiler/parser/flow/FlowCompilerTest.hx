@@ -131,6 +131,13 @@ class FlowCompilerTest
 		Assert.equals( -3, i );
 	}
 	
+	@Test( "test building Hex" )
+	public function testBuildingHex() : Void
+	{
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/testBuildingHex.flow" );
+		Assert.equals( 0xFFFFFF, this._getCoreFactory().locate( "i" ) );
+	}
+	
 	@Test( "test building Bool" )
 	public function testBuildingBool() : Void
 	{

@@ -28,16 +28,12 @@ class IntFactory
 
 		if ( args != null && args.length > 0 ) 
 		{
-			result = Std.parseInt( Std.string( args[ 0 ] ) );
+			var s = Std.string( args[ 0 ] );
+			result = Std.parseInt( s );
 		}
 		else
 		{
 			Context.error( "Invalid arguments.", constructorVO.filePosition );
-		}
-
-		if ( "" + result != args[ 0 ] )
-		{
-			Context.error( "Value is not an Int", constructorVO.filePosition );
 		}
 		
 		//Building result

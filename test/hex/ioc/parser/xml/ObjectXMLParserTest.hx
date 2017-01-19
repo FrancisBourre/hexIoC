@@ -104,6 +104,13 @@ class ObjectXMLParserTest
 		Assert.equals( -3, this._locate( "i" ) );
 	}
 	
+	@Test( "test building Hex" )
+	public function testBuildingHex() : Void
+	{
+		this.build( XmlReader.getXml( "context/testBuildingHex.xml" ) );
+		Assert.equals( 0xFFFFFF, this._locate( "i" ) );
+	}
+	
 	@Test( "test building Bool" )
 	public function testBuildingBool() : Void
 	{

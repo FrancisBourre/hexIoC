@@ -20,6 +20,14 @@ class IntFactoryTest
 		Assert.equals( 4, IntFactory.build( helper ), "constructorVO.result should equal 4" );
 	}
 	
+	@Test( "Test execute with hex positive value" )
+    public function testExecuteWithHexPositiveValue() : Void
+    {
+		var helper = new FactoryVO();
+		helper.constructorVO = new ConstructorVO( "test", "Int", ["0xFFFFFF"] );
+		Assert.equals( 0xFFFFFF, IntFactory.build( helper ), "constructorVO.result should equal 0xFFFFFF" );
+	}
+	
 	@Test( "Test execute with negative value" )
     public function testExecuteWithNegativeValue() : Void
     {
