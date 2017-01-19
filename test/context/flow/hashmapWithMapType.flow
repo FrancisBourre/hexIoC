@@ -1,0 +1,12 @@
+@context( name = 'applicationContext' )
+{
+	@map_type( 'hex.collection.HashMap<String, hex.ioc.parser.xml.mock.MockFruitVO>' ) 
+	fruits = new hex.collection.HashMap<Dynamic, hex.ioc.parser.xml.mock.MockFruitVO>
+	([ 
+		"0" => fruit0,
+		"1" => fruit1
+	]);
+	
+	fruit0 = new hex.ioc.parser.xml.mock.MockFruitVO( "orange" );
+	fruit1 = new hex.ioc.parser.xml.mock.MockFruitVO( "apple" );
+}

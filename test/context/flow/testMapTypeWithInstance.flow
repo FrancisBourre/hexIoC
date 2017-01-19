@@ -1,0 +1,11 @@
+@context( name = 'applicationContext' )
+{
+	i = 3;
+	
+	@map_type( 	'hex.ioc.parser.xml.mock.IMockInterfaceWithGeneric<Int>', 
+				'hex.ioc.parser.xml.mock.IMockInterfaceWithGeneric<UInt>' ) 
+		intInstance = new hex.ioc.parser.xml.mock.MockClassWithIntGeneric( i );
+		
+	@map_type( 'hex.ioc.parser.xml.mock.IMockInterfaceWithGeneric<String>' ) 
+		stringInstance = new hex.ioc.parser.xml.mock.MockClassWithStringGeneric( 's' );
+}
