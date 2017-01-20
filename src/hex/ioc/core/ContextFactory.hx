@@ -1,9 +1,5 @@
 package hex.ioc.core;
 
-#if macro
-//skip this class
-#else
-
 import hex.collection.ILocatorListener;
 import hex.control.macro.IMacroExecutor;
 import hex.control.macro.MacroExecutor;
@@ -14,7 +10,6 @@ import hex.core.ICoreFactory;
 import hex.core.SymbolTable;
 import hex.di.IBasicInjector;
 import hex.di.IDependencyInjector;
-import hex.di.Injector;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
 import hex.domain.DomainUtil;
@@ -101,7 +96,7 @@ class ContextFactory
 			this._contextDispatcher = ApplicationDomainDispatcher.getInstance().getDomainDispatcher( domain );
 			
 			//build injector
-			var injector = new Injector();
+			var injector : IDependencyInjector = cast Type.createInstance( Type.resolveClass( 'hex.di.Injector' ), [] );
 			injector.mapToValue( IBasicInjector, injector );
 			injector.mapToValue( IDependencyInjector, injector );
 			injector.mapToType( IMacroExecutor, MacroExecutor );
@@ -423,4 +418,3 @@ class ContextFactory
 		return result;
 	}
 }
-#end
