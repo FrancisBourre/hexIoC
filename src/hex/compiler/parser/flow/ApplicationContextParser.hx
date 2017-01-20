@@ -18,7 +18,6 @@ class ApplicationContextParser extends AbstractExprParser
 	{
 		//Create runtime applicationContext
 		var assemblerExpr	= ( cast this._applicationAssembler ).getAssemblerExpression();
-		var contextData 	= this.getContextData();
 		
 		var applicationContextClass = null;
 		var applicationContextClassName = this._applicationContextClassName;
@@ -31,7 +30,7 @@ class ApplicationContextParser extends AbstractExprParser
 			}
 			catch ( error : Dynamic )
 			{
-				//this._throwMissingTypeException( applicationContextClassName, contextData, ContextAttributeList.TYPE );
+				this._throwMissingApplicationContextClassException();
 			}
 		}
 	

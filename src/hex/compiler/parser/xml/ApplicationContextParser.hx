@@ -18,20 +18,18 @@ class ApplicationContextParser extends AbstractXmlParser
 	{
 		//Create runtime applicationContext
 		var assemblerExpr	 	= ( cast this._applicationAssembler ).getAssemblerExpression();
-		var xml : Xml 			= this.getContextData().firstElement();
-		
+
 		var applicationContextClass = null;
-		var applicationContextClassName : String = xml.get( ContextAttributeList.TYPE );
 		
-		if ( applicationContextClassName != null )
+		if ( this._applicationContextClassName != null )
 		{
 			try
 			{
-				applicationContextClass = MacroUtil.getPack( applicationContextClassName );
+				applicationContextClass = MacroUtil.getPack( this._applicationContextClassName );
 			}
 			catch ( error : Dynamic )
 			{
-				this._throwMissingTypeException( applicationContextClassName, xml, ContextAttributeList.TYPE );
+				this._throwMissingApplicationContextClassException();
 			}
 		}
 		

@@ -1050,7 +1050,7 @@ class ObjectXMLParserTest
 	@Test( "test file preprocessor with Xml file" )
 	public function testFilePreprocessorWithXmlFile() : Void
 	{
-		this.build(  XmlReader.getXml( "context/preprocessor.xml", [	"hello" 		=> "bonjour",
+		this.build(  XmlReader.getXml( "context/preprocessor.xml", [				"hello" 		=> "bonjour",
 																					"contextName" 	=> 'applicationContext',
 																					"context" 		=> 'name="${contextName}"',
 																					"node" 			=> '<msg id="message" value="${hello}"/>' ] ) );
@@ -1061,7 +1061,7 @@ class ObjectXMLParserTest
 	@Test( "test file preprocessor with Xml file and include" )
 	public function testFilePreprocessorWithXmlFileAndInclude() : Void
 	{
-		this.build(  XmlReader.getXml( "context/preprocessorWithInclude.xml", [	"hello" 		=> "bonjour",
+		this.build(  XmlReader.getXml( "context/preprocessorWithInclude.xml", [		"hello" 		=> "bonjour",
 																					"contextName" 	=> 'applicationContext',
 																					"context" 		=> 'name="${contextName}"',
 																					"node" 			=> '<msg id="message" value="${hello}"/>' ] ) );

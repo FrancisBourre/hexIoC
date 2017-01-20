@@ -5,6 +5,7 @@ import haxe.macro.Expr;
 import hex.core.IApplicationContext;
 import hex.core.IBuilder;
 import hex.factory.BuildRequest;
+import hex.ioc.core.ContextAttributeList;
 
 using hex.util.MacroUtil;
 using hex.compiler.parser.flow.ExpressionUtil;
@@ -132,5 +133,15 @@ class AbstractExprParser extends DSLParser<Expr>
 		}
 		
 		return [];
+	}
+	
+	function _throwMissingTypeException( type : String, e : Expr, attributeName : String ) : Void 
+	{
+		Context.error( "Type not found '" + type + "' ", this._exceptionReporter.getPosition( e, attributeName ) );
+	}
+	
+	function _throwMissingApplicationContextClassException() : Void 
+	{
+		this._throwMissingTypeException( this._applicationContextClassName, this.getContextData(), ContextAttributeList.TYPE );
 	}
 }
