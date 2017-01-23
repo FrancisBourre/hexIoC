@@ -1,5 +1,6 @@
 package hex.compiler.parser.flow;
 
+#if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import hex.preprocess.MacroPreprocessor;
@@ -58,3 +59,4 @@ class DSLReader
 		}
 	}
 }
+#end

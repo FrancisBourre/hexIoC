@@ -945,6 +945,7 @@ class XmlCompilerTest
 		Assert.equals( 4.5, ( myModuleB.getFloatValue() ), "" );
 	}
 	
+	#if (!neko || haxe_ver >= "3.3")
 	@Async( "test EventTrigger" )
 	public function testEventTrigger() : Void
 	{
@@ -964,21 +965,6 @@ class XmlCompilerTest
 
 		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandler ), 500 );
 		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "bonjour" ] );
-	}
-	
-	function getColorByName( name : String ) : Int
-	{
-		return name == "white" ? 0xFFFFFF : 0;
-	}
-
-	function getText( name : String ) : String
-	{
-		return name == "welcome" ? "Bienvenue" : null;
-	}
-	
-	function getAnotherText( name : String ) : String
-	{
-		return "anotherText";
 	}
 	
 	@Async( "test EventProxy" )
@@ -1009,6 +995,22 @@ class XmlCompilerTest
 	{
 		var receiver : MockReceiverModule = this._getCoreFactory().locate( "receiver" );
 		Assert.equals( "BONJOUR:HTTP://GOOGLE.COM", receiver.message, "" );
+	}
+	#end
+	
+	function getColorByName( name : String ) : Int
+	{
+		return name == "white" ? 0xFFFFFF : 0;
+	}
+
+	function getText( name : String ) : String
+	{
+		return name == "welcome" ? "Bienvenue" : null;
+	}
+	
+	function getAnotherText( name : String ) : String
+	{
+		return "anotherText";
 	}
 	
 	@Test( "Test MockObject with annotation" )

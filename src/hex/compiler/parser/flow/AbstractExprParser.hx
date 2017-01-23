@@ -1,5 +1,6 @@
 package hex.compiler.parser.flow;
 
+#if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import hex.compiler.core.CompileTimeContextFactory;
@@ -147,3 +148,4 @@ class AbstractExprParser extends DSLParser<Expr>
 		this._throwMissingTypeException( this._applicationContextClassName, this.getContextData(), ContextAttributeList.TYPE );
 	}
 }
+#end

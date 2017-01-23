@@ -1,5 +1,6 @@
 package hex.compiler.parser.flow;
 
+#if macro
 /**
  * ...
  * @author Francis Bourre
@@ -16,3 +17,4 @@ class StateParser extends AbstractExprParser
 		
 	}
 }
+#end

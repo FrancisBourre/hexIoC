@@ -33,7 +33,6 @@ before_install:
   - echo $DEPENDENCIES_BRANCH
 
 install:
-  - git clone --recursive -b $DEPENDENCIES_BRANCH https://github.com/DoclerLabs/hexUnit.git ./hexunit
   - git clone --recursive -b $DEPENDENCIES_BRANCH https://github.com/DoclerLabs/hexCore.git ./hexcore
   - git clone --recursive -b $DEPENDENCIES_BRANCH https://github.com/DoclerLabs/hexReflection.git ./hexreflection
   - git clone --recursive -b $DEPENDENCIES_BRANCH https://github.com/DoclerLabs/hexAnnotation.git ./hexannotation
@@ -42,14 +41,20 @@ install:
   - git clone --recursive -b $DEPENDENCIES_BRANCH https://github.com/DoclerLabs/hexMVC.git ./hexmvc
   - git clone --recursive -b $DEPENDENCIES_BRANCH https://github.com/DoclerLabs/hexService.git ./hexservice
   - git clone --recursive -b $DEPENDENCIES_BRANCH https://github.com/DoclerLabs/hexState.git ./hexstate
+  - git clone --recursive -b $DEPENDENCIES_BRANCH https://github.com/DoclerLabs/hexUnit.git ./hexunit
+  - git clone --recursive https://github.com/chipshort/hexDoc-Theme.git ./hexdoctheme
   - export DISPLAY=:99.0;
   - export AUDIODEV=null;
   - haxe flash/install.hxml
 
 script:
+  - if [ $TRAVIS_HAXE_VERSION != "3.2.1" ]; then haxe build-each.hxml -cp hexdoctheme/src --macro "ImportAll.run()" --no-output -php bin; fi
   - if [ $TRAVIS_HAXE_VERSION != "3.2.1" ]; then haxe build-php.hxml && php bin/index.php; fi
+  - haxe build-each.hxml -cp hexdoctheme/src --macro "ImportAll.run()" --no-output -neko bin/docs.n
   - if [ $TRAVIS_HAXE_VERSION != "3.2.1" ]; then haxe build-neko.hxml && neko bin/MainIoCTest.n; fi
+  - haxe build-each.hxml -cp hexdoctheme/src --macro "ImportAll.run()" --no-output -js bin/docs.js
   - haxe build-js.hxml           && node bin/MainIoCTest.js
+  - if [ $TRAVIS_HAXE_VERSION != "3.2.1" ]; then haxe build-each.hxml -cp hexdoctheme/src --macro "ImportAll.run()" --no-output -swf-version 11 -swf bin/docs.swf; fi
   - if [ $TRAVIS_HAXE_VERSION != "3.2.1" ]; then haxe build-flash.hxml -D fdb && haxe flash/run.hxml bin/MainIoCTest.swf; fi
 
 notifications:

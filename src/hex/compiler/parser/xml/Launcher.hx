@@ -1,5 +1,6 @@
 package hex.compiler.parser.xml;
 
+#if macro
 import hex.compiletime.ICompileTimeApplicationAssembler;
 import hex.metadata.IAnnotationProvider;
 import hex.util.MacroUtil;
@@ -39,3 +40,4 @@ class Launcher extends AbstractXmlParser
 		assembler.addExpression( assembler.getAssemblerExpression() );
 	}
 }
+#end

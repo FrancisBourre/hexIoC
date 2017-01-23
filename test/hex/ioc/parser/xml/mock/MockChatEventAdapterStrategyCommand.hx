@@ -1,5 +1,6 @@
 package hex.ioc.parser.xml.mock;
 
+#if (!neko || haxe_ver >= "3.3")
 import haxe.Timer;
 import hex.control.Request;
 import hex.control.async.AsyncCommand;
@@ -37,3 +38,4 @@ class MockChatEventAdapterStrategyCommand extends AsyncCommand
 		this._handleComplete();
 	}
 }
+#end

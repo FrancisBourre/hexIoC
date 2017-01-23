@@ -1,5 +1,6 @@
 package hex.compiler.parser.xml;
 
+#if macro
 import haxe.macro.Context;
 import hex.core.IApplicationContext;
 import hex.factory.BuildRequest;
@@ -120,3 +121,4 @@ class StateParser extends AbstractXmlParser
 	}
 	
 }
+#end
