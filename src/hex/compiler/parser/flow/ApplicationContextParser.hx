@@ -1,5 +1,6 @@
 package hex.compiler.parser.flow;
 
+#if macro
 import hex.ioc.core.ContextAttributeList;
 import hex.util.MacroUtil;
 
@@ -18,7 +19,6 @@ class ApplicationContextParser extends AbstractExprParser
 	{
 		//Create runtime applicationContext
 		var assemblerExpr	= ( cast this._applicationAssembler ).getAssemblerExpression();
-		var contextData 	= this.getContextData();
 		
 		var applicationContextClass = null;
 		var applicationContextClassName = this._applicationContextClassName;
@@ -31,22 +31,16 @@ class ApplicationContextParser extends AbstractExprParser
 			}
 			catch ( error : Dynamic )
 			{
-				//this._throwMissingTypeException( applicationContextClassName, contextData, ContextAttributeList.TYPE );
+				this._throwMissingApplicationContextClassException();
 			}
-		}
-	
-		var applicationContextName = this._applicationContextName;
-	
-		var expr;
-		if ( applicationContextClass != null )
-		{
-			expr = macro @:mergeBlock { var applicationContext = $assemblerExpr.getApplicationContext( $v { applicationContextName }, $p { applicationContextClass } ); };
 		}
 		else
 		{
-			expr = macro @:mergeBlock { var applicationContext = $assemblerExpr.getApplicationContext( $v { applicationContextName } ); };
+			applicationContextClass = MacroUtil.getPack( 'hex.ioc.assembler.ApplicationContext' );
 		}
-
+	
+		var expr = macro @:mergeBlock { var applicationContext = $assemblerExpr.getApplicationContext( $v { this._applicationContextName }, $p { applicationContextClass } ); };
 		( cast this._applicationAssembler ).addExpression( expr );
 	}
 }
+#end

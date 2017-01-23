@@ -1,5 +1,6 @@
 package hex.compiler.parser.flow;
 
+#if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.ExprTools;
@@ -192,3 +193,4 @@ class ExpressionUtil
 		return className.split( "new " ).join( '' ).split( '()' ).join( '' );
 	}
 }
+#end

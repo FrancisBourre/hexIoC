@@ -13,6 +13,7 @@ import hex.error.Exception;
 import hex.error.NoSuchElementException;
 import hex.event.Dispatcher;
 import hex.event.EventProxy;
+import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.di.MappingConfiguration;
 import hex.ioc.parser.xml.mock.AnotherMockAmazonService;
 import hex.ioc.parser.xml.mock.AnotherMockModuleWithServiceCallback;
@@ -45,7 +46,6 @@ import hex.ioc.parser.xml.mock.MockSenderModule;
 import hex.ioc.parser.xml.mock.MockServiceProvider;
 import hex.ioc.parser.xml.mock.MockStubStatefulService;
 import hex.ioc.parser.xml.mock.MockTranslationModule;
-import hex.ioc.parser.xml.state.mock.MockStateMessage;
 import hex.preprocess.Preprocessor;
 import hex.runtime.ApplicationAssembler;
 import hex.structures.Point;
@@ -68,7 +68,7 @@ class ObjectXMLParserTest
 	public function setUp() : Void
 	{
 		this._applicationAssembler 	= new ApplicationAssembler();
-		this._applicationContext 	= this._applicationAssembler.getApplicationContext( "applicationContext" );
+		this._applicationContext 	= this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext );
 		this._applicationContext.getCoreFactory().addProxyFactoryMethod( "hex.structures.Point", PointFactory, PointFactory.build );
 	}
 
@@ -102,6 +102,13 @@ class ObjectXMLParserTest
 	{
 		this.build( XmlReader.getXml( "context/testBuildingInt.xml" ) );
 		Assert.equals( -3, this._locate( "i" ) );
+	}
+	
+	@Test( "test building Hex" )
+	public function testBuildingHex() : Void
+	{
+		this.build( XmlReader.getXml( "context/testBuildingHex.xml" ) );
+		Assert.equals( 0xFFFFFF, this._locate( "i" ) );
 	}
 	
 	@Test( "test building Bool" )
@@ -907,6 +914,7 @@ class ObjectXMLParserTest
 		Assert.equals( MockMethodCaller.staticVar, instance.argument, "" );
 	}
 	
+	#if (!neko || haxe_ver >= "3.3")
 	@Async( "test EventProxy" )
 	public function testEventProxy() : Void
 	{
@@ -957,6 +965,7 @@ class ObjectXMLParserTest
 		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandler ), 500 );
 		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "bonjour" ] );
 	}
+	#end
 	
 	@Test( "test map-type attribute" )
 	public function testMapTypeAttribute() : Void
@@ -1043,7 +1052,7 @@ class ObjectXMLParserTest
 	@Test( "test file preprocessor with Xml file" )
 	public function testFilePreprocessorWithXmlFile() : Void
 	{
-		this.build(  XmlReader.getXml( "context/preprocessor.xml", [	"hello" 		=> "bonjour",
+		this.build(  XmlReader.getXml( "context/preprocessor.xml", [				"hello" 		=> "bonjour",
 																					"contextName" 	=> 'applicationContext',
 																					"context" 		=> 'name="${contextName}"',
 																					"node" 			=> '<msg id="message" value="${hello}"/>' ] ) );
@@ -1054,7 +1063,7 @@ class ObjectXMLParserTest
 	@Test( "test file preprocessor with Xml file and include" )
 	public function testFilePreprocessorWithXmlFileAndInclude() : Void
 	{
-		this.build(  XmlReader.getXml( "context/preprocessorWithInclude.xml", [	"hello" 		=> "bonjour",
+		this.build(  XmlReader.getXml( "context/preprocessorWithInclude.xml", [		"hello" 		=> "bonjour",
 																					"contextName" 	=> 'applicationContext',
 																					"context" 		=> 'name="${contextName}"',
 																					"node" 			=> '<msg id="message" value="${hello}"/>' ] ) );

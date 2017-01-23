@@ -1,10 +1,15 @@
 package hex.compiler.parser.flow;
 
+#if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
+import hex.compiler.core.CompileTimeContextFactory;
 import hex.core.IApplicationContext;
 import hex.core.IBuilder;
 import hex.factory.BuildRequest;
+import hex.ioc.assembler.AbstractApplicationContext;
+import hex.ioc.assembler.CompileTimeApplicationContext;
+import hex.ioc.core.ContextAttributeList;
 
 using hex.util.MacroUtil;
 using hex.compiler.parser.flow.ExpressionUtil;
@@ -27,7 +32,7 @@ class AbstractExprParser extends DSLParser<Expr>
 	@final
 	override public function getApplicationContext() : IApplicationContext
 	{
-		return this._applicationAssembler.getApplicationContext( this._applicationContextName );
+		return this._applicationAssembler.getApplicationContext( this._applicationContextName, CompileTimeApplicationContext );
 	}
 	
 	@final
@@ -39,8 +44,7 @@ class AbstractExprParser extends DSLParser<Expr>
 			this._findApplicationContextName( data );
 			this._findApplicationContextClassName( data );
 			
-			var context = this._applicationAssembler.getApplicationContext( this._applicationContextName );
-			this._builder = this._applicationAssembler.getBuilder( BuildRequest, context );
+			this._builder = this._applicationAssembler.getFactory( CompileTimeContextFactory, this._applicationContextName, CompileTimeApplicationContext );
 		}
 		else
 		{
@@ -133,4 +137,15 @@ class AbstractExprParser extends DSLParser<Expr>
 		
 		return [];
 	}
+	
+	function _throwMissingTypeException( type : String, e : Expr, attributeName : String ) : Void 
+	{
+		Context.error( "Type not found '" + type + "' ", this._exceptionReporter.getPosition( e, attributeName ) );
+	}
+	
+	function _throwMissingApplicationContextClassException() : Void 
+	{
+		this._throwMissingTypeException( this._applicationContextClassName, this.getContextData(), ContextAttributeList.TYPE );
+	}
 }
+#end

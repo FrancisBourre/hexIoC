@@ -1,9 +1,14 @@
 package hex.compiler.parser.xml;
 
+#if macro
 import haxe.macro.Context;
+import hex.compiler.core.CompileTimeContextFactory;
 import hex.core.IApplicationContext;
 import hex.core.IBuilder;
 import hex.factory.BuildRequest;
+import hex.ioc.assembler.AbstractApplicationContext;
+import hex.ioc.assembler.CompileTimeApplicationContext;
+import hex.ioc.core.ContextAttributeList;
 
 /**
  * ...
@@ -13,7 +18,7 @@ class AbstractXmlParser extends DSLParser<Xml>
 {
 	var _builder 						: IBuilder<BuildRequest>;
 	var _applicationContextName 		: String;
-	//var _applicationContextClassName 	: String;
+	var _applicationContextClassName 	: String;
 	
 	function new() 
 	{
@@ -23,7 +28,7 @@ class AbstractXmlParser extends DSLParser<Xml>
 	@final
 	override public function getApplicationContext() : IApplicationContext
 	{
-		return this._applicationAssembler.getApplicationContext( this._applicationContextName );
+		return this._applicationAssembler.getApplicationContext( this._applicationContextName, CompileTimeApplicationContext );
 	}
 	
 	@final
@@ -35,9 +40,9 @@ class AbstractXmlParser extends DSLParser<Xml>
 			{
 				this._contextData = data;
 				this._findApplicationContextName( data );
+				this._findApplicationContextClassName( data );
 				
-				var context = this._applicationAssembler.getApplicationContext( this._applicationContextName );
-				this._builder = this._applicationAssembler.getBuilder( BuildRequest, context );
+				this._builder = this._applicationAssembler.getFactory( CompileTimeContextFactory, this._applicationContextName, CompileTimeApplicationContext );
 			}
 			else
 			{
@@ -52,7 +57,7 @@ class AbstractXmlParser extends DSLParser<Xml>
 	
 	function _findApplicationContextName( xml : Xml ) : Void
 	{
-		this._applicationContextName = xml.firstElement().get( "name" );
+		this._applicationContextName = xml.firstElement().get( ContextAttributeList.NAME );
 		
 		if ( this._applicationContextName == null )
 		{
@@ -61,8 +66,19 @@ class AbstractXmlParser extends DSLParser<Xml>
 		}
 	}
 	
+	function _findApplicationContextClassName( xml : Xml ) : Void
+	{
+		this._applicationContextClassName = xml.firstElement().get( ContextAttributeList.TYPE );
+	}
+	
 	function _throwMissingTypeException( type : String, xml : Xml, attributeName : String ) : Void 
 	{
 		Context.error( "Type not found '" + type + "' ", this._exceptionReporter.getPosition( xml, attributeName ) );
 	}
+	
+	function _throwMissingApplicationContextClassException() : Void
+	{
+		this._throwMissingTypeException( this._applicationContextClassName, this.getContextData(), ContextAttributeList.TYPE );
+	}
 }
+#end

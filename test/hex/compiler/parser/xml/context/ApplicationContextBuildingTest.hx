@@ -2,6 +2,7 @@ package hex.compiler.parser.xml.context;
 
 import hex.core.IApplicationAssembler;
 import hex.domain.ApplicationDomainDispatcher;
+import hex.ioc.assembler.ApplicationContext;
 import hex.runtime.ApplicationAssembler;
 import hex.core.ICoreFactory;
 import hex.ioc.parser.xml.context.mock.MockApplicationContext;
@@ -30,7 +31,7 @@ class ApplicationContextBuildingTest
 		
 	function _getCoreFactory() : ICoreFactory
 	{
-		return this._applicationAssembler.getApplicationContext( "applicationContext" ).getCoreFactory();
+		return this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getCoreFactory();
 	}
 	
 	@Test( "test applicationContext building" )
@@ -38,7 +39,7 @@ class ApplicationContextBuildingTest
 	{
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/applicationContextBuildingTest.xml" );
 		
-		var applicationContext = this._applicationAssembler.getApplicationContext( "applicationContext" );
+		var applicationContext = this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext );
 		Assert.isNotNull( applicationContext, "applicationContext shouldn't be null" );
 		Assert.isInstanceOf( applicationContext, MockApplicationContext, "applicationContext shouldn't be an instance of 'MockApplicationContext'" );
 		Assert.equals( "Hola Mundo", applicationContext.getCoreFactory().locate( "test" ), "String values should be the same" );

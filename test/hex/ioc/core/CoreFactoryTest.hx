@@ -274,4 +274,9 @@ private class MockAnnotationDataProvider implements IAnnotationProvider
 	{
 		
 	}
+	
+	public function dispose() : Void
+	{
+		
+	}
 }

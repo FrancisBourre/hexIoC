@@ -1,5 +1,6 @@
 package hex.compiler.parser.flow;
 
+#if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.ExprTools;
@@ -30,7 +31,6 @@ class ObjectParser extends AbstractExprParser
 		}
 	}
 	
-	#if macro
 	private function _parseExpression( e : Expr ) : Void
 	{
 		switch ( e )
@@ -64,7 +64,15 @@ class ObjectParser extends AbstractExprParser
 				constructorVO.injectorCreation = true;
 				this._builder.build( OBJECT( constructorVO ) );
 				
-
+			case macro @map_type($a{args}) $i{ident} = $value:
+				var constructorVO = this._getConstructorVO( ident, value );
+				constructorVO.mapTypes = args.map( function( e ) return switch( e.expr ) 
+				{ 
+					case EConst(CString( mapType )) : mapType; 
+					case _: "";
+				} );
+				this._builder.build( OBJECT( constructorVO ) );
+				
 			case _:
 				trace( e.expr );
 		}
@@ -247,5 +255,5 @@ class ObjectParser extends AbstractExprParser
 		
 		return constructorVO;
 	}
-	#end
 }
+#end

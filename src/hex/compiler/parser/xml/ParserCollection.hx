@@ -1,5 +1,6 @@
 package hex.compiler.parser.xml;
 
+#if macro
 import hex.factory.BuildRequest;
 import hex.parser.AbstractParserCollection;
 
@@ -22,3 +23,4 @@ class ParserCollection extends AbstractParserCollection<AbstractXmlParser, Xml>
 		this._parserCollection.push( new Launcher() );
 	}
 }
+#end

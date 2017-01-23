@@ -6,6 +6,7 @@ import hex.error.IllegalArgumentException;
 import hex.error.NullPointerException;
 import hex.factory.BuildRequest;
 import hex.ioc.assembler.AbstractApplicationContext;
+import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.core.ContextFactory;
 import hex.ioc.error.ParsingException;
 import hex.parser.AbstractContextParser;
@@ -43,8 +44,10 @@ class AbstractXMLParser extends AbstractContextParser<Xml>
 				this._findApplicationContextName( data );
 				this._findApplicationContextClassName( data );
 				
-				var context = this._applicationAssembler.getApplicationContext( this._applicationContextName );
-				this._builder = this._applicationAssembler.getBuilder( BuildRequest, context );
+				this._builder = this._applicationAssembler.getFactory( ContextFactory, this._applicationContextName, ApplicationContext );
+				var context = this._applicationAssembler.getApplicationContext( this._applicationContextName, ApplicationContext );
+				
+				//this._builder = this._applicationAssembler.getBuilder( BuildRequest, context );
 			}
 			else
 			{

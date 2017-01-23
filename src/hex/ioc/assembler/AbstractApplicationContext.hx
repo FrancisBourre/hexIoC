@@ -38,7 +38,7 @@ class AbstractApplicationContext implements IApplicationContext
 
 	public function dispatch( messageType : MessageType, ?data : Array<Dynamic> ) : Void
 	{
-		throw new VirtualMethodException( Stringifier.stringify( this ) + "._dispatch is not implemented" );
+		throw new VirtualMethodException( Stringifier.stringify( this ) + ".dispatch is not implemented" );
 	}
 	
 	public function getCoreFactory() : ICoreFactory 
@@ -49,5 +49,10 @@ class AbstractApplicationContext implements IApplicationContext
 	public function getInjector() : IDependencyInjector 
 	{
 		return this._coreFactory.getInjector();
+	}
+	
+	public function dispose() : Void
+	{
+		//
 	}
 }
