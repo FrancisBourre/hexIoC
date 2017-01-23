@@ -3,6 +3,7 @@ package hex.compiler.parser.xml;
 import haxe.macro.Context;
 import hex.core.IApplicationContext;
 import hex.factory.BuildRequest;
+import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.core.ContextTypeList;
@@ -29,7 +30,7 @@ class ObjectParser extends AbstractXmlParser
 	
 	override public function parse() : Void
 	{
-		var applicationContext 	= this.getApplicationAssembler().getApplicationContext( this._applicationContextName );
+		var applicationContext 	= this.getApplicationAssembler().getApplicationContext( this._applicationContextName, ApplicationContext );
 		var iterator 			= this.getContextData().firstElement().elements();
 		
 		while ( iterator.hasNext() )

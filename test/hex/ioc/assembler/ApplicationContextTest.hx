@@ -16,7 +16,7 @@ class ApplicationContextTest
     public function testAccessors() : Void
     {
 		var applicationAssembler 	= new ApplicationAssembler();
-		var applicationContext 		: ApplicationContext	= cast applicationAssembler.getApplicationContext( "applicationContext" );
+		var applicationContext 		: ApplicationContext	= cast applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext );
 		
 		Assert.equals( "applicationContext", applicationContext.getName(), "returned name should be the same passed during instantiation" );
 		Assert.isInstanceOf( applicationContext.getInjector(), Injector, "injector returned should be an instance of Injector class" );

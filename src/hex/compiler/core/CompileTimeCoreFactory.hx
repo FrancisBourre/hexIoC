@@ -1,21 +1,17 @@
 package hex.compiler.core;
 
-import haxe.macro.Expr;
 import hex.collection.ILocatorListener;
 import hex.collection.LocatorMessage;
 import hex.compiler.CompileTimeFastEval;
-import hex.core.IAnnotationParsable;
+import hex.core.CoreFactoryVODef;
+import hex.core.ICoreFactory;
 import hex.di.IDependencyInjector;
 import hex.error.IllegalArgumentException;
 import hex.error.NoSuchElementException;
 import hex.event.ClosureDispatcher;
 import hex.event.MessageType;
-import hex.core.ICoreFactory;
-import hex.core.CoreFactoryVODef;
 import hex.log.Stringifier;
 import hex.metadata.IAnnotationProvider;
-import hex.service.IService;
-import hex.util.ClassUtil;
 
 /**
  * ...
@@ -23,15 +19,13 @@ import hex.util.ClassUtil;
  */
 class CompileTimeCoreFactory implements ICoreFactory
 {
-	var _expressions 			: Array<Expr>;
 	var _dispatcher 			: ClosureDispatcher;
 	var _map 					: Map<String, {}>;
 
 	static var _fastEvalMethod : Dynamic->String->ICoreFactory->Dynamic = CompileTimeFastEval.fromTarget;
 	
-	public function new( expressions : Array<Expr> ) 
+	public function new() 
 	{
-		this._expressions 			= expressions;
 		this._dispatcher 			= new ClosureDispatcher();
 		this._map 					= new Map();
 	}

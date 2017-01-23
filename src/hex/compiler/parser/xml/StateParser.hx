@@ -3,6 +3,7 @@ package hex.compiler.parser.xml;
 import haxe.macro.Context;
 import hex.core.IApplicationContext;
 import hex.factory.BuildRequest;
+import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.parser.xml.XMLParserUtil;
@@ -24,7 +25,7 @@ class StateParser extends AbstractXmlParser
 	
 	override public function parse() : Void
 	{
-		var applicationContext 	= this.getApplicationAssembler().getApplicationContext( this._applicationContextName );
+		var applicationContext 	= this.getApplicationAssembler().getApplicationContext( this._applicationContextName, ApplicationContext );
 		var iterator 			= this.getContextData().firstElement().elementsNamed( "state" );
 		
 		while ( iterator.hasNext() )

@@ -45,7 +45,7 @@ class ApplicationAssemblerStateTest
 		
 	function _getCoreFactory() : ICoreFactory
 	{
-		return this._applicationAssembler.getApplicationContext( "applicationContext" ).getCoreFactory();
+		return this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getCoreFactory();
 	}
 	
 	@Test( "test building state transitions" )
@@ -62,7 +62,7 @@ class ApplicationAssemblerStateTest
 		
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/testExtendingStateTransitions.xml" );
 
-		var coreFactory = this._applicationAssembler.getApplicationContext( "applicationContext" ).getCoreFactory();
+		var coreFactory = this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getCoreFactory();
 		var module : MockModule = coreFactory.locate( "module" );
 		var anotherModule : MockModule = coreFactory.locate( "anotherModule" );
 
@@ -103,8 +103,8 @@ class ApplicationAssemblerStateTest
 		
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/testCustomStateTransition.xml" );
 		
-		var context : ApplicationContext = cast this._applicationAssembler.getApplicationContext( "applicationContext" );
-		var coreFactory = this._applicationAssembler.getApplicationContext( "applicationContext" ).getCoreFactory();
+		var context : ApplicationContext = cast this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext );
+		var coreFactory = this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getCoreFactory();
 		var module : MockModule = coreFactory.locate( "module" );
 		Assert.isNotNull( module, "'module' shouldn't be null" );
 		

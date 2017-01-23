@@ -3,6 +3,7 @@ package hex.ioc.parser.xml.assembler;
 import hex.core.IApplicationAssembler;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.event.MessageType;
+import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.core.IContextFactory;
 import hex.ioc.parser.xml.assembler.mock.MockApplicationContext;
 import hex.ioc.parser.xml.assembler.mock.MockExitStateCommand;
@@ -47,7 +48,7 @@ class ApplicationAssemblerStateTest
 	{
 		this._applicationAssembler = XmlReader.readXmlFile( "context/testExtendingStateTransitions.xml" );
 		
-		var coreFactory = this._applicationAssembler.getApplicationContext( "applicationContext" ).getCoreFactory();
+		var coreFactory = this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getCoreFactory();
 		var module : MockModule = coreFactory.locate( "module" );
 		var anotherModule : MockModule = coreFactory.locate( "anotherModule" );
 
@@ -88,7 +89,7 @@ class ApplicationAssemblerStateTest
 		
 		this._applicationAssembler = XmlReader.readXmlFile( "context/testCustomStateTransition.xml" );
 		
-		var context = this._applicationAssembler.getApplicationContext( "applicationContext" );
+		var context = this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext );
 		var coreFactory = context.getCoreFactory();
 		
 		var module : MockModule = coreFactory.locate( "module" );

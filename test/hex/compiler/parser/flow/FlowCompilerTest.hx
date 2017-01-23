@@ -7,6 +7,7 @@ import hex.core.IApplicationAssembler;
 import hex.core.ICoreFactory;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.event.EventProxy;
+import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.core.IContextFactory;
 import hex.ioc.parser.xml.ApplicationXMLParser;
 import hex.ioc.parser.xml.mock.ClassWithConstantConstantArgument;
@@ -54,14 +55,14 @@ class FlowCompilerTest
 	
 	function _getCoreFactory() : ICoreFactory
 	{
-		return this._applicationAssembler.getApplicationContext( "applicationContext" ).getCoreFactory();
+		return this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getCoreFactory();
 	}
 	
 	@Test( "test building String with assembler" )
 	public function testBuildingStringWithAssembler() : Void
 	{
 		var assembler = new ApplicationAssembler();
-		assembler.getApplicationContext( "applicationContext" ).getCoreFactory().register( "s2", "bonjour" );
+		assembler.getApplicationContext( "applicationContext", ApplicationContext ).getCoreFactory().register( "s2", "bonjour" );
 		
 		this._applicationAssembler = FlowCompiler.compileWithAssembler( assembler, "context/flow/testBuildingString.flow" );
 
@@ -117,7 +118,7 @@ class FlowCompilerTest
 		FlowCompiler.compileWithAssembler( this._applicationAssembler, "context/flow/simpleInstanceWithoutArguments.flow" );
 		FlowCompiler.compileWithAssembler( this._applicationAssembler, "context/flow/simpleInstanceWithoutArguments.flow" );
 		
-		var coreFactory = applicationAssembler.getApplicationContext( "applicationContext" ).getCoreFactory();
+		var coreFactory = applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getCoreFactory();
 
 		var command1 = coreFactory.locate( "command" );
 		Assert.isInstanceOf( command1, BasicCommand );
@@ -384,7 +385,7 @@ class FlowCompilerTest
 	public function testInjectorCreationAttribute() : Void
 	{
 		var assembler = new ApplicationAssembler();
-		var injector = assembler.getApplicationContext( "applicationContext" ).getCoreFactory().getInjector();
+		var injector = assembler.getApplicationContext( "applicationContext", ApplicationContext ).getCoreFactory().getInjector();
 		injector.mapToValue( String, 'hola mundo' );
 		
 		this._applicationAssembler = FlowCompiler.compileWithAssembler( assembler, "context/flow/injectorCreationAttribute.flow" );
@@ -399,7 +400,7 @@ class FlowCompilerTest
 	public function testInjectIntoAttribute() : Void
 	{
 		var assembler = new ApplicationAssembler();
-		var injector = assembler.getApplicationContext( "applicationContext" ).getCoreFactory().getInjector();
+		var injector = assembler.getApplicationContext( "applicationContext", ApplicationContext ).getCoreFactory().getInjector();
 		injector.mapToValue( String, 'hola mundo' );
 
 		this._applicationAssembler = FlowCompiler.compileWithAssembler( assembler, "context/flow/injectIntoAttribute.flow" );
@@ -810,7 +811,7 @@ class FlowCompilerTest
 		var myModule : MockMappedModule = this._getCoreFactory().locate( "myModule" );
 		Assert.isNotNull( myModule );
 		Assert.isInstanceOf( myModule, MockMappedModule );
-		Assert.equals( myModule, this._applicationAssembler.getApplicationContext( "applicationContext" ).getInjector().getInstance( IMockMappedModule, "myModule" ), "" );
+		Assert.equals( myModule, this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getInjector().getInstance( IMockMappedModule, "myModule" ), "" );
 	}
 	
 	@Test( "test multi map-type attributes" )
@@ -823,8 +824,8 @@ class FlowCompilerTest
 		Assert.isInstanceOf( myModule, MockMappedModule );
 		Assert.isInstanceOf( myModule, IAnotherMockMappedModule );
 		
-		Assert.equals( myModule, this._applicationAssembler.getApplicationContext( "applicationContext" ).getInjector().getInstance( IMockMappedModule, "myModule" ), "" );
-		Assert.equals( myModule, this._applicationAssembler.getApplicationContext( "applicationContext" ).getInjector().getInstance( IAnotherMockMappedModule, "myModule" ), "" );
+		Assert.equals( myModule, this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getInjector().getInstance( IMockMappedModule, "myModule" ), "" );
+		Assert.equals( myModule, this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getInjector().getInstance( IAnotherMockMappedModule, "myModule" ), "" );
 	}
 	
 	/*@Ignore( "test static-ref with factory" )

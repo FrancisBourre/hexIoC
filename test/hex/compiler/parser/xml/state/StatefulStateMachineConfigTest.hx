@@ -1,6 +1,7 @@
 package hex.compiler.parser.xml.state;
 
 import hex.domain.ApplicationDomainDispatcher;
+import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.parser.xml.state.mock.MockModuleWorkingWithStates;
 import hex.ioc.parser.xml.state.mock.MockStateEnum;
 import hex.state.State;
@@ -17,7 +18,7 @@ class StatefulStateMachineConfigTest
 	public function testStateMachineConfiguration() : Void
 	{
 		var assembler = XmlCompiler.readXmlFile( "context/statefulStateMachineConfigTest.xml" );
-		var factory = assembler.getApplicationContext( "applicationContext" ).getCoreFactory();
+		var factory = assembler.getApplicationContext( "applicationContext", ApplicationContext ).getCoreFactory();
 
 		var initialState : State = factory.locate( "initialState" );
 		Assert.isNotNull( initialState, "state should not be null" );

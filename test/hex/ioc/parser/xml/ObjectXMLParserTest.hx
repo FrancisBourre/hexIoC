@@ -13,6 +13,7 @@ import hex.error.Exception;
 import hex.error.NoSuchElementException;
 import hex.event.Dispatcher;
 import hex.event.EventProxy;
+import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.di.MappingConfiguration;
 import hex.ioc.parser.xml.mock.AnotherMockAmazonService;
 import hex.ioc.parser.xml.mock.AnotherMockModuleWithServiceCallback;
@@ -68,7 +69,7 @@ class ObjectXMLParserTest
 	public function setUp() : Void
 	{
 		this._applicationAssembler 	= new ApplicationAssembler();
-		this._applicationContext 	= this._applicationAssembler.getApplicationContext( "applicationContext" );
+		this._applicationContext 	= this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext );
 		this._applicationContext.getCoreFactory().addProxyFactoryMethod( "hex.structures.Point", PointFactory, PointFactory.build );
 	}
 
