@@ -88,4 +88,16 @@ class ApplicationContext extends AbstractApplicationContext
 		this._dispatcher = contextDispatcher;
 		this._initStateMachine();
 	}
+	
+	override public function dispose() : Void
+	{
+		var injector = this.getInjector();
+		var annotationProvider = AnnotationProvider.getAnnotationProvider( DomainUtil.getDomain( this.getName(), Domain ) );
+		annotationProvider.unregisterInjector( injector );
+		
+		//TODO replace by annotationProvider.dispose();
+		AnnotationProvider.release();
+		
+		super.dispose();
+	}
 }
