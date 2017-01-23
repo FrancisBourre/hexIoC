@@ -2,6 +2,7 @@ package hex.compiler.parser.flow;
 
 import haxe.macro.Context;
 import haxe.macro.Expr;
+import hex.compiler.core.CompileTimeContextFactory;
 import hex.core.IApplicationContext;
 import hex.core.IBuilder;
 import hex.factory.BuildRequest;
@@ -40,8 +41,7 @@ class AbstractExprParser extends DSLParser<Expr>
 			this._findApplicationContextName( data );
 			this._findApplicationContextClassName( data );
 			
-			var context = this._applicationAssembler.getApplicationContext( this._applicationContextName );
-			this._builder = this._applicationAssembler.getBuilder( BuildRequest, context );
+			this._builder = this._applicationAssembler.getFactory( CompileTimeContextFactory, this._applicationContextName );
 		}
 		else
 		{

@@ -7,8 +7,6 @@ import hex.state.State;
 import hex.state.StateMachine;
 import hex.state.control.StateController;
 
-using hex.di.util.InjectionUtil;
-
 /**
  * ...
  * @author Francis Bourre
@@ -22,7 +20,7 @@ class ApplicationContext extends AbstractApplicationContext
 	public var state(default, null) : ApplicationContextStateList;
 		
 	@:allow( hex.ioc.core )
-	function new( dispatcher : IDispatcher<{}>, coreFactory : ICoreFactory, name : String )
+	public function new( dispatcher : IDispatcher<{}>, coreFactory : ICoreFactory, name : String )
 	{
 		super( coreFactory, name );
 		

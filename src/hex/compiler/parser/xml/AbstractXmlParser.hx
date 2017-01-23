@@ -1,6 +1,7 @@
 package hex.compiler.parser.xml;
 
 import haxe.macro.Context;
+import hex.compiler.core.CompileTimeContextFactory;
 import hex.core.IApplicationContext;
 import hex.core.IBuilder;
 import hex.factory.BuildRequest;
@@ -38,8 +39,7 @@ class AbstractXmlParser extends DSLParser<Xml>
 				this._findApplicationContextName( data );
 				this._findApplicationContextClassName( data );
 				
-				var context = this._applicationAssembler.getApplicationContext( this._applicationContextName );
-				this._builder = this._applicationAssembler.getBuilder( BuildRequest, context );
+				this._builder = this._applicationAssembler.getFactory( CompileTimeContextFactory, this._applicationContextName );
 			}
 			else
 			{

@@ -3,7 +3,6 @@ package hex.compiler.core;
 #if macro
 import haxe.macro.Expr;
 import hex.collection.ILocatorListener;
-import hex.compiler.core.CompileTimeCoreFactory;
 import hex.compiler.factory.DomainListenerFactory;
 import hex.compiler.factory.PropertyFactory;
 import hex.compiler.factory.StateTransitionFactory;
@@ -14,7 +13,6 @@ import hex.core.ICoreFactory;
 import hex.core.SymbolTable;
 import hex.event.IDispatcher;
 import hex.factory.BuildRequest;
-import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.core.IContextFactory;
 import hex.ioc.locator.ConstructorVOLocator;
@@ -48,9 +46,9 @@ class CompileTimeContextFactory
 	var _annotationProvider			: IAnnotationProvider;
 	var _contextDispatcher			: IDispatcher<{}>;
 	var _moduleLocator				: ModuleLocator;
-	var _applicationContext 		: AbstractApplicationContext;
+	var _applicationContext 		: IApplicationContext;
 	var _factoryMap 				: Map<String, FactoryVO->Dynamic>;
-	var _coreFactory 				: CompileTimeCoreFactory;
+	var _coreFactory 				: ICoreFactory;
 	var _symbolTable 				: SymbolTable;
 	var _constructorVOLocator 		: ConstructorVOLocator;
 	var _propertyVOLocator 			: PropertyVOLocator;
@@ -66,23 +64,16 @@ class CompileTimeContextFactory
 		this._isInitialized = false;
 	}
 	
-	public function init( applicationContextName : String, applicationContextClass : Class<IApplicationContext> = null ) : Void
+	public function init( applicationContext : IApplicationContext ) : Void
 	{
 		if ( !this._isInitialized )
 		{
-			//build coreFactory
-			this._coreFactory = new CompileTimeCoreFactory( this._expressions );
+			this._isInitialized = true;
 			
-			if ( applicationContextClass != null )
-			{
-				this._applicationContext = new AbstractApplicationContext( this._coreFactory, applicationContextName );
-			} 
-			else
-			{
-				this._applicationContext = new AbstractApplicationContext( this._coreFactory, applicationContextName );
-			}
-
-			//
+			this._applicationContext 				= applicationContext;
+			this._coreFactory 						= applicationContext.getCoreFactory();
+		
+		//
 			this._factoryMap 						= new Map();
 			this._symbolTable 						= new SymbolTable();
 			this._constructorVOLocator 				= new ConstructorVOLocator();
@@ -112,7 +103,6 @@ class CompileTimeContextFactory
 			this._factoryMap.set( ContextTypeList.MAPPING_CONFIG, 	hex.compiler.factory.MappingConfigurationFactory.build );
 			
 			this._coreFactory.addListener( this );
-			//
 		}
 	}
 
@@ -345,7 +335,7 @@ class CompileTimeContextFactory
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 	}
 
-	public function getApplicationContext() : AbstractApplicationContext
+	public function getApplicationContext() : IApplicationContext
 	{
 		return this._applicationContext;
 	}

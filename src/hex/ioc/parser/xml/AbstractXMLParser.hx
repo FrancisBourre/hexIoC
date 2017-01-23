@@ -43,8 +43,10 @@ class AbstractXMLParser extends AbstractContextParser<Xml>
 				this._findApplicationContextName( data );
 				this._findApplicationContextClassName( data );
 				
+				this._builder = this._applicationAssembler.getFactory( ContextFactory, this._applicationContextName, this._applicationContextClass );
 				var context = this._applicationAssembler.getApplicationContext( this._applicationContextName );
-				this._builder = this._applicationAssembler.getBuilder( BuildRequest, context );
+				
+				//this._builder = this._applicationAssembler.getBuilder( BuildRequest, context );
 			}
 			else
 			{
