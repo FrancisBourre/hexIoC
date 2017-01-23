@@ -46,7 +46,6 @@ import hex.ioc.parser.xml.mock.MockSenderModule;
 import hex.ioc.parser.xml.mock.MockServiceProvider;
 import hex.ioc.parser.xml.mock.MockStubStatefulService;
 import hex.ioc.parser.xml.mock.MockTranslationModule;
-import hex.ioc.parser.xml.state.mock.MockStateMessage;
 import hex.preprocess.Preprocessor;
 import hex.runtime.ApplicationAssembler;
 import hex.structures.Point;
@@ -915,6 +914,7 @@ class ObjectXMLParserTest
 		Assert.equals( MockMethodCaller.staticVar, instance.argument, "" );
 	}
 	
+	#if (!neko || haxe_ver >= "3.3")
 	@Async( "test EventProxy" )
 	public function testEventProxy() : Void
 	{
@@ -965,6 +965,7 @@ class ObjectXMLParserTest
 		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandler ), 500 );
 		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "bonjour" ] );
 	}
+	#end
 	
 	@Test( "test map-type attribute" )
 	public function testMapTypeAttribute() : Void
