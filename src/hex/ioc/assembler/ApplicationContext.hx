@@ -54,8 +54,8 @@ class ApplicationContext extends AbstractApplicationContext
 		return this._stateController.getCurrentState();
 	}
 	
-	//@:allow( hex.ioc.core )
-	public function new( applicationContextName : String )
+	@:allow( hex.runtime )
+	function new( applicationContextName : String )
 	{
 		//build contextDispatcher
 		var domain = DomainUtil.getDomain( applicationContextName, Domain );
