@@ -1,5 +1,6 @@
 package hex.compiler.parser.xml;
 
+#if macro
 import haxe.macro.Context;
 import hex.compiler.core.CompileTimeContextFactory;
 import hex.core.IApplicationContext;
@@ -80,3 +81,4 @@ class AbstractXmlParser extends DSLParser<Xml>
 		this._throwMissingTypeException( this._applicationContextClassName, this.getContextData(), ContextAttributeList.TYPE );
 	}
 }
+#end

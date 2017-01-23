@@ -1,5 +1,6 @@
 package hex.compiler.parser.flow;
 
+#if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.ExprTools;
@@ -30,7 +31,6 @@ class ObjectParser extends AbstractExprParser
 		}
 	}
 	
-	#if macro
 	private function _parseExpression( e : Expr ) : Void
 	{
 		switch ( e )
@@ -255,5 +255,5 @@ class ObjectParser extends AbstractExprParser
 		
 		return constructorVO;
 	}
-	#end
 }
+#end
