@@ -1,5 +1,6 @@
 package hex.compiler.parser.flow;
 
+#if macro
 import haxe.macro.Expr;
 import hex.factory.BuildRequest;
 import hex.parser.AbstractParserCollection;
@@ -23,3 +24,4 @@ class ParserCollection extends AbstractParserCollection<AbstractExprParser, Expr
 		this._parserCollection.push( new Launcher() );
 	}
 }
+#end
