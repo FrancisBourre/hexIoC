@@ -1,5 +1,6 @@
 package hex.compiler.parser.xml;
 
+#if macro
 import hex.ioc.core.ContextAttributeList;
 import hex.util.MacroUtil;
 
@@ -41,3 +42,4 @@ class ApplicationContextParser extends AbstractXmlParser
 		( cast this._applicationAssembler ).addExpression( expr );
 	}
 }
+#end
