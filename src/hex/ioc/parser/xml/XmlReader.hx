@@ -31,10 +31,20 @@ class XmlReader
 	
 	static function _parseNode( xml : Xml, positionTracker : IPositionTracker ) : Void
 	{
+		var shouldConstruct = true;
+	
 		var identifier : String = xml.get( ContextAttributeList.ID );
 		if ( identifier == null )
 		{
-			Context.error( "XmlReader parsing error with '" + xml.nodeName + "' node, 'id' attribute not found.", positionTracker.makePositionFromNode( xml ) );
+			identifier = XMLAttributeUtil.getRef( xml );
+			if ( identifier != null )
+			{
+				shouldConstruct = false;
+			}
+			else
+			{
+				Context.error( "XmlReader parsing error with '" + xml.nodeName + "' node, 'id' attribute not found.", positionTracker.makePositionFromNode( xml ) );
+			}
 		}
 
 		var type 		: String;

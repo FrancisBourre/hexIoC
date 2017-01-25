@@ -42,14 +42,25 @@ class ObjectParser extends AbstractXmlParser
 	
 	public function _parseNode( xml : Xml, applicationContext :  IApplicationContext ) : Void
 	{
+		var shouldConstruct = true;
+		
 		var identifier = xml.get( ContextAttributeList.ID );
 		if ( identifier == null )
 		{
-			Context.error
-			( 
-				"Parsing error with '" + xml.nodeName + 
-				"' node, 'id' attribute not found.", 
-				this._exceptionReporter.getPosition( xml ) );
+			identifier = xml.get( ContextAttributeList.REF );
+			
+			if ( identifier != null )
+			{
+				shouldConstruct = false;
+			}
+			else
+			{
+				Context.error
+				( 
+					"Parsing error with '" + xml.nodeName + 
+					"' node, 'id' attribute not found.", 
+					this._exceptionReporter.getPosition( xml ) );
+			}
 
 		}
 
@@ -66,304 +77,313 @@ class ObjectParser extends AbstractXmlParser
 		var ifNotList			: Array<String>;
 
 		// Build object.
-		type = xml.get( ContextAttributeList.TYPE );
-
-		if ( type == ContextTypeList.XML )
+		if ( shouldConstruct )
 		{
-			factory 					= xml.get( ContextAttributeList.PARSER_CLASS );
-			var constructorVO 			= new ConstructorVO( identifier, type, [ xml.firstElement().toString() ], factory );
-			constructorVO.filePosition 	= this._exceptionReporter.getPosition( xml );
-			constructorVO.ifList 		= XMLParserUtil.getIfList( xml );
-			constructorVO.ifNotList 	= XMLParserUtil.getIfNotList( xml );
-
-			this._builder.build( OBJECT( constructorVO ) );
-		}
-		else
-		{
-			factory 			= xml.get( ContextAttributeList.FACTORY_METHOD );
-			staticCall 			= xml.get( ContextAttributeList.STATIC_CALL );
-			injectInto			= xml.get( ContextAttributeList.INJECT_INTO ) == "true";
-			mapType 			= XMLParserUtil.getMapType( xml );
-			staticRef 			= xml.get( ContextAttributeList.STATIC_REF );
-			injectorCreation 	= xml.get( ContextAttributeList.INJECTOR_CREATION ) == "true";
-			ifList 				= XMLParserUtil.getIfList( xml );
-			ifNotList 			= XMLParserUtil.getIfNotList( xml );
-		
-			if ( type == null )
+			type = xml.get( ContextAttributeList.TYPE );
+			
+			//
+			if ( type == ContextTypeList.XML )
 			{
-				type = staticRef != null ? ContextTypeList.STATIC_VARIABLE : ContextTypeList.STRING;
-			}
+				factory 					= xml.get( ContextAttributeList.PARSER_CLASS );
+				var constructorVO 			= new ConstructorVO( identifier, type, [ xml.firstElement().toString() ], factory );
+				constructorVO.filePosition 	= this._exceptionReporter.getPosition( xml );
+				constructorVO.ifList 		= XMLParserUtil.getIfList( xml );
+				constructorVO.ifNotList 	= XMLParserUtil.getIfNotList( xml );
 
-			var strippedType = type != null ? type.split( '<' )[ 0 ] : null;
-			if ( strippedType == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR || type == ContextTypeList.MAPPING_CONFIG )
-			{
-				args = this._getMapArguments( identifier, xml, this._exceptionReporter );
-
-				for ( arg in args )
-				{
-					if ( arg.getPropertyKey() != null )
-					{
-						if ( arg.getPropertyKey().type == ContextTypeList.CLASS )
-						{
-							this._importHelper.includeClass( arg.getPropertyKey().arguments[0] );
-						}
-					}
-					
-					if ( arg.getPropertyValue() != null )
-					{
-						if ( arg.getPropertyValue().type == ContextTypeList.CLASS )
-						{
-							this._importHelper.includeClass( arg.getPropertyValue().arguments[0] );
-						}
-					}
-				}
+				this._builder.build( OBJECT( constructorVO ) );
 			}
 			else
 			{
-				args = [];
-				var iterator = xml.elementsNamed( ContextNameList.ARGUMENT );
-
-				if ( iterator.hasNext() )
+				factory 			= xml.get( ContextAttributeList.FACTORY_METHOD );
+				staticCall 			= xml.get( ContextAttributeList.STATIC_CALL );
+				injectInto			= xml.get( ContextAttributeList.INJECT_INTO ) == "true";
+				mapType 			= XMLParserUtil.getMapType( xml );
+				staticRef 			= xml.get( ContextAttributeList.STATIC_REF );
+				injectorCreation 	= xml.get( ContextAttributeList.INJECTOR_CREATION ) == "true";
+				ifList 				= XMLParserUtil.getIfList( xml );
+				ifNotList 			= XMLParserUtil.getIfNotList( xml );
+			
+				if ( type == null )
 				{
-					while ( iterator.hasNext() )
+					type = staticRef != null ? ContextTypeList.STATIC_VARIABLE : ContextTypeList.STRING;
+				}
+
+				var strippedType = type != null ? type.split( '<' )[ 0 ] : null;
+				if ( strippedType == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR || type == ContextTypeList.MAPPING_CONFIG )
+				{
+					args = this._getMapArguments( identifier, xml, this._exceptionReporter );
+
+					for ( arg in args )
 					{
-						var node = iterator.next();
-						var arg = ObjectParser._getConstructorVOFromXML( identifier, node );
-						arg.filePosition = this._exceptionReporter.getPosition( node );
+						if ( arg.getPropertyKey() != null )
+						{
+							if ( arg.getPropertyKey().type == ContextTypeList.CLASS )
+							{
+								this._importHelper.includeClass( arg.getPropertyKey().arguments[0] );
+							}
+						}
 						
-						if ( arg.staticRef != null )
+						if ( arg.getPropertyValue() != null )
 						{
-							var type = this._importHelper.getClassFullyQualifiedNameFromStaticVariable( arg.staticRef );
-							try 
+							if ( arg.getPropertyValue().type == ContextTypeList.CLASS )
 							{
-								this._importHelper.forceCompilation( type.split( '<' )[ 0 ] );
-								
-							} catch ( e : String ) 
-							{
-								this._throwMissingTypeException( type.length > 0 ? type : arg.staticRef, node, ContextAttributeList.STATIC_REF );
+								this._importHelper.includeClass( arg.getPropertyValue().arguments[0] );
 							}
 						}
-						else
-						{
-							if ( arg.className == ContextTypeList.CLASS )
-							{
-								try 
-								{
-									this._importHelper.forceCompilation( ( arg.arguments[ 0 ] ).split( '<' )[ 0 ] );
-									
-								} catch ( e : String ) 
-								{
-									this._throwMissingTypeException( arg.arguments[ 0 ], node, ContextAttributeList.VALUE );
-								}
-							}
-						}
-						args.push( arg );
 					}
 				}
 				else
 				{
-					//TODO please remove that shit
-					var value : String = XMLAttributeUtil.getValue( xml );
-					if ( value != null ) 
+					args = [];
+					var iterator = xml.elementsNamed( ContextNameList.ARGUMENT );
+
+					if ( iterator.hasNext() )
 					{
-						if 
-						( 
-							type == ContextTypeList.STRING ||
-							type == ContextTypeList.INT ||
-							type == ContextTypeList.UINT || 
-							type == ContextTypeList.FLOAT || 
-							type == ContextTypeList.BOOLEAN || 
-							type == ContextTypeList.NULL ||
-							type == ContextTypeList.CLASS
-						)
+						while ( iterator.hasNext() )
 						{
-							args = [ xml.get( ContextAttributeList.VALUE ) ];
+							var node = iterator.next();
+							var arg = ObjectParser._getConstructorVOFromXML( identifier, node );
+							arg.filePosition = this._exceptionReporter.getPosition( node );
+							
+							if ( arg.staticRef != null )
+							{
+								var type = this._importHelper.getClassFullyQualifiedNameFromStaticVariable( arg.staticRef );
+								try 
+								{
+									this._importHelper.forceCompilation( type.split( '<' )[ 0 ] );
+									
+								} catch ( e : String ) 
+								{
+									this._throwMissingTypeException( type.length > 0 ? type : arg.staticRef, node, ContextAttributeList.STATIC_REF );
+								}
+							}
+							else
+							{
+								if ( arg.className == ContextTypeList.CLASS )
+								{
+									try 
+									{
+										this._importHelper.forceCompilation( ( arg.arguments[ 0 ] ).split( '<' )[ 0 ] );
+										
+									} catch ( e : String ) 
+									{
+										this._throwMissingTypeException( arg.arguments[ 0 ], node, ContextAttributeList.VALUE );
+									}
+								}
+							}
+							args.push( arg );
 						}
-						else 
+					}
+					else
+					{
+						//TODO please remove that shit
+						var value : String = XMLAttributeUtil.getValue( xml );
+						if ( value != null ) 
 						{
-							var arg = new ConstructorVO( identifier, ContextTypeList.STRING, [ xml.get( ContextAttributeList.VALUE ) ] );
-							args.push( arg ); 
+							if 
+							( 
+								type == ContextTypeList.STRING ||
+								type == ContextTypeList.INT ||
+								type == ContextTypeList.UINT || 
+								type == ContextTypeList.FLOAT || 
+								type == ContextTypeList.BOOLEAN || 
+								type == ContextTypeList.NULL ||
+								type == ContextTypeList.CLASS
+							)
+							{
+								args = [ xml.get( ContextAttributeList.VALUE ) ];
+							}
+							else 
+							{
+								var arg = new ConstructorVO( identifier, ContextTypeList.STRING, [ xml.get( ContextAttributeList.VALUE ) ] );
+								args.push( arg ); 
+							}
 						}
 					}
 				}
-			}
-			
-			if ( type != ContextTypeList.STATIC_VARIABLE )
-			{
-				try
-				{
-					this._importHelper.forceCompilation( type.split( '<' )[ 0 ] );
-				}
-				catch ( e : String )
-				{
-					this._throwMissingTypeException( type, xml, ContextAttributeList.TYPE );
-				}
-			}
-			else
-			{
-				var t = this._importHelper.getClassFullyQualifiedNameFromStaticVariable( staticRef );
 				
-				try
+				if ( type != ContextTypeList.STATIC_VARIABLE )
 				{
-					this._importHelper.forceCompilation( t.split( '<' )[ 0 ] );
-				}
-				catch ( e : String )
-				{
-					this._throwMissingTypeException( t, xml, ContextAttributeList.STATIC_REF );
-				}
-			}
-
-			var constructorVO 			= new ConstructorVO( identifier, type, args, factory, staticCall, injectInto, null, mapType, staticRef, injectorCreation );
-			constructorVO.ifList 		= ifList;
-			constructorVO.ifNotList 	= ifNotList;
-			constructorVO.filePosition 	= constructorVO.ref == null ? this._exceptionReporter.getPosition( xml ) : this._exceptionReporter.getPosition( xml, ContextAttributeList.REF );
-
-			this._builder.build( OBJECT( constructorVO ) );
-
-			// Build property.
-			var propertyIterator = xml.elementsNamed( ContextNameList.PROPERTY );
-			while ( propertyIterator.hasNext() )
-			{
-				var property = propertyIterator.next();
-				var staticRef = property.get( ContextAttributeList.STATIC_REF );
-				
-				if ( staticRef != null )
-				{
-					var type = this._importHelper.getClassFullyQualifiedNameFromStaticVariable( staticRef );
-
 					try
 					{
 						this._importHelper.forceCompilation( type.split( '<' )[ 0 ] );
 					}
 					catch ( e : String )
 					{
-						this._throwMissingTypeException( type, property, ContextAttributeList.STATIC_REF );
+						this._throwMissingTypeException( type, xml, ContextAttributeList.TYPE );
 					}
-				}
-				
-				var propertyVO = new PropertyVO ( 	identifier, 
-													XMLAttributeUtil.getName( property ),
-													XMLAttributeUtil.getValue( property ),
-													XMLAttributeUtil.getType( property ),
-													XMLAttributeUtil.getRef( property ),
-													XMLAttributeUtil.getMethod( property ),
-													XMLAttributeUtil.getStaticRef( property ) );
-				
-				propertyVO.filePosition = propertyVO.ref == null ? this._exceptionReporter.getPosition( property ) : this._exceptionReporter.getPosition( property, ContextAttributeList.REF );
-				propertyVO.ifList 		= XMLParserUtil.getIfList( xml );
-				propertyVO.ifNotList 	= XMLParserUtil.getIfNotList( xml );
-
-				this._builder.build( PROPERTY( propertyVO ) );
-			}
-
-			// Build method call.
-			var methodCallIterator = xml.elementsNamed( ContextNameList.METHOD_CALL );
-			while( methodCallIterator.hasNext() )
-			{
-				var methodCallItem = methodCallIterator.next();
-
-				args = [];
-				var iterator = methodCallItem.elementsNamed( ContextNameList.ARGUMENT );
-
-				while ( iterator.hasNext() )
-				{
-					var node 			= iterator.next();
-					var arg 			= ObjectParser._getConstructorVOFromXML( identifier, node );
-					arg.filePosition 	= this._exceptionReporter.getPosition( node );
-					
-					if ( arg.staticRef != null )
-					{
-						var type = this._importHelper.getClassFullyQualifiedNameFromStaticVariable( arg.staticRef );
-						try 
-						{
-							this._importHelper.forceCompilation( type );
-							
-						} catch ( e : String ) 
-						{
-							this._throwMissingTypeException( type.length > 0 ? type : arg.staticRef, node, ContextAttributeList.STATIC_REF );
-						}
-					}
-					else
-					{
-						if ( arg.className == ContextTypeList.CLASS )
-						{
-							try 
-							{
-								this._importHelper.forceCompilation( ( arg.arguments[ 0 ] ).split( '<' )[ 0 ] );
-								
-							} catch ( e : String ) 
-							{
-								this._throwMissingTypeException( arg.arguments[ 0 ], node, ContextAttributeList.VALUE );
-							}
-						}
-					}
-					
-					args.push( arg );
-				}
-				
-				var methodCallVO 			= new MethodCallVO( identifier, methodCallItem.get( ContextAttributeList.NAME ), args );
-				methodCallVO.filePosition 	= this._exceptionReporter.getPosition( methodCallItem );
-				methodCallVO.ifList 		= XMLParserUtil.getIfList( methodCallItem );
-				methodCallVO.ifNotList 		= XMLParserUtil.getIfNotList( methodCallItem );
-				
-				this._builder.build( METHOD_CALL( methodCallVO ) );
-			}
-
-			// Build channel listener.
-			var listenIterator = xml.elementsNamed( ContextNameList.LISTEN );
-			while( listenIterator.hasNext() )
-			{
-				var listener = listenIterator.next();
-				var channelName : String = listener.get( ContextAttributeList.REF );
-
-				if ( channelName != null )
-				{
-					var listenerArgs : Array<DomainListenerVOArguments> = [];
-					var iterator = listener.elementsNamed( ContextNameList.EVENT );
-
-					while ( iterator.hasNext() )
-					{
-						var node = iterator.next();
-						var listenerArg = XMLParserUtil.getEventArgument( node );
-						listenerArg.filePosition = this._exceptionReporter.getPosition( node );
-						
-						//
-						var staticRef = listenerArg.staticRef;
-						if ( staticRef != null )
-						{
-							var type = this._importHelper.getClassFullyQualifiedNameFromStaticVariable( staticRef );
-							
-							try
-							{
-								this._importHelper.forceCompilation( type.split( '<' )[ 0 ] );
-							}
-							catch ( e : String )
-							{
-								this._throwMissingTypeException( type, node, ContextAttributeList.STATIC_REF );
-							}
-						}
-						
-						listenerArgs.push( listenerArg );
-					}
-
-					var domainListenerVO 			= new DomainListenerVO( identifier, channelName, listenerArgs );
-					domainListenerVO.filePosition 	= this._exceptionReporter.getPosition( listener );
-					domainListenerVO.ifList 		= XMLParserUtil.getIfList( listener );
-					domainListenerVO.ifNotList 		= XMLParserUtil.getIfNotList( listener );
-
-					this._builder.build( DOMAIN_LISTENER( domainListenerVO ) );
 				}
 				else
 				{
-					Context.error
-					( 
-						"Parsing error with '" + xml.nodeName + 
-							"' node, 'ref' attribute is mandatory in a 'listen' node.", 
-						this._exceptionReporter.getPosition( listener ) );
-	
+					var t = this._importHelper.getClassFullyQualifiedNameFromStaticVariable( staticRef );
+					
+					try
+					{
+						this._importHelper.forceCompilation( t.split( '<' )[ 0 ] );
+					}
+					catch ( e : String )
+					{
+						this._throwMissingTypeException( t, xml, ContextAttributeList.STATIC_REF );
+					}
+				}
+
+				var constructorVO 			= new ConstructorVO( identifier, type, args, factory, staticCall, injectInto, null, mapType, staticRef, injectorCreation );
+				constructorVO.ifList 		= ifList;
+				constructorVO.ifNotList 	= ifNotList;
+				constructorVO.filePosition 	= constructorVO.ref == null ? this._exceptionReporter.getPosition( xml ) : this._exceptionReporter.getPosition( xml, ContextAttributeList.REF );
+
+				this._builder.build( OBJECT( constructorVO ) );
+			}
+			//
+		}
+
+		//
+		// Build property.
+		var propertyIterator = xml.elementsNamed( ContextNameList.PROPERTY );
+		while ( propertyIterator.hasNext() )
+		{
+			var property = propertyIterator.next();
+			var staticRef = property.get( ContextAttributeList.STATIC_REF );
+			
+			if ( staticRef != null )
+			{
+				var type = this._importHelper.getClassFullyQualifiedNameFromStaticVariable( staticRef );
+
+				try
+				{
+					this._importHelper.forceCompilation( type.split( '<' )[ 0 ] );
+				}
+				catch ( e : String )
+				{
+					this._throwMissingTypeException( type, property, ContextAttributeList.STATIC_REF );
 				}
 			}
+			
+			var propertyVO = new PropertyVO ( 	identifier, 
+												XMLAttributeUtil.getName( property ),
+												XMLAttributeUtil.getValue( property ),
+												XMLAttributeUtil.getType( property ),
+												XMLAttributeUtil.getRef( property ),
+												XMLAttributeUtil.getMethod( property ),
+												XMLAttributeUtil.getStaticRef( property ) );
+			
+			propertyVO.filePosition = propertyVO.ref == null ? this._exceptionReporter.getPosition( property ) : this._exceptionReporter.getPosition( property, ContextAttributeList.REF );
+			propertyVO.ifList 		= XMLParserUtil.getIfList( xml );
+			propertyVO.ifNotList 	= XMLParserUtil.getIfNotList( xml );
+
+			this._builder.build( PROPERTY( propertyVO ) );
 		}
+
+		// Build method call.
+		var methodCallIterator = xml.elementsNamed( ContextNameList.METHOD_CALL );
+		while( methodCallIterator.hasNext() )
+		{
+			var methodCallItem = methodCallIterator.next();
+
+			args = [];
+			var iterator = methodCallItem.elementsNamed( ContextNameList.ARGUMENT );
+
+			while ( iterator.hasNext() )
+			{
+				var node 			= iterator.next();
+				var arg 			= ObjectParser._getConstructorVOFromXML( identifier, node );
+				arg.filePosition 	= this._exceptionReporter.getPosition( node );
+				
+				if ( arg.staticRef != null )
+				{
+					var type = this._importHelper.getClassFullyQualifiedNameFromStaticVariable( arg.staticRef );
+					try 
+					{
+						this._importHelper.forceCompilation( type );
+						
+					} catch ( e : String ) 
+					{
+						this._throwMissingTypeException( type.length > 0 ? type : arg.staticRef, node, ContextAttributeList.STATIC_REF );
+					}
+				}
+				else
+				{
+					if ( arg.className == ContextTypeList.CLASS )
+					{
+						try 
+						{
+							this._importHelper.forceCompilation( ( arg.arguments[ 0 ] ).split( '<' )[ 0 ] );
+							
+						} catch ( e : String ) 
+						{
+							this._throwMissingTypeException( arg.arguments[ 0 ], node, ContextAttributeList.VALUE );
+						}
+					}
+				}
+				
+				args.push( arg );
+			}
+			
+			var methodCallVO 			= new MethodCallVO( identifier, methodCallItem.get( ContextAttributeList.NAME ), args );
+			methodCallVO.filePosition 	= this._exceptionReporter.getPosition( methodCallItem );
+			methodCallVO.ifList 		= XMLParserUtil.getIfList( methodCallItem );
+			methodCallVO.ifNotList 		= XMLParserUtil.getIfNotList( methodCallItem );
+			
+			this._builder.build( METHOD_CALL( methodCallVO ) );
+		}
+
+		// Build channel listener.
+		var listenIterator = xml.elementsNamed( ContextNameList.LISTEN );
+		while( listenIterator.hasNext() )
+		{
+			var listener = listenIterator.next();
+			var channelName : String = listener.get( ContextAttributeList.REF );
+
+			if ( channelName != null )
+			{
+				var listenerArgs : Array<DomainListenerVOArguments> = [];
+				var iterator = listener.elementsNamed( ContextNameList.EVENT );
+
+				while ( iterator.hasNext() )
+				{
+					var node = iterator.next();
+					var listenerArg = XMLParserUtil.getEventArgument( node );
+					listenerArg.filePosition = this._exceptionReporter.getPosition( node );
+					
+					//
+					var staticRef = listenerArg.staticRef;
+					if ( staticRef != null )
+					{
+						var type = this._importHelper.getClassFullyQualifiedNameFromStaticVariable( staticRef );
+						
+						try
+						{
+							this._importHelper.forceCompilation( type.split( '<' )[ 0 ] );
+						}
+						catch ( e : String )
+						{
+							this._throwMissingTypeException( type, node, ContextAttributeList.STATIC_REF );
+						}
+					}
+					
+					listenerArgs.push( listenerArg );
+				}
+
+				var domainListenerVO 			= new DomainListenerVO( identifier, channelName, listenerArgs );
+				domainListenerVO.filePosition 	= this._exceptionReporter.getPosition( listener );
+				domainListenerVO.ifList 		= XMLParserUtil.getIfList( listener );
+				domainListenerVO.ifNotList 		= XMLParserUtil.getIfNotList( listener );
+
+				this._builder.build( DOMAIN_LISTENER( domainListenerVO ) );
+			}
+			else
+			{
+				Context.error
+				( 
+					"Parsing error with '" + xml.nodeName + 
+						"' node, 'ref' attribute is mandatory in a 'listen' node.", 
+					this._exceptionReporter.getPosition( listener ) );
+
+			}
+		}
+		//
+
+		
 	}
 
 	function _getMapArguments( ownerID : String, xml : Xml, exceptionReporter : IAssemblingExceptionReporter<Xml> ) : Array<MapVO>

@@ -349,6 +349,16 @@ class XmlCompilerTest
 		Assert.deepEquals( [ "hello", "world" ], MockCaller.passedArguments, "" );
 	}
 	
+	@Test( "test simple method call from another node" )
+	public function testSimpleMethodCallFromAnotherNode() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/simpleMethodCallFromAnotherNode.xml" );
+
+		var caller : MockCaller = this._getCoreFactory().locate( "caller" );
+		Assert.isInstanceOf( caller, MockCaller, "" );
+		Assert.deepEquals( [ "hello", "world" ], MockCaller.passedArguments, "" );
+	}
+	
 	@Test( "test method call with type params" )
 	public function testCallWithTypeParams() : Void
 	{
