@@ -1,18 +1,17 @@
 package hex.compiler.parser.xml.assembler;
 
 import hex.core.IApplicationAssembler;
+import hex.core.ICoreFactory;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.event.MessageType;
-import hex.ioc.assembler.AbstractApplicationContext;
-import hex.runtime.ApplicationAssembler;
 import hex.ioc.assembler.ApplicationContext;
-import hex.ioc.core.IContextFactory;
-import hex.core.ICoreFactory;
+import hex.ioc.core.ContextFactory;
 import hex.ioc.parser.xml.assembler.mock.MockApplicationContext;
 import hex.ioc.parser.xml.assembler.mock.MockExitStateCommand;
 import hex.ioc.parser.xml.assembler.mock.MockModule;
 import hex.ioc.parser.xml.assembler.mock.MockStateCommand;
 import hex.ioc.parser.xml.assembler.mock.MockStateCommandWithModule;
+import hex.runtime.ApplicationAssembler;
 import hex.state.State;
 import hex.unittest.assertion.Assert;
 
@@ -22,7 +21,7 @@ import hex.unittest.assertion.Assert;
  */
 class ApplicationAssemblerStateTest
 {
-	var _builderFactory 			: IContextFactory;
+	var _builderFactory 			: ContextFactory;
 	var _applicationAssembler 		: IApplicationAssembler;
 		
 	@Before

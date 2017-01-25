@@ -8,7 +8,7 @@ import hex.core.ICoreFactory;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.event.EventProxy;
 import hex.ioc.assembler.ApplicationContext;
-import hex.ioc.core.IContextFactory;
+import hex.ioc.core.ContextFactory;
 import hex.ioc.parser.xml.ApplicationXMLParser;
 import hex.ioc.parser.xml.mock.ClassWithConstantConstantArgument;
 import hex.ioc.parser.xml.mock.IAnotherMockMappedModule;
@@ -35,7 +35,7 @@ import hex.unittest.assertion.Assert;
  */
 class FlowCompilerTest 
 {
-	var _contextFactory 			: IContextFactory;
+	var _contextFactory 			: ContextFactory;
 	var _applicationAssembler 		: IApplicationAssembler;
 	
 	static var applicationAssembler : IApplicationAssembler;

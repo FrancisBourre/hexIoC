@@ -1,8 +1,8 @@
 package hex.ioc.control;
 
 import hex.error.PrivateConstructorException;
+import hex.ioc.core.ContextFactory;
 import hex.ioc.core.ContextTypeList;
-import hex.ioc.core.IContextFactory;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.PropertyVO;
 import hex.util.ClassUtil;
@@ -19,7 +19,7 @@ class PropertyFactory
         throw new PrivateConstructorException( "This class can't be instantiated." );
     }
 
-	static public function build( factory : IContextFactory, property : PropertyVO, target : Dynamic ) : Dynamic
+	static public function build( factory : ContextFactory, property : PropertyVO, target : Dynamic ) : Dynamic
 	{
 		var propertyName = property.name;
 		if ( propertyName.indexOf( '.' ) == -1 )
@@ -37,7 +37,7 @@ class PropertyFactory
 		return _getValue( factory, property );
 	}
 	
-	static function _getValue( factory : IContextFactory, property : PropertyVO ) : Dynamic
+	static function _getValue( factory : ContextFactory, property : PropertyVO ) : Dynamic
 	{
 		if ( property.method != null )
 		{

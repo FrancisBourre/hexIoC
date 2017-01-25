@@ -2,7 +2,6 @@ package hex.ioc.locator;
 
 import hex.collection.Locator;
 import hex.collection.LocatorMessage;
-import hex.ioc.core.IContextFactory;
 import hex.ioc.vo.StateTransitionVO;
 import hex.state.StateUnmapper;
 
@@ -12,12 +11,9 @@ import hex.state.StateUnmapper;
  */
 class StateTransitionVOLocator extends Locator<String, StateTransitionVO>
 {
-	var _contextFactory : IContextFactory;
-
-	public function new( contextFactory : IContextFactory )
+	public function new()
 	{
 		super();
-		this._contextFactory = contextFactory;
 	}
 	
 	override public function release() : Void

@@ -80,8 +80,8 @@ class CompileTimeContextFactory
 			this._propertyVOLocator 				= new PropertyVOLocator();
 			this._methodCallVOLocator 				= new MethodCallVOLocator();
 			this._domainListenerVOLocator 			= new DomainListenerVOLocator();
-			this._stateTransitionVOLocator 			= new StateTransitionVOLocator( this );
-			this._moduleLocator 					= new ModuleLocator( this );
+			this._stateTransitionVOLocator 			= new StateTransitionVOLocator();
+			this._moduleLocator 					= new ModuleLocator();
 			
 			DomainListenerFactory.domainLocator = new Map();
 			
