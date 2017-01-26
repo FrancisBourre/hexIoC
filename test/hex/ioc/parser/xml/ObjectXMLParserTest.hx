@@ -840,6 +840,22 @@ class ObjectXMLParserTest
 		Assert.isTrue( myModule.getBooleanValue() );
 	}
 	
+	@Test( "test module listening service with map-type" )
+	public function testModuleListeningServiceWithMapType() : Void
+	{
+		this.build(  XmlReader.getXml( "context/moduleListeningServiceWithMapType.xml" ) );
+
+		var myService : IMockStubStatefulService = this._locate( "myService" );
+		Assert.isNotNull( myService );
+
+		var myModule : MockModuleWithServiceCallback = this._locate( "myModule" );
+		Assert.isNotNull( myModule );
+
+		var booleanVO = new MockBooleanVO( true );
+		myService.setBooleanVO( booleanVO );
+		Assert.isTrue( myModule.getBooleanValue() );
+	}
+	
 	@Test( "test module listening service with strategy and module injection" )
 	public function testModuleListeningServiceWithStrategyAndModuleInjection() : Void
 	{
