@@ -2,8 +2,8 @@ package hex.compiler.factory;
 
 import haxe.macro.Context;
 import haxe.macro.Expr;
+import hex.compiler.core.CompileTimeContextFactory;
 import hex.control.command.CommandMapping;
-import hex.ioc.core.IContextFactory;
 import hex.ioc.di.ContextOwnerWrapper;
 import hex.ioc.vo.CommandMappingVO;
 import hex.ioc.vo.StateTransitionVO;
@@ -24,7 +24,7 @@ class StateTransitionFactory
 	}
 	
 	#if macro
-	static public function build( vo : StateTransitionVO, contextFactory : IContextFactory ) : Array<TransitionVO>
+	static public function build( vo : StateTransitionVO, contextFactory : CompileTimeContextFactory ) : Array<TransitionVO>
 	{
 		var stateExp : Expr = null;
 		if ( vo.staticReference != null )

@@ -66,11 +66,8 @@ class DomainListenerFactory
 		{
 			switch ( e.expr )
 			{
-				case EMeta( s, _.expr => EBlock( exprs ) ):
-				switch( exprs[ 0 ].expr )
-				{
-					case EVars( vars ):
-					
+				case EVars( vars ):
+				
 					switch( vars[ 0 ].expr.expr )
 					{
 						case ENew( t, params ):
@@ -79,14 +76,9 @@ class DomainListenerFactory
 						default:
 							return null;
 					}
-					
-					default:
-						return null;
-					}
-					
-				default:
-					return null;	
 				
+				default:
+					return null;
 			}
 
 			return MacroUtil.getClassType( className );

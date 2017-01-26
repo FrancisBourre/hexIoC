@@ -3,7 +3,7 @@ package hex.ioc.control;
 import hex.control.command.CommandMapping;
 import hex.control.command.ICommand;
 import hex.di.IContextOwner;
-import hex.ioc.core.IContextFactory;
+import hex.ioc.core.ContextFactory;
 import hex.core.ICoreFactory;
 import hex.ioc.di.ContextOwnerWrapper;
 import hex.ioc.error.BuildingException;
@@ -25,7 +25,7 @@ class StateTransitionFactory
 
 	}
 	
-	static public function build( vo : StateTransitionVO, contextFactory : IContextFactory ) : Array<TransitionVO>
+	static public function build( vo : StateTransitionVO, contextFactory : ContextFactory ) : Array<TransitionVO>
 	{
 		var coreFactory : ICoreFactory = contextFactory.getCoreFactory();
 		

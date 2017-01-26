@@ -1,0 +1,12 @@
+<root name="applicationContext">
+
+    <caller id="caller" type="hex.ioc.parser.xml.mock.MockCaller"/>
+	
+	<caller ref="caller">
+        <method-call name="call">
+            <argument value="hello"/>
+            <argument value="world"/>
+        </method-call>
+    </caller>
+
+</root>

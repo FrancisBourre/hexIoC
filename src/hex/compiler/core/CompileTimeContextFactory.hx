@@ -1,4 +1,5 @@
 package hex.compiler.core;
+import hex.compiler.factory.FactoryUtil;
 
 #if macro
 import haxe.macro.Expr;
@@ -80,8 +81,8 @@ class CompileTimeContextFactory
 			this._propertyVOLocator 				= new PropertyVOLocator();
 			this._methodCallVOLocator 				= new MethodCallVOLocator();
 			this._domainListenerVOLocator 			= new DomainListenerVOLocator();
-			this._stateTransitionVOLocator 			= new StateTransitionVOLocator( this );
-			this._moduleLocator 					= new ModuleLocator( this );
+			this._stateTransitionVOLocator 			= new StateTransitionVOLocator();
+			this._moduleLocator 					= new ModuleLocator();
 			
 			DomainListenerFactory.domainLocator = new Map();
 			
@@ -365,10 +366,41 @@ class CompileTimeContextFactory
 
 		if ( id != null )
 		{
-			this._expressions.push( macro @:mergeBlock { $result;  coreFactory.register( $v{ id }, $i{ id } ); } );
+			
+			var finalResult = ( constructorVO.mapTypes != null ) ?
+				this._mapTypes( constructorVO, result ) : result;
+
+			this._expressions.push( macro @:mergeBlock { $finalResult;  coreFactory.register( $v { id }, $i { id } ); } );
 			this._coreFactory.register( id, result );
 		}
 
+		return result;
+	}
+	
+	function _mapTypes( constructorVO : ConstructorVO, result : Expr ) : Expr
+	{
+		var mapTypes = constructorVO.mapTypes;
+		for ( mapType in mapTypes )
+		{
+			//Check if class exists
+			FactoryUtil.checkTypeParamsExist( mapType, constructorVO.filePosition );
+			
+			//Remove whitespaces
+			mapType = mapType.split( ' ' ).join( '' );
+			
+			//Map it
+			var idVar = constructorVO.ID;
+			
+			result = macro 	@:pos( constructorVO.filePosition ) 
+			@:mergeBlock 
+			{
+				$result; 
+				__applicationContextInjector.mapClassNameToValue
+				( $v{ mapType }, $i{ idVar }, $v{ idVar } 
+				);
+			};
+		}
+		
 		return result;
 	}
 	

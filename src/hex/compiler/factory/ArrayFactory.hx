@@ -30,33 +30,7 @@ class ArrayFactory
 			var exp 	= Context.parseInlineString( "new " + constructorVO.type + "()", constructorVO.filePosition );
 			var varType = TypeTools.toComplexType( Context.typeof( exp ) );
 			var result 	= macro @:pos( constructorVO.filePosition ) var $idVar : $varType = $a{ args };
-			
-			if ( constructorVO.mapTypes != null )
-			{
-				var mapTypes = constructorVO.mapTypes;
-				for ( mapType in mapTypes )
-				{
-					//Check if class exists
-					FactoryUtil.checkTypeParamsExist( mapType, constructorVO.filePosition );
-					
-					//Remove whitespaces
-					mapType = mapType.split( ' ' ).join( '' );
-					
-					//Map it
-					result = macro 	@:pos( constructorVO.filePosition ) 
-					@:mergeBlock 
-					{
-						$result; 
-						__applicationContextInjector.mapClassNameToValue
-						( 
-							$v{ mapType }, 
-							$i{ constructorVO.ID }, 
-							$v{ constructorVO.ID } 
-						); 
-					};
-				}
-			}
-			
+
 			return result;
 		}
 		else

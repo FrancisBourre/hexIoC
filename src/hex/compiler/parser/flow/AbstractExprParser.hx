@@ -7,9 +7,7 @@ import hex.compiler.core.CompileTimeContextFactory;
 import hex.core.IApplicationContext;
 import hex.core.IBuilder;
 import hex.factory.BuildRequest;
-import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.CompileTimeApplicationContext;
-import hex.ioc.core.ContextAttributeList;
 
 using hex.util.MacroUtil;
 using hex.compiler.parser.flow.ExpressionUtil;
@@ -48,7 +46,7 @@ class AbstractExprParser extends DSLParser<Expr>
 		}
 		else
 		{
-			Context.error( "Context data is null.", Context.currentPos() );
+			Context.error( "Context data is null.", data.pos );
 		}
 	}
 	
@@ -64,7 +62,7 @@ class AbstractExprParser extends DSLParser<Expr>
 					{ 
 						return switch( p.expr ) 
 						{
-							case EBinop( OpAssign, _.expr => EConst(CIdent('name')), e2 ) : true;
+							case EBinop( OpAssign, _.expr => EConst(CIdent(ContextKeywordList.NAME)), e2 ) : true;
 							case _: false;
 						}
 					} );
@@ -92,7 +90,7 @@ class AbstractExprParser extends DSLParser<Expr>
 	{
 		this._applicationContextClassName = switch( data.expr )
 		{
-			case EMeta( entry, e ) if ( entry.name == "context" ):
+			case EMeta( entry, e ) if ( entry.name == ContextKeywordList.CONTEXT ):
 
 				var name = null;
 				
@@ -100,7 +98,7 @@ class AbstractExprParser extends DSLParser<Expr>
 					{ 
 						return switch( p.expr ) 
 						{
-							case EBinop( OpAssign, _.expr => EConst(CIdent('type')), e2 ) : true;
+							case EBinop( OpAssign, _.expr => EConst(CIdent(ContextKeywordList.TYPE)), e2 ) : true;
 							case _: false;
 						}
 					} );
@@ -130,7 +128,7 @@ class AbstractExprParser extends DSLParser<Expr>
 
 		switch( e.expr )
 		{
-			case EMeta( entry, _.expr => EBlock( exprs ) ) if ( entry.name == "context" ):
+			case EMeta( entry, _.expr => EBlock( exprs ) ) if ( entry.name == ContextKeywordList.CONTEXT ):
 				return exprs;
 			case _:
 		}
@@ -145,7 +143,7 @@ class AbstractExprParser extends DSLParser<Expr>
 	
 	function _throwMissingApplicationContextClassException() : Void 
 	{
-		this._throwMissingTypeException( this._applicationContextClassName, this.getContextData(), ContextAttributeList.TYPE );
+		this._throwMissingTypeException( this._applicationContextClassName, this.getContextData(), ContextKeywordList.TYPE );
 	}
 }
 #end

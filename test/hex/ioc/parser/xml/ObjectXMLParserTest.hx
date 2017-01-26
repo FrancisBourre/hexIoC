@@ -270,6 +270,16 @@ class ObjectXMLParserTest
 		Assert.deepEquals( [ "hello", "world" ], MockCaller.passedArguments, "" );
 	}
 	
+	@Test( "test simple method call from another node" )
+	public function testSimpleMethodCallFromAnotherNode() : Void
+	{
+		this.build( XmlReader.getXml( "context/simpleMethodCallFromAnotherNode.xml" ) );
+
+		var caller : MockCaller = this._locate( "caller" );
+		Assert.isInstanceOf( caller, MockCaller, "" );
+		Assert.deepEquals( [ "hello", "world" ], MockCaller.passedArguments, "" );
+	}
+	
 	@Test( "test method call with type params" )
 	public function testCallWithTypeParams() : Void
 	{
@@ -818,6 +828,22 @@ class ObjectXMLParserTest
 	public function testModuleListeningService() : Void
 	{
 		this.build(  XmlReader.getXml( "context/moduleListeningService.xml" ) );
+
+		var myService : IMockStubStatefulService = this._locate( "myService" );
+		Assert.isNotNull( myService );
+
+		var myModule : MockModuleWithServiceCallback = this._locate( "myModule" );
+		Assert.isNotNull( myModule );
+
+		var booleanVO = new MockBooleanVO( true );
+		myService.setBooleanVO( booleanVO );
+		Assert.isTrue( myModule.getBooleanValue() );
+	}
+	
+	@Test( "test module listening service with map-type" )
+	public function testModuleListeningServiceWithMapType() : Void
+	{
+		this.build(  XmlReader.getXml( "context/moduleListeningServiceWithMapType.xml" ) );
 
 		var myService : IMockStubStatefulService = this._locate( "myService" );
 		Assert.isNotNull( myService );

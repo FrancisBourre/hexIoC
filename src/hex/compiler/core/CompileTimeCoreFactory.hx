@@ -35,11 +35,6 @@ class CompileTimeCoreFactory implements ICoreFactory
 		return null;
 	}
 	
-	public function getAnnotationProvider() : IAnnotationProvider
-	{
-		return null;
-	}
-	
 	public function clear() : Void 
 	{
 		this._map = new Map();

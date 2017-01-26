@@ -100,8 +100,8 @@ class ContextFactory
 			this._propertyVOLocator 		= new PropertyVOLocator();
 			this._methodCallVOLocator 		= new MethodCallVOLocator();
 			this._domainListenerVOLocator 	= new DomainListenerVOLocator();
-			this._stateTransitionVOLocator 	= new StateTransitionVOLocator( this );
-			this._moduleLocator 			= new ModuleLocator( this );
+			this._stateTransitionVOLocator 	= new StateTransitionVOLocator();
+			this._moduleLocator 			= new ModuleLocator();
 
 			this._factoryMap.set( ContextTypeList.ARRAY, ArrayFactory.build );
 			this._factoryMap.set( ContextTypeList.BOOLEAN, BoolFactory.build );
