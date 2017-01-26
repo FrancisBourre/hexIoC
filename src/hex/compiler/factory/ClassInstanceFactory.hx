@@ -124,10 +124,7 @@ class ClassInstanceFactory
 							Context.parseInlineString( '( null : ${constructorVO.type})', constructorVO.filePosition ) ) );
 				
 				var exp = macro @:pos( constructorVO.filePosition )
-								@:mergeBlock 
-								{ 
 									var $idVar : $varType = new $typePath( $a { constructorArgs } ); 
-								};
 								
 				result = result == null ? exp:
 					macro 	@:pos( constructorVO.filePosition )
@@ -162,7 +159,7 @@ class ClassInstanceFactory
 			}
 			
 			//Mapping
-			if ( constructorVO.mapTypes != null )
+			/*if ( constructorVO.mapTypes != null )
 			{
 				var mapTypes = constructorVO.mapTypes;
 				for ( mapType in mapTypes )
@@ -183,7 +180,7 @@ class ClassInstanceFactory
 						);
 					};
 				}
-			}
+			}*/
 		}
 		
 		return macro @:pos( constructorVO.filePosition ) $result;

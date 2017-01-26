@@ -913,6 +913,22 @@ class XmlCompilerTest
 		Assert.isTrue( myModule.getBooleanValue(), "" );
 	}
 	
+	@Test( "test module listening service with map-type" )
+	public function testModuleListeningServiceWithMapType() : Void
+	{
+		this._applicationAssembler = XmlCompiler.readXmlFile( "context/moduleListeningServiceWithMapType.xml" );
+
+		var myService : IMockStubStatefulService = this._getCoreFactory().locate( "myService" );
+		Assert.isNotNull( myService );
+
+		var myModule : MockModuleWithServiceCallback = this._getCoreFactory().locate( "myModule" );
+		Assert.isNotNull( myModule );
+
+		var booleanVO = new MockBooleanVO( true );
+		myService.setBooleanVO( booleanVO );
+		Assert.isTrue( myModule.getBooleanValue() );
+	}
+	
 	@Test( "test module listening service with strategy and module injection" )
 	public function testModuleListeningServiceWithStrategyAndModuleInjection() : Void
 	{

@@ -62,30 +62,6 @@ class HashMapFactory
 				}
 			}
 			
-			//Mapping
-			if ( constructorVO.mapTypes != null )
-			{
-				var mapTypes = constructorVO.mapTypes;
-				for ( mapType in mapTypes )
-				{
-					//Check if class exists
-					FactoryUtil.checkTypeParamsExist( mapType, constructorVO.filePosition );
-					
-					//Remove whitespaces
-					mapType = mapType.split( ' ' ).join( '' );
-					
-					//Map it
-					result = macro 	@:pos( constructorVO.filePosition ) 
-					@:mergeBlock 
-					{
-						$result; 
-						__applicationContextInjector.mapClassNameToValue
-						( $v { mapType }, $i{ idVar }, $v{ idVar } 
-						);
-					};
-				}
-			}
-			
 			return result;
 		}
 		else
