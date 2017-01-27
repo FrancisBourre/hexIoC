@@ -1,4 +1,5 @@
 package hex.compiler.core;
+import hex.collection.Locator;
 import hex.compiler.factory.FactoryUtil;
 
 #if macro
@@ -16,12 +17,7 @@ import hex.event.IDispatcher;
 import hex.factory.BuildRequest;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.core.IContextFactory;
-import hex.ioc.locator.ConstructorVOLocator;
-import hex.ioc.locator.DomainListenerVOLocator;
-import hex.ioc.locator.MethodCallVOLocator;
 import hex.ioc.locator.ModuleLocator;
-import hex.ioc.locator.PropertyVOLocator;
-import hex.ioc.locator.StateTransitionVOLocator;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.FactoryVO;
@@ -51,11 +47,11 @@ class CompileTimeContextFactory
 	var _factoryMap 				: Map<String, FactoryVO->Dynamic>;
 	var _coreFactory 				: ICoreFactory;
 	var _symbolTable 				: SymbolTable;
-	var _constructorVOLocator 		: ConstructorVOLocator;
-	var _propertyVOLocator 			: PropertyVOLocator;
-	var _methodCallVOLocator 		: MethodCallVOLocator;
-	var _domainListenerVOLocator 	: DomainListenerVOLocator;
-	var _stateTransitionVOLocator 	: StateTransitionVOLocator;
+	var _constructorVOLocator 		: Locator<String, ConstructorVO>;
+	var _propertyVOLocator 			: Locator<String, Array<PropertyVO>>;
+	var _methodCallVOLocator 		: Locator<String, MethodCallVO>;
+	var _domainListenerVOLocator 	: Locator<String, DomainListenerVO>;
+	var _stateTransitionVOLocator 	: Locator<String, StateTransitionVO>;
 	
 	var _transitions				: Array<TransitionVO>;
 	
@@ -77,11 +73,11 @@ class CompileTimeContextFactory
 		//
 			this._factoryMap 						= new Map();
 			this._symbolTable 						= new SymbolTable();
-			this._constructorVOLocator 				= new ConstructorVOLocator();
-			this._propertyVOLocator 				= new PropertyVOLocator();
-			this._methodCallVOLocator 				= new MethodCallVOLocator();
-			this._domainListenerVOLocator 			= new DomainListenerVOLocator();
-			this._stateTransitionVOLocator 			= new StateTransitionVOLocator();
+			this._constructorVOLocator 				= new Locator();
+			this._propertyVOLocator 				= new Locator();
+			this._methodCallVOLocator 				= new Locator();
+			this._domainListenerVOLocator 			= new Locator();
+			this._stateTransitionVOLocator 			= new Locator();
 			this._moduleLocator 					= new ModuleLocator();
 			
 			DomainListenerFactory.domainLocator = new Map();
@@ -351,7 +347,7 @@ class CompileTimeContextFactory
 		return this._annotationProvider;
 	}
 	
-	public function getStateTransitionVOLocator() : StateTransitionVOLocator
+	public function getStateTransitionVOLocator() : Locator<String, StateTransitionVO>
 	{
 		return this._stateTransitionVOLocator;
 	}
