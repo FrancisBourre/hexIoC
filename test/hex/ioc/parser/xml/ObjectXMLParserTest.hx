@@ -854,6 +854,8 @@ class ObjectXMLParserTest
 		var booleanVO = new MockBooleanVO( true );
 		myService.setBooleanVO( booleanVO );
 		Assert.isTrue( myModule.getBooleanValue() );
+		
+		Assert.equals( myService, this._applicationContext.getInjector().getInstance( IMockStubStatefulService, "myService" ) );
 	}
 	
 	@Test( "test module listening service with strategy and module injection" )
