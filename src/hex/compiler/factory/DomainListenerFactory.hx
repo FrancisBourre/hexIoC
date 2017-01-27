@@ -3,13 +3,13 @@ package hex.compiler.factory;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Type.ClassType;
+import hex.collection.Locator;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
 import hex.domain.DomainUtil;
 import hex.event.ClassAdapter;
 import hex.event.EventProxy;
 import hex.event.IObservable;
-import hex.ioc.locator.ModuleLocator;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.DomainListenerVOArguments;
 import hex.ioc.vo.FactoryVO;
@@ -102,7 +102,7 @@ class DomainListenerFactory
 		return classType != null ? MacroUtil.implementsInterface( classType, DomainListenerFactory._observableInterface ) : false;
 	}
 	
-	static public function build( expressions : Array<Expr>, factoryVO : FactoryVO, domainListener : DomainListenerVO, moduleLocator : ModuleLocator ) : Bool
+	static public function build( expressions : Array<Expr>, factoryVO : FactoryVO, domainListener : DomainListenerVO, moduleLocator : Locator<String, String> ) : Bool
 	{
 		var args = domainListener.arguments;
 

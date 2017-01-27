@@ -30,7 +30,6 @@ import hex.ioc.control.StaticVariableFactory;
 import hex.ioc.control.StringFactory;
 import hex.ioc.control.UIntFactory;
 import hex.ioc.control.XmlFactory;
-import hex.ioc.locator.ModuleLocator;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.FactoryVO;
@@ -55,7 +54,7 @@ class ContextFactory
 	
 	var _annotationProvider			: IAnnotationProvider;
 	var _contextDispatcher			: IDispatcher<{}>;
-	var _moduleLocator				: ModuleLocator;
+	var _moduleLocator				: Locator<String, IModule>;
 	var _applicationContext 		: IApplicationContext;
 	var _factoryMap 				: Map<String, FactoryVO->Dynamic>;
 	var _coreFactory 				: ICoreFactory;
@@ -97,7 +96,7 @@ class ContextFactory
 			this._methodCallVOLocator 		= new Locator();
 			this._domainListenerVOLocator 	= new Locator();
 			this._stateTransitionVOLocator 	= new Locator();
-			this._moduleLocator 			= new ModuleLocator();
+			this._moduleLocator 			= new Locator();
 
 			this._factoryMap.set( ContextTypeList.ARRAY, ArrayFactory.build );
 			this._factoryMap.set( ContextTypeList.BOOLEAN, BoolFactory.build );

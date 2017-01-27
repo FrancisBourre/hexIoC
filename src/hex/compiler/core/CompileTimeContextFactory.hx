@@ -1,33 +1,26 @@
 package hex.compiler.core;
-import haxe.macro.Context;
-import haxe.macro.Type.ClassType;
-import hex.collection.Locator;
-import hex.compiler.factory.FactoryUtil;
-import hex.core.IAnnotationParsable;
-import hex.di.IDependencyInjector;
-import hex.di.IInjectorContainer;
-import hex.domain.Domain;
-import hex.domain.DomainUtil;
-import hex.event.MessageType;
-import hex.log.ILogger;
-import hex.module.IModule;
 
 #if macro
+import haxe.macro.Context;
 import haxe.macro.Expr;
+import haxe.macro.Type.ClassType;
 import hex.collection.ILocatorListener;
+import hex.collection.Locator;
 import hex.compiler.factory.DomainListenerFactory;
+import hex.compiler.factory.FactoryUtil;
 import hex.compiler.factory.PropertyFactory;
 import hex.compiler.factory.StateTransitionFactory;
 import hex.core.HashCodeFactory;
+import hex.core.IAnnotationParsable;
 import hex.core.IApplicationContext;
 import hex.core.IBuilder;
 import hex.core.ICoreFactory;
 import hex.core.SymbolTable;
+import hex.di.IInjectorContainer;
 import hex.event.IDispatcher;
 import hex.factory.BuildRequest;
 import hex.ioc.core.ContextTypeList;
 import hex.ioc.core.IContextFactory;
-import hex.ioc.locator.ModuleLocator;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.FactoryVO;
@@ -36,6 +29,7 @@ import hex.ioc.vo.PropertyVO;
 import hex.ioc.vo.StateTransitionVO;
 import hex.ioc.vo.TransitionVO;
 import hex.metadata.IAnnotationProvider;
+import hex.module.IModule;
 import hex.util.MacroUtil;
 
 /**
@@ -56,7 +50,7 @@ class CompileTimeContextFactory
 	
 	var _annotationProvider			: IAnnotationProvider;
 	var _contextDispatcher			: IDispatcher<{}>;
-	var _moduleLocator				: ModuleLocator;
+	var _moduleLocator				: Locator<String, String>;
 	var _applicationContext 		: IApplicationContext;
 	var _factoryMap 				: Map<String, FactoryVO->Dynamic>;
 	var _coreFactory 				: ICoreFactory;
@@ -92,7 +86,7 @@ class CompileTimeContextFactory
 			this._methodCallVOLocator 				= new Locator();
 			this._domainListenerVOLocator 			= new Locator();
 			this._stateTransitionVOLocator 			= new Locator();
-			this._moduleLocator 					= new ModuleLocator();
+			this._moduleLocator 					= new Locator();
 			
 			DomainListenerFactory.domainLocator = new Map();
 			
@@ -333,11 +327,10 @@ class CompileTimeContextFactory
 	
 	public function callModuleInitialisation() : Void
 	{
-		var modules = this._moduleLocator.values();
-		for ( module in modules )
+		var domains = this._moduleLocator.values();
+		for ( moduleName in domains )
 		{
-			var module = macro $i { module.getDomain().getName() };
-			this._expressions.push( macro @:mergeBlock { $module.initialize(); } );
+			this._expressions.push( macro @:mergeBlock { $i{moduleName}.initialize(); } );
 		}
 		
 		this._moduleLocator.clear();
@@ -394,7 +387,7 @@ class CompileTimeContextFactory
 	{
 		if ( MacroUtil.implementsInterface( this._getClassType( constructorVO.className ), _moduleInterface ) )
 		{
-			this._moduleLocator.register( constructorVO.ID, new EmptyModule( constructorVO.ID ) );
+			this._moduleLocator.register( constructorVO.ID, constructorVO.ID );
 		}
 	}
 	
@@ -488,70 +481,6 @@ class CompileTimeContextFactory
 		{
 			return null;
 		}
-	}
-}
-
-private class EmptyModule implements IModule
-{
-	var _domainName : String;
-	
-	public function new( domainName : String )
-	{
-		this._domainName = domainName;
-	}
-	
-	public function initialize() : Void 
-	{
-		
-	}
-	
-	public var isInitialized( get, null ) : Bool;
-	
-	function get_isInitialized() : Bool 
-	{
-		return false;
-	}
-	
-	public function release() : Void 
-	{
-		
-	}
-	
-	public var isReleased( get, null ) : Bool;
-	
-	function get_isReleased() : Bool 
-	{
-		return false;
-	}
-	
-	public function dispatchPublicMessage( messageType : MessageType, ?data : Array<Dynamic> ) : Void 
-	{
-		
-	}
-	
-	public function addHandler( messageType : MessageType, scope : Dynamic, callback : Dynamic ) : Void 
-	{
-		
-	}
-	
-	public function removeHandler( messageType : MessageType, scope : Dynamic, callback : Dynamic ) : Void 
-	{
-		
-	}
-	
-	public function getDomain() : Domain 
-	{
-		return DomainUtil.getDomain( this._domainName, Domain );
-	}
-	
-	public function getLogger() : ILogger 
-	{
-		return null;
-	}
-	
-	public function getInjector() : IDependencyInjector 
-	{
-		return null;
 	}
 }
 #end
