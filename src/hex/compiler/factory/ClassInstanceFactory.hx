@@ -3,7 +3,6 @@ package hex.compiler.factory;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.TypeTools;
-import hex.core.IAnnotationParsable;
 import hex.di.IDependencyInjector;
 import hex.di.IInjectorContainer;
 import hex.domain.Domain;
@@ -36,7 +35,6 @@ class ClassInstanceFactory
 	static var _domainClass 				= MacroUtil.getPack( Type.getClassName( Domain ) );
 	
 	static var _moduleInterface 			= MacroUtil.getClassType( Type.getClassName( IModule ) );
-	static var _annotationParsableInterface = MacroUtil.getClassType( Type.getClassName( IAnnotationParsable ) );
 	static var _injectorContainerInterface 	= MacroUtil.getClassType( Type.getClassName( IInjectorContainer ) );
 					
 	static public function build( factoryVO : FactoryVO ) : Expr
@@ -144,16 +142,6 @@ class ClassInstanceFactory
 									{ 
 										$result; 
 										__applicationContextInjector.injectInto( $instanceVar ); 
-									};
-				}
-				
-				if ( MacroUtil.implementsInterface( classType, _annotationParsableInterface ) )
-				{
-					result = macro 	@:pos( constructorVO.filePosition ) 
-									@:mergeBlock 
-									{ 
-										$result; 
-										$i{ "__annotationProvider" }.parse( $i{ idVar } ); 
 									};
 				}
 			}

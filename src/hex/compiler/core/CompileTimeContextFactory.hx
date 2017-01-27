@@ -1,6 +1,10 @@
 package hex.compiler.core;
+import haxe.macro.Context;
+import haxe.macro.Type.ClassType;
 import hex.collection.Locator;
 import hex.compiler.factory.FactoryUtil;
+import hex.core.IAnnotationParsable;
+import hex.di.IInjectorContainer;
 
 #if macro
 import haxe.macro.Expr;
@@ -37,6 +41,9 @@ class CompileTimeContextFactory
 	implements IContextFactory 
 	implements ILocatorListener<String, Dynamic>
 {
+	static var _annotationParsableInterface = MacroUtil.getClassType( Type.getClassName( IAnnotationParsable ) );
+	static var _injectorContainerInterface 	= MacroUtil.getClassType( Type.getClassName( IInjectorContainer ) );
+	
 	var _isInitialized				: Bool;
 	var _expressions 				: Array<Expr>;
 	
@@ -362,9 +369,10 @@ class CompileTimeContextFactory
 
 		if ( id != null )
 		{
-			
-			var finalResult = ( constructorVO.mapTypes != null ) ?
-				this._mapTypes( constructorVO, result ) : result;
+			var finalResult : Expr;
+			finalResult = this._parseInjectInto( constructorVO, result );
+			finalResult = this._parseAnnotation( constructorVO, result );
+			finalResult = this._parseMapTypes( constructorVO, finalResult );
 
 			this._expressions.push( macro @:mergeBlock { $finalResult;  coreFactory.register( $v { id }, $i { id } ); } );
 			this._coreFactory.register( id, result );
@@ -373,28 +381,64 @@ class CompileTimeContextFactory
 		return result;
 	}
 	
-	function _mapTypes( constructorVO : ConstructorVO, result : Expr ) : Expr
+	function _parseInjectInto( constructorVO : ConstructorVO, result : Expr ) : Expr
 	{
-		var mapTypes = constructorVO.mapTypes;
-		for ( mapType in mapTypes )
+		return null;
+	}
+	
+	function _parseAnnotation( constructorVO : ConstructorVO, result : Expr ) : Expr
+	{
+		var classType : ClassType;
+		
+		try
 		{
-			//Check if class exists
-			FactoryUtil.checkTypeParamsExist( mapType, constructorVO.filePosition );
-			
-			//Remove whitespaces
-			mapType = mapType.split( ' ' ).join( '' );
-			
-			//Map it
-			var idVar = constructorVO.ID;
-			
-			result = macro 	@:pos( constructorVO.filePosition ) 
-			@:mergeBlock 
+			classType = switch Context.getType( constructorVO.className ) 
 			{
-				$result; 
-				__applicationContextInjector.mapClassNameToValue
-				( $v{ mapType }, $i{ idVar }, $v{ idVar } 
-				);
-			};
+				case TInst( t, _ ): t.get();
+				default: null;
+			}
+		}
+		catch ( e : Dynamic )
+		{
+			return result;
+		}
+		
+		if ( MacroUtil.implementsInterface( classType, _annotationParsableInterface ) )
+		{
+			result = macro 	@:pos( constructorVO.filePosition ) 
+							@:mergeBlock 
+							{ 
+								$result; 
+								__annotationProvider.parse( $i{ constructorVO.ID } ); 
+							};
+		}
+		
+		return result;
+	}
+	
+	function _parseMapTypes( constructorVO : ConstructorVO, result : Expr ) : Expr
+	{
+		if ( constructorVO.mapTypes != null )
+		{
+			var mapTypes = constructorVO.mapTypes;
+			for ( mapType in mapTypes )
+			{
+				//Check if class exists
+				FactoryUtil.checkTypeParamsExist( mapType, constructorVO.filePosition );
+				
+				//Remove whitespaces
+				mapType = mapType.split( ' ' ).join( '' );
+				
+				//Map it
+				result = macro 	@:pos( constructorVO.filePosition ) 
+				@:mergeBlock 
+				{
+					$result; 
+					__applicationContextInjector.mapClassNameToValue
+					( $v{ mapType }, $i{ constructorVO.ID }, $v{ constructorVO.ID } 
+					);
+				};
+			}
 		}
 		
 		return result;
