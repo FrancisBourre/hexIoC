@@ -9,6 +9,7 @@ import hex.domain.DomainUtil;
 import hex.event.ClassAdapter;
 import hex.event.EventProxy;
 import hex.event.IObservable;
+import hex.ioc.locator.ModuleLocator;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.DomainListenerVOArguments;
 import hex.ioc.vo.FactoryVO;
@@ -101,7 +102,7 @@ class DomainListenerFactory
 		return classType != null ? MacroUtil.implementsInterface( classType, DomainListenerFactory._observableInterface ) : false;
 	}
 	
-	static public function build( expressions : Array<Expr>, factoryVO : FactoryVO, domainListener : DomainListenerVO ) : Bool
+	static public function build( expressions : Array<Expr>, factoryVO : FactoryVO, domainListener : DomainListenerVO, moduleLocator : ModuleLocator ) : Bool
 	{
 		var args = domainListener.arguments;
 
@@ -142,7 +143,7 @@ class DomainListenerFactory
 						expressions.push( macro @:mergeBlock { $adapterVar.setAdapterClass( $p { StrategyClass } ); } );
 						expressions.push( macro @:mergeBlock { $adapterVar.setAnnotationProvider( __annotationProvider ); } );
 
-						if ( domainListenerArgument.injectedInModule && factoryVO.moduleLocator.isRegisteredWithKey( listenerID ) )
+						if ( domainListenerArgument.injectedInModule && moduleLocator.isRegisteredWithKey( listenerID ) )
 						{
 							expressions.push( macro @:mergeBlock 
 							{ 

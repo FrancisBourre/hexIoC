@@ -3,15 +3,12 @@ package hex.compiler.factory;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.TypeTools;
-import hex.di.IDependencyInjector;
 import hex.di.IInjectorContainer;
 import hex.domain.Domain;
 import hex.domain.DomainExpert;
 import hex.domain.DomainUtil;
 import hex.error.PrivateConstructorException;
-import hex.event.MessageType;
 import hex.ioc.vo.FactoryVO;
-import hex.log.ILogger;
 import hex.metadata.AnnotationProvider;
 import hex.module.IModule;
 import hex.util.MacroUtil;
@@ -112,8 +109,6 @@ class ClassInstanceFactory
 											$p{ _domainUtilClass } .getDomain( $v{ applicationContextName }, $p{ _domainClass } )
 										); 
 									} 
-					
-					factoryVO.moduleLocator.register( constructorVO.ID, new EmptyModule( constructorVO.ID ) );
 				}
 				
 				var varType = 
@@ -131,87 +126,10 @@ class ClassInstanceFactory
 								$result; 
 								$exp; 
 							};
-							
-				if ( constructorVO.injectInto && MacroUtil.implementsInterface( classType, _injectorContainerInterface ) )
-				{
-					var instanceVar = macro $i { idVar };
-					
-					//TODO throws an error if interface is not implemented
-					result = macro 	@:pos( constructorVO.filePosition )
-									@:mergeBlock
-									{ 
-										$result; 
-										__applicationContextInjector.injectInto( $instanceVar ); 
-									};
-				}
 			}
 		}
 		
 		return macro @:pos( constructorVO.filePosition ) $result;
 	}
 	#end
-}
-
-private class EmptyModule implements IModule
-{
-	var _domainName : String;
-	
-	public function new( domainName : String )
-	{
-		this._domainName = domainName;
-	}
-	
-	public function initialize() : Void 
-	{
-		
-	}
-	
-	public var isInitialized( get, null ) : Bool;
-	
-	function get_isInitialized() : Bool 
-	{
-		return false;
-	}
-	
-	public function release() : Void 
-	{
-		
-	}
-	
-	public var isReleased( get, null ) : Bool;
-	
-	function get_isReleased() : Bool 
-	{
-		return false;
-	}
-	
-	public function dispatchPublicMessage( messageType : MessageType, ?data : Array<Dynamic> ) : Void 
-	{
-		
-	}
-	
-	public function addHandler( messageType : MessageType, scope : Dynamic, callback : Dynamic ) : Void 
-	{
-		
-	}
-	
-	public function removeHandler( messageType : MessageType, scope : Dynamic, callback : Dynamic ) : Void 
-	{
-		
-	}
-	
-	public function getDomain() : Domain 
-	{
-		return DomainUtil.getDomain( this._domainName, Domain );
-	}
-	
-	public function getLogger() : ILogger 
-	{
-		return null;
-	}
-	
-	public function getInjector() : IDependencyInjector 
-	{
-		return null;
-	}
 }

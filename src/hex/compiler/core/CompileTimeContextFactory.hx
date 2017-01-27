@@ -4,7 +4,13 @@ import haxe.macro.Type.ClassType;
 import hex.collection.Locator;
 import hex.compiler.factory.FactoryUtil;
 import hex.core.IAnnotationParsable;
+import hex.di.IDependencyInjector;
 import hex.di.IInjectorContainer;
+import hex.domain.Domain;
+import hex.domain.DomainUtil;
+import hex.event.MessageType;
+import hex.log.ILogger;
+import hex.module.IModule;
 
 #if macro
 import haxe.macro.Expr;
@@ -43,6 +49,7 @@ class CompileTimeContextFactory
 {
 	static var _annotationParsableInterface = MacroUtil.getClassType( Type.getClassName( IAnnotationParsable ) );
 	static var _injectorContainerInterface 	= MacroUtil.getClassType( Type.getClassName( IInjectorContainer ) );
+	static var _moduleInterface 			= MacroUtil.getClassType( Type.getClassName( IModule ) );
 	
 	var _isInitialized				: Bool;
 	var _expressions 				: Array<Expr>;
@@ -279,7 +286,7 @@ class CompileTimeContextFactory
 
 	public function assignDomainListener( id : String ) : Bool
 	{
-		return DomainListenerFactory.build( this._expressions, this._getFactoryVO( null ), this._domainListenerVOLocator.locate( id ) );
+		return DomainListenerFactory.build( this._expressions, this._getFactoryVO( null ), this._domainListenerVOLocator.locate( id ), this._moduleLocator );
 	}
 	
 	public function registerMethodCallVO( methodCallVO : MethodCallVO ) : Void
@@ -369,9 +376,11 @@ class CompileTimeContextFactory
 
 		if ( id != null )
 		{
-			var finalResult : Expr;
-			finalResult = this._parseInjectInto( constructorVO, result );
-			finalResult = this._parseAnnotation( constructorVO, result );
+			this._tryToRegisterModule( constructorVO );
+			
+			var finalResult = result;
+			finalResult = this._parseInjectInto( constructorVO, finalResult );
+			finalResult = this._parseAnnotation( constructorVO, finalResult );
 			finalResult = this._parseMapTypes( constructorVO, finalResult );
 
 			this._expressions.push( macro @:mergeBlock { $finalResult;  coreFactory.register( $v { id }, $i { id } ); } );
@@ -381,29 +390,33 @@ class CompileTimeContextFactory
 		return result;
 	}
 	
-	function _parseInjectInto( constructorVO : ConstructorVO, result : Expr ) : Expr
+	function _tryToRegisterModule( constructorVO : ConstructorVO ) : Void
 	{
-		return null;
+		if ( MacroUtil.implementsInterface( this._getClassType( constructorVO.className ), _moduleInterface ) )
+		{
+			this._moduleLocator.register( constructorVO.ID, new EmptyModule( constructorVO.ID ) );
+		}
 	}
 	
+	function _parseInjectInto( constructorVO : ConstructorVO, result : Expr ) : Expr
+	{
+		if ( constructorVO.injectInto && MacroUtil.implementsInterface( this._getClassType( constructorVO.className ), _injectorContainerInterface ) )
+		{
+			//TODO throws an error if interface is not implemented
+			result = macro 	@:pos( constructorVO.filePosition )
+							@:mergeBlock
+							{ 
+								$result; 
+								__applicationContextInjector.injectInto( $i{ constructorVO.ID } ); 
+							};
+		}
+		
+		return result;
+	}
+
 	function _parseAnnotation( constructorVO : ConstructorVO, result : Expr ) : Expr
 	{
-		var classType : ClassType;
-		
-		try
-		{
-			classType = switch Context.getType( constructorVO.className ) 
-			{
-				case TInst( t, _ ): t.get();
-				default: null;
-			}
-		}
-		catch ( e : Dynamic )
-		{
-			return result;
-		}
-		
-		if ( MacroUtil.implementsInterface( classType, _annotationParsableInterface ) )
+		if ( MacroUtil.implementsInterface( this._getClassType( constructorVO.className ), _annotationParsableInterface ) )
 		{
 			result = macro 	@:pos( constructorVO.filePosition ) 
 							@:mergeBlock 
@@ -456,9 +469,89 @@ class CompileTimeContextFactory
 		
 		factoryVO.contextFactory 	= this;
 		factoryVO.coreFactory 		= this._coreFactory;
-		factoryVO.moduleLocator 	= this._moduleLocator;
 
 		return factoryVO;
+	}
+	
+	//helper
+	function _getClassType( className : String ) : ClassType
+	{
+		try
+		{
+			return switch Context.getType( className ) 
+			{
+				case TInst( t, _ ): t.get();
+				default: null;
+			}
+		}
+		catch ( e : Dynamic )
+		{
+			return null;
+		}
+	}
+}
+
+private class EmptyModule implements IModule
+{
+	var _domainName : String;
+	
+	public function new( domainName : String )
+	{
+		this._domainName = domainName;
+	}
+	
+	public function initialize() : Void 
+	{
+		
+	}
+	
+	public var isInitialized( get, null ) : Bool;
+	
+	function get_isInitialized() : Bool 
+	{
+		return false;
+	}
+	
+	public function release() : Void 
+	{
+		
+	}
+	
+	public var isReleased( get, null ) : Bool;
+	
+	function get_isReleased() : Bool 
+	{
+		return false;
+	}
+	
+	public function dispatchPublicMessage( messageType : MessageType, ?data : Array<Dynamic> ) : Void 
+	{
+		
+	}
+	
+	public function addHandler( messageType : MessageType, scope : Dynamic, callback : Dynamic ) : Void 
+	{
+		
+	}
+	
+	public function removeHandler( messageType : MessageType, scope : Dynamic, callback : Dynamic ) : Void 
+	{
+		
+	}
+	
+	public function getDomain() : Domain 
+	{
+		return DomainUtil.getDomain( this._domainName, Domain );
+	}
+	
+	public function getLogger() : ILogger 
+	{
+		return null;
+	}
+	
+	public function getInjector() : IDependencyInjector 
+	{
+		return null;
 	}
 }
 #end
