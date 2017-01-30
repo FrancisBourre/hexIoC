@@ -35,7 +35,7 @@ class UIntFactory
 		#if js
 		if ( result == null || result < 0 )
 		#else
-		if ( "" + result != args[ 0 ] && result >=0 )
+		if ( "" + result != args[ 0 ] && '0x' + StringTools.hex( result, 6 ) != args[ 0 ] && result >= 0 )
 		#end
 		{
 			throw new IllegalArgumentException( "UIntFactory.build(" + result + ") failed." );

@@ -34,7 +34,7 @@ class IntFactory
 		#if js
 		if ( result == null )
 		#else
-		if ( "" + result != args[ 0 ] )
+		if ( "" + result != args[ 0 ] && '0x' + StringTools.hex( result, 6 ) != args[ 0 ] )
 		#end
 		{
 			throw new IllegalArgumentException( "IntFactory.build(" + result + ") failed." );
