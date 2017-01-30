@@ -54,7 +54,7 @@ class ContextFactory
 	
 	var _annotationProvider			: IAnnotationProvider;
 	var _contextDispatcher			: IDispatcher<{}>;
-	var _moduleLocator				: Locator<String, String>;
+	var _moduleLocator				: Locator<String, IModule>;
 	var _applicationContext 		: IApplicationContext;
 	var _factoryMap 				: Map<String, FactoryVO->Dynamic>;
 	var _coreFactory 				: ICoreFactory;
@@ -319,9 +319,9 @@ class ContextFactory
 	public function callModuleInitialisation() : Void
 	{
 		var modules = this._moduleLocator.values();
-		for ( moduleName in modules )
+		for ( module in modules )
 		{
-			cast( this._coreFactory.locate( moduleName ) ).initialize();
+			module.initialize();
 		}
 		this._moduleLocator.clear();
 		
