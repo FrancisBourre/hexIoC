@@ -1,13 +1,12 @@
 package hex.ioc.assembler;
 
 import hex.core.IApplicationContext;
+import hex.core.ICoreFactory;
 import hex.di.IDependencyInjector;
 import hex.domain.Domain;
 import hex.domain.DomainUtil;
 import hex.error.VirtualMethodException;
 import hex.event.MessageType;
-import hex.core.ICoreFactory;
-import hex.log.Stringifier;
 
 /**
  * ...
@@ -38,7 +37,7 @@ class AbstractApplicationContext implements IApplicationContext
 
 	public function dispatch( messageType : MessageType, ?data : Array<Dynamic> ) : Void
 	{
-		throw new VirtualMethodException( Stringifier.stringify( this ) + ".dispatch is not implemented" );
+		throw new VirtualMethodException();
 	}
 	
 	public function getCoreFactory() : ICoreFactory 
