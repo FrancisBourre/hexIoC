@@ -5,7 +5,7 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.ExprTools;
 import haxe.macro.TypeTools;
-import hex.ioc.core.ContextTypeList;
+import hex.core.ContextTypeList;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.MethodCallVO;
 
@@ -226,8 +226,7 @@ class ObjectParser extends AbstractExprParser
 		switch ( type )
 		{
 			case ContextTypeList.HASHMAP | 
-					ContextTypeList.SERVICE_LOCATOR | 
-						ContextTypeList.MAPPING_CONFIG:
+					ContextTypeList.MAPPING_CONFIG:
 				
 				if ( params.length > 0 )
 				{

@@ -1,7 +1,6 @@
 package hex.compiler.parser.flow;
 
 #if macro
-import hex.ioc.core.ContextAttributeList;
 import hex.util.MacroUtil;
 
 /**
@@ -21,7 +20,7 @@ class ApplicationContextParser extends AbstractExprParser
 		var assemblerExpr	= ( cast this._applicationAssembler ).getAssemblerExpression();
 		
 		var applicationContextClass = null;
-		var applicationContextClassName = this._applicationContextClassName;
+		var applicationContextClassName = this._applicationContextClass.name;
 		
 		if ( applicationContextClassName != null )
 		{
@@ -31,7 +30,8 @@ class ApplicationContextParser extends AbstractExprParser
 			}
 			catch ( error : Dynamic )
 			{
-				this._throwMissingApplicationContextClassException();
+				this._exceptionReporter.report( "Type not found '" + this._applicationContextClass.name + "' ", 
+														this._applicationContextClass.pos );
 			}
 		}
 		else

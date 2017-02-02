@@ -1,4 +1,5 @@
 package hex.compiler.parser.xml;
+import hex.compiletime.xml.XmlUtil;
 
 #if macro
 import haxe.macro.Context;
@@ -8,7 +9,7 @@ import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.parser.xml.XMLParserUtil;
-import hex.ioc.parser.xml.XmlAssemblingExceptionReporter;
+import hex.compiletime.xml.ExceptionReporter;
 import hex.ioc.vo.CommandMappingVO;
 import hex.ioc.vo.StateTransitionVO;
 import hex.ioc.vo.TransitionVO;
@@ -28,7 +29,7 @@ class StateParser extends AbstractXmlParser
 	{
 		var applicationContext 	= this.getApplicationAssembler().getApplicationContext( this._applicationContextName, ApplicationContext );
 		var iterator 			= this.getContextData().firstElement().elementsNamed( "state" );
-		
+
 		while ( iterator.hasNext() )
 		{
 			var node = iterator.next();
@@ -42,11 +43,9 @@ class StateParser extends AbstractXmlParser
 		var identifier = xml.get( ContextAttributeList.ID );
 		if ( identifier == null )
 		{
-			Context.error
-			( 
-				"Parsing error with '" + xml.nodeName + 
-				"' node, 'id' attribute not found.", 
-				this._exceptionReporter.getPosition( xml ) );
+			this._exceptionReporter.report( "Parsing error with '" + xml.nodeName + 
+											"' node, 'id' attribute not found.",
+											this._positionTracker.getPosition( xml ) );
 		}
 		
 		var staticReference 		= xml.get( ContextAttributeList.STATIC_REF );
@@ -57,10 +56,10 @@ class StateParser extends AbstractXmlParser
 		var transitionList 			= this._getTransitionList( xml );
 		
 		var stateTransitionVO 		= new StateTransitionVO( identifier, staticReference, instanceReference, enterList, exitList, transitionList );
-		stateTransitionVO.ifList 	= XMLParserUtil.getIfList( xml );
-		stateTransitionVO.ifNotList = XMLParserUtil.getIfNotList( xml );
+		stateTransitionVO.ifList 	= XmlUtil.getIfList( xml );
+		stateTransitionVO.ifNotList = XmlUtil.getIfNotList( xml );
 		
-		stateTransitionVO.filePosition 	= this._exceptionReporter.getPosition( xml );
+		stateTransitionVO.filePosition 	= this._positionTracker.getPosition( xml );
 		this._builder.build( STATE_TRANSITION( stateTransitionVO ) );
 	}
 	
@@ -86,7 +85,7 @@ class StateParser extends AbstractXmlParser
 										fireOnce: item.get( ContextAttributeList.FIRE_ONCE ) == "true", 
 										contextOwner: item.get( ContextAttributeList.CONTEXT_OWNER ),
 										methodRef: methodRef,
-										filePosition: this._exceptionReporter.getPosition( item )
+										filePosition: this._positionTracker.getPosition( item )
 									};
 
 			list.push( commandMappingVO );

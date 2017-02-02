@@ -717,48 +717,6 @@ class FlowCompilerTest
 		Assert.equals( domain, mock1.domain, "" );
 	}
 	
-	@Ignore( "test building serviceLocator" )
-	public function testBuildingServiceLocator() : Void
-	{
-		this._applicationAssembler = XmlCompiler.readXmlFile( "context/serviceLocator.xml" );
-
-		var serviceLocator : ServiceLocator = this._getCoreFactory().locate( "serviceLocator" );
-		Assert.isInstanceOf( serviceLocator, ServiceLocator, "" );
-
-		var amazonService : IMockAmazonService = serviceLocator.getService( IMockAmazonService );
-		var facebookService : IMockFacebookService = serviceLocator.getService( IMockFacebookService );
-		Assert.isInstanceOf( amazonService, MockAmazonService, "" );
-		Assert.isInstanceOf( facebookService, MockFacebookService, "" );
-
-		var injector = new Injector();
-		serviceLocator.configure( injector, new Dispatcher(), null );
-
-		Assert.isInstanceOf( injector.getInstance( IMockAmazonService ), MockAmazonService, "" );
-		Assert.isInstanceOf( injector.getInstance( IMockFacebookService ), MockFacebookService, "" );
-		Assert.equals( facebookService, injector.getInstance( IMockFacebookService ), "" );
-	}
-	
-	@Ignore( "test building serviceLocator with map names" )
-	public function testBuildingServiceLocatorWithMapNames() : Void
-	{
-		this._applicationAssembler = XmlCompiler.readXmlFile( "context/serviceLocatorWithMapNames.xml" );
-
-		var serviceLocator : ServiceLocator = this._getCoreFactory().locate( "serviceLocator" );
-		Assert.isInstanceOf( serviceLocator, ServiceLocator, "" );
-
-		var amazonService0 : IMockAmazonService = serviceLocator.getService( IMockAmazonService, "amazon0" );
-		var amazonService1 : IMockAmazonService = serviceLocator.getService( IMockAmazonService, "amazon1" );
-		Assert.isNotNull( amazonService0, "" );
-		Assert.isNotNull( amazonService1, "" );
-
-		var injector = new Injector();
-		serviceLocator.configure( injector, new Dispatcher(), null );
-
-		Assert.isInstanceOf( injector.getInstance( IMockAmazonService, "amazon0" ),  MockAmazonService, "" );
-		Assert.isInstanceOf( injector.getInstance( IMockAmazonService, "amazon1" ), AnotherMockAmazonService, "" );
-	}
-	*/
-	
 	@Test( "test static-ref" )
 	public function testStaticRef() : Void
 	{

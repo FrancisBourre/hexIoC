@@ -4,6 +4,7 @@ package hex.compiler.parser.flow;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import hex.compiler.core.CompileTimeContextFactory;
+import hex.compiletime.DSLParser;
 import hex.core.IApplicationContext;
 import hex.core.IBuilder;
 import hex.factory.BuildRequest;
@@ -20,7 +21,7 @@ class AbstractExprParser extends DSLParser<Expr>
 {
 	var _builder 						: IBuilder<BuildRequest>;
 	var _applicationContextName 		: String;
-	var _applicationContextClassName 	: String;
+	var _applicationContextClass 		: {name: String, pos: Position};
 	
 	function new() 
 	{
@@ -40,7 +41,7 @@ class AbstractExprParser extends DSLParser<Expr>
 		{
 			this._contextData = data;
 			this._findApplicationContextName( data );
-			this._findApplicationContextClassName( data );
+			this._findApplicationContextClass( data );
 			
 			this._builder = this._applicationAssembler.getFactory( CompileTimeContextFactory, this._applicationContextName, CompileTimeApplicationContext );
 		}
@@ -86,9 +87,9 @@ class AbstractExprParser extends DSLParser<Expr>
 		}
 	}
 	
-	function _findApplicationContextClassName( data : Expr ) : Void
+	function _findApplicationContextClass( data : Expr ) : Void
 	{
-		this._applicationContextClassName = switch( data.expr )
+		this._applicationContextClass = switch( data.expr )
 		{
 			case EMeta( entry, e ) if ( entry.name == ContextKeywordList.CONTEXT ):
 
@@ -115,7 +116,7 @@ class AbstractExprParser extends DSLParser<Expr>
 					}
 				}
 
-				name;
+				{name: name, pos: e.pos};
 				
 			case _ :
 				null;
@@ -134,16 +135,6 @@ class AbstractExprParser extends DSLParser<Expr>
 		}
 		
 		return [];
-	}
-	
-	function _throwMissingTypeException( type : String, e : Expr, attributeName : String ) : Void 
-	{
-		Context.error( "Type not found '" + type + "' ", this._exceptionReporter.getPosition( e, attributeName ) );
-	}
-	
-	function _throwMissingApplicationContextClassException() : Void 
-	{
-		this._throwMissingTypeException( this._applicationContextClassName, this.getContextData(), ContextKeywordList.TYPE );
 	}
 }
 #end

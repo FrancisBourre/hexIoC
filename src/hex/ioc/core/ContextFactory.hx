@@ -2,6 +2,7 @@ package hex.ioc.core;
 
 import hex.collection.ILocatorListener;
 import hex.collection.Locator;
+import hex.core.ContextTypeList;
 import hex.core.HashCodeFactory;
 import hex.core.IApplicationContext;
 import hex.core.IBuilder;
@@ -24,7 +25,6 @@ import hex.ioc.control.IntFactory;
 import hex.ioc.control.MappingConfigurationFactory;
 import hex.ioc.control.NullFactory;
 import hex.ioc.control.PropertyFactory;
-import hex.ioc.control.ServiceLocatorFactory;
 import hex.ioc.control.StateTransitionFactory;
 import hex.ioc.control.StaticVariableFactory;
 import hex.ioc.control.StringFactory;
@@ -108,7 +108,6 @@ class ContextFactory
 			this._factoryMap.set( ContextTypeList.UINT, UIntFactory.build );
 			this._factoryMap.set( ContextTypeList.DEFAULT, StringFactory.build );
 			this._factoryMap.set( ContextTypeList.HASHMAP, HashMapFactory.build );
-			this._factoryMap.set( ContextTypeList.SERVICE_LOCATOR, ServiceLocatorFactory.build );
 			this._factoryMap.set( ContextTypeList.CLASS, ClassFactory.build );
 			this._factoryMap.set( ContextTypeList.XML, XmlFactory.build );
 			this._factoryMap.set( ContextTypeList.FUNCTION, FunctionFactory.build );
@@ -356,7 +355,6 @@ class ContextFactory
 		var buildMethod 						= ( this._factoryMap.exists( type ) ) ? this._factoryMap.get( type ) : ClassInstanceFactory.build;
 
 		var builderHelperVO 					= new FactoryVO();
-		builderHelperVO.type 					= type;
 		builderHelperVO.contextFactory 			= this;
 		builderHelperVO.coreFactory 			= this._coreFactory;
 		builderHelperVO.constructorVO 			= constructorVO;

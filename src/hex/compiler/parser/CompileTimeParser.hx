@@ -1,9 +1,10 @@
 package hex.compiler.parser;
 
 import haxe.macro.Context;
-import hex.compiler.parser.xml.ClassImportHelper;
+import hex.compiletime.DSLParser;
+import hex.compiletime.util.ClassImportHelper;
 import hex.core.IApplicationAssembler;
-import hex.ioc.error.IAssemblingExceptionReporter;
+import hex.compiletime.error.IExceptionReporter;
 import hex.parser.AbstractParserCollection;
 
 /**
@@ -16,7 +17,7 @@ class CompileTimeParser<ContentType, ParserType:DSLParser<ContentType>, RequestT
 	var _assembler 			: IApplicationAssembler;
 	var _importHelper 		: ClassImportHelper;
 	var _parserCollection 	: AbstractParserCollection<ParserType, ContentType>;
-	var _exceptionReporter 	: IAssemblingExceptionReporter<ContentType>;
+	var _exceptionReporter 	: IExceptionReporter<ContentType>;
 	
 	public function new( parserCollection : AbstractParserCollection<ParserType, ContentType> )
 	{
@@ -28,7 +29,7 @@ class CompileTimeParser<ContentType, ParserType:DSLParser<ContentType>, RequestT
 		this._importHelper = importHelper;
 	}
 	
-	public function setExceptionReporter( exceptionReporter : IAssemblingExceptionReporter<ContentType> ) : Void
+	public function setExceptionReporter( exceptionReporter : IExceptionReporter<ContentType> ) : Void
 	{
 		this._exceptionReporter = exceptionReporter;
 	}

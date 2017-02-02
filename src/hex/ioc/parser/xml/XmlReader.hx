@@ -6,16 +6,16 @@ import hex.util.MacroUtil;
 #if macro
 import haxe.macro.Context;
 import hex.preprocess.MacroConditionalVariablesProcessor;
-import hex.compiler.parser.xml.ClassImportHelper;
+import hex.compiletime.util.ClassImportHelper;
 import hex.ioc.assembler.ConditionalVariablesChecker;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
-import hex.ioc.core.ContextTypeList;
+import hex.core.ContextTypeList;
 import hex.ioc.vo.DomainListenerVOArguments;
 import haxe.macro.Expr;
-import hex.compiler.parser.xml.IPositionTracker;
-import hex.compiler.parser.xml.PositionTracker;
-import hex.compiler.parser.xml.DSLReader;
+import hex.compiletime.xml.IXmlPositionTracker;
+import hex.compiletime.xml.PositionTracker;
+import hex.compiletime.xml.DSLReader;
 
 using StringTools;
 #end
@@ -29,7 +29,7 @@ class XmlReader
 	#if macro
 	static var _importHelper : ClassImportHelper;
 	
-	static function _parseNode( xml : Xml, positionTracker : IPositionTracker ) : Void
+	static function _parseNode( xml : Xml, positionTracker : IXmlPositionTracker ) : Void
 	{
 		var shouldConstruct = true;
 	
@@ -62,7 +62,7 @@ class XmlReader
 		else
 		{
 			var strippedType = type != null ? type.split( '<' )[ 0 ] : type;
-			if ( strippedType == ContextTypeList.HASHMAP || strippedType == ContextTypeList.SERVICE_LOCATOR || strippedType == ContextTypeList.MAPPING_CONFIG )
+			if ( strippedType == ContextTypeList.HASHMAP || strippedType == ContextTypeList.MAPPING_CONFIG )
 			{
 				args = XMLParserUtil.getMapArguments( identifier, xml );
 				for ( arg in args )
@@ -180,7 +180,7 @@ class XmlReader
 		}
 	}
 	
-	static function _parseStateNodes( xml : Xml, positionTracker : IPositionTracker ) : Void
+	static function _parseStateNodes( xml : Xml, positionTracker : IXmlPositionTracker ) : Void
 	{
 		var identifier : String = xml.get( ContextAttributeList.ID );
 		if ( identifier == null )
@@ -215,8 +215,7 @@ class XmlReader
 		var conditionalVariablesMap 	= MacroConditionalVariablesProcessor.parse( conditionalVariables );
 		var conditionalVariablesChecker = new ConditionalVariablesChecker( conditionalVariablesMap );
 		
-		var positionTracker				= new PositionTracker() ;
-		var reader						= new DSLReader( positionTracker );
+		var reader						= new DSLReader();
 		var document 					= reader.read( fileName, preprocessingVariables, conditionalVariablesChecker );
 		var data 						= document.toString();
 		
@@ -227,7 +226,7 @@ class XmlReader
 		while ( iterator.hasNext() )
 		{
 			var node = iterator.next();
-			XmlReader._parseStateNodes( node, positionTracker );
+			XmlReader._parseStateNodes( node, reader.positionTracker );
 			document.firstElement().removeChild( node );
 		}
 		
@@ -235,7 +234,7 @@ class XmlReader
 		var iterator = document.firstElement().elements();
 		while ( iterator.hasNext() )
 		{
-			XmlReader._parseNode( iterator.next(), positionTracker );
+			XmlReader._parseNode( iterator.next(), reader.positionTracker );
 		}
 		
 		return macro $v{ data };

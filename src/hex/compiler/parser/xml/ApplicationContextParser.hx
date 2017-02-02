@@ -22,15 +22,16 @@ class ApplicationContextParser extends AbstractXmlParser
 
 		var applicationContextClass = null;
 		
-		if ( this._applicationContextClassName != null )
+		if ( this._applicationContextClass.name != null )
 		{
 			try
 			{
-				applicationContextClass = MacroUtil.getPack( this._applicationContextClassName );
+				applicationContextClass = MacroUtil.getPack( this._applicationContextClass.name );
 			}
 			catch ( error : Dynamic )
 			{
-				this._throwMissingApplicationContextClassException();
+				this._exceptionReporter.report( "Type not found '" + this._applicationContextClass.name + "' ", 
+												this._applicationContextClass.pos );
 			}
 		}
 		else

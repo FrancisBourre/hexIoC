@@ -1,6 +1,6 @@
 package hex.compiler.parser.flow;
 
-import hex.compiler.parser.xml.ClassImportHelper;
+import hex.compiletime.util.ClassImportHelper;
 import hex.core.IApplicationAssembler;
 
 #if macro

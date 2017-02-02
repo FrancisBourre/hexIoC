@@ -1,14 +1,15 @@
 package hex.compiler.parser.xml;
 
 #if macro
-import haxe.macro.Context;
 import hex.compiler.core.CompileTimeContextFactory;
+import hex.compiletime.xml.ExceptionReporter;
+import hex.compiletime.xml.ContextAttributeList;
+import hex.compiletime.DSLParser;
+import hex.compiletime.xml.IXmlPositionTracker;
 import hex.core.IApplicationContext;
 import hex.core.IBuilder;
 import hex.factory.BuildRequest;
-import hex.ioc.assembler.AbstractApplicationContext;
 import hex.ioc.assembler.CompileTimeApplicationContext;
-import hex.ioc.core.ContextAttributeList;
 
 /**
  * ...
@@ -18,7 +19,8 @@ class AbstractXmlParser extends DSLParser<Xml>
 {
 	var _builder 						: IBuilder<BuildRequest>;
 	var _applicationContextName 		: String;
-	var _applicationContextClassName 	: String;
+	var _applicationContextClass 		: {name: String, pos: haxe.macro.Expr.Position};
+	var _positionTracker				: IXmlPositionTracker;
 	
 	function new() 
 	{
@@ -34,24 +36,26 @@ class AbstractXmlParser extends DSLParser<Xml>
 	@final
 	override public function setContextData( data : Xml ) : Void
 	{
+		this._positionTracker = cast ( this._exceptionReporter, ExceptionReporter ).positionTracker;
+		
 		if ( data != null )
 		{
 			if ( Std.is( data, Xml ) )
 			{
 				this._contextData = data;
 				this._findApplicationContextName( data );
-				this._findApplicationContextClassName( data );
+				this._findApplicationContextClass( data );
 				
 				this._builder = this._applicationAssembler.getFactory( CompileTimeContextFactory, this._applicationContextName, CompileTimeApplicationContext );
 			}
 			else
 			{
-				Context.error( "Context data should be an instance of Xml.", Context.currentPos() );
+				this._exceptionReporter.report( "Context data should be an instance of Xml." );
 			}
 		}
 		else
 		{
-			Context.error( "Context data is null.", Context.currentPos() );
+			this._exceptionReporter.report( "Context data is null." );
 		}
 	}
 	
@@ -61,24 +65,21 @@ class AbstractXmlParser extends DSLParser<Xml>
 		
 		if ( this._applicationContextName == null )
 		{
-			Context.error( "Fails to retrieve applicationContext name. You should add 'name' attribute to the root of your xml context", 
-			this._exceptionReporter.getPosition( xml  ) );
+			this._exceptionReporter.report( "Fails to retrieve applicationContext name. You should add 'name' attribute to the root of your xml context", 
+				this._positionTracker.getPosition( xml  ) );
 		}
 	}
 	
-	function _findApplicationContextClassName( xml : Xml ) : Void
+	function _findApplicationContextClass( xml : Xml ) : Void
 	{
-		this._applicationContextClassName = xml.firstElement().get( ContextAttributeList.TYPE );
+		var name = xml.firstElement().get( ContextAttributeList.TYPE );
+		var pos = name != null ? this._positionTracker.getPosition( xml.firstElement() ) : null;
+		this._applicationContextClass = { name: name, pos: pos };
 	}
 	
 	function _throwMissingTypeException( type : String, xml : Xml, attributeName : String ) : Void 
 	{
-		Context.error( "Type not found '" + type + "' ", this._exceptionReporter.getPosition( xml, attributeName ) );
-	}
-	
-	function _throwMissingApplicationContextClassException() : Void
-	{
-		this._throwMissingTypeException( this._applicationContextClassName, this.getContextData(), ContextAttributeList.TYPE );
+		this._exceptionReporter.report( "Type not found '" + type + "' ", this._positionTracker.getPosition( xml, attributeName ) );
 	}
 }
 #end

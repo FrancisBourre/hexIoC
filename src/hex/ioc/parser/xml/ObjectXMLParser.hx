@@ -1,9 +1,10 @@
 package hex.ioc.parser.xml;
 
+import hex.compiletime.xml.XmlUtil;
 import hex.error.Exception;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
-import hex.ioc.core.ContextTypeList;
+import hex.core.ContextTypeList;
 import hex.ioc.error.ParsingException;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
@@ -71,15 +72,15 @@ class ObjectXMLParser extends AbstractXMLParser
 				args = [ xml.firstElement().toString() ];
 				
 				var constructorVO 		= new ConstructorVO( identifier, type, args, factory );
-				constructorVO.ifList 	= XMLParserUtil.getIfList( xml );
-				constructorVO.ifNotList = XMLParserUtil.getIfNotList( xml );
+				constructorVO.ifList 	= XmlUtil.getIfList( xml );
+				constructorVO.ifNotList = XmlUtil.getIfNotList( xml );
 
 				this._builder.build( OBJECT( constructorVO ) );
 			}
 			else
 			{
 				var strippedType 	= type != null ? type.split( '<' )[ 0 ] : type;
-				args 				= ( strippedType == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR || type == ContextTypeList.MAPPING_CONFIG ) ? XMLParserUtil.getMapArguments( identifier, xml ) : XMLParserUtil.getArguments( identifier, xml, type );
+				args 				= ( strippedType == ContextTypeList.HASHMAP || type == ContextTypeList.MAPPING_CONFIG ) ? XMLParserUtil.getMapArguments( identifier, xml ) : XMLParserUtil.getArguments( identifier, xml, type );
 				factory 			= XMLAttributeUtil.getFactoryMethod( xml );
 				staticCall 			= XMLAttributeUtil.getStaticCall( xml );
 				injectInto			= XMLAttributeUtil.getInjectInto( xml );
@@ -93,8 +94,8 @@ class ObjectXMLParser extends AbstractXMLParser
 				}
 				
 				var constructorVO 		= new ConstructorVO( identifier, type, args, factory, staticCall, injectInto, null, mapType, staticRef, injectorCreation );
-				constructorVO.ifList 	= XMLParserUtil.getIfList( xml );
-				constructorVO.ifNotList = XMLParserUtil.getIfNotList( xml );
+				constructorVO.ifList 	= XmlUtil.getIfList( xml );
+				constructorVO.ifNotList = XmlUtil.getIfNotList( xml );
 
 				this._builder.build( OBJECT( constructorVO ) );
 			}
@@ -114,8 +115,8 @@ class ObjectXMLParser extends AbstractXMLParser
 												XMLAttributeUtil.getMethod( property ),
 												XMLAttributeUtil.getStaticRef( property ) );
 			
-			propertyVO.ifList = XMLParserUtil.getIfList( xml );
-			propertyVO.ifNotList = XMLParserUtil.getIfNotList( xml );
+			propertyVO.ifList = XmlUtil.getIfList( xml );
+			propertyVO.ifNotList = XmlUtil.getIfNotList( xml );
 			
 			this._builder.build( PROPERTY( propertyVO ) );
 		}
@@ -126,8 +127,8 @@ class ObjectXMLParser extends AbstractXMLParser
 		{
 			var methodCallItem 		= methodCallIterator.next();
 			var methodCallVO 		= new MethodCallVO( identifier, XMLAttributeUtil.getName( methodCallItem ), XMLParserUtil.getMethodCallArguments( identifier, methodCallItem ) );
-			methodCallVO.ifList 	= XMLParserUtil.getIfList( methodCallItem );
-			methodCallVO.ifNotList 	= XMLParserUtil.getIfNotList( methodCallItem );
+			methodCallVO.ifList 	= XmlUtil.getIfList( methodCallItem );
+			methodCallVO.ifNotList 	= XmlUtil.getIfNotList( methodCallItem );
 			
 			this._builder.build( METHOD_CALL( methodCallVO ) );
 		}
@@ -142,8 +143,8 @@ class ObjectXMLParser extends AbstractXMLParser
 			if ( channelName != null )
 			{
 				var domainListenerVO 		= new DomainListenerVO( identifier, channelName, XMLParserUtil.getEventArguments( listener ) );
-				domainListenerVO.ifList 	= XMLParserUtil.getIfList( listener );
-				domainListenerVO.ifNotList 	= XMLParserUtil.getIfNotList( listener );
+				domainListenerVO.ifList 	= XmlUtil.getIfList( listener );
+				domainListenerVO.ifNotList 	= XmlUtil.getIfNotList( listener );
 				
 				this._builder.build( DOMAIN_LISTENER( domainListenerVO ) );
 			}

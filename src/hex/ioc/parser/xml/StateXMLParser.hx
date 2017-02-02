@@ -1,5 +1,6 @@
 package hex.ioc.parser.xml;
 
+import hex.compiletime.xml.XmlUtil;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
 import hex.ioc.error.ParsingException;
@@ -44,8 +45,8 @@ class StateXMLParser extends AbstractXMLParser
 		var transitionList 			= this._getTransitionList( xml, ContextNameList.TRANSITION );
 		
 		var stateTransitionVO 		= new StateTransitionVO( identifier, staticReference, instanceReference, enterList, exitList, transitionList );
-		stateTransitionVO.ifList 	= XMLParserUtil.getIfList( xml );
-		stateTransitionVO.ifNotList = XMLParserUtil.getIfNotList( xml );
+		stateTransitionVO.ifList 	= XmlUtil.getIfList( xml );
+		stateTransitionVO.ifNotList = XmlUtil.getIfNotList( xml );
 		
 		this._builder.build( STATE_TRANSITION( stateTransitionVO ) );
 	}

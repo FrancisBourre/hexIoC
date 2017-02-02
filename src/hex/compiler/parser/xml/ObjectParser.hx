@@ -5,10 +5,11 @@ import haxe.macro.Context;
 import hex.core.IApplicationContext;
 import hex.factory.BuildRequest;
 import hex.ioc.assembler.ApplicationContext;
+import hex.compiletime.xml.XmlUtil;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
-import hex.ioc.core.ContextTypeList;
-import hex.ioc.error.IAssemblingExceptionReporter;
+import hex.core.ContextTypeList;
+import hex.compiletime.error.IExceptionReporter;
 import hex.ioc.parser.xml.XMLAttributeUtil;
 import hex.ioc.parser.xml.XMLParserUtil;
 import hex.ioc.vo.ConstructorVO;
@@ -59,7 +60,7 @@ class ObjectParser extends AbstractXmlParser
 				( 
 					"Parsing error with '" + xml.nodeName + 
 					"' node, 'id' attribute not found.", 
-					this._exceptionReporter.getPosition( xml ) );
+					this._positionTracker.getPosition( xml ) );
 			}
 
 		}
@@ -81,14 +82,13 @@ class ObjectParser extends AbstractXmlParser
 		{
 			type = xml.get( ContextAttributeList.TYPE );
 			
-			//
 			if ( type == ContextTypeList.XML )
 			{
 				factory 					= xml.get( ContextAttributeList.PARSER_CLASS );
 				var constructorVO 			= new ConstructorVO( identifier, type, [ xml.firstElement().toString() ], factory );
-				constructorVO.filePosition 	= this._exceptionReporter.getPosition( xml );
-				constructorVO.ifList 		= XMLParserUtil.getIfList( xml );
-				constructorVO.ifNotList 	= XMLParserUtil.getIfNotList( xml );
+				constructorVO.filePosition 	= this._positionTracker.getPosition( xml );
+				constructorVO.ifList 		= XmlUtil.getIfList( xml );
+				constructorVO.ifNotList 	= XmlUtil.getIfNotList( xml );
 
 				this._builder.build( OBJECT( constructorVO ) );
 			}
@@ -100,8 +100,8 @@ class ObjectParser extends AbstractXmlParser
 				mapType 			= XMLParserUtil.getMapType( xml );
 				staticRef 			= xml.get( ContextAttributeList.STATIC_REF );
 				injectorCreation 	= xml.get( ContextAttributeList.INJECTOR_CREATION ) == "true";
-				ifList 				= XMLParserUtil.getIfList( xml );
-				ifNotList 			= XMLParserUtil.getIfNotList( xml );
+				ifList 				= XmlUtil.getIfList( xml );
+				ifNotList 			= XmlUtil.getIfNotList( xml );
 			
 				if ( type == null )
 				{
@@ -109,7 +109,7 @@ class ObjectParser extends AbstractXmlParser
 				}
 
 				var strippedType = type != null ? type.split( '<' )[ 0 ] : null;
-				if ( strippedType == ContextTypeList.HASHMAP || type == ContextTypeList.SERVICE_LOCATOR || type == ContextTypeList.MAPPING_CONFIG )
+				if ( strippedType == ContextTypeList.HASHMAP || type == ContextTypeList.MAPPING_CONFIG )
 				{
 					args = this._getMapArguments( identifier, xml, this._exceptionReporter );
 
@@ -143,7 +143,7 @@ class ObjectParser extends AbstractXmlParser
 						{
 							var node = iterator.next();
 							var arg = ObjectParser._getConstructorVOFromXML( identifier, node );
-							arg.filePosition = this._exceptionReporter.getPosition( node );
+							arg.filePosition = this._positionTracker.getPosition( node );
 							
 							if ( arg.staticRef != null )
 							{
@@ -230,14 +230,12 @@ class ObjectParser extends AbstractXmlParser
 				var constructorVO 			= new ConstructorVO( identifier, type, args, factory, staticCall, injectInto, null, mapType, staticRef, injectorCreation );
 				constructorVO.ifList 		= ifList;
 				constructorVO.ifNotList 	= ifNotList;
-				constructorVO.filePosition 	= constructorVO.ref == null ? this._exceptionReporter.getPosition( xml ) : this._exceptionReporter.getPosition( xml, ContextAttributeList.REF );
+				constructorVO.filePosition 	= constructorVO.ref == null ? this._positionTracker.getPosition( xml ) : this._positionTracker.getPosition( xml, ContextAttributeList.REF );
 
 				this._builder.build( OBJECT( constructorVO ) );
 			}
-			//
 		}
 
-		//
 		// Build property.
 		var propertyIterator = xml.elementsNamed( ContextNameList.PROPERTY );
 		while ( propertyIterator.hasNext() )
@@ -267,9 +265,9 @@ class ObjectParser extends AbstractXmlParser
 												XMLAttributeUtil.getMethod( property ),
 												XMLAttributeUtil.getStaticRef( property ) );
 			
-			propertyVO.filePosition = propertyVO.ref == null ? this._exceptionReporter.getPosition( property ) : this._exceptionReporter.getPosition( property, ContextAttributeList.REF );
-			propertyVO.ifList 		= XMLParserUtil.getIfList( xml );
-			propertyVO.ifNotList 	= XMLParserUtil.getIfNotList( xml );
+			propertyVO.filePosition = propertyVO.ref == null ? this._positionTracker.getPosition( property ) : this._positionTracker.getPosition( property, ContextAttributeList.REF );
+			propertyVO.ifList 		= XmlUtil.getIfList( xml );
+			propertyVO.ifNotList 	= XmlUtil.getIfNotList( xml );
 
 			this._builder.build( PROPERTY( propertyVO ) );
 		}
@@ -287,7 +285,7 @@ class ObjectParser extends AbstractXmlParser
 			{
 				var node 			= iterator.next();
 				var arg 			= ObjectParser._getConstructorVOFromXML( identifier, node );
-				arg.filePosition 	= this._exceptionReporter.getPosition( node );
+				arg.filePosition 	= this._positionTracker.getPosition( node );
 				
 				if ( arg.staticRef != null )
 				{
@@ -320,9 +318,9 @@ class ObjectParser extends AbstractXmlParser
 			}
 			
 			var methodCallVO 			= new MethodCallVO( identifier, methodCallItem.get( ContextAttributeList.NAME ), args );
-			methodCallVO.filePosition 	= this._exceptionReporter.getPosition( methodCallItem );
-			methodCallVO.ifList 		= XMLParserUtil.getIfList( methodCallItem );
-			methodCallVO.ifNotList 		= XMLParserUtil.getIfNotList( methodCallItem );
+			methodCallVO.filePosition 	= this._positionTracker.getPosition( methodCallItem );
+			methodCallVO.ifList 		= XmlUtil.getIfList( methodCallItem );
+			methodCallVO.ifNotList 		= XmlUtil.getIfNotList( methodCallItem );
 			
 			this._builder.build( METHOD_CALL( methodCallVO ) );
 		}
@@ -343,7 +341,7 @@ class ObjectParser extends AbstractXmlParser
 				{
 					var node = iterator.next();
 					var listenerArg = XMLParserUtil.getEventArgument( node );
-					listenerArg.filePosition = this._exceptionReporter.getPosition( node );
+					listenerArg.filePosition = this._positionTracker.getPosition( node );
 					
 					//
 					var staticRef = listenerArg.staticRef;
@@ -365,9 +363,9 @@ class ObjectParser extends AbstractXmlParser
 				}
 
 				var domainListenerVO 			= new DomainListenerVO( identifier, channelName, listenerArgs );
-				domainListenerVO.filePosition 	= this._exceptionReporter.getPosition( listener );
-				domainListenerVO.ifList 		= XMLParserUtil.getIfList( listener );
-				domainListenerVO.ifNotList 		= XMLParserUtil.getIfNotList( listener );
+				domainListenerVO.filePosition 	= this._positionTracker.getPosition( listener );
+				domainListenerVO.ifList 		= XmlUtil.getIfList( listener );
+				domainListenerVO.ifNotList 		= XmlUtil.getIfNotList( listener );
 
 				this._builder.build( DOMAIN_LISTENER( domainListenerVO ) );
 			}
@@ -377,7 +375,7 @@ class ObjectParser extends AbstractXmlParser
 				( 
 					"Parsing error with '" + xml.nodeName + 
 						"' node, 'ref' attribute is mandatory in a 'listen' node.", 
-					this._exceptionReporter.getPosition( listener ) );
+					this._positionTracker.getPosition( listener ) );
 
 			}
 		}
@@ -386,7 +384,7 @@ class ObjectParser extends AbstractXmlParser
 		
 	}
 
-	function _getMapArguments( ownerID : String, xml : Xml, exceptionReporter : IAssemblingExceptionReporter<Xml> ) : Array<MapVO>
+	function _getMapArguments( ownerID : String, xml : Xml, exceptionReporter : IExceptionReporter<Xml> ) : Array<MapVO>
 	{
 		var args : Array<MapVO> = [];
 		var iterator = xml.elementsNamed( ContextNameList.ITEM );
@@ -405,11 +403,11 @@ class ObjectParser extends AbstractXmlParser
 				var value 		= XMLParserUtil._getAttributes( valueNode );
 				var keyVO 		= XMLParserUtil._getConstructorVO( ownerID, key );
 
-				keyVO.filePosition = exceptionReporter.getPosition( keyNode );
+				keyVO.filePosition = this._positionTracker.getPosition( keyNode );
 				var valueVO	= XMLParserUtil._getConstructorVO( ownerID, value );
-				valueVO.filePosition = exceptionReporter.getPosition( valueNode );
+				valueVO.filePosition = this._positionTracker.getPosition( valueNode );
 				var mapVO = new MapVO( keyVO, valueVO, XMLAttributeUtil.getMapName( item ), XMLAttributeUtil.getAsSingleton( item ), XMLAttributeUtil.getInjectInto( item ) );
-				mapVO.filePosition = exceptionReporter.getPosition( item );
+				mapVO.filePosition = this._positionTracker.getPosition( item );
 				args.push( mapVO );
 			}
 		}

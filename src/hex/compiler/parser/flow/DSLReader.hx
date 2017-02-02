@@ -1,6 +1,7 @@
 package hex.compiler.parser.flow;
 
 #if macro
+import hex.compiletime.DSLData;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import hex.preprocess.MacroPreprocessor;

@@ -1,22 +1,20 @@
 package hex.compiler.parser.flow;
 
+#if macro
 import haxe.macro.Expr;
-import hex.ioc.error.IAssemblingExceptionReporter;
+import hex.compiletime.error.IExceptionReporter;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class FlowAssemblingExceptionReporter implements IAssemblingExceptionReporter<Expr>
+class FlowAssemblingExceptionReporter implements IExceptionReporter<Expr>
 {
-	public function new() 
+	public function new() {}
+
+	public function report( message : String, ?position : Position ) : Void
 	{
-		
-	}
-	
-	public function getPosition( e : Expr, ?additionalInformations : Dynamic ) : Position
-	{
-		//return additionalInformations == null ? this._positionTracker.makePositionFromNode( xml ) : this._positionTracker.makePositionFromAttribute( xml, additionalInformations );
-		return null;
+		haxe.macro.Context.error( message, position != null ? position : haxe.macro.Context.currentPos() );
 	}
 }
+#end

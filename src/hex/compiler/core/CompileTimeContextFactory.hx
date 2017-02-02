@@ -19,7 +19,7 @@ import hex.core.SymbolTable;
 import hex.di.IInjectorContainer;
 import hex.event.IDispatcher;
 import hex.factory.BuildRequest;
-import hex.ioc.core.ContextTypeList;
+import hex.core.ContextTypeList;
 import hex.ioc.core.IContextFactory;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
@@ -100,7 +100,6 @@ class CompileTimeContextFactory
 			this._factoryMap.set( ContextTypeList.UINT, 			hex.compiler.factory.UIntFactory.build );
 			this._factoryMap.set( ContextTypeList.DEFAULT, 			hex.compiler.factory.StringFactory.build );
 			this._factoryMap.set( ContextTypeList.HASHMAP, 			hex.compiler.factory.HashMapFactory.build );
-			this._factoryMap.set( ContextTypeList.SERVICE_LOCATOR, 	hex.compiler.factory.ServiceLocatorFactory.build );
 			this._factoryMap.set( ContextTypeList.CLASS, 			hex.compiler.factory.ClassFactory.build );
 			this._factoryMap.set( ContextTypeList.XML, 				hex.compiler.factory.XmlFactory.build );
 			this._factoryMap.set( ContextTypeList.FUNCTION, 		hex.compiler.factory.FunctionFactory.build );
@@ -456,7 +455,6 @@ class CompileTimeContextFactory
 
 		if ( constructorVO != null )
 		{
-			factoryVO.type 			= constructorVO.className;
 			factoryVO.constructorVO = constructorVO;
 		}
 		

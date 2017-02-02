@@ -9,7 +9,6 @@ import hex.ioc.core.IContextFactory;
  */
 class FactoryVO
 {
-	public var type 					: String;
 	public var contextFactory 			: IContextFactory;
 	public var coreFactory				: ICoreFactory;
 	public var constructorVO 			: ConstructorVO;

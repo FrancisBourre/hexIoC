@@ -2,7 +2,7 @@ package hex.ioc.parser.xml;
 
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
-import hex.ioc.core.ContextTypeList;
+import hex.core.ContextTypeList;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVOArguments;
 import hex.ioc.vo.MapVO;
@@ -203,18 +203,6 @@ class XMLParserUtil
 		}
 
 		return obj;
-	}
-	
-	static public function getIfList( xml : Xml ) : Array<String>
-	{
-		var s = XMLAttributeUtil.getIf( xml );
-		return s != null ? s.split( "," ) : null;
-	}
-	
-	static public function getIfNotList( xml : Xml ) : Array<String>
-	{
-		var s = XMLAttributeUtil.getIfNot( xml );
-		return s != null ? s.split( "," ) : null;
 	}
 	
 	static public function getMapType( xml : Xml ) : Array<String>

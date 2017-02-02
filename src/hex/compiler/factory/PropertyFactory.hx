@@ -2,7 +2,7 @@ package hex.compiler.factory;
 
 import haxe.macro.Expr;
 import hex.error.PrivateConstructorException;
-import hex.ioc.core.ContextTypeList;
+import hex.core.ContextTypeList;
 import hex.ioc.core.IContextFactory;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.PropertyVO;

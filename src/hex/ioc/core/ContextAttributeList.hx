@@ -9,8 +9,8 @@ import hex.error.PrivateConstructorException;
 class ContextAttributeList
 {
 	static public inline var ID 					: String = "id";
-	static public inline var TYPE 					: String = "type";
-	static public inline var NAME 					: String = "name";
+	static public inline var TYPE 					: String = hex.compiletime.xml.ContextAttributeList.TYPE;
+	static public inline var NAME 					: String = hex.compiletime.xml.ContextAttributeList.NAME;
 	static public inline var REF 					: String = "ref";
 	static public inline var VALUE 					: String = "value";
 	static public inline var FACTORY_METHOD 		: String = "factory-method";
@@ -29,8 +29,8 @@ class ContextAttributeList
 	public static inline var COMMAND_CLASS 			: String = "command-class";
 	public static inline var FIRE_ONCE 				: String = "fire-once";
 	public static inline var CONTEXT_OWNER 			: String = "context-owner";
-	public static inline var IF 					: String = "if";
-	public static inline var IF_NOT 				: String = "if-not";
+	public static inline var IF 					: String = hex.compiletime.xml.ContextAttributeList.IF;
+	public static inline var IF_NOT 				: String = hex.compiletime.xml.ContextAttributeList.IF_NOT;
 	public static inline var FILE 					: String = "file";
 	public static inline var MESSAGE 				: String = "message";
 	public static inline var STATE 					: String = "state";

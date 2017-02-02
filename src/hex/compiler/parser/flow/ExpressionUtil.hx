@@ -5,7 +5,7 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.ExprTools;
 import hex.error.PrivateConstructorException;
-import hex.ioc.core.ContextTypeList;
+import hex.core.ContextTypeList;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.MapVO;
 import hex.ioc.vo.PropertyVO;
