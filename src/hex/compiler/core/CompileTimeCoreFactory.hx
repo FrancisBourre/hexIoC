@@ -3,7 +3,6 @@ package hex.compiler.core;
 import hex.collection.ILocatorListener;
 import hex.collection.LocatorMessage;
 import hex.compiler.CompileTimeFastEval;
-import hex.core.CoreFactoryVODef;
 import hex.core.ICoreFactory;
 import hex.di.IDependencyInjector;
 import hex.error.IllegalArgumentException;
@@ -175,26 +174,6 @@ class CompileTimeCoreFactory implements ICoreFactory
 		var b = this._dispatcher.removeHandler( LocatorMessage.REGISTER, listener.onRegister );
 		return this._dispatcher.removeHandler( LocatorMessage.UNREGISTER, listener.onUnregister ) || b;
     }
-	
-	public function buildInstance( constructorVO : CoreFactoryVODef ) : Dynamic
-	{
-		return null;
-	}
-	
-	public function addProxyFactoryMethod( className : String, socpe : Dynamic, factoryMethod : Dynamic ) : Void
-	{
-		//
-	}
-	
-	public function removeProxyFactoryMethod( classPath : String ) : Bool
-	{
-		return false;
-	}
-	
-	public function hasProxyFactoryMethod( className : String ) : Bool
-	{
-		return false;
-	}
 	
 	public function fastEvalFromTarget( target : Dynamic, toEval : String ) : Dynamic
 	{
