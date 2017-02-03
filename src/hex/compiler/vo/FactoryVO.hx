@@ -1,5 +1,6 @@
 package hex.compiler.vo;
 
+#if macro
 import hex.compiler.core.CompileTimeContextFactory;
 import hex.compiler.core.CompileTimeCoreFactory;
 import hex.ioc.vo.ConstructorVO;
@@ -19,3 +20,4 @@ class FactoryVO
 		
 	}
 }
+#end
