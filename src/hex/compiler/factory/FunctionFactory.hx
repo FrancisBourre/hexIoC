@@ -1,10 +1,10 @@
 package hex.compiler.factory;
 
 import haxe.macro.Expr;
+import hex.compiler.vo.FactoryVO;
 import hex.error.Exception;
 import hex.error.PrivateConstructorException;
 import hex.ioc.vo.ConstructorVO;
-import hex.ioc.vo.FactoryVO;
 
 /**
  * ...
@@ -15,7 +15,7 @@ class FunctionFactory
 	/** @private */
     function new()
     {
-        throw new PrivateConstructorException( "This class can't be instantiated." );
+        throw new PrivateConstructorException();
     }
 
 	static public function build( factoryVO : FactoryVO ) : Expr

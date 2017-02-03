@@ -11,7 +11,6 @@ import hex.error.NoSuchElementException;
 import hex.event.ClosureDispatcher;
 import hex.event.MessageType;
 import hex.log.Stringifier;
-import hex.metadata.IAnnotationProvider;
 
 /**
  * ...

@@ -32,16 +32,4 @@ class PropertyVO extends AssemblerVO
 			this.method 	= method;
 			this.staticRef 	= staticRef;
 		}
-
-		/*public function toString() : String
-		{
-			return 	"("
-					+ "ownerID:"    		+ ownerID       + ", "
-					+ "name:"               + name          + ", "
-					+ "value:"              + value         + ", "
-					+ "type:"               + type          + ", "
-					+ "ref:"                + ref           + ", "
-					+ "method:"     		+ method       + ", "
-					+ "staticRef:"     		+ staticRef     + ")";
-		}*/
 }

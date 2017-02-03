@@ -10,6 +10,8 @@ import hex.compiler.factory.DomainListenerFactory;
 import hex.compiler.factory.FactoryUtil;
 import hex.compiler.factory.PropertyFactory;
 import hex.compiler.factory.StateTransitionFactory;
+import hex.compiler.vo.FactoryVO;
+import hex.core.ContextTypeList;
 import hex.core.HashCodeFactory;
 import hex.core.IAnnotationParsable;
 import hex.core.IApplicationContext;
@@ -19,11 +21,9 @@ import hex.core.SymbolTable;
 import hex.di.IInjectorContainer;
 import hex.event.IDispatcher;
 import hex.factory.BuildRequest;
-import hex.core.ContextTypeList;
 import hex.ioc.core.IContextFactory;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
-import hex.ioc.vo.FactoryVO;
 import hex.ioc.vo.MethodCallVO;
 import hex.ioc.vo.PropertyVO;
 import hex.ioc.vo.StateTransitionVO;
@@ -53,7 +53,7 @@ class CompileTimeContextFactory
 	var _moduleLocator				: Locator<String, String>;
 	var _applicationContext 		: IApplicationContext;
 	var _factoryMap 				: Map<String, FactoryVO->Dynamic>;
-	var _coreFactory 				: ICoreFactory;
+	var _coreFactory 				: CompileTimeCoreFactory;
 	var _symbolTable 				: SymbolTable;
 	var _constructorVOLocator 		: Locator<String, ConstructorVO>;
 	var _propertyVOLocator 			: Locator<String, Array<PropertyVO>>;
@@ -76,7 +76,7 @@ class CompileTimeContextFactory
 			this._isInitialized = true;
 			
 			this._applicationContext 				= applicationContext;
-			this._coreFactory 						= applicationContext.getCoreFactory();
+			this._coreFactory 						= cast ( applicationContext.getCoreFactory(), CompileTimeCoreFactory );
 		
 		//
 			this._factoryMap 						= new Map();
@@ -341,21 +341,6 @@ class CompileTimeContextFactory
 	public function getApplicationContext() : IApplicationContext
 	{
 		return this._applicationContext;
-	}
-
-	public function getCoreFactory() : ICoreFactory
-	{
-		return this._coreFactory;
-	}
-	
-	public function getAnnotationProvider() : IAnnotationProvider
-	{
-		return this._annotationProvider;
-	}
-	
-	public function getStateTransitionVOLocator() : Locator<String, StateTransitionVO>
-	{
-		return this._stateTransitionVOLocator;
 	}
 
 	public function buildVO( constructorVO : ConstructorVO, ?id : String ) : Dynamic

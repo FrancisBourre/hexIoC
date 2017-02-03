@@ -4,15 +4,15 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Type.ClassType;
 import hex.collection.Locator;
+import hex.compiler.vo.FactoryVO;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
 import hex.domain.DomainUtil;
+import hex.error.PrivateConstructorException;
 import hex.event.ClassAdapter;
 import hex.event.EventProxy;
 import hex.event.IObservable;
 import hex.ioc.vo.DomainListenerVO;
-import hex.ioc.vo.DomainListenerVOArguments;
-import hex.ioc.vo.FactoryVO;
 import hex.util.MacroUtil;
 
 /**
@@ -21,10 +21,11 @@ import hex.util.MacroUtil;
  */
 class DomainListenerFactory
 {
-	function new()
-	{
-
-	}
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException();
+    }
 	
 	#if macro
 	public static var domainLocator : Map<String, String>;

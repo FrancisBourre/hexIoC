@@ -35,8 +35,9 @@ class ContextAttributeList
 	public static inline var MESSAGE 				: String = "message";
 	public static inline var STATE 					: String = "state";
 	
+	/** @private */
 	function new() 
 	{
-		throw new PrivateConstructorException( "'ContextAttributeList' class can't be instantiated." );
+		throw new PrivateConstructorException();
 	}
 }

@@ -13,7 +13,7 @@ class FloatFactory
 	/** @private */
     function new()
     {
-        throw new PrivateConstructorException( "This class can't be instantiated." );
+        throw new PrivateConstructorException();
     }
 	
 	static public function build( factoryVO : FactoryVO ) : Float

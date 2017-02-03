@@ -2,8 +2,8 @@ package hex.compiler.factory;
 
 import haxe.macro.Context;
 import haxe.macro.Expr;
+import hex.compiler.vo.FactoryVO;
 import hex.error.PrivateConstructorException;
-import hex.ioc.vo.FactoryVO;
 
 /**
  * ...
@@ -14,7 +14,7 @@ class FloatFactory
 	/** @private */
     function new()
     {
-        throw new PrivateConstructorException( "This class can't be instantiated." );
+        throw new PrivateConstructorException();
     }
 	
 	#if macro

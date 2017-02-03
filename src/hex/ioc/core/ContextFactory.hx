@@ -57,7 +57,7 @@ class ContextFactory
 	var _moduleLocator				: Locator<String, IModule>;
 	var _applicationContext 		: IApplicationContext;
 	var _factoryMap 				: Map<String, FactoryVO->Dynamic>;
-	var _coreFactory 				: ICoreFactory;
+	var _coreFactory 				: CoreFactory;
 	var _symbolTable 				: SymbolTable;
 	var _constructorVOLocator 		: Locator<String, ConstructorVO>;
 	var _propertyVOLocator 			: Locator<String, Array<PropertyVO>>;
@@ -83,7 +83,7 @@ class ContextFactory
 			this._contextDispatcher = ApplicationDomainDispatcher.getInstance().getDomainDispatcher( applicationContext.getDomain() );
 			var injector = this._applicationContext.getInjector();
 			this._annotationProvider = injector.getInstance( IAnnotationProvider );
-			this._coreFactory = applicationContext.getCoreFactory();
+			this._coreFactory = cast ( applicationContext.getCoreFactory(), CoreFactory );
 
 			//initialization
 			this._contextDispatcher.dispatch( ApplicationAssemblerMessage.CONTEXT_PARSED );
@@ -332,7 +332,7 @@ class ContextFactory
 		return this._applicationContext;
 	}
 
-	public function getCoreFactory() : ICoreFactory
+	public function getCoreFactory() : CoreFactory
 	{
 		return this._coreFactory;
 	}

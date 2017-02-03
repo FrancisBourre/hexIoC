@@ -1,7 +1,7 @@
 package hex.ioc.vo;
 
-import hex.core.ICoreFactory;
-import hex.ioc.core.IContextFactory;
+import hex.ioc.core.ContextFactory;
+import hex.ioc.core.CoreFactory;
 
 /**
  * ...
@@ -9,8 +9,8 @@ import hex.ioc.core.IContextFactory;
  */
 class FactoryVO
 {
-	public var contextFactory 			: IContextFactory;
-	public var coreFactory				: ICoreFactory;
+	public var contextFactory 			: ContextFactory;
+	public var coreFactory				: CoreFactory;
 	public var constructorVO 			: ConstructorVO;
 
 	public function new() 

@@ -20,7 +20,7 @@ class ExpressionUtil
 	/** @private */
     function new()
     {
-        throw new PrivateConstructorException( "This class can't be instantiated." );
+        throw new PrivateConstructorException();
     }
 
 	static public function compressField( e : ExprDef, ?previousValue : String = "" ) : String

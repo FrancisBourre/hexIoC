@@ -3,12 +3,12 @@ package hex.compiler.factory;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.TypeTools;
+import hex.compiler.vo.FactoryVO;
 import hex.di.IInjectorContainer;
 import hex.domain.Domain;
 import hex.domain.DomainExpert;
 import hex.domain.DomainUtil;
 import hex.error.PrivateConstructorException;
-import hex.ioc.vo.FactoryVO;
 import hex.metadata.AnnotationProvider;
 import hex.module.IModule;
 import hex.util.MacroUtil;
@@ -22,7 +22,7 @@ class ClassInstanceFactory
 	/** @private */
     function new()
     {
-        throw new PrivateConstructorException( "This class can't be instantiated." );
+        throw new PrivateConstructorException();
     }
 
 	#if macro
