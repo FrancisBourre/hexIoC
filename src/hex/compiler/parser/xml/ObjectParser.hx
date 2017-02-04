@@ -33,7 +33,7 @@ class ObjectParser extends AbstractXmlParser
 	override public function parse() : Void
 	{
 		var applicationContext 	= this.getApplicationAssembler().getApplicationContext( this._applicationContextName, ApplicationContext );
-		var iterator 			= this.getContextData().firstElement().elements();
+		var iterator 			= this._contextData.firstElement().elements();
 		
 		while ( iterator.hasNext() )
 		{

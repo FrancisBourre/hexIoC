@@ -28,13 +28,13 @@ class StateParser extends AbstractXmlParser
 	override public function parse() : Void
 	{
 		var applicationContext 	= this.getApplicationAssembler().getApplicationContext( this._applicationContextName, ApplicationContext );
-		var iterator 			= this.getContextData().firstElement().elementsNamed( "state" );
+		var iterator 			= this._contextData.firstElement().elementsNamed( "state" );
 
 		while ( iterator.hasNext() )
 		{
 			var node = iterator.next();
 			this._parseNode( applicationContext, node );
-			this.getContextData().firstElement().removeChild( node );
+			this._contextData.firstElement().removeChild( node );
 		}
 	}
 	

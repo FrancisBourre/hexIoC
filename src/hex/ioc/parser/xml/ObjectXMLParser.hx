@@ -5,11 +5,12 @@ import hex.error.Exception;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
 import hex.core.ContextTypeList;
-import hex.ioc.error.ParsingException;
+import hex.runtime.error.ParsingException;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.MethodCallVO;
 import hex.ioc.vo.PropertyVO;
+import hex.runtime.xml.AbstractXMLParser;
 
 /**
  * ...
@@ -24,7 +25,7 @@ class ObjectXMLParser extends AbstractXMLParser
 	
 	override public function parse() : Void
 	{
-		var iterator = this.getContextData().firstElement().elements();
+		var iterator = this._contextData.firstElement().elements();
 		while ( iterator.hasNext() )
 		{
 			this._parseNode( iterator.next() );

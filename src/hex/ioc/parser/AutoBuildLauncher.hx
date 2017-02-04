@@ -1,6 +1,6 @@
 package hex.ioc.parser;
 
-import hex.ioc.parser.xml.AbstractXMLParser;
+import hex.runtime.xml.AbstractXMLParser;
 
 /**
  * ...

@@ -1,10 +1,12 @@
 package hex.compiler.parser;
 
 import haxe.macro.Context;
+import hex.compiler.core.CompileTimeContextFactory;
 import hex.compiletime.DSLParser;
 import hex.compiletime.util.ClassImportHelper;
 import hex.core.IApplicationAssembler;
 import hex.compiletime.error.IExceptionReporter;
+import hex.ioc.assembler.CompileTimeApplicationContext;
 import hex.parser.AbstractParserCollection;
 
 /**
@@ -81,13 +83,21 @@ class CompileTimeParser<ContentType, ParserType:DSLParser<ContentType>, RequestT
 
 		while ( this._parserCollection.hasNext() )
 		{
+			//Get current parser
 			var parser = this._parserCollection.next();
+			
+			//Initialize settings
+			parser.setFactoryClass( CompileTimeContextFactory );
+			parser.setApplicationContextDefaultClass( CompileTimeApplicationContext );
 			parser.setImportHelper( this._importHelper );
 			parser.setExceptionReporter( this._exceptionReporter );
 			parser.setApplicationAssembler( this._assembler );
+			
+			//Do parsing
 			parser.setContextData( this._contextData );
 			parser.parse();
 
+			//Get back parsed data
 			this._contextData = parser.getContextData();
 		}
 

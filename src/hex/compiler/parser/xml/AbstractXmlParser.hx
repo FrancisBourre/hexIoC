@@ -1,15 +1,13 @@
 package hex.compiler.parser.xml;
 
 #if macro
-import hex.compiler.core.CompileTimeContextFactory;
-import hex.compiletime.xml.ExceptionReporter;
-import hex.compiletime.xml.ContextAttributeList;
 import hex.compiletime.DSLParser;
+import hex.compiletime.xml.ContextAttributeList;
+import hex.compiletime.xml.ExceptionReporter;
 import hex.compiletime.xml.IXmlPositionTracker;
 import hex.core.IApplicationContext;
 import hex.core.IBuilder;
 import hex.factory.BuildRequest;
-import hex.ioc.assembler.CompileTimeApplicationContext;
 
 /**
  * ...
@@ -28,9 +26,9 @@ class AbstractXmlParser extends DSLParser<Xml>
 	}
 	
 	@final
-	override public function getApplicationContext() : IApplicationContext
+	public function getApplicationContext() : IApplicationContext
 	{
-		return this._applicationAssembler.getApplicationContext( this._applicationContextName, CompileTimeApplicationContext );
+		return this._applicationAssembler.getApplicationContext( this._applicationContextName, this._applicationContextDefaultClass );
 	}
 	
 	@final
@@ -46,7 +44,8 @@ class AbstractXmlParser extends DSLParser<Xml>
 				this._findApplicationContextName( data );
 				this._findApplicationContextClass( data );
 				
-				this._builder = this._applicationAssembler.getFactory( CompileTimeContextFactory, this._applicationContextName, CompileTimeApplicationContext );
+				var applicationContext = this._applicationAssembler.getApplicationContext( this._applicationContextName, this._applicationContextDefaultClass );
+				this._builder = this._applicationAssembler.getFactory( this._factoryClass, applicationContext );
 			}
 			else
 			{

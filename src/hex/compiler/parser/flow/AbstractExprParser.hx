@@ -3,12 +3,10 @@ package hex.compiler.parser.flow;
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
-import hex.compiler.core.CompileTimeContextFactory;
 import hex.compiletime.DSLParser;
 import hex.core.IApplicationContext;
 import hex.core.IBuilder;
 import hex.factory.BuildRequest;
-import hex.ioc.assembler.CompileTimeApplicationContext;
 
 using hex.util.MacroUtil;
 using hex.compiler.parser.flow.ExpressionUtil;
@@ -29,9 +27,9 @@ class AbstractExprParser extends DSLParser<Expr>
 	}
 	
 	@final
-	override public function getApplicationContext() : IApplicationContext
+	public function getApplicationContext() : IApplicationContext
 	{
-		return this._applicationAssembler.getApplicationContext( this._applicationContextName, CompileTimeApplicationContext );
+		return this._applicationAssembler.getApplicationContext( this._applicationContextName, this._applicationContextDefaultClass );
 	}
 	
 	@final
@@ -43,7 +41,8 @@ class AbstractExprParser extends DSLParser<Expr>
 			this._findApplicationContextName( data );
 			this._findApplicationContextClass( data );
 			
-			this._builder = this._applicationAssembler.getFactory( CompileTimeContextFactory, this._applicationContextName, CompileTimeApplicationContext );
+			var applicationContext = this._applicationAssembler.getApplicationContext( this._applicationContextName, this._applicationContextDefaultClass );
+			this._builder = this._applicationAssembler.getFactory( this._factoryClass, applicationContext );
 		}
 		else
 		{
@@ -125,7 +124,7 @@ class AbstractExprParser extends DSLParser<Expr>
 	
 	function _getExpressions() : Array<Expr>
 	{
-		var e = this.getContextData();
+		var e = this._contextData;
 
 		switch( e.expr )
 		{
