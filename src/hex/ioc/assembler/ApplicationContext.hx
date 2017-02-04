@@ -84,7 +84,7 @@ class ApplicationContext extends AbstractApplicationContext
 		
 		super( coreFactory, applicationContextName );
 		
-		coreFactory.getInjector().mapClassNameToValue( "hex.event.IDispatcher<{}>", contextDispatcher, applicationContextName );
+		coreFactory.getInjector().mapClassNameToValue( "hex.event.IDispatcher<{}>", contextDispatcher );
 		this._dispatcher = contextDispatcher;
 		this._initStateMachine();
 	}
