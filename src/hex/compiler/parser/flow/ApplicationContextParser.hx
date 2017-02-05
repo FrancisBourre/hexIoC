@@ -1,13 +1,15 @@
 package hex.compiler.parser.flow;
+import hex.compiletime.flow.AbstractExprParser;
 
 #if macro
+import hex.factory.BuildRequest;
 import hex.util.MacroUtil;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class ApplicationContextParser extends AbstractExprParser
+class ApplicationContextParser extends AbstractExprParser<BuildRequest>
 {
 	public function new() 
 	{

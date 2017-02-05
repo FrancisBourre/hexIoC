@@ -1,4 +1,5 @@
 package hex.compiler.parser.flow;
+import hex.compiletime.flow.AbstractExprParser;
 
 #if macro
 import haxe.macro.Context;
@@ -6,6 +7,7 @@ import haxe.macro.Expr;
 import haxe.macro.ExprTools;
 import haxe.macro.TypeTools;
 import hex.core.ContextTypeList;
+import hex.factory.BuildRequest;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.MethodCallVO;
 
@@ -13,7 +15,7 @@ import hex.ioc.vo.MethodCallVO;
  * ...
  * @author Francis Bourre
  */
-class ObjectParser extends AbstractExprParser
+class ObjectParser extends AbstractExprParser<BuildRequest>
 {
 	public function new() 
 	{

@@ -1,5 +1,6 @@
 package hex.compiler.parser.flow;
 
+import hex.compiletime.flow.FlowAssemblingExceptionReporter;
 import hex.compiletime.util.ClassImportHelper;
 import hex.core.IApplicationAssembler;
 

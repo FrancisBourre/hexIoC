@@ -1,4 +1,5 @@
 package hex.compiler.parser.xml;
+import hex.compiletime.xml.AbstractXmlParser;
 
 #if macro
 import haxe.macro.Context;
@@ -23,7 +24,7 @@ import hex.ioc.vo.PropertyVO;
  * ...
  * @author Francis Bourre
  */
-class ObjectParser extends AbstractXmlParser
+class ObjectParser extends AbstractXmlParser<BuildRequest>
 {
 	public function new() 
 	{

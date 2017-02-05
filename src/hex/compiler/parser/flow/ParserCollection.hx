@@ -1,4 +1,5 @@
 package hex.compiler.parser.flow;
+import hex.compiletime.flow.AbstractExprParser;
 
 #if macro
 import haxe.macro.Expr;
@@ -9,7 +10,7 @@ import hex.parser.AbstractParserCollection;
  * ...
  * @author Francis Bourre
  */
-class ParserCollection extends AbstractParserCollection<AbstractExprParser, Expr>
+class ParserCollection extends AbstractParserCollection<AbstractExprParser<BuildRequest>>
 {
 	public function new() 
 	{

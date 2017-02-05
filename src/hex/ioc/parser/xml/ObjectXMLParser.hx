@@ -1,22 +1,23 @@
 package hex.ioc.parser.xml;
 
 import hex.compiletime.xml.XmlUtil;
+import hex.core.ContextTypeList;
 import hex.error.Exception;
+import hex.factory.BuildRequest;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
-import hex.core.ContextTypeList;
-import hex.runtime.error.ParsingException;
 import hex.ioc.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.MethodCallVO;
 import hex.ioc.vo.PropertyVO;
+import hex.runtime.error.ParsingException;
 import hex.runtime.xml.AbstractXMLParser;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class ObjectXMLParser extends AbstractXMLParser
+class ObjectXMLParser extends AbstractXMLParser<BuildRequest>
 {
 	public function new() 
 	{

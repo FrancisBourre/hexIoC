@@ -3,9 +3,10 @@ package hex.compiler.parser;
 import haxe.macro.Context;
 import hex.compiler.core.CompileTimeContextFactory;
 import hex.compiletime.DSLParser;
+import hex.compiletime.error.IExceptionReporter;
 import hex.compiletime.util.ClassImportHelper;
 import hex.core.IApplicationAssembler;
-import hex.compiletime.error.IExceptionReporter;
+import hex.factory.BuildRequest;
 import hex.ioc.assembler.CompileTimeApplicationContext;
 import hex.parser.AbstractParserCollection;
 
@@ -13,15 +14,15 @@ import hex.parser.AbstractParserCollection;
  * ...
  * @author Francis Bourre
  */
-class CompileTimeParser<ContentType, ParserType:DSLParser<ContentType>, RequestType> 
+class CompileTimeParser<ContentType, ParserType:DSLParser<ContentType, BuildRequest>> 
 {
 	var _contextData 		: ContentType;
 	var _assembler 			: IApplicationAssembler;
 	var _importHelper 		: ClassImportHelper;
-	var _parserCollection 	: AbstractParserCollection<ParserType, ContentType>;
+	var _parserCollection 	: AbstractParserCollection<ParserType>;
 	var _exceptionReporter 	: IExceptionReporter<ContentType>;
 	
-	public function new( parserCollection : AbstractParserCollection<ParserType, ContentType> )
+	public function new( parserCollection : AbstractParserCollection<ParserType> )
 	{
 		this._parserCollection = parserCollection;
 	}

@@ -1,4 +1,5 @@
 package hex.compiler.parser.xml;
+import hex.compiletime.xml.AbstractXmlParser;
 import hex.compiletime.xml.XmlUtil;
 
 #if macro
@@ -18,7 +19,7 @@ import hex.ioc.vo.TransitionVO;
  * ...
  * @author Francis Bourre
  */
-class StateParser extends AbstractXmlParser 
+class StateParser extends AbstractXmlParser<BuildRequest> 
 {
 	public function new() 
 	{

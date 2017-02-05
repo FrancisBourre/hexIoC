@@ -1,4 +1,6 @@
 package hex.compiler.parser.xml;
+import hex.compiletime.xml.AbstractXmlParser;
+import hex.factory.BuildRequest;
 
 #if macro
 import hex.ioc.core.ContextAttributeList;
@@ -8,7 +10,7 @@ import hex.util.MacroUtil;
  * ...
  * @author Francis Bourre
  */
-class ApplicationContextParser extends AbstractXmlParser
+class ApplicationContextParser extends AbstractXmlParser<BuildRequest>
 {
 	public function new() 
 	{

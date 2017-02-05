@@ -1,19 +1,20 @@
 package hex.ioc.parser.xml;
 
 import hex.compiletime.xml.XmlUtil;
+import hex.factory.BuildRequest;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
-import hex.runtime.error.ParsingException;
 import hex.ioc.vo.CommandMappingVO;
 import hex.ioc.vo.StateTransitionVO;
 import hex.ioc.vo.TransitionVO;
+import hex.runtime.error.ParsingException;
 import hex.runtime.xml.AbstractXMLParser;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class StateXMLParser extends AbstractXMLParser
+class StateXMLParser extends AbstractXMLParser<BuildRequest>
 {
 	public function new() 
 	{

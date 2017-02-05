@@ -1,7 +1,9 @@
 package hex.compiler.parser.flow;
+import hex.compiletime.flow.AbstractExprParser;
 
 #if macro
 import hex.compiletime.ICompileTimeApplicationAssembler;
+import hex.factory.BuildRequest;
 import hex.metadata.IAnnotationProvider;
 import hex.util.MacroUtil;
 
@@ -9,7 +11,7 @@ import hex.util.MacroUtil;
  * ...
  * @author Francis Bourre
  */
-class Launcher extends AbstractExprParser
+class Launcher extends AbstractExprParser<BuildRequest>
 {
 	public function new() 
 	{
