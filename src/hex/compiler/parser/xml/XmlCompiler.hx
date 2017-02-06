@@ -1,8 +1,11 @@
 package hex.compiler.parser.xml;
 
+import hex.compiler.core.CompileTimeContextFactory;
+import hex.compiletime.CompileTimeParser;
 import hex.compiletime.util.ClassImportHelper;
 import hex.compiletime.xml.DSLReader;
 import hex.core.IApplicationAssembler;
+import hex.ioc.assembler.CompileTimeApplicationContext;
 
 #if macro
 import haxe.macro.Expr;
@@ -34,7 +37,7 @@ class XmlCompiler
 		
 		parser.setImportHelper( new ClassImportHelper() );
 		parser.setExceptionReporter( new ExceptionReporter( dslReader.positionTracker ) );
-		parser.parse( assembler, document );
+		parser.parse( assembler, document, CompileTimeContextFactory, CompileTimeApplicationContext );
 
 		return assembler.getMainExpression();
 	}

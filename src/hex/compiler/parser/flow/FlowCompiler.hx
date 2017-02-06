@@ -1,8 +1,11 @@
 package hex.compiler.parser.flow;
 
+import hex.compiler.core.CompileTimeContextFactory;
+import hex.compiletime.CompileTimeParser;
 import hex.compiletime.flow.FlowAssemblingExceptionReporter;
 import hex.compiletime.util.ClassImportHelper;
 import hex.core.IApplicationAssembler;
+import hex.ioc.assembler.CompileTimeApplicationContext;
 
 #if macro
 import haxe.macro.Expr;
@@ -26,7 +29,7 @@ class FlowCompiler
 		
 		parser.setImportHelper( new ClassImportHelper() );
 		parser.setExceptionReporter( new FlowAssemblingExceptionReporter() );
-		parser.parse( assembler, document );
+		parser.parse( assembler, document, CompileTimeContextFactory, CompileTimeApplicationContext );
 		
 		return assembler.getMainExpression();
 	}
