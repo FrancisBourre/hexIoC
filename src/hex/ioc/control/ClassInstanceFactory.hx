@@ -25,6 +25,7 @@ class ClassInstanceFactory
 	{
 		var result : Dynamic 	= null;
 		var constructorVO 		= factoryVO.constructorVO;
+		var coreFactory			= factoryVO.contextFactory.getCoreFactory();
 
 		if ( constructorVO.ref != null )
 		{
@@ -36,7 +37,7 @@ class ClassInstanceFactory
 			constructorVO.arguments = ArgumentFactory.build( factoryVO );
 			
 			//TODO Allows proxy classes
-			if ( !factoryVO.coreFactory.hasProxyFactoryMethod( constructorVO.className ) )
+			if ( !coreFactory.hasProxyFactoryMethod( constructorVO.className ) )
 			{
 				var classReference = ClassUtil.getClassReference( constructorVO.className );
 			
@@ -49,7 +50,7 @@ class ClassInstanceFactory
 				}
 			}
 			
-			result = factoryVO.coreFactory.buildInstance( constructorVO );
+			result = coreFactory.buildInstance( constructorVO );
 
 			if ( constructorVO.mapTypes != null )
 			{

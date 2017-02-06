@@ -7,14 +7,13 @@ package hex.ioc.vo;
 class ConstructorVO extends AssemblerVO
 {
 	public var              ID              	: String;
-	public var              className           : String;
 	public var              type            	: String;
+	public var              className           : String;
 	public var              arguments       	: Array<Dynamic>;
 	public var              factory         	: String;
 	public var              staticCall       	: String;
 	public var              injectInto      	: Bool;
 	public var              ref             	: String;
-	public var              result          	: Dynamic;
 	public var 				mapTypes			: Array<String>;
 	public var 				staticRef			: String;
 	public var              injectorCreation 	: Bool;
@@ -51,14 +50,16 @@ class ConstructorVO extends AssemblerVO
 	{
 		return 	"("
 				+ "id:"                 + ID            	+ ", "
-				+ "type:"               + className          	+ ", "
+				+ "type:"               + type 				+ ", "
+				+ "className:"          + className         + ", "
 				+ "arguments:[" 		+ arguments 		+ "], "
 				+ "factory:"    		+ factory       	+ ", "
 				+ "staticCall:"  		+ staticCall 		+ ", "
 				+ "injectInto:"  		+ injectInto 		+ ", "
 				+ "ref:"  				+ ref 				+ ", "
 				+ "mapTypes:"  			+ mapTypes 			+ ", "
-				+ "staticRef:"          + staticRef 		+ ")"
-				+ "injectorCreation:"   + injectorCreation 	+ ")";
+				+ "staticRef:"          + staticRef 		+ ", "
+				+ "injectorCreation:"   + injectorCreation 	+ ", "
+				+ "shouldAssign:"   	+ shouldAssign 		+ ")";
 	}
 }

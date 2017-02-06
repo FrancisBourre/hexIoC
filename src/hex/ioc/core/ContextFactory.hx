@@ -157,6 +157,11 @@ class ContextFactory
 		this._symbolTable.clear();
 	}
 	
+	public function getCoreFactory() : CoreFactory
+	{
+		return this._coreFactory;
+	}
+	
 	public function dispatchAssemblingStart() : Void
 	{
 		this._contextDispatcher.dispatch( ApplicationAssemblerMessage.ASSEMBLING_START );
@@ -331,11 +336,6 @@ class ContextFactory
 	{
 		return this._applicationContext;
 	}
-
-	public function getCoreFactory() : CoreFactory
-	{
-		return this._coreFactory;
-	}
 	
 	public function getAnnotationProvider() : IAnnotationProvider
 	{
@@ -350,17 +350,15 @@ class ContextFactory
 	public function buildVO( constructorVO : ConstructorVO, ?id : String ) : Dynamic
 	{
 		//TODO better type checking
-		var type 								= constructorVO.className.split( "<" )[ 0 ];
-		
-		var buildMethod 						= ( this._factoryMap.exists( type ) ) ? this._factoryMap.get( type ) : ClassInstanceFactory.build;
+		var type 						= constructorVO.className.split( "<" )[ 0 ];
+		var buildMethod 				= ( this._factoryMap.exists( type ) ) ? this._factoryMap.get( type ) : ClassInstanceFactory.build;
 
-		var builderHelperVO 					= new FactoryVO();
-		builderHelperVO.contextFactory 			= this;
-		builderHelperVO.coreFactory 			= this._coreFactory;
-		builderHelperVO.constructorVO 			= constructorVO;
+		var factoryVO 					= new FactoryVO();
+		factoryVO.contextFactory 		= this;
+		factoryVO.constructorVO 		= constructorVO;
 
 		//build instance with the expected factory method
-		var result 	= buildMethod( builderHelperVO );
+		var result 	= buildMethod( factoryVO );
 
 		if ( id != null )
 		{

@@ -39,7 +39,7 @@ class XmlFactory
 				{
 					try
 					{
-						var parser : IParser<Dynamic> = factoryVO.coreFactory.buildInstance( new ConstructorVO( null, factory ) );
+						var parser : IParser<Dynamic> = factoryVO.contextFactory.getCoreFactory().buildInstance( new ConstructorVO( null, factory ) );
 						result = parser.parse( Xml.parse( source ) );
 					}
 					catch ( error : Dynamic )

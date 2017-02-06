@@ -21,25 +21,26 @@ class FunctionFactory
 
 	static public function build( factoryVO : FactoryVO ) : Expr
 	{
-		var constructorVO : ConstructorVO = factoryVO.constructorVO;
+		var constructorVO 	= factoryVO.constructorVO;
+		var coreFactory		= factoryVO.contextFactory.getCoreFactory();
 
 		var method : Dynamic;
 		var msg : String;
 
-		var args : Array<String> = constructorVO.arguments[ 0 ].split(".");
-		var targetID : String = args[ 0 ];
-		var path : String = args.slice( 1 ).join( "." );
+		var args 				= constructorVO.arguments[ 0 ].split(".");
+		var targetID : String 	= args[ 0 ];
+		var path 				= args.slice( 1 ).join( "." );
 
-		if ( !factoryVO.coreFactory.isRegisteredWithKey( targetID ) )
+		if ( !coreFactory.isRegisteredWithKey( targetID ) )
 		{
 			factoryVO.contextFactory.buildObject( targetID );
 		}
 
-		var target : Dynamic = factoryVO.coreFactory.locate( targetID );
+		var target = coreFactory.locate( targetID );
 
 		try
 		{
-			method = factoryVO.coreFactory.fastEvalFromTarget( target, path );
+			method = coreFactory.fastEvalFromTarget( target, path );
 
 		} catch ( error : Dynamic )
 		{
@@ -47,10 +48,8 @@ class FunctionFactory
 			msg += path + " method can't be found.";
 			throw new Exception( msg );
 		}
-
-		constructorVO.result = method;
 		
-		return null;
+		return method;
 	}
 }
 #end

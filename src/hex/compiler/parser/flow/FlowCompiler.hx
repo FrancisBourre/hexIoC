@@ -1,15 +1,15 @@
 package hex.compiler.parser.flow;
 
-import hex.compiler.core.CompileTimeContextFactory;
-import hex.compiletime.CompileTimeParser;
-import hex.compiletime.flow.FlowAssemblingExceptionReporter;
-import hex.compiletime.util.ClassImportHelper;
 import hex.core.IApplicationAssembler;
-import hex.ioc.assembler.CompileTimeApplicationContext;
 
 #if macro
 import haxe.macro.Expr;
+import hex.compiler.core.CompileTimeContextFactory;
 import hex.compiletime.CompileTimeApplicationAssembler;
+import hex.compiletime.CompileTimeParser;
+import hex.compiletime.flow.FlowAssemblingExceptionReporter;
+import hex.compiletime.util.ClassImportHelper;
+import hex.ioc.assembler.CompileTimeApplicationContext;
 #end
 
 /**

@@ -20,13 +20,14 @@ class ReferenceFactory
 		var result : Dynamic 	= null;
 		var constructorVO 		= factoryVO.constructorVO;
 		var key 				= constructorVO.ref;
+		var coreFactory			= factoryVO.contextFactory.getCoreFactory();
 
 		if ( key.indexOf(".") != -1 )
 		{
 			key = Std.string( ( key.split( "." ) ).shift() );
 		}
 
-		if ( !( factoryVO.coreFactory.isRegisteredWithKey( key ) ) )
+		if ( !( coreFactory.isRegisteredWithKey( key ) ) )
 		{
 			factoryVO.contextFactory.buildObject( key );
 		}
@@ -35,11 +36,11 @@ class ReferenceFactory
 		{
 			var args = constructorVO.ref.split( "." );
 			args.shift();
-			result = factoryVO.coreFactory.fastEvalFromTarget( factoryVO.coreFactory.locate( key ), args.join( "." )  );
+			result = coreFactory.fastEvalFromTarget( coreFactory.locate( key ), args.join( "." )  );
 		}
 		else 
 		{
-			result = factoryVO.coreFactory.locate( key );
+			result = coreFactory.locate( key );
 		}
 		
 		return result; 

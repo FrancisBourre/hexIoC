@@ -16,7 +16,6 @@ import hex.core.HashCodeFactory;
 import hex.core.IAnnotationParsable;
 import hex.core.IApplicationContext;
 import hex.core.IBuilder;
-import hex.core.ICoreFactory;
 import hex.core.SymbolTable;
 import hex.di.IInjectorContainer;
 import hex.event.IDispatcher;
@@ -148,6 +147,11 @@ class CompileTimeContextFactory
 		this._symbolTable.clear();
 		
 		DomainListenerFactory.domainLocator = null;
+	}
+	
+	public function getCoreFactory() : CompileTimeCoreFactory
+	{
+		return this._coreFactory;
 	}
 	
 	public function dispatchAssemblingStart() : Void
@@ -444,8 +448,6 @@ class CompileTimeContextFactory
 		}
 		
 		factoryVO.contextFactory 	= this;
-		factoryVO.coreFactory 		= this._coreFactory;
-
 		return factoryVO;
 	}
 	

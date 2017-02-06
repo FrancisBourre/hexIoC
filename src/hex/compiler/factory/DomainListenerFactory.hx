@@ -105,13 +105,14 @@ class DomainListenerFactory
 	
 	static public function build( expressions : Array<Expr>, factoryVO : FactoryVO, domainListener : DomainListenerVO, moduleLocator : Locator<String, String> ) : Bool
 	{
-		var args = domainListener.arguments;
+		var args 		= domainListener.arguments;
+		var coreFactory	= factoryVO.contextFactory.getCoreFactory();
 
 		if ( args != null && args.length > 0 )
 		{
 			for ( domainListenerArgument in args )
 			{
-				var method = DomainListenerFactory.isEventProxy( factoryVO.coreFactory.locate( domainListener.ownerID ) ) ? "handleCallback" : domainListenerArgument.method;
+				var method = DomainListenerFactory.isEventProxy( coreFactory.locate( domainListener.ownerID ) ) ? "handleCallback" : domainListenerArgument.method;
 
 				if ( method != null || domainListenerArgument.strategy != null )
 				{
@@ -121,12 +122,12 @@ class DomainListenerFactory
 					var messageType 		= MacroUtil.getStaticVariable( domainListenerArgument.staticRef, domainListenerArgument.filePosition );
 					var strategyClassName 	= domainListenerArgument.strategy;
 					
-					if ( !factoryVO.coreFactory.isRegisteredWithKey( listenedDomainName ) )
+					if ( !coreFactory.isRegisteredWithKey( listenedDomainName ) )
 					{
 						Context.error( "Domain '" + listenedDomainName + "' not found in applicationContext named '" + 
 						factoryVO.contextFactory.getApplicationContext().getName() + "'", domainListener.filePosition );
 					}
-					var listenedDomain		= factoryVO.coreFactory.locate( listenedDomainName );
+					var listenedDomain		= coreFactory.locate( listenedDomainName );
 
 					if ( strategyClassName != null )
 					{

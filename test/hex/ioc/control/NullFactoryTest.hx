@@ -1,8 +1,8 @@
 package hex.ioc.control;
 
 import hex.ioc.control.NullFactory;
-import hex.ioc.vo.FactoryVO;
 import hex.ioc.vo.ConstructorVO;
+import hex.ioc.vo.FactoryVO;
 import hex.unittest.assertion.Assert;
 
 /**
@@ -16,7 +16,6 @@ class NullFactoryTest
     {
 		var helper = new FactoryVO();
 		helper.constructorVO = new ConstructorVO( "test" );
-		NullFactory.build( helper );
-		Assert.isNull( helper.constructorVO.result, "constructorVO.result should be null" );
+		Assert.isNull( NullFactory.build( helper ), "constructorVO.result should be null" );
 	}
 }

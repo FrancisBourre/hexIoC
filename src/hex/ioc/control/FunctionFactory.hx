@@ -23,17 +23,19 @@ class FunctionFactory
 		var args 				= constructorVO.arguments[ 0 ].split(".");
 		var targetID 			= args[ 0 ];
 		var path 				= args.slice( 1 ).join( "." );
+		
+		var coreFactory			= factoryVO.contextFactory.getCoreFactory();
 
-		if ( !factoryVO.coreFactory.isRegisteredWithKey( targetID ) )
+		if ( !coreFactory.isRegisteredWithKey( targetID ) )
 		{
 			factoryVO.contextFactory.buildObject( targetID );
 		}
 
-		var target : Dynamic = factoryVO.coreFactory.locate( targetID );
+		var target = coreFactory.locate( targetID );
 
 		try
 		{
-			result = factoryVO.coreFactory.fastEvalFromTarget( target, path );
+			result = coreFactory.fastEvalFromTarget( target, path );
 
 		} catch ( error : Dynamic )
 		{

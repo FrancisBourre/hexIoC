@@ -10,7 +10,6 @@ import hex.ioc.core.CoreFactory;
 class FactoryVO
 {
 	public var contextFactory 			: ContextFactory;
-	public var coreFactory				: CoreFactory;
 	public var constructorVO 			: ConstructorVO;
 
 	public function new() 

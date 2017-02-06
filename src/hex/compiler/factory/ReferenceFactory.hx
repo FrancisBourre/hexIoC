@@ -23,13 +23,14 @@ class ReferenceFactory
 		var constructorVO 	= factoryVO.constructorVO;
 		var idVar 			= constructorVO.ID;
 		var key 			= constructorVO.ref;
+		var coreFactory		= factoryVO.contextFactory.getCoreFactory();
 
 		if ( key.indexOf( "." ) != -1 )
 		{
 			key = Std.string( ( key.split( "." ) ).shift() );
 		}
 
-		if ( !( factoryVO.coreFactory.isRegisteredWithKey( key ) ) )
+		if ( !( coreFactory.isRegisteredWithKey( key ) ) )
 		{
 			factoryVO.contextFactory.buildObject( key );
 		}
