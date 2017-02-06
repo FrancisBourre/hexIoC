@@ -44,14 +44,14 @@ class XmlFactory
 					}
 					catch ( error : Dynamic )
 					{
-						throw new ParsingException( "XmlFactory.build() failed to deserialize XML with '" + factory + "' deserializer class." );
+						throw new ParsingException( "XmlFactory fails to deserialize XML with '" + factory + "' class." );
 					}
 				}
 			}
 			else
 			{
 				#if debug
-				trace( "XmlFactory.build() returns an empty XML." );
+				trace( "XmlFactory returns an empty XML." );
 				#end
 
 				result = Xml.parse( "" );
@@ -60,7 +60,7 @@ class XmlFactory
 		else
 		{
 			#if debug
-			trace( "XmlFactory.build() returns an empty XML." );
+			trace( "XmlFactory returns an empty XML." );
 			#end
 
 			result = Xml.parse( "" );

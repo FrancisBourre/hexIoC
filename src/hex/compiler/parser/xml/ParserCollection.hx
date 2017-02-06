@@ -1,7 +1,7 @@
 package hex.compiler.parser.xml;
-import hex.compiletime.xml.AbstractXmlParser;
 
 #if macro
+import hex.compiletime.xml.AbstractXmlParser;
 import hex.factory.BuildRequest;
 import hex.parser.AbstractParserCollection;
 

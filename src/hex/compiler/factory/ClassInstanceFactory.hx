@@ -1,7 +1,9 @@
 package hex.compiler.factory;
 
+#if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
+import haxe.macro.Type.ClassType;
 import haxe.macro.TypeTools;
 import hex.compiler.vo.FactoryVO;
 import hex.di.IInjectorContainer;
@@ -25,17 +27,32 @@ class ClassInstanceFactory
         throw new PrivateConstructorException();
     }
 
-	#if macro
-	static var _annotationProviderClass 	= MacroUtil.getPack( Type.getClassName( AnnotationProvider ) );
-	static var _domainExpertClass 			= MacroUtil.getPack( Type.getClassName( DomainExpert ) );
-	static var _domainUtilClass 			= MacroUtil.getPack( Type.getClassName( DomainUtil ) );
-	static var _domainClass 				= MacroUtil.getPack( Type.getClassName( Domain ) );
+	static var _annotationProviderClass 	: Array<String>;
+	static var _domainExpertClass 			: Array<String>;
+	static var _domainUtilClass 			: Array<String>;
+	static var _domainClass 				: Array<String>;
 	
-	static var _moduleInterface 			= MacroUtil.getClassType( Type.getClassName( IModule ) );
-	static var _injectorContainerInterface 	= MacroUtil.getClassType( Type.getClassName( IInjectorContainer ) );
+	static var _moduleInterface 			: ClassType;
+	static var _injectorContainerInterface 	: ClassType;
+	
+	static var _isInitialized = false;
+	
+	static function _init() : Bool
+	{
+		ClassInstanceFactory._annotationProviderClass 		= MacroUtil.getPack( Type.getClassName( AnnotationProvider ) );
+		ClassInstanceFactory._domainExpertClass 			= MacroUtil.getPack( Type.getClassName( DomainExpert ) );
+		ClassInstanceFactory._domainUtilClass 				= MacroUtil.getPack( Type.getClassName( DomainUtil ) );
+		ClassInstanceFactory._domainClass 					= MacroUtil.getPack( Type.getClassName( Domain ) );
+		ClassInstanceFactory._moduleInterface 				= MacroUtil.getClassType( Type.getClassName( IModule ) );
+		ClassInstanceFactory._injectorContainerInterface 	= MacroUtil.getClassType( Type.getClassName( IInjectorContainer ) );
+
+		return true;
+	}
 					
 	static public function build( factoryVO : FactoryVO ) : Expr
 	{
+		if ( !ClassInstanceFactory._isInitialized ) ClassInstanceFactory._isInitialized = ClassInstanceFactory._init();
+
 		var result : Expr 	= null;
 		var constructorVO 	= factoryVO.constructorVO;
 		var idVar 			= constructorVO.ID;
@@ -49,7 +66,6 @@ class ClassInstanceFactory
 			//build arguments
 			var constructorArgs = ArgumentFactory.build( factoryVO );
 		
-			
 			var tp 				= MacroUtil.getPack( constructorVO.className, constructorVO.filePosition );
 			var typePath 		= MacroUtil.getTypePath( constructorVO.className, constructorVO.filePosition );
 
@@ -80,8 +96,8 @@ class ClassInstanceFactory
 				}
 				else//factory method error
 				{
-					Context.error( "'" + factoryMethod + "' method cannot be called on '" + 
-					constructorVO.className +"' class. Add static method or variable to make it working.", constructorVO.filePosition );
+					Context.error( 	"'" + factoryMethod + "' method cannot be called on '" +  constructorVO.className + 
+									"' class. Add static method or variable to make it working.", constructorVO.filePosition );
 				}
 			}
 			else if ( staticCall != null )//simple static method call
@@ -131,5 +147,5 @@ class ClassInstanceFactory
 		
 		return macro @:pos( constructorVO.filePosition ) $result;
 	}
-	#end
 }
+#end
