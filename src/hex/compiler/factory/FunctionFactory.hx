@@ -1,5 +1,6 @@
 package hex.compiler.factory;
 
+#if macro
 import haxe.macro.Expr;
 import hex.compiler.vo.FactoryVO;
 import hex.error.Exception;
@@ -52,3 +53,4 @@ class FunctionFactory
 		return null;
 	}
 }
+#end
