@@ -1,7 +1,7 @@
 package hex.ioc.control;
 
 import hex.error.IllegalArgumentException;
-import hex.ioc.vo.ConstructorVO;
+import hex.vo.ConstructorVO;
 import hex.ioc.vo.FactoryVO;
 import hex.structures.Size;
 import hex.unittest.assertion.Assert;

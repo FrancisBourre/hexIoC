@@ -1,7 +1,7 @@
 package hex.ioc.control;
 
 import hex.ioc.control.NullFactory;
-import hex.ioc.vo.ConstructorVO;
+import hex.vo.ConstructorVO;
 import hex.ioc.vo.FactoryVO;
 import hex.unittest.assertion.Assert;
 

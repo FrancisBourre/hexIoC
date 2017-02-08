@@ -5,7 +5,7 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Type.ClassType;
 import haxe.macro.TypeTools;
-import hex.compiler.vo.FactoryVO;
+import hex.compiletime.factory.ArgumentFactory;
 import hex.di.IInjectorContainer;
 import hex.domain.Domain;
 import hex.domain.DomainExpert;
@@ -14,6 +14,7 @@ import hex.error.PrivateConstructorException;
 import hex.metadata.AnnotationProvider;
 import hex.module.IModule;
 import hex.util.MacroUtil;
+import hex.vo.FactoryVODef;
 
 /**
  * ...
@@ -49,100 +50,93 @@ class ClassInstanceFactory
 		return true;
 	}
 					
-	static public function build( factoryVO : FactoryVO ) : Expr
+	static public function build<T:FactoryVODef>( factoryVO : T ) : Expr
 	{
 		if ( !ClassInstanceFactory._isInitialized ) ClassInstanceFactory._isInitialized = ClassInstanceFactory._init();
 
 		var result : Expr 	= null;
 		var constructorVO 	= factoryVO.constructorVO;
 		var idVar 			= constructorVO.ID;
+
+		//build arguments
+		var constructorArgs = ArgumentFactory.build( factoryVO );
+	
+		var tp 				= MacroUtil.getPack( constructorVO.className, constructorVO.filePosition );
+		var typePath 		= MacroUtil.getTypePath( constructorVO.className, constructorVO.filePosition );
+
+		//build instance
+		var staticCall 		= constructorVO.staticCall;
+		var factoryMethod 	= constructorVO.factory;
+		var staticRef 		= constructorVO.staticRef;
+		var classType 		= MacroUtil.getClassType( constructorVO.className, constructorVO.filePosition );
 		
-		if ( constructorVO.ref != null )
+		if ( constructorVO.injectorCreation && MacroUtil.implementsInterface( classType, _injectorContainerInterface ) )
 		{
-			result = ReferenceFactory.build( factoryVO );
+			result = macro 	@:pos( constructorVO.filePosition ) 
+				var $idVar = __applicationContextInjector.instantiateUnmapped( $p { tp } ); 
+
 		}
-		else
+		else if ( factoryMethod != null )//factory method
 		{
-			//build arguments
-			var constructorArgs = ArgumentFactory.build( factoryVO );
-		
-			var tp 				= MacroUtil.getPack( constructorVO.className, constructorVO.filePosition );
-			var typePath 		= MacroUtil.getTypePath( constructorVO.className, constructorVO.filePosition );
+			//TODO implement the same behavior @runtime issue#1
+			if ( staticRef != null )//static variable - with factory method
+			{
+				result = macro 	@:pos( constructorVO.filePosition ) 
+								var $idVar = $p { tp } .$staticRef.$factoryMethod( $a { constructorArgs } ); 
+			}
+			else if ( staticCall != null )//static method call - with factory method
+			{
+				result = macro 	@:pos( constructorVO.filePosition ) 
+								var $idVar = $p { tp }.$staticCall().$factoryMethod( $a{ constructorArgs } ); 
+			}
+			else//factory method error
+			{
+				Context.error( 	"'" + factoryMethod + "' method cannot be called on '" +  constructorVO.className + 
+								"' class. Add static method or variable to make it working.", constructorVO.filePosition );
+			}
+		}
+		else if ( staticCall != null )//simple static method call
+		{
+			result = macro 	@:pos( constructorVO.filePosition ) 
+							var $idVar = $p { tp }.$staticCall( $a{ constructorArgs } ); 
+		}
+		else//Standard instantiation
+		{
+			if ( MacroUtil.implementsInterface( classType, _moduleInterface ) )
+			{
+				var applicationContextName = factoryVO.contextFactory.getApplicationContext().getName();
+				
+				//TODO register for every instance (from staticCall and/or factory)
+				result = macro 	@:mergeBlock 
+								{ 
+									$p { _domainExpertClass } .getInstance().registerDomain
+									( 
+										$p { _domainUtilClass } .getDomain( $v { idVar }, $p { _domainClass } ) 
+									);
 
-			//build instance
-			var staticCall 		= constructorVO.staticCall;
-			var factoryMethod 	= constructorVO.factory;
-			var staticRef 		= constructorVO.staticRef;
-			var classType 		= MacroUtil.getClassType( constructorVO.className, constructorVO.filePosition );
+									$p { _annotationProviderClass } .registerToParentDomain
+									( 
+										$p{ _domainUtilClass } .getDomain( $v{ idVar }, $p{ _domainClass } ),
+										$p{ _domainUtilClass } .getDomain( $v{ applicationContextName }, $p{ _domainClass } )
+									); 
+								} 
+			}
 			
-			if ( constructorVO.injectorCreation && MacroUtil.implementsInterface( classType, _injectorContainerInterface ) )
-			{
-				result = macro 	@:pos( constructorVO.filePosition ) 
-								var $idVar = __applicationContextInjector.instantiateUnmapped( $p { tp } ); 
-
-			}
-			else if ( factoryMethod != null )//factory method
-			{
-				//TODO implement the same behavior @runtime issue#1
-				if ( staticRef != null )//static variable - with factory method
-				{
-					result = macro 	@:pos( constructorVO.filePosition ) 
-									var $idVar = $p { tp } .$staticRef.$factoryMethod( $a { constructorArgs } ); 
-				}
-				else if ( staticCall != null )//static method call - with factory method
-				{
-					result = macro 	@:pos( constructorVO.filePosition ) 
-									var $idVar = $p { tp }.$staticCall().$factoryMethod( $a{ constructorArgs } ); 
-				}
-				else//factory method error
-				{
-					Context.error( 	"'" + factoryMethod + "' method cannot be called on '" +  constructorVO.className + 
-									"' class. Add static method or variable to make it working.", constructorVO.filePosition );
-				}
-			}
-			else if ( staticCall != null )//simple static method call
-			{
-				result = macro 	@:pos( constructorVO.filePosition ) 
-								var $idVar = $p { tp }.$staticCall( $a{ constructorArgs } ); 
-			}
-			else//Standard instantiation
-			{
-				if ( MacroUtil.implementsInterface( classType, _moduleInterface ) )
-				{
-					var applicationContextName = factoryVO.contextFactory.getApplicationContext().getName();
-					
-					//TODO register for every instance (from staticCall and/or factory)
-					result = macro 	@:mergeBlock 
-									{ 
-										$p { _domainExpertClass } .getInstance().registerDomain
-										( 
-											$p { _domainUtilClass } .getDomain( $v { idVar }, $p { _domainClass } ) 
-										);
-
-										$p { _annotationProviderClass } .registerToParentDomain
-										( 
-											$p{ _domainUtilClass } .getDomain( $v{ idVar }, $p{ _domainClass } ),
-											$p{ _domainUtilClass } .getDomain( $v{ applicationContextName }, $p{ _domainClass } )
-										); 
-									} 
-				}
-				
-				var varType = 
-					TypeTools.toComplexType( 
-						Context.typeof( 
-							Context.parseInlineString( '( null : ${constructorVO.type})', constructorVO.filePosition ) ) );
-				
-				var exp = macro @:pos( constructorVO.filePosition )
-									var $idVar : $varType = new $typePath( $a { constructorArgs } ); 
-								
-				result = result == null ? exp:
-					macro 	@:pos( constructorVO.filePosition )
-							@:mergeBlock 
-							{ 
-								$result; 
-								$exp; 
-							};
-			}
+			var varType = 
+				TypeTools.toComplexType( 
+					Context.typeof( 
+						Context.parseInlineString( '( null : ${constructorVO.type})', constructorVO.filePosition ) ) );
+			
+			var exp = macro @:pos( constructorVO.filePosition )
+								var $idVar : $varType = new $typePath( $a { constructorArgs } ); 
+							
+			result = result == null ? exp:
+				macro 	@:pos( constructorVO.filePosition )
+						@:mergeBlock 
+						{ 
+							$result; 
+							$exp; 
+						};
 		}
 		
 		return macro @:pos( constructorVO.filePosition ) $result;

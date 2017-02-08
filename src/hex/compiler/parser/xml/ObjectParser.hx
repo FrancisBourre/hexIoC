@@ -13,12 +13,12 @@ import hex.core.ContextTypeList;
 import hex.compiletime.error.IExceptionReporter;
 import hex.ioc.parser.xml.XMLAttributeUtil;
 import hex.ioc.parser.xml.XMLParserUtil;
-import hex.ioc.vo.ConstructorVO;
+import hex.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.DomainListenerVOArguments;
-import hex.ioc.vo.MapVO;
-import hex.ioc.vo.MethodCallVO;
-import hex.ioc.vo.PropertyVO;
+import hex.vo.MapVO;
+import hex.vo.MethodCallVO;
+import hex.vo.PropertyVO;
 
 /**
  * ...

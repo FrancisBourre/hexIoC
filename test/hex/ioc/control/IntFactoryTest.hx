@@ -2,7 +2,7 @@ package hex.ioc.control;
 
 import hex.error.IllegalArgumentException;
 import hex.ioc.control.IntFactory;
-import hex.ioc.vo.ConstructorVO;
+import hex.vo.ConstructorVO;
 import hex.ioc.vo.FactoryVO;
 import hex.unittest.assertion.Assert;
 

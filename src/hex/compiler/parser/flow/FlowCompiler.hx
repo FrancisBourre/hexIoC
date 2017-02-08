@@ -7,9 +7,10 @@ import haxe.macro.Expr;
 import hex.compiler.core.CompileTimeContextFactory;
 import hex.compiletime.CompileTimeApplicationAssembler;
 import hex.compiletime.CompileTimeParser;
+import hex.compiletime.flow.DSLReader;
 import hex.compiletime.flow.FlowAssemblingExceptionReporter;
 import hex.compiletime.util.ClassImportHelper;
-import hex.ioc.assembler.CompileTimeApplicationContext;
+import hex.compiletime.basic.CompileTimeApplicationContext;
 #end
 
 /**

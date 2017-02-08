@@ -14,7 +14,7 @@ import hex.error.NoSuchElementException;
 import hex.event.Dispatcher;
 import hex.event.EventProxy;
 import hex.ioc.assembler.ApplicationContext;
-import hex.ioc.di.MappingConfiguration;
+import hex.di.mapping.MappingConfiguration;
 import hex.ioc.parser.xml.ApplicationXMLParser;
 import hex.ioc.parser.xml.mock.AnotherMockAmazonService;
 import hex.ioc.parser.xml.mock.AnotherMockModuleWithServiceCallback;

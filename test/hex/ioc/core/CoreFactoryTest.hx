@@ -4,7 +4,7 @@ import hex.MockDependencyInjector;
 import hex.collection.ILocatorListener;
 import hex.di.IDependencyInjector;
 import hex.error.IllegalArgumentException;
-import hex.ioc.vo.ConstructorVO;
+import hex.vo.ConstructorVO;
 import hex.metadata.IAnnotationProvider;
 import hex.structures.Point;
 import hex.structures.PointFactory;

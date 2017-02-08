@@ -1,6 +1,0 @@
-@context( name = 'applicationContext' )
-{
-	rect = new hex.ioc.parser.xml.mock.MockRectangle( 10, 20, 30, 40 );
-	size = new hex.structures.Size( 15, 25 );
-	position = new hex.structures.Point( 35, 45 );
-}

@@ -1,4 +1,5 @@
 package hex.compiler.core;
+import hex.compiletime.basic.CompileTimeCoreFactory;
 
 #if macro
 import haxe.macro.Context;
@@ -7,29 +8,30 @@ import haxe.macro.Type.ClassType;
 import hex.collection.ILocatorListener;
 import hex.collection.Locator;
 import hex.compiler.factory.DomainListenerFactory;
-import hex.compiler.factory.FactoryUtil;
-import hex.compiler.factory.PropertyFactory;
+import hex.compiletime.factory.FactoryUtil;
+import hex.compiletime.factory.PropertyFactory;
 import hex.compiler.factory.StateTransitionFactory;
-import hex.compiler.vo.FactoryVO;
 import hex.core.ContextTypeList;
 import hex.core.HashCodeFactory;
 import hex.core.IAnnotationParsable;
 import hex.core.IApplicationContext;
 import hex.core.IBuilder;
+import hex.core.ICoreFactory;
 import hex.core.SymbolTable;
 import hex.di.IInjectorContainer;
 import hex.event.IDispatcher;
 import hex.factory.BuildRequest;
-import hex.ioc.core.IContextFactory;
-import hex.ioc.vo.ConstructorVO;
+import hex.core.IContextFactory;
 import hex.ioc.vo.DomainListenerVO;
-import hex.ioc.vo.MethodCallVO;
-import hex.ioc.vo.PropertyVO;
+import hex.vo.MethodCallVO;
+import hex.vo.PropertyVO;
 import hex.ioc.vo.StateTransitionVO;
 import hex.ioc.vo.TransitionVO;
 import hex.metadata.IAnnotationProvider;
 import hex.module.IModule;
 import hex.util.MacroUtil;
+import hex.vo.ConstructorVO;
+import hex.vo.FactoryVODef;
 
 /**
  * ...
@@ -51,8 +53,8 @@ class CompileTimeContextFactory
 	var _contextDispatcher			: IDispatcher<{}>;
 	var _moduleLocator				: Locator<String, String>;
 	var _applicationContext 		: IApplicationContext;
-	var _factoryMap 				: Map<String, FactoryVO->Dynamic>;
-	var _coreFactory 				: CompileTimeCoreFactory;
+	var _factoryMap 				: Map<String, FactoryVODef->Dynamic>;
+	var _coreFactory 				: ICoreFactory;
 	var _symbolTable 				: SymbolTable;
 	var _constructorVOLocator 		: Locator<String, ConstructorVO>;
 	var _propertyVOLocator 			: Locator<String, Array<PropertyVO>>;
@@ -89,21 +91,21 @@ class CompileTimeContextFactory
 			
 			DomainListenerFactory.domainLocator = new Map();
 			
-			this._factoryMap.set( ContextTypeList.ARRAY, 			hex.compiler.factory.ArrayFactory.build );
-			this._factoryMap.set( ContextTypeList.BOOLEAN, 			hex.compiler.factory.BoolFactory.build );
-			this._factoryMap.set( ContextTypeList.INT, 				hex.compiler.factory.IntFactory.build );
-			this._factoryMap.set( ContextTypeList.NULL, 			hex.compiler.factory.NullFactory.build );
-			this._factoryMap.set( ContextTypeList.FLOAT, 			hex.compiler.factory.FloatFactory.build );
-			this._factoryMap.set( ContextTypeList.OBJECT, 			hex.compiler.factory.DynamicObjectFactory.build );
-			this._factoryMap.set( ContextTypeList.STRING, 			hex.compiler.factory.StringFactory.build );
-			this._factoryMap.set( ContextTypeList.UINT, 			hex.compiler.factory.UIntFactory.build );
-			this._factoryMap.set( ContextTypeList.DEFAULT, 			hex.compiler.factory.StringFactory.build );
-			this._factoryMap.set( ContextTypeList.HASHMAP, 			hex.compiler.factory.HashMapFactory.build );
-			this._factoryMap.set( ContextTypeList.CLASS, 			hex.compiler.factory.ClassFactory.build );
-			this._factoryMap.set( ContextTypeList.XML, 				hex.compiler.factory.XmlFactory.build );
-			this._factoryMap.set( ContextTypeList.FUNCTION, 		hex.compiler.factory.FunctionFactory.build );
-			this._factoryMap.set( ContextTypeList.STATIC_VARIABLE, 	hex.compiler.factory.StaticVariableFactory.build );
-			this._factoryMap.set( ContextTypeList.MAPPING_CONFIG, 	hex.compiler.factory.MappingConfigurationFactory.build );
+			this._factoryMap.set( ContextTypeList.ARRAY, 			hex.compiletime.factory.ArrayFactory.build );
+			this._factoryMap.set( ContextTypeList.BOOLEAN, 			hex.compiletime.factory.BoolFactory.build );
+			this._factoryMap.set( ContextTypeList.INT, 				hex.compiletime.factory.IntFactory.build );
+			this._factoryMap.set( ContextTypeList.NULL, 			hex.compiletime.factory.NullFactory.build );
+			this._factoryMap.set( ContextTypeList.FLOAT, 			hex.compiletime.factory.FloatFactory.build );
+			this._factoryMap.set( ContextTypeList.OBJECT, 			hex.compiletime.factory.DynamicObjectFactory.build );
+			this._factoryMap.set( ContextTypeList.STRING, 			hex.compiletime.factory.StringFactory.build );
+			this._factoryMap.set( ContextTypeList.UINT, 			hex.compiletime.factory.UIntFactory.build );
+			this._factoryMap.set( ContextTypeList.DEFAULT, 			hex.compiletime.factory.StringFactory.build );
+			this._factoryMap.set( ContextTypeList.HASHMAP, 			hex.compiletime.factory.HashMapFactory.build );
+			this._factoryMap.set( ContextTypeList.CLASS, 			hex.compiletime.factory.ClassFactory.build );
+			this._factoryMap.set( ContextTypeList.XML, 				hex.compiletime.factory.XmlFactory.build );
+			this._factoryMap.set( ContextTypeList.FUNCTION, 		hex.compiletime.factory.FunctionFactory.build );
+			this._factoryMap.set( ContextTypeList.STATIC_VARIABLE, 	hex.compiletime.factory.StaticVariableFactory.build );
+			this._factoryMap.set( ContextTypeList.MAPPING_CONFIG, 	hex.compiletime.factory.MappingConfigurationFactory.build );
 			
 			this._coreFactory.addListener( this );
 		}
@@ -149,7 +151,7 @@ class CompileTimeContextFactory
 		DomainListenerFactory.domainLocator = null;
 	}
 	
-	public function getCoreFactory() : CompileTimeCoreFactory
+	public function getCoreFactory() : ICoreFactory
 	{
 		return this._coreFactory;
 	}
@@ -350,10 +352,24 @@ class CompileTimeContextFactory
 	public function buildVO( constructorVO : ConstructorVO, ?id : String ) : Dynamic
 	{
 		constructorVO.shouldAssign 	= id != null;
-		//TODO better type checking with Context.typeof
-		var type 					= constructorVO.className;
-		var buildMethod 			= ( this._factoryMap.exists( type ) ) ? this._factoryMap.get( type ) : hex.compiler.factory.ClassInstanceFactory.build;
-		var result 					= buildMethod( this._getFactoryVO( constructorVO ) );
+		
+		var type = constructorVO.className;
+		var buildMethod : FactoryVODef->Dynamic = null;
+		
+		if ( this._factoryMap.exists( type ) )
+		{
+			buildMethod = this._factoryMap.get( type );
+		}
+		else if( constructorVO.ref != null )
+		{
+			buildMethod = hex.compiletime.factory.ReferenceFactory.build;
+		}
+		else
+		{
+			buildMethod = hex.compiler.factory.ClassInstanceFactory.build;
+		}
+		
+		var result = buildMethod( this._getFactoryVO( constructorVO ) );
 
 		if ( id != null )
 		{
@@ -438,17 +454,9 @@ class CompileTimeContextFactory
 		return result;
 	}
 	
-	function _getFactoryVO( ?constructorVO : ConstructorVO ) : FactoryVO
+	function _getFactoryVO( constructorVO : ConstructorVO = null ) : FactoryVODef
 	{
-		var factoryVO = new FactoryVO();
-
-		if ( constructorVO != null )
-		{
-			factoryVO.constructorVO = constructorVO;
-		}
-		
-		factoryVO.contextFactory 	= this;
-		return factoryVO;
+		return { constructorVO : constructorVO, contextFactory : this };
 	}
 	
 	//helper

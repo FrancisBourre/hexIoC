@@ -1,5 +1,6 @@
 package hex.ioc.vo;
 
+import hex.vo.ConstructorVO;
 import hex.ioc.core.ContextFactory;
 import hex.ioc.core.CoreFactory;
 

@@ -2,6 +2,7 @@ package hex.ioc.assembler;
 
 import hex.control.macro.IMacroExecutor;
 import hex.control.macro.MacroExecutor;
+import hex.core.AbstractApplicationContext;
 import hex.core.IApplicationContext;
 import hex.di.IBasicInjector;
 import hex.di.IDependencyInjector;
@@ -97,7 +98,5 @@ class ApplicationContext extends AbstractApplicationContext
 		
 		//TODO replace by annotationProvider.dispose();
 		AnnotationProvider.release();
-		
-		super.dispose();
 	}
 }

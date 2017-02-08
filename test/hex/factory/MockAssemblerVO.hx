@@ -1,6 +1,6 @@
 package hex.factory;
 
-import hex.ioc.vo.AssemblerVO;
+import hex.vo.AssemblerVO;
 
 /**
  * ...

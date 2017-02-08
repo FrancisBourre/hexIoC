@@ -1,4 +1,5 @@
 package hex.ioc.vo;
+import hex.vo.AssemblerVO;
 
 /**
  * ...

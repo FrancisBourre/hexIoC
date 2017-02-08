@@ -1,4 +1,0 @@
-@context( name = 'applicationContext' )
-{
-	rect = hex.ioc.parser.xml.mock.MockRectangleFactory.getRectangle( 10, 20, 30, 40 );
-}

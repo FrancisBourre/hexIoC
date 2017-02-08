@@ -1,6 +1,6 @@
 <root name="applicationContext">
 
-    <config id="config" type="hex.ioc.di.MappingConfiguration">
+    <config id="config" type="hex.di.mapping.MappingConfiguration">
         <item> <key type="Class" value="hex.ioc.parser.xml.mock.IMockAmazonService"/> <value type="Class" value="hex.ioc.parser.xml.mock.MockAmazonService"/></item>
         <item> <key type="Class" value="hex.ioc.parser.xml.mock.IMockFacebookService"/> <value ref="facebookService"/></item>
     </config>

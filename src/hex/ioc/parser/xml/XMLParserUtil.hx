@@ -3,9 +3,9 @@ package hex.ioc.parser.xml;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
 import hex.core.ContextTypeList;
-import hex.ioc.vo.ConstructorVO;
+import hex.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVOArguments;
-import hex.ioc.vo.MapVO;
+import hex.vo.MapVO;
 
 using StringTools;
 

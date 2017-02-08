@@ -2,7 +2,7 @@ package hex.ioc.control;
 
 import hex.error.PrivateConstructorException;
 import hex.ioc.vo.FactoryVO;
-import hex.ioc.vo.MapVO;
+import hex.vo.MapVO;
 
 /**
  * ...

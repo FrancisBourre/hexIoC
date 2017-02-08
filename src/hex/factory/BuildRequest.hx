@@ -1,9 +1,9 @@
 package hex.factory;
 
-import hex.ioc.vo.ConstructorVO;
+import hex.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
-import hex.ioc.vo.MethodCallVO;
-import hex.ioc.vo.PropertyVO;
+import hex.vo.MethodCallVO;
+import hex.vo.PropertyVO;
 import hex.ioc.vo.StateTransitionVO;
 
 /**

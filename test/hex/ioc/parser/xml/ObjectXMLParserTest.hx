@@ -14,7 +14,7 @@ import hex.event.Dispatcher;
 import hex.event.EventProxy;
 import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.core.CoreFactory;
-import hex.ioc.di.MappingConfiguration;
+import hex.di.mapping.MappingConfiguration;
 import hex.ioc.parser.xml.mock.AnotherMockAmazonService;
 import hex.ioc.parser.xml.mock.AnotherMockModuleWithServiceCallback;
 import hex.ioc.parser.xml.mock.ClassWithConstantConstantArgument;

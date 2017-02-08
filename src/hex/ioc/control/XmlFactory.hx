@@ -3,7 +3,7 @@ package hex.ioc.control;
 import hex.data.IParser;
 import hex.error.PrivateConstructorException;
 import hex.runtime.error.ParsingException;
-import hex.ioc.vo.ConstructorVO;
+import hex.vo.ConstructorVO;
 import hex.ioc.vo.FactoryVO;
 
 /**

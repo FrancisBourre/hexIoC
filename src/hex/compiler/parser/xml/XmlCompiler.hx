@@ -10,7 +10,7 @@ import hex.compiletime.CompileTimeParser;
 import hex.compiletime.util.ClassImportHelper;
 import hex.compiletime.xml.DSLReader;
 import hex.compiletime.xml.ExceptionReporter;
-import hex.ioc.assembler.CompileTimeApplicationContext;
+import hex.compiletime.basic.CompileTimeApplicationContext;
 import hex.ioc.assembler.ConditionalVariablesChecker;
 import hex.preprocess.MacroConditionalVariablesProcessor;
 

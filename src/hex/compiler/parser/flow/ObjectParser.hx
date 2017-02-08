@@ -1,5 +1,6 @@
 package hex.compiler.parser.flow;
 import hex.compiletime.flow.AbstractExprParser;
+import hex.compiletime.flow.parser.ExpressionUtil;
 
 #if macro
 import haxe.macro.Context;
@@ -8,8 +9,8 @@ import haxe.macro.ExprTools;
 import haxe.macro.TypeTools;
 import hex.core.ContextTypeList;
 import hex.factory.BuildRequest;
-import hex.ioc.vo.ConstructorVO;
-import hex.ioc.vo.MethodCallVO;
+import hex.vo.ConstructorVO;
+import hex.vo.MethodCallVO;
 
 /**
  * ...

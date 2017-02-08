@@ -6,10 +6,10 @@ import hex.error.Exception;
 import hex.factory.BuildRequest;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
-import hex.ioc.vo.ConstructorVO;
+import hex.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
-import hex.ioc.vo.MethodCallVO;
-import hex.ioc.vo.PropertyVO;
+import hex.vo.MethodCallVO;
+import hex.vo.PropertyVO;
 import hex.runtime.error.ParsingException;
 import hex.runtime.xml.AbstractXMLParser;
 

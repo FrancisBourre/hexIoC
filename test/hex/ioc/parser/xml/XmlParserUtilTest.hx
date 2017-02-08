@@ -1,6 +1,6 @@
 package hex.ioc.parser.xml;
 
-import hex.ioc.vo.ConstructorVO;
+import hex.vo.ConstructorVO;
 import hex.unittest.assertion.Assert;
 
 /**

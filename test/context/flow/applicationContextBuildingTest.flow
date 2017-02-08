@@ -1,6 +1,0 @@
-@context( 
-			name = 'applicationContext', 
-			type = hex.ioc.parser.xml.context.mock.MockApplicationContext )
-{
-	test = 'Hola Mundo';
-}

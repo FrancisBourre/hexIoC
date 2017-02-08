@@ -6,24 +6,19 @@ import hex.control.command.BasicCommand;
 import hex.core.IApplicationAssembler;
 import hex.core.ICoreFactory;
 import hex.domain.ApplicationDomainDispatcher;
-import hex.event.EventProxy;
 import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.core.ContextFactory;
 import hex.ioc.parser.xml.ApplicationXMLParser;
-import hex.ioc.parser.xml.mock.ClassWithConstantConstantArgument;
-import hex.ioc.parser.xml.mock.IAnotherMockMappedModule;
-import hex.ioc.parser.xml.mock.IMockMappedModule;
-import hex.ioc.parser.xml.mock.MockCaller;
-import hex.ioc.parser.xml.mock.MockChatModule;
-import hex.ioc.parser.xml.mock.MockClassWithGeneric;
-import hex.ioc.parser.xml.mock.MockClassWithInjectedProperty;
-import hex.ioc.parser.xml.mock.MockFruitVO;
-import hex.ioc.parser.xml.mock.MockMappedModule;
-import hex.ioc.parser.xml.mock.MockMethodCaller;
-import hex.ioc.parser.xml.mock.MockReceiverModule;
-import hex.ioc.parser.xml.mock.MockRectangle;
-import hex.ioc.parser.xml.mock.MockServiceProvider;
-import hex.ioc.parser.xml.mock.MockStubStatefulService;
+import hex.mock.MockCaller;
+import hex.mock.MockChat;
+import hex.mock.MockClassWithGeneric;
+import hex.mock.MockClassWithInjectedProperty;
+import hex.mock.MockClassWithoutArgument;
+import hex.mock.MockFruitVO;
+import hex.mock.MockProxy;
+import hex.mock.MockReceiver;
+import hex.mock.MockRectangle;
+import hex.mock.MockServiceProvider;
 import hex.runtime.ApplicationAssembler;
 import hex.structures.Point;
 import hex.structures.Size;
@@ -187,8 +182,8 @@ class FlowCompilerTest
 	{
 		this._applicationAssembler = FlowCompiler.compile( "context/flow/simpleInstanceWithoutArguments.flow" );
 
-		var command : BasicCommand = this._getCoreFactory().locate( "command" );
-		Assert.isInstanceOf( command, BasicCommand );
+		var instance : MockClassWithoutArgument = this._getCoreFactory().locate( "instance" );
+		Assert.isInstanceOf( instance, MockClassWithoutArgument );
 	}
 	
 	@Test( "test building simple instance with arguments" )
@@ -238,17 +233,17 @@ class FlowCompilerTest
 	{
 		this._applicationAssembler = FlowCompiler.compile( "context/flow/singleInstanceWithObjectReferences.flow" );
 		
-		var chat : MockChatModule = this._getCoreFactory().locate( "chat" );
-		Assert.isInstanceOf( chat, MockChatModule );
+		var chat : MockChat = this._getCoreFactory().locate( "chat" );
+		Assert.isInstanceOf( chat, MockChat );
 		
-		var receiver : MockReceiverModule = this._getCoreFactory().locate( "receiver" );
-		Assert.isInstanceOf( receiver, MockReceiverModule );
+		var receiver : MockReceiver = this._getCoreFactory().locate( "receiver" );
+		Assert.isInstanceOf( receiver, MockReceiver );
 		
-		var proxyChat : EventProxy = this._getCoreFactory().locate( "proxyChat" );
-		Assert.isInstanceOf( proxyChat, EventProxy );
+		var proxyChat : MockProxy = this._getCoreFactory().locate( "proxyChat" );
+		Assert.isInstanceOf( proxyChat, MockProxy );
 		
-		var proxyReceiver : EventProxy = this._getCoreFactory().locate( "proxyReceiver" );
-		Assert.isInstanceOf( proxyReceiver, EventProxy );
+		var proxyReceiver : MockProxy = this._getCoreFactory().locate( "proxyReceiver" );
+		Assert.isInstanceOf( proxyReceiver, MockProxy );
 
 		Assert.equals( chat, proxyChat.scope );
 		Assert.equals( chat.onTranslation, proxyChat.callback );
@@ -497,7 +492,7 @@ class FlowCompilerTest
 		Assert.equals( "orange", orange.toString(), "" );
 		Assert.equals( "apple", apple.toString(), "" );
 		
-		var map = this._getCoreFactory().getInjector().getInstanceWithClassName( "hex.collection.HashMap<String,hex.ioc.parser.xml.mock.MockFruitVO>", "fruits" );
+		var map = this._getCoreFactory().getInjector().getInstanceWithClassName( "hex.collection.HashMap<String,hex.mock.MockFruitVO>", "fruits" );
 		Assert.equals( fruits, map );
 	}
 	
@@ -523,9 +518,9 @@ class FlowCompilerTest
 	{
 		this._applicationAssembler = FlowCompiler.compile( "context/flow/testMapTypeWithInstance.flow" );
 		
-		var intInstance = this._getCoreFactory().getInjector().getInstanceWithClassName( "hex.ioc.parser.xml.mock.IMockInterfaceWithGeneric<Int>", "intInstance" );
-		var uintInstance = this._getCoreFactory().getInjector().getInstanceWithClassName( "hex.ioc.parser.xml.mock.IMockInterfaceWithGeneric<UInt>", "intInstance" );
-		var stringInstance = this._getCoreFactory().getInjector().getInstanceWithClassName( "hex.ioc.parser.xml.mock.IMockInterfaceWithGeneric<String>", "stringInstance" );
+		var intInstance = this._getCoreFactory().getInjector().getInstanceWithClassName( "hex.mock.IMockInterfaceWithGeneric<Int>", "intInstance" );
+		var uintInstance = this._getCoreFactory().getInjector().getInstanceWithClassName( "hex.mock.IMockInterfaceWithGeneric<UInt>", "intInstance" );
+		var stringInstance = this._getCoreFactory().getInjector().getInstanceWithClassName( "hex.mock.IMockInterfaceWithGeneric<String>", "stringInstance" );
 
 		Assert.isInstanceOf( intInstance, MockClassWithGeneric );
 		Assert.isInstanceOf( uintInstance, MockClassWithGeneric );

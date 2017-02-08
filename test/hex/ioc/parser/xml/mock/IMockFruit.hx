@@ -1,12 +1,10 @@
 package hex.ioc.parser.xml.mock;
-/**
- * @author 
- */
 
+/**
+ * ...
+ * @author Francis Bourre
+ */
 interface IMockFruit 
 {
-	
 	function toString():String;
-	
-	
 }

@@ -3,8 +3,8 @@ package hex.ioc.control;
 import hex.error.PrivateConstructorException;
 import hex.ioc.core.ContextFactory;
 import hex.core.ContextTypeList;
-import hex.ioc.vo.ConstructorVO;
-import hex.ioc.vo.PropertyVO;
+import hex.vo.ConstructorVO;
+import hex.vo.PropertyVO;
 import hex.util.ClassUtil;
 
 /**

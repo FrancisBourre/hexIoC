@@ -1,7 +1,7 @@
 package hex.ioc.control;
 
 import hex.error.PrivateConstructorException;
-import hex.ioc.di.MappingConfiguration;
+import hex.di.mapping.MappingConfiguration;
 import hex.ioc.vo.FactoryVO;
 
 /**
