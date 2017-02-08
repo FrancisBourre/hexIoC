@@ -158,19 +158,19 @@ class CompileTimeContextFactory
 	
 	public function dispatchAssemblingStart() : Void
 	{
-		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.ASSEMBLING_START" );
+		var messageType = MacroUtil.getStaticVariable( "hex.core.ApplicationAssemblerMessage.ASSEMBLING_START" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 	}
 	
 	public function dispatchAssemblingEnd() : Void
 	{
-		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.ASSEMBLING_END" );
+		var messageType = MacroUtil.getStaticVariable( "hex.core.ApplicationAssemblerMessage.ASSEMBLING_END" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 	}
 	
 	public function dispatchIdleMode() : Void
 	{
-		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.IDLE_MODE" );
+		var messageType = MacroUtil.getStaticVariable( "hex.core.ApplicationAssemblerMessage.IDLE_MODE" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 	}
 	
@@ -204,7 +204,7 @@ class CompileTimeContextFactory
 			this._transitions = this._transitions.concat( this.buildStateTransition( key ) );
 		}
 
-		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.STATE_TRANSITIONS_BUILT" );
+		var messageType = MacroUtil.getStaticVariable( "hex.core.ApplicationAssemblerMessage.STATE_TRANSITIONS_BUILT" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 	}
 	
@@ -259,7 +259,7 @@ class CompileTimeContextFactory
 			this.buildObject( key );
 		}
 		
-		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.OBJECTS_BUILT" );
+		var messageType = MacroUtil.getStaticVariable( "hex.core.ApplicationAssemblerMessage.OBJECTS_BUILT" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 		
 		StateTransitionFactory.flush( this._expressions, this._transitions );
@@ -279,7 +279,7 @@ class CompileTimeContextFactory
 		}
 		
 		this._domainListenerVOLocator.clear();
-		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.DOMAIN_LISTENERS_ASSIGNED" );
+		var messageType = MacroUtil.getStaticVariable( "hex.core.ApplicationAssemblerMessage.DOMAIN_LISTENERS_ASSIGNED" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 	}
 
@@ -326,7 +326,7 @@ class CompileTimeContextFactory
 		
 		this._methodCallVOLocator.clear();
 
-		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.METHODS_CALLED" );
+		var messageType = MacroUtil.getStaticVariable( "hex.core.ApplicationAssemblerMessage.METHODS_CALLED" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 	}
 	
@@ -340,7 +340,7 @@ class CompileTimeContextFactory
 		
 		this._moduleLocator.clear();
 		
-		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.MODULES_INITIALIZED" );
+		var messageType = MacroUtil.getStaticVariable( "hex.core.ApplicationAssemblerMessage.MODULES_INITIALIZED" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 	}
 

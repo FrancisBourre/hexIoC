@@ -23,7 +23,7 @@ class Launcher extends AbstractXmlParser<BuildRequest>
 		var assembler : ICompileTimeApplicationAssembler = cast this._applicationAssembler;
 		
 		//Dispatch CONTEXT_PARSED message
-		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.CONTEXT_PARSED" );
+		var messageType = MacroUtil.getStaticVariable( "hex.core.ApplicationAssemblerMessage.CONTEXT_PARSED" );
 		assembler.addExpression( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 
 		//Create applicationcontext injector

@@ -12,7 +12,7 @@ import hex.core.SymbolTable;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.event.IDispatcher;
 import hex.factory.BuildRequest;
-import hex.ioc.assembler.ApplicationAssemblerMessage;
+import hex.core.ApplicationAssemblerMessage;
 import hex.ioc.control.ArrayFactory;
 import hex.ioc.control.BoolFactory;
 import hex.ioc.control.ClassFactory;
