@@ -364,8 +364,9 @@ class ContextFactory
 		if ( id != null )
 		{
 			//keep track of Module instances for initializing them
+			// bugfix : should cast result to prevent that var result is typed as IModule on Flash target
 			if ( Std.is( result, IModule ) )
-				this._moduleLocator.register( id, cast result );
+				this._moduleLocator.register( id, cast(result, IModule) );
 
 			this._coreFactory.register( id, result );
 		}

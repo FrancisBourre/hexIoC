@@ -39,7 +39,8 @@ class FunctionFactory
 
 		} catch ( error : Dynamic )
 		{
-			var msg = "FunctionFactory.build() failed on " + target + " with id '" + targetID + "'. ";
+			// bugfix: Should safe cast target to prevent that var target is typed as String on Flash target
+			var msg = "FunctionFactory.build() failed on " + cast(target, String) + " with id '" + targetID + "'. ";
 			msg += path + " method can't be found.";
 			throw new Exception( msg );
 		}
