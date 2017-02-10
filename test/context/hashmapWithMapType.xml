@@ -1,8 +1,0 @@
-<root name="applicationContext">
-    <collection id="fruits" type="hex.collection.HashMap" map-type="hex.collection.HashMap<String, hex.ioc.parser.xml.mock.MockFruitVO>">
-        <item> <key value="0"/> <value ref="fruit0"/></item>
-        <item> <key value="1"/> <value ref="fruit1"/></item>
-    </collection>
-    <fruit id="fruit0" type="hex.ioc.parser.xml.mock.MockFruitVO"><argument value="orange"/></fruit>
-    <fruit id="fruit1" type="hex.ioc.parser.xml.mock.MockFruitVO"><argument value="apple"/></fruit>
-</root>

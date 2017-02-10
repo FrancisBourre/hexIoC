@@ -1,3 +1,0 @@
-<root name="applicationContext">
-    <constant id="constant" static-ref="hex.ioc.parser.xml.mock.MockStubStatefulService.INT_VO_UPDATE"/>
-</root>

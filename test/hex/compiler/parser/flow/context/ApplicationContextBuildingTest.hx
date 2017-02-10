@@ -2,11 +2,11 @@ package hex.compiler.parser.flow.context;
 
 import hex.compiler.parser.flow.FlowCompiler;
 import hex.core.IApplicationAssembler;
+import hex.core.ICoreFactory;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.ioc.assembler.ApplicationContext;
-import hex.runtime.ApplicationAssembler;
-import hex.core.ICoreFactory;
 import hex.ioc.parser.xml.context.mock.MockApplicationContext;
+import hex.runtime.ApplicationAssembler;
 import hex.unittest.assertion.Assert;
 
 /**
@@ -38,7 +38,7 @@ class ApplicationContextBuildingTest
 	@Test( "test applicationContext building" )
 	public function testApplicationContextBuilding() : Void
 	{
-		this._applicationAssembler = FlowCompiler.compile( "context/flow/applicationContextBuildingTest.flow" );
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/extendApplicationContextTest.flow" );
 
 		var applicationContext = this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext );
 		Assert.isNotNull( applicationContext, "applicationContext shouldn't be null" );

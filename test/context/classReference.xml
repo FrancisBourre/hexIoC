@@ -1,9 +1,0 @@
-<root name="applicationContext">
-
-    <RectangleClass id="RectangleClass" type="Class" value="hex.ioc.parser.xml.mock.MockRectangle"/>
-
-    <test id="classContainer" type="Object">
-        <property name="AnotherRectangleClass" ref="RectangleClass"/>
-    </test>
-
-</root>

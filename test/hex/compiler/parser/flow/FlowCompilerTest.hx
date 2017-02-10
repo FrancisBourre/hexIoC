@@ -9,12 +9,17 @@ import hex.domain.ApplicationDomainDispatcher;
 import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.core.ContextFactory;
 import hex.ioc.parser.xml.ApplicationXMLParser;
+import hex.mock.ClassWithConstantConstantArgument;
+import hex.mock.IAnotherMockInterface;
+import hex.mock.IMockInterface;
 import hex.mock.MockCaller;
 import hex.mock.MockChat;
+import hex.mock.MockClass;
 import hex.mock.MockClassWithGeneric;
 import hex.mock.MockClassWithInjectedProperty;
 import hex.mock.MockClassWithoutArgument;
 import hex.mock.MockFruitVO;
+import hex.mock.MockMethodCaller;
 import hex.mock.MockProxy;
 import hex.mock.MockReceiver;
 import hex.mock.MockRectangle;
@@ -228,10 +233,10 @@ class FlowCompilerTest
 		Assert.equals( 2, position.y );
 	}
 	
-	@Test( "test building single instance with object references" )
-	public function testBuildingSingleInstanceWithObjectReferences() : Void
+	@Test( "test building single instance with method references" )
+	public function testBuildingSingleInstanceWithMethodReferences() : Void
 	{
-		this._applicationAssembler = FlowCompiler.compile( "context/flow/singleInstanceWithObjectReferences.flow" );
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/singleInstanceWithMethodReferences.flow" );
 		
 		var chat : MockChat = this._getCoreFactory().locate( "chat" );
 		Assert.isInstanceOf( chat, MockChat );
@@ -710,16 +715,16 @@ class FlowCompilerTest
 		var mock1 = injector.getInstance( IMockInjectee, "mock1" );
 		Assert.isInstanceOf( mock1, MockInjectee, "" );
 		Assert.equals( domain, mock1.domain, "" );
-	}
+	}*/
 	
 	@Test( "test static-ref" )
 	public function testStaticRef() : Void
 	{
 		this._applicationAssembler = FlowCompiler.compile( "context/flow/staticRef.flow" );
 
-		var note : String = this._getCoreFactory().locate( "constant" );
-		Assert.isNotNull( note );
-		Assert.equals( note, MockStubStatefulService.INT_VO_UPDATE );
+		var messageType : String = this._getCoreFactory().locate( "constant" );
+		Assert.isNotNull( messageType );
+		Assert.equals( messageType, MockClass.MESSAGE_TYPE );
 	}
 	
 	@Test( "test static-ref property" )
@@ -729,11 +734,11 @@ class FlowCompilerTest
 
 		var object : Dynamic = this._getCoreFactory().locate( "object" );
 		Assert.isNotNull( object );
-		Assert.equals( MockStubStatefulService.INT_VO_UPDATE, object.property );
+		Assert.equals( MockClass.MESSAGE_TYPE, object.property );
 		
 		var object2 : Dynamic = this._getCoreFactory().locate( "object2" );
 		Assert.isNotNull( object2 );
-		Assert.equals( MockStubStatefulService, object2.property );
+		Assert.equals( MockClass, object2.property );
 	}
 	
 	@Test( "test static-ref argument" )
@@ -743,7 +748,7 @@ class FlowCompilerTest
 
 		var instance : ClassWithConstantConstantArgument = this._getCoreFactory().locate( "instance" );
 		Assert.isNotNull( instance, "" );
-		Assert.equals( instance.constant, MockStubStatefulService.INT_VO_UPDATE, "" );
+		Assert.equals( instance.constant, MockClass.MESSAGE_TYPE );
 	}
 	
 	@Test( "test static-ref argument on method-call" )
@@ -753,7 +758,7 @@ class FlowCompilerTest
 
 		var instance : MockMethodCaller = this._getCoreFactory().locate( "instance" );
 		Assert.isNotNull( instance, "" );
-		Assert.equals( MockMethodCaller.staticVar, instance.argument, "" );
+		Assert.equals( MockMethodCaller.staticVar, instance.argument );
 	}
 	
 	@Test( "test map-type attribute" )
@@ -761,10 +766,11 @@ class FlowCompilerTest
 	{
 		this._applicationAssembler = FlowCompiler.compile( "context/flow/mapTypeAttribute.flow" );
 
-		var myModule : MockMappedModule = this._getCoreFactory().locate( "myModule" );
-		Assert.isNotNull( myModule );
-		Assert.isInstanceOf( myModule, MockMappedModule );
-		Assert.equals( myModule, this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getInjector().getInstance( IMockMappedModule, "myModule" ), "" );
+		var instance : MockClass = this._getCoreFactory().locate( "instance" );
+		Assert.isNotNull( instance );
+		Assert.isInstanceOf( instance, MockClass );
+		Assert.isInstanceOf( instance, IMockInterface );
+		Assert.equals( instance, this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getInjector().getInstance( IMockInterface, "instance" ) );
 	}
 	
 	@Test( "test multi map-type attributes" )
@@ -772,13 +778,14 @@ class FlowCompilerTest
 	{
 		this._applicationAssembler = FlowCompiler.compile( "context/flow/multiMapTypeAttributes.flow" );
 
-		var myModule : MockMappedModule = this._getCoreFactory().locate( "myModule" );
-		Assert.isNotNull( myModule );
-		Assert.isInstanceOf( myModule, MockMappedModule );
-		Assert.isInstanceOf( myModule, IAnotherMockMappedModule );
+		var instance : MockClass = this._getCoreFactory().locate( "instance" );
+		Assert.isNotNull( instance );
+		Assert.isInstanceOf( instance, MockClass );
+		Assert.isInstanceOf( instance, IMockInterface );
+		Assert.isInstanceOf( instance, IAnotherMockInterface );
 		
-		Assert.equals( myModule, this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getInjector().getInstance( IMockMappedModule, "myModule" ), "" );
-		Assert.equals( myModule, this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getInjector().getInstance( IAnotherMockMappedModule, "myModule" ), "" );
+		Assert.equals( instance, this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getInjector().getInstance( IMockInterface, "instance" ) );
+		Assert.equals( instance, this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getInjector().getInstance( IAnotherMockInterface, "instance" ) );
 	}
 	
 	/*@Ignore( "test static-ref with factory" )

@@ -11,7 +11,7 @@ import hex.compiletime.util.ClassImportHelper;
 import hex.compiletime.xml.DSLReader;
 import hex.compiletime.xml.ExceptionReporter;
 import hex.compiletime.basic.CompileTimeApplicationContext;
-import hex.ioc.assembler.ConditionalVariablesChecker;
+import hex.preprocess.ConditionalVariablesChecker;
 import hex.preprocess.MacroConditionalVariablesProcessor;
 
 using StringTools;
@@ -45,11 +45,11 @@ class XmlCompiler
 	
 	macro public static function readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
 	{
-		return _readXmlFile( fileName, preprocessingVariables, conditionalVariables );
+		return XmlCompiler._readXmlFile( fileName, preprocessingVariables, conditionalVariables );
 	}
 	
 	macro public static function readXmlFileWithAssembler( assemblerExpr : Expr, fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
 	{
-		return _readXmlFile( fileName, preprocessingVariables, conditionalVariables, assemblerExpr );
+		return XmlCompiler._readXmlFile( fileName, preprocessingVariables, conditionalVariables, assemblerExpr );
 	}
 }
