@@ -31,7 +31,8 @@ class IntFactory
 			throw new IllegalArgumentException( "IntFactory.build(" + ( args != null && args.length > 0 ? args[0] : "" ) + ") failed." );
 		}
 
-		#if js
+		// neko doesnt support null in StringTools.hex();
+		#if (js || neko)
 		if ( result == null )
 		#else
 		if ( "" + result != args[ 0 ] && '0x' + StringTools.hex( result, 6 ) != args[ 0 ] )
