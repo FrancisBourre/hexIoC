@@ -12,7 +12,6 @@ import hex.event.EventProxy;
 import hex.event.IAdapterStrategy;
 import hex.event.IObservable;
 import hex.event.MessageType;
-import hex.core.ICoreFactory;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.DomainListenerVOArguments;
 import hex.log.Stringifier;

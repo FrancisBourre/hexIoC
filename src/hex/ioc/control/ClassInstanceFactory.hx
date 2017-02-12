@@ -4,9 +4,11 @@ import hex.domain.Domain;
 import hex.domain.DomainExpert;
 import hex.domain.DomainUtil;
 import hex.error.PrivateConstructorException;
-import hex.ioc.vo.FactoryVO;
 import hex.metadata.AnnotationProvider;
 import hex.module.IModule;
+import hex.runtime.basic.vo.FactoryVOTypeDef;
+import hex.runtime.factory.ArgumentFactory;
+import hex.runtime.factory.ReferenceFactory;
 import hex.util.ClassUtil;
 
 /**
@@ -21,7 +23,7 @@ class ClassInstanceFactory
         throw new PrivateConstructorException();
     }
 
-	static public function build( factoryVO : FactoryVO ) : Dynamic
+	static public function build<T:FactoryVOTypeDef>( factoryVO : T ) : Dynamic
 	{
 		var result : Dynamic 	= null;
 		var constructorVO 		= factoryVO.constructorVO;

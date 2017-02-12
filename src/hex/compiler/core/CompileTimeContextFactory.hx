@@ -21,7 +21,7 @@ import hex.core.SymbolTable;
 import hex.di.IInjectorContainer;
 import hex.event.IDispatcher;
 import hex.factory.BuildRequest;
-import hex.core.IContextFactory;
+import hex.compiletime.basic.IContextFactory;
 import hex.ioc.vo.DomainListenerVO;
 import hex.vo.MethodCallVO;
 import hex.vo.PropertyVO;
@@ -31,7 +31,7 @@ import hex.metadata.IAnnotationProvider;
 import hex.module.IModule;
 import hex.util.MacroUtil;
 import hex.vo.ConstructorVO;
-import hex.vo.FactoryVODef;
+import hex.compiletime.basic.vo.FactoryVOTypeDef;
 
 /**
  * ...
@@ -53,7 +53,7 @@ class CompileTimeContextFactory
 	var _contextDispatcher			: IDispatcher<{}>;
 	var _moduleLocator				: Locator<String, String>;
 	var _applicationContext 		: IApplicationContext;
-	var _factoryMap 				: Map<String, FactoryVODef->Dynamic>;
+	var _factoryMap 				: Map<String, FactoryVOTypeDef->Dynamic>;
 	var _coreFactory 				: ICoreFactory;
 	var _symbolTable 				: SymbolTable;
 	var _constructorVOLocator 		: Locator<String, ConstructorVO>;
@@ -354,7 +354,7 @@ class CompileTimeContextFactory
 		constructorVO.shouldAssign 	= id != null;
 		
 		var type = constructorVO.className;
-		var buildMethod : FactoryVODef->Dynamic = null;
+		var buildMethod : FactoryVOTypeDef->Dynamic = null;
 		
 		if ( this._factoryMap.exists( type ) )
 		{
@@ -454,7 +454,7 @@ class CompileTimeContextFactory
 		return result;
 	}
 	
-	function _getFactoryVO( constructorVO : ConstructorVO = null ) : FactoryVODef
+	function _getFactoryVO( constructorVO : ConstructorVO = null ) : FactoryVOTypeDef
 	{
 		return { constructorVO : constructorVO, contextFactory : this };
 	}

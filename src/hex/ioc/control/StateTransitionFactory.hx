@@ -3,13 +3,14 @@ package hex.ioc.control;
 import hex.control.command.CommandMapping;
 import hex.control.command.ICommand;
 import hex.di.IContextOwner;
-import hex.ioc.core.ContextFactory;
-import hex.core.ICoreFactory;
+import hex.error.PrivateConstructorException;
 import hex.ioc.di.ContextOwnerWrapper;
 import hex.ioc.error.BuildingException;
 import hex.ioc.vo.CommandMappingVO;
 import hex.ioc.vo.StateTransitionVO;
 import hex.ioc.vo.TransitionVO;
+import hex.runtime.basic.IRunTimeContextFactory;
+import hex.runtime.basic.IRunTimeCoreFactory;
 import hex.state.State;
 import hex.state.StateUnmapper;
 import hex.util.ClassUtil;
@@ -20,14 +21,15 @@ import hex.util.ClassUtil;
  */
 class StateTransitionFactory
 {
-	function new()
-	{
-
-	}
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException();
+    }
 	
-	static public function build( vo : StateTransitionVO, contextFactory : ContextFactory ) : Array<TransitionVO>
+	static public function build( vo : StateTransitionVO, contextFactory : IRunTimeContextFactory ) : Array<TransitionVO>
 	{
-		var coreFactory : ICoreFactory = contextFactory.getCoreFactory();
+		var coreFactory : IRunTimeCoreFactory = contextFactory.getCoreFactory();
 		
 		var state : State;
 		if ( vo.staticReference != null )
@@ -142,7 +144,7 @@ class StateTransitionFactory
 		return transitions;
 	}
 	
-	static public function flush( coreFactory : ICoreFactory, transitions : Array<TransitionVO> ) : Void
+	static public function flush( coreFactory : IRunTimeCoreFactory, transitions : Array<TransitionVO> ) : Void
 	{
 		for ( transition in transitions )
 		{

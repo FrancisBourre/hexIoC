@@ -1,9 +1,11 @@
 package hex.compiler.factory;
 
+#if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Type.ClassType;
 import hex.collection.Locator;
+import hex.compiletime.basic.vo.FactoryVOTypeDef;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
 import hex.domain.DomainUtil;
@@ -13,7 +15,6 @@ import hex.event.EventProxy;
 import hex.event.IObservable;
 import hex.ioc.vo.DomainListenerVO;
 import hex.util.MacroUtil;
-import hex.vo.FactoryVODef;
 
 /**
  * ...
@@ -27,7 +28,6 @@ class DomainListenerFactory
         throw new PrivateConstructorException();
     }
 	
-	#if macro
 	public static var domainLocator : Map<String, String>;
 	
 	static var _eventProxyClassType 				= MacroUtil.getClassType( Type.getClassName( EventProxy ) );
@@ -39,7 +39,7 @@ class DomainListenerFactory
 	
 	static var _classAdapterTypePath 				= MacroUtil.getTypePath( Type.getClassName( ClassAdapter ) );
 	
-	static function _getDomain( expressions: Array<Expr>, domainName : String, factoryVO : FactoryVODef ) : String
+	static function _getDomain( expressions: Array<Expr>, domainName : String, factoryVO : FactoryVOTypeDef ) : String
 	{
 		if ( domainLocator.exists( domainName ) )
 		{
@@ -103,7 +103,7 @@ class DomainListenerFactory
 		return classType != null ? MacroUtil.implementsInterface( classType, DomainListenerFactory._observableInterface ) : false;
 	}
 	
-	static public function build( expressions : Array<Expr>, factoryVO : FactoryVODef, domainListener : DomainListenerVO, moduleLocator : Locator<String, String> ) : Bool
+	static public function build( expressions : Array<Expr>, factoryVO : FactoryVOTypeDef, domainListener : DomainListenerVO, moduleLocator : Locator<String, String> ) : Bool
 	{
 		var args 		= domainListener.arguments;
 		var coreFactory	= factoryVO.contextFactory.getCoreFactory();
@@ -222,5 +222,5 @@ class DomainListenerFactory
 			return true;
 		}
 	}
-	#end
 }
+#end

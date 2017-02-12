@@ -5,6 +5,7 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Type.ClassType;
 import haxe.macro.TypeTools;
+import hex.compiletime.basic.vo.FactoryVOTypeDef;
 import hex.compiletime.factory.ArgumentFactory;
 import hex.di.IInjectorContainer;
 import hex.domain.Domain;
@@ -14,7 +15,6 @@ import hex.error.PrivateConstructorException;
 import hex.metadata.AnnotationProvider;
 import hex.module.IModule;
 import hex.util.MacroUtil;
-import hex.vo.FactoryVODef;
 
 /**
  * ...
@@ -50,7 +50,7 @@ class ClassInstanceFactory
 		return true;
 	}
 					
-	static public function build<T:FactoryVODef>( factoryVO : T ) : Expr
+	static public function build<T:FactoryVOTypeDef>( factoryVO : T ) : Expr
 	{
 		if ( !ClassInstanceFactory._isInitialized ) ClassInstanceFactory._isInitialized = ClassInstanceFactory._init();
 

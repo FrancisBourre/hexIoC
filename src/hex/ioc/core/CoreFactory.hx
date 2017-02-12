@@ -4,7 +4,6 @@ import hex.collection.ILocatorListener;
 import hex.collection.LocatorMessage;
 import hex.core.CoreFactoryVODef;
 import hex.core.IAnnotationParsable;
-import hex.core.ICoreFactory;
 import hex.di.IDependencyInjector;
 import hex.error.IllegalArgumentException;
 import hex.error.NoSuchElementException;
@@ -12,6 +11,7 @@ import hex.event.ClosureDispatcher;
 import hex.event.MessageType;
 import hex.log.Stringifier;
 import hex.metadata.IAnnotationProvider;
+import hex.runtime.basic.IRunTimeCoreFactory;
 import hex.service.IService;
 import hex.util.ClassUtil;
 import hex.util.FastEval;
@@ -20,7 +20,7 @@ import hex.util.FastEval;
  * ...
  * @author Francis Bourre
  */
-class CoreFactory implements ICoreFactory
+class CoreFactory implements IRunTimeCoreFactory
 {
 	var _injector 				: IDependencyInjector;
 	var _annotationProvider 	: IAnnotationProvider;
@@ -28,7 +28,7 @@ class CoreFactory implements ICoreFactory
 	var _map 					: Map<String, {}>;
 	var _classPaths 			: Map<String, ProxyFactoryMethodHelper>;
 	
-	static var _fastEvalMethod : Dynamic->String->ICoreFactory->Dynamic = FastEval.fromTarget;
+	static var _fastEvalMethod : Dynamic->String->IRunTimeCoreFactory->Dynamic = FastEval.fromTarget;
 	
 	public function new( injector : IDependencyInjector, annotationProvider : IAnnotationProvider ) 
 	{
@@ -385,7 +385,7 @@ class CoreFactory implements ICoreFactory
 		return CoreFactory._fastEvalMethod( target, toEval, this );
 	}
 	
-	static public function setFastEvalMethod( method : Dynamic->String->ICoreFactory->Dynamic ) : Void
+	static public function setFastEvalMethod( method : Dynamic->String->IRunTimeCoreFactory->Dynamic ) : Void
 	{
 		CoreFactory._fastEvalMethod = method;
 	}

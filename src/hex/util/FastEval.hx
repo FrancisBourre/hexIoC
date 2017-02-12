@@ -2,7 +2,7 @@ package hex.util;
 
 import hex.error.IllegalArgumentException;
 import hex.ioc.assembler.ApplicationContext;
-import hex.core.ICoreFactory;
+import hex.runtime.basic.IRunTimeCoreFactory;
 
 /**
  * ...
@@ -15,7 +15,7 @@ class FastEval
 		
 	}
 	
-	static public function fromTarget( target : Dynamic, toEval : String, coreFactory : ICoreFactory ) : Dynamic
+	static public function fromTarget( target : Dynamic, toEval : String, coreFactory : IRunTimeCoreFactory ) : Dynamic
 	{
 		var members : Array<String> = toEval.split( "." );
 		var result 	: Dynamic;
