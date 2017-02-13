@@ -871,18 +871,17 @@ class XmlCompilerTest
 		Assert.isInstanceOf( instance2, AnotherMockClass );
 		
 		var copyOfInstance2 = injector.getInstance( IAnotherMockInterface, "name2" );
-		Assert.isInstanceOf( copyOfInstance2,  AnotherMockClass, "" );
+		Assert.isInstanceOf( copyOfInstance2,  AnotherMockClass );
 		Assert.notEquals( instance2, copyOfInstance2 );
 	}
 	
-	//TODO fix it
-	@Ignore( "test building mapping configuration with inject-into" )
+	@Test( "test building mapping configuration with inject-into" )
 	public function testBuildingMappingConfigurationWithInjectInto() : Void
 	{
 		this._applicationAssembler = XmlCompiler.compile( "context/xml/mappingConfigurationWithInjectInto.xml" );
 
 		var config = this._locate( "config" );
-		Assert.isInstanceOf( config, MappingConfiguration, "" );
+		Assert.isInstanceOf( config, MappingConfiguration );
 
 		var injector = new Injector();
 		var domain = DomainUtil.getDomain( 'XmlCompilerTest.testBuildingMappingConfigurationWithInjectInto', Domain );
@@ -890,12 +889,12 @@ class XmlCompilerTest
 		
 		config.configure( injector, new Dispatcher(), null );
 
-		var mock0 = injector.getInstance( IMockInjectee );
-		Assert.isInstanceOf( mock0,  MockInjectee, "" );
-		Assert.equals( domain, mock0.domain, "" );
+		var mock0 = injector.getInstance( IMockInjectee, "name1" );
+		Assert.isInstanceOf( mock0,  MockInjectee );
+		Assert.equals( domain, mock0.domain  );
 		
-		var mock1 = injector.getInstance( IMockInjectee );
-		Assert.isInstanceOf( mock1, MockInjectee, "" );
+		var mock1 = injector.getInstance( IMockInjectee, "name2" );
+		Assert.isInstanceOf( mock1, MockInjectee );
 		Assert.equals( domain, mock1.domain );
 	}
 	
