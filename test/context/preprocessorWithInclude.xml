@@ -1,3 +1,0 @@
-<root ${context}>
-	<include file="context/preprocessor.xml"/>
-</root>

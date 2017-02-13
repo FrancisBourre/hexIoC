@@ -1,7 +1,9 @@
 package hex.ioc.parser.xml;
 
-import hex.error.NullPointerException;
 import hex.core.IApplicationAssembler;
+import hex.error.NullPointerException;
+import hex.ioc.assembler.ApplicationContext;
+import hex.ioc.core.ContextFactory;
 
 /**
  * ...
@@ -64,7 +66,7 @@ class ApplicationXMLParser
 
 		} else
 		{
-			throw new NullPointerException ( this + ".parse() can't retrieve instance of ApplicationAssembler" );
+			throw new NullPointerException ( "ApplicationAssembler is null." );
 		}
 
 		if ( context != null )
@@ -73,21 +75,30 @@ class ApplicationXMLParser
 
 		} else
 		{
-			throw new NullPointerException ( this + ".parse() can't retrieve IoC context data" );
+			throw new NullPointerException ( "Context data is null." );
 		}
 
 		if ( this._parserCollection == null )
 		{
+			//Set default parser collection
 			this._parserCollection = new XMLParserCollection();
 		}
 
 		while ( this._parserCollection.hasNext() )
 		{
+			//Get current parser
 			var parser = this._parserCollection.next();
+			
+			//Initialize settings
+			parser.setFactoryClass( ContextFactory );
+			parser.setApplicationContextDefaultClass( ApplicationContext );
 			parser.setApplicationAssembler( this._assembler );
+			
+			//Do parsing
 			parser.setContextData( this._contextData );
 			parser.parse();
 
+			//Get back parsed data
 			this._contextData = parser.getContextData();
 		}
 

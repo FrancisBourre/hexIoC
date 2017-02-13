@@ -20,6 +20,5 @@ class MockStateCommandWithModule extends BasicCommand
 	{
 		MockStateCommandWithModule.callCount++;
 		MockStateCommandWithModule.lastInjectedModule = this.module;
-		//trace( Stringifier.stringify( this.module ) );
 	}
 }

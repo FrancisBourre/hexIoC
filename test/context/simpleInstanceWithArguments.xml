@@ -1,6 +1,0 @@
-<root name="applicationContext">
-    <bean id="size" type="hex.structures.Size">
-        <argument type="Int" value="10"/>
-        <argument type="Int" value="20"/>
-    </bean>
-</root>

@@ -12,7 +12,7 @@ class XMLAttributeUtil
 	/** @private */
     function new()
     {
-        throw new PrivateConstructorException( "This class can't be instantiated." );
+        throw new PrivateConstructorException();
     }
 	
 	static public function getID( xml : Xml ) : String

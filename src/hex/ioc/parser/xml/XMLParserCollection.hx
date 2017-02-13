@@ -2,12 +2,13 @@ package hex.ioc.parser.xml;
 
 import hex.factory.BuildRequest;
 import hex.parser.AbstractParserCollection;
+import hex.runtime.xml.AbstractXMLParser;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class XMLParserCollection extends AbstractParserCollection<AbstractXMLParser, Xml>
+class XMLParserCollection extends AbstractParserCollection<AbstractXMLParser<BuildRequest>>
 {
 	private var _isAutoBuild : Bool = false;
 	

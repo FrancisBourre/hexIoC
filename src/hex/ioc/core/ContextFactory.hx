@@ -1,49 +1,45 @@
 package hex.ioc.core;
 
 import hex.collection.ILocatorListener;
+import hex.collection.Locator;
+import hex.core.ApplicationAssemblerMessage;
+import hex.core.ContextTypeList;
 import hex.core.HashCodeFactory;
 import hex.core.IApplicationContext;
 import hex.core.IBuilder;
-import hex.core.ICoreFactory;
 import hex.core.SymbolTable;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.event.IDispatcher;
 import hex.factory.BuildRequest;
-import hex.ioc.assembler.ApplicationAssemblerMessage;
-import hex.ioc.control.ArrayFactory;
-import hex.ioc.control.BoolFactory;
-import hex.ioc.control.ClassFactory;
+import hex.runtime.factory.ArrayFactory;
+import hex.runtime.factory.BoolFactory;
+import hex.runtime.factory.ClassFactory;
 import hex.ioc.control.ClassInstanceFactory;
 import hex.ioc.control.DomainListenerFactory;
-import hex.ioc.control.DynamicObjectFactory;
-import hex.ioc.control.FloatFactory;
-import hex.ioc.control.FunctionFactory;
-import hex.ioc.control.HashMapFactory;
-import hex.ioc.control.IntFactory;
-import hex.ioc.control.MappingConfigurationFactory;
-import hex.ioc.control.NullFactory;
-import hex.ioc.control.PropertyFactory;
-import hex.ioc.control.ServiceLocatorFactory;
+import hex.runtime.factory.DynamicObjectFactory;
+import hex.runtime.factory.FloatFactory;
+import hex.runtime.factory.FunctionFactory;
+import hex.runtime.factory.HashMapFactory;
+import hex.runtime.factory.IntFactory;
+import hex.runtime.factory.MappingConfigurationFactory;
+import hex.runtime.factory.NullFactory;
+import hex.runtime.factory.PropertyFactory;
 import hex.ioc.control.StateTransitionFactory;
-import hex.ioc.control.StaticVariableFactory;
-import hex.ioc.control.StringFactory;
-import hex.ioc.control.UIntFactory;
-import hex.ioc.control.XmlFactory;
-import hex.ioc.locator.ConstructorVOLocator;
-import hex.ioc.locator.DomainListenerVOLocator;
-import hex.ioc.locator.MethodCallVOLocator;
-import hex.ioc.locator.ModuleLocator;
-import hex.ioc.locator.PropertyVOLocator;
-import hex.ioc.locator.StateTransitionVOLocator;
-import hex.ioc.vo.ConstructorVO;
+import hex.runtime.factory.StaticVariableFactory;
+import hex.runtime.factory.StringFactory;
+import hex.runtime.factory.UIntFactory;
+import hex.runtime.factory.XmlFactory;
 import hex.ioc.vo.DomainListenerVO;
-import hex.ioc.vo.FactoryVO;
-import hex.ioc.vo.MethodCallVO;
-import hex.ioc.vo.PropertyVO;
 import hex.ioc.vo.StateTransitionVO;
 import hex.ioc.vo.TransitionVO;
 import hex.metadata.IAnnotationProvider;
 import hex.module.IModule;
+import hex.runtime.basic.IRunTimeContextFactory;
+import hex.runtime.basic.IRunTimeCoreFactory;
+import hex.runtime.basic.vo.FactoryVOTypeDef;
+import hex.vo.ConstructorVO;
+import hex.vo.MethodCallVO;
+import hex.vo.PropertyVO;
 
 /**
  * ...
@@ -52,23 +48,23 @@ import hex.module.IModule;
 @:keepSub
 class ContextFactory 
 	implements IBuilder<BuildRequest>
-	implements IContextFactory 
+	implements IRunTimeContextFactory 
 	implements ILocatorListener<String, Dynamic>
 {
 	var _isInitialized				: Bool;
 	
 	var _annotationProvider			: IAnnotationProvider;
 	var _contextDispatcher			: IDispatcher<{}>;
-	var _moduleLocator				: ModuleLocator;
+	var _moduleLocator				: Locator<String, IModule>;
 	var _applicationContext 		: IApplicationContext;
-	var _factoryMap 				: Map<String, FactoryVO->Dynamic>;
-	var _coreFactory 				: ICoreFactory;
+	var _factoryMap 				: Map<String, FactoryVOTypeDef->Dynamic>;
+	var _coreFactory 				: IRunTimeCoreFactory;
 	var _symbolTable 				: SymbolTable;
-	var _constructorVOLocator 		: ConstructorVOLocator;
-	var _propertyVOLocator 			: PropertyVOLocator;
-	var _methodCallVOLocator 		: MethodCallVOLocator;
-	var _domainListenerVOLocator 	: DomainListenerVOLocator;
-	var _stateTransitionVOLocator 	: StateTransitionVOLocator;
+	var _constructorVOLocator 		: Locator<String, ConstructorVO>;
+	var _propertyVOLocator 			: Locator<String, Array<PropertyVO>>;
+	var _methodCallVOLocator 		: Locator<String, MethodCallVO>;
+	var _domainListenerVOLocator 	: Locator<String, DomainListenerVO>;
+	var _stateTransitionVOLocator 	: Locator<String, StateTransitionVO>;
 	
 	var _transitions				: Array<TransitionVO>;
 
@@ -88,7 +84,7 @@ class ContextFactory
 			this._contextDispatcher = ApplicationDomainDispatcher.getInstance().getDomainDispatcher( applicationContext.getDomain() );
 			var injector = this._applicationContext.getInjector();
 			this._annotationProvider = injector.getInstance( IAnnotationProvider );
-			this._coreFactory = applicationContext.getCoreFactory();
+			this._coreFactory = cast ( applicationContext.getCoreFactory(), IRunTimeCoreFactory );
 
 			//initialization
 			this._contextDispatcher.dispatch( ApplicationAssemblerMessage.CONTEXT_PARSED );
@@ -96,12 +92,12 @@ class ContextFactory
 			//
 			this._factoryMap 				= new Map();
 			this._symbolTable 				= new SymbolTable();
-			this._constructorVOLocator 		= new ConstructorVOLocator();
-			this._propertyVOLocator 		= new PropertyVOLocator();
-			this._methodCallVOLocator 		= new MethodCallVOLocator();
-			this._domainListenerVOLocator 	= new DomainListenerVOLocator();
-			this._stateTransitionVOLocator 	= new StateTransitionVOLocator();
-			this._moduleLocator 			= new ModuleLocator();
+			this._constructorVOLocator 		= new Locator();
+			this._propertyVOLocator 		= new Locator();
+			this._methodCallVOLocator 		= new Locator();
+			this._domainListenerVOLocator 	= new Locator();
+			this._stateTransitionVOLocator 	= new Locator();
+			this._moduleLocator 			= new Locator();
 
 			this._factoryMap.set( ContextTypeList.ARRAY, ArrayFactory.build );
 			this._factoryMap.set( ContextTypeList.BOOLEAN, BoolFactory.build );
@@ -113,7 +109,6 @@ class ContextFactory
 			this._factoryMap.set( ContextTypeList.UINT, UIntFactory.build );
 			this._factoryMap.set( ContextTypeList.DEFAULT, StringFactory.build );
 			this._factoryMap.set( ContextTypeList.HASHMAP, HashMapFactory.build );
-			this._factoryMap.set( ContextTypeList.SERVICE_LOCATOR, ServiceLocatorFactory.build );
 			this._factoryMap.set( ContextTypeList.CLASS, ClassFactory.build );
 			this._factoryMap.set( ContextTypeList.XML, XmlFactory.build );
 			this._factoryMap.set( ContextTypeList.FUNCTION, FunctionFactory.build );
@@ -161,6 +156,11 @@ class ContextFactory
 		this._moduleLocator.release();
 		this._factoryMap = new Map();
 		this._symbolTable.clear();
+	}
+	
+	public function getCoreFactory() : IRunTimeCoreFactory
+	{
+		return this._coreFactory;
 	}
 	
 	public function dispatchAssemblingStart() : Void
@@ -337,47 +337,43 @@ class ContextFactory
 	{
 		return this._applicationContext;
 	}
-
-	public function getCoreFactory() : ICoreFactory
-	{
-		return this._coreFactory;
-	}
 	
 	public function getAnnotationProvider() : IAnnotationProvider
 	{
 		return this._annotationProvider;
 	}
 	
-	public function getStateTransitionVOLocator() : StateTransitionVOLocator
+	public function getStateTransitionVOLocator() : Locator<String, StateTransitionVO>
 	{
 		return this._stateTransitionVOLocator;
 	}
 
 	public function buildVO( constructorVO : ConstructorVO, ?id : String ) : Dynamic
 	{
-		//TODO better type checking
-		var type 								= constructorVO.className.split( "<" )[ 0 ];
+		var buildMethod : FactoryVOTypeDef->Dynamic = null;
 		
-		var buildMethod 						= ( this._factoryMap.exists( type ) ) ? this._factoryMap.get( type ) : ClassInstanceFactory.build;
-
-		var builderHelperVO 					= new FactoryVO();
-		builderHelperVO.type 					= type;
-		builderHelperVO.contextFactory 			= this;
-		builderHelperVO.coreFactory 			= this._coreFactory;
-		builderHelperVO.constructorVO 			= constructorVO;
+		//TODO better type checking
+		var type 						= constructorVO.className.split( "<" )[ 0 ];
+		var buildMethod 				= ( this._factoryMap.exists( type ) ) ? this._factoryMap.get( type ) : ClassInstanceFactory.build;
 
 		//build instance with the expected factory method
-		var result 	= buildMethod( builderHelperVO );
+		var result 	= buildMethod( this._getFactoryVO( constructorVO ) );
 
 		if ( id != null )
 		{
 			//keep track of Module instances for initializing them
+			// bugfix : should cast result to prevent that var result is typed as IModule on Flash target
 			if ( Std.is( result, IModule ) )
-				this._moduleLocator.register( id, result );
+				this._moduleLocator.register( id, cast(result, IModule) );
 
 			this._coreFactory.register( id, result );
 		}
 
 		return result;
+	}
+	
+	function _getFactoryVO( constructorVO : ConstructorVO = null ) : FactoryVOTypeDef
+	{
+		return { constructorVO : constructorVO, contextFactory : this };
 	}
 }

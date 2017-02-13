@@ -8,10 +8,7 @@ import hex.data.IParser;
  */
 class MockXMLParser implements IParser<Array<MockFruitVO>>
 {
-	public function new() 
-	{
-		
-	}
+	public function new() {}
 	
 	public function parse( serializedContent : Dynamic, target : Dynamic = null ) : Array<MockFruitVO> 
 	{
@@ -23,7 +20,6 @@ class MockXMLParser implements IParser<Array<MockFruitVO>>
 		{
 			var item = iterator.next();
 			collection.push( new MockFruitVO( item.firstChild().nodeValue ) );
-
 		}
 
 		return collection;

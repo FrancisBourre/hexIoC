@@ -1,4 +1,0 @@
-@context( name = 'applicationContext' )
-{
-	size = new hex.structures.Size( 10, 20 );
-}

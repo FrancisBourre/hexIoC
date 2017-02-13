@@ -1,11 +1,8 @@
 package hex.ioc.vo;
 
-#if macro
-import hex.ioc.locator.ModuleLocator;
-#end
-
-import hex.core.ICoreFactory;
-import hex.ioc.core.IContextFactory;
+import hex.vo.ConstructorVO;
+import hex.ioc.core.ContextFactory;
+import hex.ioc.core.CoreFactory;
 
 /**
  * ...
@@ -13,14 +10,8 @@ import hex.ioc.core.IContextFactory;
  */
 class FactoryVO
 {
-	public var type 					: String;
-	public var contextFactory 			: IContextFactory;
-	public var coreFactory				: ICoreFactory;
+	public var contextFactory 			: ContextFactory;
 	public var constructorVO 			: ConstructorVO;
-
-	#if macro
-	public var moduleLocator			: ModuleLocator;
-	#end
 
 	public function new() 
 	{

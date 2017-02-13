@@ -19,7 +19,7 @@ class StatefulStateMachineConfigTest
 	{
 		//there's a bug with haxe version < 3.3 with recursive toJSon call
 		#if (haxe_ver >= "3.3")
-		var assembler = XmlReader.readXmlFile( "context/statefulStateMachineConfigTest.xml" );
+		var assembler = XmlReader.compile( "context/statefulStateMachineConfigTest.xml" );
 		var factory	= assembler.getApplicationContext( "applicationContext", ApplicationContext ).getCoreFactory();
 
 		var initialState : State = factory.locate( "initialState" );

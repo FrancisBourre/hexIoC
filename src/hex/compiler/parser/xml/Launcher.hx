@@ -1,4 +1,6 @@
 package hex.compiler.parser.xml;
+import hex.compiletime.xml.AbstractXmlParser;
+import hex.factory.BuildRequest;
 
 #if macro
 import hex.compiletime.ICompileTimeApplicationAssembler;
@@ -9,7 +11,7 @@ import hex.util.MacroUtil;
  * ...
  * @author Francis Bourre
  */
-class Launcher extends AbstractXmlParser
+class Launcher extends AbstractXmlParser<BuildRequest>
 {
 	public function new() 
 	{
@@ -21,7 +23,7 @@ class Launcher extends AbstractXmlParser
 		var assembler : ICompileTimeApplicationAssembler = cast this._applicationAssembler;
 		
 		//Dispatch CONTEXT_PARSED message
-		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.CONTEXT_PARSED" );
+		var messageType = MacroUtil.getStaticVariable( "hex.core.ApplicationAssemblerMessage.CONTEXT_PARSED" );
 		assembler.addExpression( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 
 		//Create applicationcontext injector

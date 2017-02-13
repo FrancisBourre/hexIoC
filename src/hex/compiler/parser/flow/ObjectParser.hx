@@ -1,19 +1,22 @@
 package hex.compiler.parser.flow;
+import hex.compiletime.flow.AbstractExprParser;
+import hex.compiletime.flow.parser.ExpressionUtil;
 
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.ExprTools;
 import haxe.macro.TypeTools;
-import hex.ioc.core.ContextTypeList;
-import hex.ioc.vo.ConstructorVO;
-import hex.ioc.vo.MethodCallVO;
+import hex.core.ContextTypeList;
+import hex.factory.BuildRequest;
+import hex.vo.ConstructorVO;
+import hex.vo.MethodCallVO;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class ObjectParser extends AbstractExprParser
+class ObjectParser extends AbstractExprParser<BuildRequest>
 {
 	public function new() 
 	{
@@ -226,8 +229,7 @@ class ObjectParser extends AbstractExprParser
 		switch ( type )
 		{
 			case ContextTypeList.HASHMAP | 
-					ContextTypeList.SERVICE_LOCATOR | 
-						ContextTypeList.MAPPING_CONFIG:
+					ContextTypeList.MAPPING_CONFIG:
 				
 				if ( params.length > 0 )
 				{

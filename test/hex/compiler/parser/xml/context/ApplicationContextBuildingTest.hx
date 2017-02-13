@@ -37,7 +37,7 @@ class ApplicationContextBuildingTest
 	@Test( "test applicationContext building" )
 	public function testApplicationContextBuilding() : Void
 	{
-		this._applicationAssembler = XmlCompiler.readXmlFile( "context/applicationContextBuildingTest.xml" );
+		this._applicationAssembler = XmlCompiler.compile( "context/xml/extendApplicationContextTest.xml" );
 		
 		var applicationContext = this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext );
 		Assert.isNotNull( applicationContext, "applicationContext shouldn't be null" );

@@ -1,17 +1,20 @@
 package hex.ioc.parser.xml;
 
+import hex.compiletime.xml.XmlUtil;
+import hex.factory.BuildRequest;
 import hex.ioc.core.ContextAttributeList;
 import hex.ioc.core.ContextNameList;
-import hex.ioc.error.ParsingException;
 import hex.ioc.vo.CommandMappingVO;
 import hex.ioc.vo.StateTransitionVO;
 import hex.ioc.vo.TransitionVO;
+import hex.runtime.error.ParsingException;
+import hex.runtime.xml.AbstractXMLParser;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class StateXMLParser extends AbstractXMLParser
+class StateXMLParser extends AbstractXMLParser<BuildRequest>
 {
 	public function new() 
 	{
@@ -20,12 +23,12 @@ class StateXMLParser extends AbstractXMLParser
 	
 	override public function parse() : Void
 	{
-		var iterator = this.getContextData().firstElement().elementsNamed( "state" );
+		var iterator = this._contextData.firstElement().elementsNamed( "state" );
 		while ( iterator.hasNext() )
 		{
 			var node = iterator.next();
 			this._parseNode( node );
-			this.getContextData().firstElement().removeChild( node );
+			this._contextData.firstElement().removeChild( node );
 		}
 	}
 	
@@ -44,8 +47,8 @@ class StateXMLParser extends AbstractXMLParser
 		var transitionList 			= this._getTransitionList( xml, ContextNameList.TRANSITION );
 		
 		var stateTransitionVO 		= new StateTransitionVO( identifier, staticReference, instanceReference, enterList, exitList, transitionList );
-		stateTransitionVO.ifList 	= XMLParserUtil.getIfList( xml );
-		stateTransitionVO.ifNotList = XMLParserUtil.getIfNotList( xml );
+		stateTransitionVO.ifList 	= XmlUtil.getIfList( xml );
+		stateTransitionVO.ifNotList = XmlUtil.getIfNotList( xml );
 		
 		this._builder.build( STATE_TRANSITION( stateTransitionVO ) );
 	}

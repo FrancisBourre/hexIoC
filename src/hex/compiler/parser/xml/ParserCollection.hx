@@ -1,6 +1,7 @@
 package hex.compiler.parser.xml;
 
 #if macro
+import hex.compiletime.xml.AbstractXmlParser;
 import hex.factory.BuildRequest;
 import hex.parser.AbstractParserCollection;
 
@@ -8,7 +9,7 @@ import hex.parser.AbstractParserCollection;
  * ...
  * @author Francis Bourre
  */
-class ParserCollection extends AbstractParserCollection<AbstractXmlParser, Xml>
+class ParserCollection extends AbstractParserCollection<AbstractXmlParser<BuildRequest>>
 {
 	public function new() 
 	{

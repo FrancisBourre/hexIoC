@@ -24,6 +24,4 @@ class MockCaller
 	{
 		MockCaller.passedArray = callArray;
 	}
-	
-	
 }

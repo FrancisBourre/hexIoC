@@ -1,36 +1,37 @@
 package hex.compiler.core;
-import hex.compiler.factory.FactoryUtil;
+import hex.compiletime.basic.CompileTimeCoreFactory;
 
 #if macro
+import haxe.macro.Context;
 import haxe.macro.Expr;
+import haxe.macro.Type.ClassType;
 import hex.collection.ILocatorListener;
+import hex.collection.Locator;
 import hex.compiler.factory.DomainListenerFactory;
-import hex.compiler.factory.PropertyFactory;
+import hex.compiletime.factory.FactoryUtil;
+import hex.compiletime.factory.PropertyFactory;
 import hex.compiler.factory.StateTransitionFactory;
+import hex.core.ContextTypeList;
 import hex.core.HashCodeFactory;
+import hex.core.IAnnotationParsable;
 import hex.core.IApplicationContext;
 import hex.core.IBuilder;
 import hex.core.ICoreFactory;
 import hex.core.SymbolTable;
+import hex.di.IInjectorContainer;
 import hex.event.IDispatcher;
 import hex.factory.BuildRequest;
-import hex.ioc.core.ContextTypeList;
-import hex.ioc.core.IContextFactory;
-import hex.ioc.locator.ConstructorVOLocator;
-import hex.ioc.locator.DomainListenerVOLocator;
-import hex.ioc.locator.MethodCallVOLocator;
-import hex.ioc.locator.ModuleLocator;
-import hex.ioc.locator.PropertyVOLocator;
-import hex.ioc.locator.StateTransitionVOLocator;
-import hex.ioc.vo.ConstructorVO;
+import hex.compiletime.basic.IContextFactory;
 import hex.ioc.vo.DomainListenerVO;
-import hex.ioc.vo.FactoryVO;
-import hex.ioc.vo.MethodCallVO;
-import hex.ioc.vo.PropertyVO;
+import hex.vo.MethodCallVO;
+import hex.vo.PropertyVO;
 import hex.ioc.vo.StateTransitionVO;
 import hex.ioc.vo.TransitionVO;
 import hex.metadata.IAnnotationProvider;
+import hex.module.IModule;
 import hex.util.MacroUtil;
+import hex.vo.ConstructorVO;
+import hex.compiletime.basic.vo.FactoryVOTypeDef;
 
 /**
  * ...
@@ -41,21 +42,25 @@ class CompileTimeContextFactory
 	implements IContextFactory 
 	implements ILocatorListener<String, Dynamic>
 {
+	static var _annotationParsableInterface = MacroUtil.getClassType( Type.getClassName( IAnnotationParsable ) );
+	static var _injectorContainerInterface 	= MacroUtil.getClassType( Type.getClassName( IInjectorContainer ) );
+	static var _moduleInterface 			= MacroUtil.getClassType( Type.getClassName( IModule ) );
+	
 	var _isInitialized				: Bool;
 	var _expressions 				: Array<Expr>;
 	
 	var _annotationProvider			: IAnnotationProvider;
 	var _contextDispatcher			: IDispatcher<{}>;
-	var _moduleLocator				: ModuleLocator;
+	var _moduleLocator				: Locator<String, String>;
 	var _applicationContext 		: IApplicationContext;
-	var _factoryMap 				: Map<String, FactoryVO->Dynamic>;
+	var _factoryMap 				: Map<String, FactoryVOTypeDef->Dynamic>;
 	var _coreFactory 				: ICoreFactory;
 	var _symbolTable 				: SymbolTable;
-	var _constructorVOLocator 		: ConstructorVOLocator;
-	var _propertyVOLocator 			: PropertyVOLocator;
-	var _methodCallVOLocator 		: MethodCallVOLocator;
-	var _domainListenerVOLocator 	: DomainListenerVOLocator;
-	var _stateTransitionVOLocator 	: StateTransitionVOLocator;
+	var _constructorVOLocator 		: Locator<String, ConstructorVO>;
+	var _propertyVOLocator 			: Locator<String, Array<PropertyVO>>;
+	var _methodCallVOLocator 		: Locator<String, MethodCallVO>;
+	var _domainListenerVOLocator 	: Locator<String, DomainListenerVO>;
+	var _stateTransitionVOLocator 	: Locator<String, StateTransitionVO>;
 	
 	var _transitions				: Array<TransitionVO>;
 	
@@ -72,36 +77,35 @@ class CompileTimeContextFactory
 			this._isInitialized = true;
 			
 			this._applicationContext 				= applicationContext;
-			this._coreFactory 						= applicationContext.getCoreFactory();
+			this._coreFactory 						= cast ( applicationContext.getCoreFactory(), CompileTimeCoreFactory );
 		
 		//
 			this._factoryMap 						= new Map();
 			this._symbolTable 						= new SymbolTable();
-			this._constructorVOLocator 				= new ConstructorVOLocator();
-			this._propertyVOLocator 				= new PropertyVOLocator();
-			this._methodCallVOLocator 				= new MethodCallVOLocator();
-			this._domainListenerVOLocator 			= new DomainListenerVOLocator();
-			this._stateTransitionVOLocator 			= new StateTransitionVOLocator();
-			this._moduleLocator 					= new ModuleLocator();
+			this._constructorVOLocator 				= new Locator();
+			this._propertyVOLocator 				= new Locator();
+			this._methodCallVOLocator 				= new Locator();
+			this._domainListenerVOLocator 			= new Locator();
+			this._stateTransitionVOLocator 			= new Locator();
+			this._moduleLocator 					= new Locator();
 			
 			DomainListenerFactory.domainLocator = new Map();
 			
-			this._factoryMap.set( ContextTypeList.ARRAY, 			hex.compiler.factory.ArrayFactory.build );
-			this._factoryMap.set( ContextTypeList.BOOLEAN, 			hex.compiler.factory.BoolFactory.build );
-			this._factoryMap.set( ContextTypeList.INT, 				hex.compiler.factory.IntFactory.build );
-			this._factoryMap.set( ContextTypeList.NULL, 			hex.compiler.factory.NullFactory.build );
-			this._factoryMap.set( ContextTypeList.FLOAT, 			hex.compiler.factory.FloatFactory.build );
-			this._factoryMap.set( ContextTypeList.OBJECT, 			hex.compiler.factory.DynamicObjectFactory.build );
-			this._factoryMap.set( ContextTypeList.STRING, 			hex.compiler.factory.StringFactory.build );
-			this._factoryMap.set( ContextTypeList.UINT, 			hex.compiler.factory.UIntFactory.build );
-			this._factoryMap.set( ContextTypeList.DEFAULT, 			hex.compiler.factory.StringFactory.build );
-			this._factoryMap.set( ContextTypeList.HASHMAP, 			hex.compiler.factory.HashMapFactory.build );
-			this._factoryMap.set( ContextTypeList.SERVICE_LOCATOR, 	hex.compiler.factory.ServiceLocatorFactory.build );
-			this._factoryMap.set( ContextTypeList.CLASS, 			hex.compiler.factory.ClassFactory.build );
-			this._factoryMap.set( ContextTypeList.XML, 				hex.compiler.factory.XmlFactory.build );
-			this._factoryMap.set( ContextTypeList.FUNCTION, 		hex.compiler.factory.FunctionFactory.build );
-			this._factoryMap.set( ContextTypeList.STATIC_VARIABLE, 	hex.compiler.factory.StaticVariableFactory.build );
-			this._factoryMap.set( ContextTypeList.MAPPING_CONFIG, 	hex.compiler.factory.MappingConfigurationFactory.build );
+			this._factoryMap.set( ContextTypeList.ARRAY, 			hex.compiletime.factory.ArrayFactory.build );
+			this._factoryMap.set( ContextTypeList.BOOLEAN, 			hex.compiletime.factory.BoolFactory.build );
+			this._factoryMap.set( ContextTypeList.INT, 				hex.compiletime.factory.IntFactory.build );
+			this._factoryMap.set( ContextTypeList.NULL, 			hex.compiletime.factory.NullFactory.build );
+			this._factoryMap.set( ContextTypeList.FLOAT, 			hex.compiletime.factory.FloatFactory.build );
+			this._factoryMap.set( ContextTypeList.OBJECT, 			hex.compiletime.factory.DynamicObjectFactory.build );
+			this._factoryMap.set( ContextTypeList.STRING, 			hex.compiletime.factory.StringFactory.build );
+			this._factoryMap.set( ContextTypeList.UINT, 			hex.compiletime.factory.UIntFactory.build );
+			this._factoryMap.set( ContextTypeList.DEFAULT, 			hex.compiletime.factory.StringFactory.build );
+			this._factoryMap.set( ContextTypeList.HASHMAP, 			hex.compiletime.factory.HashMapFactory.build );
+			this._factoryMap.set( ContextTypeList.CLASS, 			hex.compiletime.factory.ClassFactory.build );
+			this._factoryMap.set( ContextTypeList.XML, 				hex.compiletime.factory.XmlFactory.build );
+			this._factoryMap.set( ContextTypeList.FUNCTION, 		hex.compiletime.factory.FunctionFactory.build );
+			this._factoryMap.set( ContextTypeList.STATIC_VARIABLE, 	hex.compiletime.factory.StaticVariableFactory.build );
+			this._factoryMap.set( ContextTypeList.MAPPING_CONFIG, 	hex.compiletime.factory.MappingConfigurationFactory.build );
 			
 			this._coreFactory.addListener( this );
 		}
@@ -147,21 +151,26 @@ class CompileTimeContextFactory
 		DomainListenerFactory.domainLocator = null;
 	}
 	
+	public function getCoreFactory() : ICoreFactory
+	{
+		return this._coreFactory;
+	}
+	
 	public function dispatchAssemblingStart() : Void
 	{
-		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.ASSEMBLING_START" );
+		var messageType = MacroUtil.getStaticVariable( "hex.core.ApplicationAssemblerMessage.ASSEMBLING_START" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 	}
 	
 	public function dispatchAssemblingEnd() : Void
 	{
-		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.ASSEMBLING_END" );
+		var messageType = MacroUtil.getStaticVariable( "hex.core.ApplicationAssemblerMessage.ASSEMBLING_END" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 	}
 	
 	public function dispatchIdleMode() : Void
 	{
-		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.IDLE_MODE" );
+		var messageType = MacroUtil.getStaticVariable( "hex.core.ApplicationAssemblerMessage.IDLE_MODE" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 	}
 	
@@ -195,7 +204,7 @@ class CompileTimeContextFactory
 			this._transitions = this._transitions.concat( this.buildStateTransition( key ) );
 		}
 
-		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.STATE_TRANSITIONS_BUILT" );
+		var messageType = MacroUtil.getStaticVariable( "hex.core.ApplicationAssemblerMessage.STATE_TRANSITIONS_BUILT" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 	}
 	
@@ -250,7 +259,7 @@ class CompileTimeContextFactory
 			this.buildObject( key );
 		}
 		
-		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.OBJECTS_BUILT" );
+		var messageType = MacroUtil.getStaticVariable( "hex.core.ApplicationAssemblerMessage.OBJECTS_BUILT" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 		
 		StateTransitionFactory.flush( this._expressions, this._transitions );
@@ -270,13 +279,13 @@ class CompileTimeContextFactory
 		}
 		
 		this._domainListenerVOLocator.clear();
-		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.DOMAIN_LISTENERS_ASSIGNED" );
+		var messageType = MacroUtil.getStaticVariable( "hex.core.ApplicationAssemblerMessage.DOMAIN_LISTENERS_ASSIGNED" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 	}
 
 	public function assignDomainListener( id : String ) : Bool
 	{
-		return DomainListenerFactory.build( this._expressions, this._getFactoryVO( null ), this._domainListenerVOLocator.locate( id ) );
+		return DomainListenerFactory.build( this._expressions, this._getFactoryVO( null ), this._domainListenerVOLocator.locate( id ), this._moduleLocator );
 	}
 	
 	public function registerMethodCallVO( methodCallVO : MethodCallVO ) : Void
@@ -317,22 +326,21 @@ class CompileTimeContextFactory
 		
 		this._methodCallVOLocator.clear();
 
-		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.METHODS_CALLED" );
+		var messageType = MacroUtil.getStaticVariable( "hex.core.ApplicationAssemblerMessage.METHODS_CALLED" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 	}
 	
 	public function callModuleInitialisation() : Void
 	{
-		var modules = this._moduleLocator.values();
-		for ( module in modules )
+		var domains = this._moduleLocator.values();
+		for ( moduleName in domains )
 		{
-			var module = macro $i { module.getDomain().getName() };
-			this._expressions.push( macro @:mergeBlock { $module.initialize(); } );
+			this._expressions.push( macro @:mergeBlock { $i{moduleName}.initialize(); } );
 		}
 		
 		this._moduleLocator.clear();
 		
-		var messageType = MacroUtil.getStaticVariable( "hex.ioc.assembler.ApplicationAssemblerMessage.MODULES_INITIALIZED" );
+		var messageType = MacroUtil.getStaticVariable( "hex.core.ApplicationAssemblerMessage.MODULES_INITIALIZED" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 	}
 
@@ -341,34 +349,36 @@ class CompileTimeContextFactory
 		return this._applicationContext;
 	}
 
-	public function getCoreFactory() : ICoreFactory
-	{
-		return this._coreFactory;
-	}
-	
-	public function getAnnotationProvider() : IAnnotationProvider
-	{
-		return this._annotationProvider;
-	}
-	
-	public function getStateTransitionVOLocator() : StateTransitionVOLocator
-	{
-		return this._stateTransitionVOLocator;
-	}
-
 	public function buildVO( constructorVO : ConstructorVO, ?id : String ) : Dynamic
 	{
 		constructorVO.shouldAssign 	= id != null;
-		//TODO better type checking with Context.typeof
-		var type 					= constructorVO.className;
-		var buildMethod 			= ( this._factoryMap.exists( type ) ) ? this._factoryMap.get( type ) : hex.compiler.factory.ClassInstanceFactory.build;
-		var result 					= buildMethod( this._getFactoryVO( constructorVO ) );
+		
+		var type = constructorVO.className;
+		var buildMethod : FactoryVOTypeDef->Dynamic = null;
+		
+		if ( this._factoryMap.exists( type ) )
+		{
+			buildMethod = this._factoryMap.get( type );
+		}
+		else if( constructorVO.ref != null )
+		{
+			buildMethod = hex.compiletime.factory.ReferenceFactory.build;
+		}
+		else
+		{
+			buildMethod = hex.compiler.factory.ClassInstanceFactory.build;
+		}
+		
+		var result = buildMethod( this._getFactoryVO( constructorVO ) );
 
 		if ( id != null )
 		{
+			this._tryToRegisterModule( constructorVO );
 			
-			var finalResult = ( constructorVO.mapTypes != null ) ?
-				this._mapTypes( constructorVO, result ) : result;
+			var finalResult = result;
+			finalResult = this._parseInjectInto( constructorVO, finalResult );
+			finalResult = this._parseAnnotation( constructorVO, finalResult );
+			finalResult = this._parseMapTypes( constructorVO, finalResult );
 
 			this._expressions.push( macro @:mergeBlock { $finalResult;  coreFactory.register( $v { id }, $i { id } ); } );
 			this._coreFactory.register( id, result );
@@ -377,48 +387,93 @@ class CompileTimeContextFactory
 		return result;
 	}
 	
-	function _mapTypes( constructorVO : ConstructorVO, result : Expr ) : Expr
+	function _tryToRegisterModule( constructorVO : ConstructorVO ) : Void
 	{
-		var mapTypes = constructorVO.mapTypes;
-		for ( mapType in mapTypes )
+		if ( MacroUtil.implementsInterface( this._getClassType( constructorVO.className ), _moduleInterface ) )
 		{
-			//Check if class exists
-			FactoryUtil.checkTypeParamsExist( mapType, constructorVO.filePosition );
-			
-			//Remove whitespaces
-			mapType = mapType.split( ' ' ).join( '' );
-			
-			//Map it
-			var idVar = constructorVO.ID;
-			
+			this._moduleLocator.register( constructorVO.ID, constructorVO.ID );
+		}
+	}
+	
+	function _parseInjectInto( constructorVO : ConstructorVO, result : Expr ) : Expr
+	{
+		if ( constructorVO.injectInto && MacroUtil.implementsInterface( this._getClassType( constructorVO.className ), _injectorContainerInterface ) )
+		{
+			//TODO throws an error if interface is not implemented
+			result = macro 	@:pos( constructorVO.filePosition )
+							@:mergeBlock
+							{ 
+								$result; 
+								__applicationContextInjector.injectInto( $i{ constructorVO.ID } ); 
+							};
+		}
+		
+		return result;
+	}
+
+	function _parseAnnotation( constructorVO : ConstructorVO, result : Expr ) : Expr
+	{
+		if ( MacroUtil.implementsInterface( this._getClassType( constructorVO.className ), _annotationParsableInterface ) )
+		{
 			result = macro 	@:pos( constructorVO.filePosition ) 
-			@:mergeBlock 
-			{
-				$result; 
-				__applicationContextInjector.mapClassNameToValue
-				( $v{ mapType }, $i{ idVar }, $v{ idVar } 
-				);
-			};
+							@:mergeBlock 
+							{ 
+								$result; 
+								__annotationProvider.parse( $i{ constructorVO.ID } ); 
+							};
 		}
 		
 		return result;
 	}
 	
-	function _getFactoryVO( ?constructorVO : ConstructorVO ) : FactoryVO
+	function _parseMapTypes( constructorVO : ConstructorVO, result : Expr ) : Expr
 	{
-		var factoryVO = new FactoryVO();
-
-		if ( constructorVO != null )
+		if ( constructorVO.mapTypes != null )
 		{
-			factoryVO.type 			= constructorVO.className;
-			factoryVO.constructorVO = constructorVO;
+			var mapTypes = constructorVO.mapTypes;
+			for ( mapType in mapTypes )
+			{
+				//Check if class exists
+				FactoryUtil.checkTypeParamsExist( mapType, constructorVO.filePosition );
+				
+				//Remove whitespaces
+				mapType = mapType.split( ' ' ).join( '' );
+				
+				//Map it
+				result = macro 	@:pos( constructorVO.filePosition ) 
+				@:mergeBlock 
+				{
+					$result; 
+					__applicationContextInjector.mapClassNameToValue
+					( $v{ mapType }, $i{ constructorVO.ID }, $v{ constructorVO.ID } 
+					);
+				};
+			}
 		}
 		
-		factoryVO.contextFactory 	= this;
-		factoryVO.coreFactory 		= this._coreFactory;
-		factoryVO.moduleLocator 	= this._moduleLocator;
-
-		return factoryVO;
+		return result;
+	}
+	
+	function _getFactoryVO( constructorVO : ConstructorVO = null ) : FactoryVOTypeDef
+	{
+		return { constructorVO : constructorVO, contextFactory : this };
+	}
+	
+	//helper
+	function _getClassType( className : String ) : ClassType
+	{
+		try
+		{
+			return switch Context.getType( className ) 
+			{
+				case TInst( t, _ ): t.get();
+				default: null;
+			}
+		}
+		catch ( e : Dynamic )
+		{
+			return null;
+		}
 	}
 }
 #end

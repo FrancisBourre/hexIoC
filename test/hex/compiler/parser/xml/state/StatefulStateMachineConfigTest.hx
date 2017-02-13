@@ -17,7 +17,7 @@ class StatefulStateMachineConfigTest
 	@Test( "test statemachine configuration" )
 	public function testStateMachineConfiguration() : Void
 	{
-		var assembler = XmlCompiler.readXmlFile( "context/statefulStateMachineConfigTest.xml" );
+		var assembler = XmlCompiler.compile( "context/statefulStateMachineConfigTest.xml" );
 		var factory = assembler.getApplicationContext( "applicationContext", ApplicationContext ).getCoreFactory();
 
 		var initialState : State = factory.locate( "initialState" );

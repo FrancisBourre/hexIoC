@@ -1,17 +1,19 @@
 package hex.compiler.factory;
 
+#if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Type.ClassType;
+import hex.collection.Locator;
+import hex.compiletime.basic.vo.FactoryVOTypeDef;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
 import hex.domain.DomainUtil;
+import hex.error.PrivateConstructorException;
 import hex.event.ClassAdapter;
 import hex.event.EventProxy;
 import hex.event.IObservable;
 import hex.ioc.vo.DomainListenerVO;
-import hex.ioc.vo.DomainListenerVOArguments;
-import hex.ioc.vo.FactoryVO;
 import hex.util.MacroUtil;
 
 /**
@@ -20,12 +22,12 @@ import hex.util.MacroUtil;
  */
 class DomainListenerFactory
 {
-	function new()
-	{
-
-	}
+	/** @private */
+    function new()
+    {
+        throw new PrivateConstructorException();
+    }
 	
-	#if macro
 	public static var domainLocator : Map<String, String>;
 	
 	static var _eventProxyClassType 				= MacroUtil.getClassType( Type.getClassName( EventProxy ) );
@@ -37,7 +39,7 @@ class DomainListenerFactory
 	
 	static var _classAdapterTypePath 				= MacroUtil.getTypePath( Type.getClassName( ClassAdapter ) );
 	
-	static function _getDomain( expressions: Array<Expr>, domainName : String, factoryVO : FactoryVO ) : String
+	static function _getDomain( expressions: Array<Expr>, domainName : String, factoryVO : FactoryVOTypeDef ) : String
 	{
 		if ( domainLocator.exists( domainName ) )
 		{
@@ -101,15 +103,16 @@ class DomainListenerFactory
 		return classType != null ? MacroUtil.implementsInterface( classType, DomainListenerFactory._observableInterface ) : false;
 	}
 	
-	static public function build( expressions : Array<Expr>, factoryVO : FactoryVO, domainListener : DomainListenerVO ) : Bool
+	static public function build( expressions : Array<Expr>, factoryVO : FactoryVOTypeDef, domainListener : DomainListenerVO, moduleLocator : Locator<String, String> ) : Bool
 	{
-		var args = domainListener.arguments;
+		var args 		= domainListener.arguments;
+		var coreFactory	= factoryVO.contextFactory.getCoreFactory();
 
 		if ( args != null && args.length > 0 )
 		{
 			for ( domainListenerArgument in args )
 			{
-				var method = DomainListenerFactory.isEventProxy( factoryVO.coreFactory.locate( domainListener.ownerID ) ) ? "handleCallback" : domainListenerArgument.method;
+				var method = DomainListenerFactory.isEventProxy( coreFactory.locate( domainListener.ownerID ) ) ? "handleCallback" : domainListenerArgument.method;
 
 				if ( method != null || domainListenerArgument.strategy != null )
 				{
@@ -119,12 +122,12 @@ class DomainListenerFactory
 					var messageType 		= MacroUtil.getStaticVariable( domainListenerArgument.staticRef, domainListenerArgument.filePosition );
 					var strategyClassName 	= domainListenerArgument.strategy;
 					
-					if ( !factoryVO.coreFactory.isRegisteredWithKey( listenedDomainName ) )
+					if ( !coreFactory.isRegisteredWithKey( listenedDomainName ) )
 					{
 						Context.error( "Domain '" + listenedDomainName + "' not found in applicationContext named '" + 
 						factoryVO.contextFactory.getApplicationContext().getName() + "'", domainListener.filePosition );
 					}
-					var listenedDomain		= factoryVO.coreFactory.locate( listenedDomainName );
+					var listenedDomain		= coreFactory.locate( listenedDomainName );
 
 					if ( strategyClassName != null )
 					{
@@ -142,7 +145,7 @@ class DomainListenerFactory
 						expressions.push( macro @:mergeBlock { $adapterVar.setAdapterClass( $p { StrategyClass } ); } );
 						expressions.push( macro @:mergeBlock { $adapterVar.setAnnotationProvider( __annotationProvider ); } );
 
-						if ( domainListenerArgument.injectedInModule && factoryVO.moduleLocator.isRegisteredWithKey( listenerID ) )
+						if ( domainListenerArgument.injectedInModule && moduleLocator.isRegisteredWithKey( listenerID ) )
 						{
 							expressions.push( macro @:mergeBlock 
 							{ 
@@ -219,5 +222,5 @@ class DomainListenerFactory
 			return true;
 		}
 	}
-	#end
 }
+#end

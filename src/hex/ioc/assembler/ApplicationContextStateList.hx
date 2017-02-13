@@ -1,5 +1,6 @@
 package hex.ioc.assembler;
 
+import hex.core.ApplicationAssemblerMessage;
 import hex.state.State;
 
 /**

@@ -1,4 +1,0 @@
-@context( name = 'applicationContext' )
-{
-	command = new hex.control.command.BasicCommand();
-}

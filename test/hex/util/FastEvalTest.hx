@@ -1,11 +1,11 @@
 package hex.util;
 
 import hex.collection.ILocatorListener;
+import hex.core.CoreFactoryVODef;
 import hex.di.IDependencyInjector;
 import hex.event.MessageType;
-import hex.core.ICoreFactory;
-import hex.core.CoreFactoryVODef;
 import hex.metadata.IAnnotationProvider;
+import hex.runtime.basic.IRunTimeCoreFactory;
 import hex.structures.Size;
 import hex.unittest.assertion.Assert;
 
@@ -15,7 +15,7 @@ import hex.unittest.assertion.Assert;
  */
 class FastEvalTest
 {
-	var _coreFactory : ICoreFactory;
+	var _coreFactory : IRunTimeCoreFactory;
 	
 	@Before
 	public function setUp() : Void
@@ -39,7 +39,7 @@ class FastEvalTest
 }
 
 
-private class MockCoreFactory implements ICoreFactory
+private class MockCoreFactory implements IRunTimeCoreFactory
 {
 	public function new()
 	{

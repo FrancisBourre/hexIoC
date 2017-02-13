@@ -1,5 +1,6 @@
 package hex.ioc.control;
 
+import hex.collection.Locator;
 import hex.core.IApplicationContext;
 import hex.di.IBasicInjector;
 import hex.domain.ApplicationDomainDispatcher;
@@ -11,8 +12,6 @@ import hex.event.EventProxy;
 import hex.event.IAdapterStrategy;
 import hex.event.IObservable;
 import hex.event.MessageType;
-import hex.core.ICoreFactory;
-import hex.ioc.locator.DomainListenerVOLocator;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.DomainListenerVOArguments;
 import hex.log.Stringifier;
@@ -31,7 +30,7 @@ class DomainListenerFactory
 
 	}
 	
-	static public function build( id : String, domainListenerVOLocator : DomainListenerVOLocator, applicationContext : IApplicationContext, annotationProvider : IAnnotationProvider ) : Bool
+	static public function build( id : String, domainListenerVOLocator : Locator<String, DomainListenerVO>, applicationContext : IApplicationContext, annotationProvider : IAnnotationProvider ) : Bool
 	{
 		var coreFactory 								= applicationContext.getCoreFactory();
 		var domainListener : DomainListenerVO			= domainListenerVOLocator.locate( id );
