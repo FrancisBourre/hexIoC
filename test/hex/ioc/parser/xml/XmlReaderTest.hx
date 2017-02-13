@@ -198,8 +198,7 @@ class XmlReaderTest
 		Assert.equals( 2, position.y );
 	}
 
-	//TODO fix it
-	@Ignore( "test building single instance with method references" )
+	@Test( "test building single instance with method references" )
 	public function testBuildingSingleInstanceWithMethodReferences() : Void
 	{
 		this.build(  XmlReader.getXml( "context/xml/singleInstanceWithMethodReferences.xml" ) );
@@ -215,17 +214,12 @@ class XmlReaderTest
 		
 		var proxyReceiver : MockProxy = this._locate( "proxyReceiver" );
 		Assert.isInstanceOf( proxyReceiver, MockProxy );
-		
-		/*
-		var chat = new MockChat();
-		var proxyChat = new MockProxy( chat, chat.onTranslation );
-		*/
-		
+
 		Assert.equals( chat, proxyChat.scope );
-		Assert.equals( chat.onTranslation, proxyChat.callback );
+		Assert.equals( chat.onTranslation(), proxyChat.call() );
 		
 		Assert.equals( receiver, proxyReceiver.scope );
-		Assert.equals( receiver.onMessage, proxyReceiver.callback );
+		Assert.equals( receiver.onMessage(), proxyReceiver.call() );
 	}
 
 	@Test( "test building multiple instances with references" )

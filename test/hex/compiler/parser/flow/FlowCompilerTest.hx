@@ -83,7 +83,7 @@ class FlowCompilerTest
 		Assert.equals( assembler, this._applicationAssembler );
 	}
 	
-	@Ignore( "test building String" )
+	@Test( "test building String" )
 	public function testBuildingString() : Void
 	{
 		this._applicationAssembler = FlowCompiler.compile( "context/flow/testBuildingString.flow" );
