@@ -1,8 +1,8 @@
 <root name="applicationContext">
 
     <config id="config" type="hex.di.mapping.MappingConfiguration">
-        <item map-name="amazon0"> <key type="Class" value="hex.ioc.parser.xml.mock.IMockAmazonService"/> <value type="Class" value="hex.ioc.parser.xml.mock.MockAmazonService"/></item>
-        <item map-name="amazon1"> <key type="Class" value="hex.ioc.parser.xml.mock.IMockAmazonService"/> <value type="Class" value="hex.ioc.parser.xml.mock.AnotherMockAmazonService"/></item>
+        <item map-name="name1"> <key type="Class" value="hex.mock.IAnotherMockInterface"/> <value type="Class" value="hex.mock.MockClass"/></item>
+        <item map-name="name2"> <key type="Class" value="hex.mock.IAnotherMockInterface"/> <value type="Class" value="hex.mock.AnotherMockClass"/></item>
     </config>
 
 </root>
