@@ -50,7 +50,7 @@ class ApplicationAssemblerStateTest
 	@Test( "test building state transitions" )
 	public function testBuildingStateTransitions() : Void
 	{
-		this._applicationAssembler = XmlCompiler.readXmlFile( "context/testBuildingStateTransitions.xml" );
+		this._applicationAssembler = XmlCompiler.compile( "context/testBuildingStateTransitions.xml" );
 	}
 	
 	@Test( "test extending state transitions" )
@@ -59,7 +59,7 @@ class ApplicationAssemblerStateTest
 		MockStateCommand.callCount = 0;
 		MockStateCommand.lastInjecteContext = null;
 		
-		this._applicationAssembler = XmlCompiler.readXmlFile( "context/testExtendingStateTransitions.xml" );
+		this._applicationAssembler = XmlCompiler.compile( "context/testExtendingStateTransitions.xml" );
 
 		var coreFactory = this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getCoreFactory();
 		var module : MockModule = coreFactory.locate( "module" );
@@ -100,7 +100,7 @@ class ApplicationAssemblerStateTest
 		MockExitStateCommand.callCount = 0;
 		MockStateCommand.lastInjecteContext = null;
 		
-		this._applicationAssembler = XmlCompiler.readXmlFile( "context/testCustomStateTransition.xml" );
+		this._applicationAssembler = XmlCompiler.compile( "context/testCustomStateTransition.xml" );
 		
 		var context : ApplicationContext = cast this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext );
 		var coreFactory = this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getCoreFactory();

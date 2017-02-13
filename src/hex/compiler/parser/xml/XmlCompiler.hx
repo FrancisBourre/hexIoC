@@ -43,12 +43,12 @@ class XmlCompiler
 	}
 	#end
 	
-	macro public static function readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
+	macro public static function compile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
 	{
 		return XmlCompiler._readXmlFile( fileName, preprocessingVariables, conditionalVariables );
 	}
 	
-	macro public static function readXmlFileWithAssembler( assemblerExpr : Expr, fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
+	macro public static function compileWithAssembler( assemblerExpr : Expr, fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
 	{
 		return XmlCompiler._readXmlFile( fileName, preprocessingVariables, conditionalVariables, assemblerExpr );
 	}
