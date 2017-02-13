@@ -824,7 +824,7 @@ class XmlReaderTest
 	@Test( "test building mapping configuration" )
 	public function testBuildingMappingConfiguration() : Void
 	{
-		this.build( XmlReader.getXml( "context/mappingConfiguration.xml" ) );
+		this.build( XmlReader.getXml( "context/xml/mappingConfiguration.xml" ) );
 
 		var config : MappingConfiguration = this._locate( "config" );
 		Assert.isInstanceOf( config, MappingConfiguration );
@@ -840,7 +840,7 @@ class XmlReaderTest
 	@Test( "test building mapping configuration with map names" )
 	public function testBuildingMappingConfigurationWithMapNames() : Void
 	{
-		this.build( XmlReader.getXml( "context/mappingConfigurationWithMapNames.xml" ) );
+		this.build( XmlReader.getXml( "context/xml/mappingConfigurationWithMapNames.xml" ) );
 
 		var config : MappingConfiguration = this._locate( "config" );
 		Assert.isInstanceOf( config, MappingConfiguration );
@@ -855,7 +855,7 @@ class XmlReaderTest
 	@Test( "test building mapping configuration with singleton" )
 	public function testBuildingMappingConfigurationWithSingleton() : Void
 	{
-		this.build( XmlReader.getXml( "context/mappingConfigurationWithSingleton.xml" ) );
+		this.build( XmlReader.getXml( "context/xml/mappingConfigurationWithSingleton.xml" ) );
 
 		var config = this._locate( "config" );
 		Assert.isInstanceOf( config, MappingConfiguration );
@@ -882,7 +882,7 @@ class XmlReaderTest
 	@Ignore( "test building mapping configuration with inject-into" )
 	public function testBuildingMappingConfigurationWithInjectInto() : Void
 	{
-		this.build( XmlReader.getXml( "context/mappingConfigurationWithInjectInto.xml" ) );
+		this.build( XmlReader.getXml( "context/xml/mappingConfigurationWithInjectInto.xml" ) );
 
 		var config = this._locate( "config" );
 		Assert.isInstanceOf( config, MappingConfiguration, "" );
