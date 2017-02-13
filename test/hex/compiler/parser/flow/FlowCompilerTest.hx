@@ -5,10 +5,14 @@ import hex.compiler.parser.flow.FlowCompiler;
 import hex.control.command.BasicCommand;
 import hex.core.IApplicationAssembler;
 import hex.core.ICoreFactory;
+import hex.di.Injector;
+import hex.di.mapping.MappingConfiguration;
 import hex.domain.ApplicationDomainDispatcher;
+import hex.event.Dispatcher;
 import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.core.ContextFactory;
 import hex.ioc.parser.xml.ApplicationXMLParser;
+import hex.mock.AnotherMockClass;
 import hex.mock.ClassWithConstantConstantArgument;
 import hex.mock.IAnotherMockInterface;
 import hex.mock.IMockInterface;
@@ -636,23 +640,23 @@ class FlowCompilerTest
 		Assert.equals( anotherRectangleClass, anotherRectangleClassRef, "" );
 	}
 	
-	/*
-	@Ignore( "test building mapping configuration" )
+	@Test( "test building mapping configuration" )
 	public function testBuildingMappingConfiguration() : Void
 	{
-		this._applicationAssembler = XmlCompiler.readXmlFile( "context/mappingConfiguration.xml" );
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/mappingConfiguration.flow" );
 
 		var config : MappingConfiguration = this._getCoreFactory().locate( "config" );
-		Assert.isInstanceOf( config, MappingConfiguration, "" );
+		Assert.isInstanceOf( config, MappingConfiguration );
 
 		var injector = new Injector();
 		config.configure( injector, new Dispatcher(), null );
 
-		Assert.isInstanceOf( injector.getInstance( IMockAmazonService ), MockAmazonService, "" );
-		Assert.isInstanceOf( injector.getInstance( IMockFacebookService ), MockFacebookService, "" );
-		Assert.equals( this._getCoreFactory().locate( "facebookService" ), injector.getInstance( IMockFacebookService ), "" );
+		Assert.isInstanceOf( injector.getInstance( IMockInterface ), MockClass );
+		Assert.isInstanceOf( injector.getInstance( IAnotherMockInterface ), AnotherMockClass );
+		Assert.equals( this._getCoreFactory().locate( "instance" ), injector.getInstance( IAnotherMockInterface ) );
 	}
 	
+	/*
 	@Ignore( "test building mapping configuration with map names" )
 	public function testBuildingMappingConfigurationWithMapNames() : Void
 	{
