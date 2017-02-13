@@ -1,5 +1,6 @@
 package hex.ioc.parser.xml;
 
+import hex.metadata.AnnotationProvider;
 import haxe.Timer;
 import hex.collection.HashMap;
 import hex.core.IApplicationAssembler;
@@ -75,6 +76,7 @@ class XmlReaderTest
 	@Before
 	public function setUp() : Void
 	{
+		AnnotationProvider.release();
 		this._applicationAssembler 	= new ApplicationAssembler();
 		this._applicationContext 	= this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext );
 		cast ( this._applicationContext.getCoreFactory(), CoreFactory ).addProxyFactoryMethod( "hex.structures.Point", PointFactory, PointFactory.build );
