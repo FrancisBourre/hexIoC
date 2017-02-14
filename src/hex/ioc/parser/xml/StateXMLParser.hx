@@ -23,7 +23,7 @@ class StateXMLParser extends AbstractXMLParser<BuildRequest>
 	
 	override public function parse() : Void
 	{
-		var iterator = this._contextData.firstElement().elementsNamed( "state" );
+		var iterator = this._contextData.firstElement().elementsNamed( ContextNodeNameList.STATE );
 		while ( iterator.hasNext() )
 		{
 			var node = iterator.next();

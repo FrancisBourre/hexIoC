@@ -26,7 +26,7 @@ class StateParser extends AbstractXmlParser<BuildRequest>
 	override public function parse() : Void
 	{
 		var applicationContext 	= this.getApplicationAssembler().getApplicationContext( this._applicationContextName, ApplicationContext );
-		var iterator 			= this._contextData.firstElement().elementsNamed( "state" );
+		var iterator 			= this._contextData.firstElement().elementsNamed( ContextNodeNameList.STATE );
 
 		while ( iterator.hasNext() )
 		{
