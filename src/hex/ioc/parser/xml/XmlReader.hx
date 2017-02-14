@@ -253,7 +253,7 @@ class XmlReader
 		return macro @:pos( Context.currentPos() ){ $p { tp }.parse( $data ); }
 	}
 	
-	macro public static function compile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
+	macro public static function read( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
 	{
 		var xmlPack = MacroUtil.getPack( Type.getClassName( Xml ) );
 		var applicationAssemblerTypePath = MacroUtil.getTypePath( "hex.runtime.ApplicationAssembler" );
