@@ -1,16 +1,13 @@
 package hex.compiler.parser.xml;
-import hex.compiletime.xml.AbstractXmlParser;
-import hex.compiletime.xml.XmlUtil;
 
 #if macro
-import haxe.macro.Context;
+import hex.compiletime.xml.AbstractXmlParser;
+import hex.compiletime.xml.XmlUtil;
 import hex.core.IApplicationContext;
 import hex.factory.BuildRequest;
 import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.core.ContextAttributeList;
-import hex.ioc.core.ContextNameList;
-import hex.ioc.parser.xml.XMLParserUtil;
-import hex.compiletime.xml.ExceptionReporter;
+import hex.ioc.core.ContextNodeNameList;
 import hex.ioc.vo.CommandMappingVO;
 import hex.ioc.vo.StateTransitionVO;
 import hex.ioc.vo.TransitionVO;
@@ -52,8 +49,8 @@ class StateParser extends AbstractXmlParser<BuildRequest>
 		var staticReference 		= xml.get( ContextAttributeList.STATIC_REF );
 		var instanceReference 		= xml.get( ContextAttributeList.REF );
 		
-		var enterList 				= this._getCommandList( xml, ContextNameList.ENTER );
-		var exitList 				= this._getCommandList( xml, ContextNameList.EXIT );
+		var enterList 				= this._getCommandList( xml, ContextNodeNameList.ENTER );
+		var exitList 				= this._getCommandList( xml, ContextNodeNameList.EXIT );
 		var transitionList 			= this._getTransitionList( xml );
 		
 		var stateTransitionVO 		= new StateTransitionVO( identifier, staticReference, instanceReference, enterList, exitList, transitionList );
@@ -97,14 +94,14 @@ class StateParser extends AbstractXmlParser<BuildRequest>
 	
 	function _getTransitionList( xml : Xml ) : Array<TransitionVO>
 	{
-		var iterator = xml.elementsNamed( ContextNameList.TRANSITION );
+		var iterator = xml.elementsNamed( ContextNodeNameList.TRANSITION );
 		var list : Array<TransitionVO> = [];
 		
 		while( iterator.hasNext() )
 		{
 			var transition = iterator.next();
-			var message = transition.elementsNamed( ContextNameList.MESSAGE ).next();
-			var state = transition.elementsNamed( ContextNameList.STATE ).next();
+			var message = transition.elementsNamed( ContextNodeNameList.MESSAGE ).next();
+			var state = transition.elementsNamed( ContextNodeNameList.STATE ).next();
 
 			var vo = new TransitionVO();
 			vo.messageReference = message.get( 	ContextAttributeList.REF ) != null ?

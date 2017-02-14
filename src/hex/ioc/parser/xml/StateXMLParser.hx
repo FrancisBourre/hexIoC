@@ -3,7 +3,7 @@ package hex.ioc.parser.xml;
 import hex.compiletime.xml.XmlUtil;
 import hex.factory.BuildRequest;
 import hex.ioc.core.ContextAttributeList;
-import hex.ioc.core.ContextNameList;
+import hex.ioc.core.ContextNodeNameList;
 import hex.ioc.vo.CommandMappingVO;
 import hex.ioc.vo.StateTransitionVO;
 import hex.ioc.vo.TransitionVO;
@@ -42,9 +42,9 @@ class StateXMLParser extends AbstractXMLParser<BuildRequest>
 		
 		var staticReference 		= XMLAttributeUtil.getStaticRef( xml );
 		var instanceReference 		= XMLAttributeUtil.getRef( xml );
-		var enterList 				= this._buildList( xml, ContextNameList.ENTER );
-		var exitList 				= this._buildList( xml, ContextNameList.EXIT );
-		var transitionList 			= this._getTransitionList( xml, ContextNameList.TRANSITION );
+		var enterList 				= this._buildList( xml, ContextNodeNameList.ENTER );
+		var exitList 				= this._buildList( xml, ContextNodeNameList.EXIT );
+		var transitionList 			= this._getTransitionList( xml, ContextNodeNameList.TRANSITION );
 		
 		var stateTransitionVO 		= new StateTransitionVO( identifier, staticReference, instanceReference, enterList, exitList, transitionList );
 		stateTransitionVO.ifList 	= XmlUtil.getIfList( xml );
@@ -79,8 +79,8 @@ class StateXMLParser extends AbstractXMLParser<BuildRequest>
 		while( iterator.hasNext() )
 		{
 			var transition = iterator.next();
-			var message = transition.elementsNamed( ContextNameList.MESSAGE ).next();
-			var state = transition.elementsNamed( ContextNameList.STATE ).next();
+			var message = transition.elementsNamed( ContextNodeNameList.MESSAGE ).next();
+			var state = transition.elementsNamed( ContextNodeNameList.STATE ).next();
 			
 			var vo = new TransitionVO();
 			vo.messageReference = message.get( ContextAttributeList.REF ) != null ?

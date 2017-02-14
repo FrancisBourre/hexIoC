@@ -6,7 +6,7 @@ import hex.error.PrivateConstructorException;
  * ...
  * @author Francis Bourre
  */
-class ContextNameList
+class ContextNodeNameList
 {
 	static public inline var PROPERTY 		= hex.compiletime.xml.ContextNodeNameList.PROPERTY;
 	static public inline var ARGUMENT 		= hex.compiletime.xml.ContextNodeNameList.ARGUMENT;

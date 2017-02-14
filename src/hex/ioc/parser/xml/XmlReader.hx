@@ -9,7 +9,7 @@ import hex.preprocess.MacroConditionalVariablesProcessor;
 import hex.compiletime.util.ClassImportHelper;
 import hex.preprocess.ConditionalVariablesChecker;
 import hex.ioc.core.ContextAttributeList;
-import hex.ioc.core.ContextNameList;
+import hex.ioc.core.ContextNodeNameList;
 import hex.core.ContextTypeList;
 import hex.ioc.vo.DomainListenerVOArguments;
 import haxe.macro.Expr;
@@ -126,14 +126,14 @@ class XmlReader
 			}
 
 			// Build property.
-			var propertyIterator = xml.elementsNamed( ContextNameList.PROPERTY );
+			var propertyIterator = xml.elementsNamed( ContextNodeNameList.PROPERTY );
 			while ( propertyIterator.hasNext() )
 			{
 				XmlReader._importHelper.includeStaticRef( propertyIterator.next().get( ContextAttributeList.STATIC_REF ) );
 			}
 
 			// Build method call.
-			var methodCallIterator = xml.elementsNamed( ContextNameList.METHOD_CALL );
+			var methodCallIterator = xml.elementsNamed( ContextNodeNameList.METHOD_CALL );
 			while( methodCallIterator.hasNext() )
 			{
 				var methodCallItem = methodCallIterator.next();
@@ -157,7 +157,7 @@ class XmlReader
 			}
 
 			// Build channel listener.
-			var listenIterator = xml.elementsNamed( ContextNameList.LISTEN );
+			var listenIterator = xml.elementsNamed( ContextNodeNameList.LISTEN );
 			while( listenIterator.hasNext() )
 			{
 				var listener = listenIterator.next();
@@ -192,7 +192,7 @@ class XmlReader
 		var instanceReference 	: String = xml.get( ContextAttributeList.REF );
 		
 		// Build enter list
-		var enterListIterator = xml.elementsNamed( ContextNameList.ENTER );
+		var enterListIterator = xml.elementsNamed( ContextNodeNameList.ENTER );
 
 		while( enterListIterator.hasNext() )
 		{
@@ -201,7 +201,7 @@ class XmlReader
 		}
 		
 		// Build exit list
-		var exitListIterator = xml.elementsNamed( ContextNameList.EXIT );
+		var exitListIterator = xml.elementsNamed( ContextNodeNameList.EXIT );
 
 		while( exitListIterator.hasNext() )
 		{
