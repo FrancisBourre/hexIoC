@@ -1,6 +1,5 @@
 package hex.ioc.parser.xml.assembler.mock;
 
-import hex.control.Request;
 import hex.control.command.BasicCommand;
 import hex.core.IApplicationContext;
 
@@ -16,7 +15,7 @@ class MockExitStateCommand extends BasicCommand
 	@Inject
 	public var context : IApplicationContext;
 	
-	public function execute( ?request : Request ) : Void 
+	override public function execute() : Void
 	{
 		MockExitStateCommand.callCount++;
 		MockExitStateCommand.lastInjecteContext = this.context;

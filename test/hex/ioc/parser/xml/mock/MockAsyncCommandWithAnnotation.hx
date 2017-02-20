@@ -1,6 +1,5 @@
 package hex.ioc.parser.xml.mock;
 
-import hex.control.Request;
 import hex.control.async.AsyncCommand;
 import hex.core.IAnnotationParsable;
 
@@ -20,7 +19,7 @@ class MockAsyncCommandWithAnnotation extends AsyncCommand implements IAnnotation
         super();
     }
 
-    public function execute(?request : Request ) : Void
+    override public function execute() : Void
     {
         MockAsyncCommandWithAnnotation.lastResult = this.languageTest;
     }

@@ -1,6 +1,5 @@
 package hex.ioc.parser.xml.assembler.mock;
 
-import hex.control.Request;
 import hex.control.command.BasicCommand;
 import hex.module.IModule;
 
@@ -16,7 +15,7 @@ class MockStateCommandWithModule extends BasicCommand
 	@Inject
 	public var module : IModule;
 	
-	public function execute( ?request : Request ) : Void 
+	override public function execute() : Void
 	{
 		MockStateCommandWithModule.callCount++;
 		MockStateCommandWithModule.lastInjectedModule = this.module;
