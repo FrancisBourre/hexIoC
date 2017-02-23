@@ -5,7 +5,6 @@ import hex.core.IApplicationContext;
 import hex.di.IBasicInjector;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
-import hex.domain.DomainUtil;
 import hex.error.IllegalArgumentException;
 import hex.event.ClassAdapter;
 import hex.event.EventProxy;
@@ -61,7 +60,7 @@ class DomainListenerFactory
 
 					if ( observable == null )
 					{
-						var domain : Domain = DomainUtil.getDomain( domainListener.listenedDomainName );
+						var domain : Domain = Domain.getDomain( domainListener.listenedDomainName );
 						ApplicationDomainDispatcher.getInstance().addHandler( messageType, listener, callback, domain );
 					}
 					else
@@ -92,7 +91,7 @@ class DomainListenerFactory
 
 		} else
 		{
-			var domain : Domain = DomainUtil.getDomain( domainListener.listenedDomainName );
+			var domain : Domain = Domain.getDomain( domainListener.listenedDomainName );
 			return ApplicationDomainDispatcher.getInstance().addListener( listener, domain );
 		}
 	}

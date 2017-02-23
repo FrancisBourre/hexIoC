@@ -8,7 +8,6 @@ import hex.di.IBasicInjector;
 import hex.di.IDependencyInjector;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
-import hex.domain.DomainUtil;
 import hex.event.IDispatcher;
 import hex.event.MessageType;
 import hex.ioc.core.CoreFactory;
@@ -59,7 +58,7 @@ class ApplicationContext extends AbstractApplicationContext
 	function new( applicationContextName : String )
 	{
 		//build contextDispatcher
-		var domain = DomainUtil.getDomain( applicationContextName );
+		var domain = Domain.getDomain( applicationContextName );
 		var contextDispatcher = ApplicationDomainDispatcher.getInstance().getDomainDispatcher( domain );
 		
 		//build injector
@@ -72,7 +71,7 @@ class ApplicationContext extends AbstractApplicationContext
 		injector.mapToValue( ILogger, logger );
 		
 		//build annotation provider
-		var annotationProvider = AnnotationProvider.getAnnotationProvider( DomainUtil.getDomain( applicationContextName ) );
+		var annotationProvider = AnnotationProvider.getAnnotationProvider( Domain.getDomain( applicationContextName ) );
 		annotationProvider.registerInjector( injector );
 		injector.mapToValue( IAnnotationProvider, annotationProvider );
 		
@@ -93,7 +92,7 @@ class ApplicationContext extends AbstractApplicationContext
 	override public function dispose() : Void
 	{
 		var injector = this.getInjector();
-		var annotationProvider = AnnotationProvider.getAnnotationProvider( DomainUtil.getDomain( this.getName() ) );
+		var annotationProvider = AnnotationProvider.getAnnotationProvider( Domain.getDomain( this.getName() ) );
 		annotationProvider.unregisterInjector( injector );
 		
 		//TODO replace by annotationProvider.dispose();

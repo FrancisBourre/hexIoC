@@ -2,7 +2,6 @@ package hex.ioc.control;
 
 import hex.domain.Domain;
 import hex.domain.DomainExpert;
-import hex.domain.DomainUtil;
 import hex.error.PrivateConstructorException;
 import hex.metadata.AnnotationProvider;
 import hex.module.IModule;
@@ -46,7 +45,7 @@ class ClassInstanceFactory
 				var isModule : Bool = ClassUtil.classExtendsOrImplements( classReference, IModule );
 				if ( isModule && constructorVO.ID != null && constructorVO.ID.length > 0 )
 				{
-					var moduleDomain = DomainUtil.getDomain( constructorVO.ID );
+					var moduleDomain = Domain.getDomain( constructorVO.ID );
 					DomainExpert.getInstance().registerDomain( moduleDomain );
 					AnnotationProvider.registerToParentDomain( moduleDomain, factoryVO.contextFactory.getApplicationContext().getDomain() );
 				}
