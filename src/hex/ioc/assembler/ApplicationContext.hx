@@ -59,7 +59,7 @@ class ApplicationContext extends AbstractApplicationContext
 	function new( applicationContextName : String )
 	{
 		//build contextDispatcher
-		var domain = DomainUtil.getDomain( applicationContextName, Domain );
+		var domain = DomainUtil.getDomain( applicationContextName );
 		var contextDispatcher = ApplicationDomainDispatcher.getInstance().getDomainDispatcher( domain );
 		
 		//build injector
@@ -72,7 +72,7 @@ class ApplicationContext extends AbstractApplicationContext
 		injector.mapToValue( ILogger, logger );
 		
 		//build annotation provider
-		var annotationProvider = AnnotationProvider.getAnnotationProvider( DomainUtil.getDomain( applicationContextName, Domain ) );
+		var annotationProvider = AnnotationProvider.getAnnotationProvider( DomainUtil.getDomain( applicationContextName ) );
 		annotationProvider.registerInjector( injector );
 		injector.mapToValue( IAnnotationProvider, annotationProvider );
 		
@@ -93,7 +93,7 @@ class ApplicationContext extends AbstractApplicationContext
 	override public function dispose() : Void
 	{
 		var injector = this.getInjector();
-		var annotationProvider = AnnotationProvider.getAnnotationProvider( DomainUtil.getDomain( this.getName(), Domain ) );
+		var annotationProvider = AnnotationProvider.getAnnotationProvider( DomainUtil.getDomain( this.getName() ) );
 		annotationProvider.unregisterInjector( injector );
 		
 		//TODO replace by annotationProvider.dispose();

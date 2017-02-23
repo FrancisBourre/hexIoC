@@ -61,7 +61,7 @@ class DomainListenerFactory
 
 					if ( observable == null )
 					{
-						var domain : Domain = DomainUtil.getDomain( domainListener.listenedDomainName, Domain );
+						var domain : Domain = DomainUtil.getDomain( domainListener.listenedDomainName );
 						ApplicationDomainDispatcher.getInstance().addHandler( messageType, listener, callback, domain );
 					}
 					else
@@ -92,7 +92,7 @@ class DomainListenerFactory
 
 		} else
 		{
-			var domain : Domain = DomainUtil.getDomain( domainListener.listenedDomainName, Domain );
+			var domain : Domain = DomainUtil.getDomain( domainListener.listenedDomainName );
 			return ApplicationDomainDispatcher.getInstance().addListener( listener, domain );
 		}
 	}

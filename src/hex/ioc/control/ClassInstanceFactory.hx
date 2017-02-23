@@ -46,7 +46,7 @@ class ClassInstanceFactory
 				var isModule : Bool = ClassUtil.classExtendsOrImplements( classReference, IModule );
 				if ( isModule && constructorVO.ID != null && constructorVO.ID.length > 0 )
 				{
-					var moduleDomain = DomainUtil.getDomain( constructorVO.ID, Domain );
+					var moduleDomain = DomainUtil.getDomain( constructorVO.ID );
 					DomainExpert.getInstance().registerDomain( moduleDomain );
 					AnnotationProvider.registerToParentDomain( moduleDomain, factoryVO.contextFactory.getApplicationContext().getDomain() );
 				}

@@ -35,7 +35,6 @@ class DomainListenerFactory
 	
 	static var _applicationDomainDispatcherClass 	= MacroUtil.getPack( Type.getClassName( ApplicationDomainDispatcher )  );
 	static var _domainUtilClass 					= MacroUtil.getPack( Type.getClassName( DomainUtil )  );
-	static var _domainClass 						= MacroUtil.getPack( Type.getClassName( Domain )  );
 	
 	static var _classAdapterTypePath 				= MacroUtil.getTypePath( Type.getClassName( ClassAdapter ) );
 	
@@ -51,7 +50,7 @@ class DomainListenerFactory
 
 			expressions.push( macro @:mergeBlock 
 			{ 
-				var $domainVariable = $p { _domainUtilClass }.getDomain( $v{ domainName }, $p { _domainClass } ); 
+				var $domainVariable = $p { _domainUtilClass }.getDomain( $v{ domainName } ); 
 			} );
 			
 			domainLocator.set( domainName, domainVariable );

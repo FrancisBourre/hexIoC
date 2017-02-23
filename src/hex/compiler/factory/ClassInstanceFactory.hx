@@ -31,7 +31,6 @@ class ClassInstanceFactory
 	static var _annotationProviderClass 	: Array<String>;
 	static var _domainExpertClass 			: Array<String>;
 	static var _domainUtilClass 			: Array<String>;
-	static var _domainClass 				: Array<String>;
 	
 	static var _moduleInterface 			: ClassType;
 	static var _injectorContainerInterface 	: ClassType;
@@ -43,7 +42,6 @@ class ClassInstanceFactory
 		ClassInstanceFactory._annotationProviderClass 		= MacroUtil.getPack( Type.getClassName( AnnotationProvider ) );
 		ClassInstanceFactory._domainExpertClass 			= MacroUtil.getPack( Type.getClassName( DomainExpert ) );
 		ClassInstanceFactory._domainUtilClass 				= MacroUtil.getPack( Type.getClassName( DomainUtil ) );
-		ClassInstanceFactory._domainClass 					= MacroUtil.getPack( Type.getClassName( Domain ) );
 		ClassInstanceFactory._moduleInterface 				= MacroUtil.getClassType( Type.getClassName( IModule ) );
 		ClassInstanceFactory._injectorContainerInterface 	= MacroUtil.getClassType( Type.getClassName( IInjectorContainer ) );
 
@@ -111,13 +109,13 @@ class ClassInstanceFactory
 								{ 
 									$p { _domainExpertClass } .getInstance().registerDomain
 									( 
-										$p { _domainUtilClass } .getDomain( $v { idVar }, $p { _domainClass } ) 
+										$p { _domainUtilClass } .getDomain( $v { idVar } ) 
 									);
 
 									$p { _annotationProviderClass } .registerToParentDomain
 									( 
-										$p{ _domainUtilClass } .getDomain( $v{ idVar }, $p{ _domainClass } ),
-										$p{ _domainUtilClass } .getDomain( $v{ applicationContextName }, $p{ _domainClass } )
+										$p{ _domainUtilClass } .getDomain( $v{ idVar } ),
+										$p{ _domainUtilClass } .getDomain( $v{ applicationContextName } )
 									); 
 								} 
 			}
