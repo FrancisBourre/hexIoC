@@ -3,7 +3,6 @@ package hex.ioc.control;
 import hex.domain.Domain;
 import hex.domain.DomainExpert;
 import hex.error.PrivateConstructorException;
-import hex.metadata.AnnotationProvider;
 import hex.module.IModule;
 import hex.runtime.basic.vo.FactoryVOTypeDef;
 import hex.runtime.factory.ArgumentFactory;
@@ -52,7 +51,6 @@ class ClassInstanceFactory
 					var moduleDomain = Domain.getDomain( domainName );
 					
 					DomainExpert.getInstance().registerDomain( moduleDomain );
-					AnnotationProvider.registerToParentDomain( moduleDomain, factoryVO.contextFactory.getApplicationContext().getDomain() );
 				}
 			}
 			

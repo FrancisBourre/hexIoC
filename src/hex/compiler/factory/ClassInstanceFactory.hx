@@ -11,7 +11,6 @@ import hex.di.IInjectorContainer;
 import hex.domain.Domain;
 import hex.domain.DomainExpert;
 import hex.error.PrivateConstructorException;
-import hex.metadata.AnnotationProvider;
 import hex.module.IModule;
 import hex.util.MacroUtil;
 
@@ -27,7 +26,6 @@ class ClassInstanceFactory
         throw new PrivateConstructorException();
     }
 
-	static var _annotationProviderClass : Array<String>;
 	static var _domainExpertClass 		: Array<String>;
 	static var _domainClass 			: Array<String>;
 	
@@ -38,7 +36,6 @@ class ClassInstanceFactory
 	
 	static function _init() : Bool
 	{
-		ClassInstanceFactory._annotationProviderClass 		= MacroUtil.getPack( Type.getClassName( AnnotationProvider ) );
 		ClassInstanceFactory._domainExpertClass 			= MacroUtil.getPack( Type.getClassName( DomainExpert ) );
 		ClassInstanceFactory._domainClass 					= MacroUtil.getPack( Type.getClassName( Domain ) );
 		ClassInstanceFactory._moduleInterface 				= MacroUtil.getClassType( Type.getClassName( IModule ) );
@@ -114,12 +111,6 @@ class ClassInstanceFactory
 									( 
 										$p { _domainClass } .getDomain( $v { domainName } ) 
 									);
-
-									$p { _annotationProviderClass } .registerToParentDomain
-									( 
-										$p{ _domainClass } .getDomain( $v{ domainName } ),
-										$p{ _domainClass } .getDomain( $v{ applicationContextName } )
-									); 
 								} 
 			}
 			
