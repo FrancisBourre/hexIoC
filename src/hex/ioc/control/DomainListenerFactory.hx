@@ -14,7 +14,7 @@ import hex.event.IObservable;
 import hex.event.MessageType;
 import hex.ioc.vo.DomainListenerVO;
 import hex.ioc.vo.DomainListenerVOArguments;
-import hex.log.Stringifier;
+import hex.util.Stringifier;
 import hex.metadata.IAnnotationProvider;
 import hex.module.IModule;
 import hex.util.ClassUtil;
