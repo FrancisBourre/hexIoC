@@ -39,13 +39,17 @@ class DomainListenerFactory
 	
 	static function _getDomain( expressions: Array<Expr>, domainName : String, factoryVO : FactoryVOTypeDef ) : String
 	{
+		//concatenate domain's name with parent's domain
+		domainName = factoryVO.contextFactory.getApplicationContext().getDomain().getName()
+			+ '.' + domainName;
+			
 		if ( domainLocator.exists( domainName ) )
 		{
 			return domainLocator.get( domainName );
 		}
 		else
 		{
-			var domainVariable = "__domainName_" + domainName;
+			var domainVariable = "__domainName_" + domainName.split( '.' ).join( '_' );
 
 			expressions.push( macro @:mergeBlock 
 			{ 

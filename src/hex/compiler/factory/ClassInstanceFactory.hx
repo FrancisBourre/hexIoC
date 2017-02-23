@@ -103,17 +103,21 @@ class ClassInstanceFactory
 			{
 				var applicationContextName = factoryVO.contextFactory.getApplicationContext().getName();
 				
+				//concatenate domain's name with parent's domain
+				var domainName = factoryVO.contextFactory.getApplicationContext().getDomain().getName() 
+					+ '.' + idVar;
+				
 				//TODO register for every instance (from staticCall and/or factory)
 				result = macro 	@:mergeBlock 
 								{ 
 									$p { _domainExpertClass } .getInstance().registerDomain
 									( 
-										$p { _domainClass } .getDomain( $v { idVar } ) 
+										$p { _domainClass } .getDomain( $v { domainName } ) 
 									);
 
 									$p { _annotationProviderClass } .registerToParentDomain
 									( 
-										$p{ _domainClass } .getDomain( $v{ idVar } ),
+										$p{ _domainClass } .getDomain( $v{ domainName } ),
 										$p{ _domainClass } .getDomain( $v{ applicationContextName } )
 									); 
 								} 
