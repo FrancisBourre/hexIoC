@@ -53,6 +53,8 @@ import hex.mock.MockProxy;
 import hex.mock.MockReceiver;
 import hex.mock.MockRectangle;
 import hex.mock.MockServiceProvider;
+import hex.mock.MockWeatherListener;
+import hex.mock.MockWeatherModel;
 import hex.runtime.ApplicationAssembler;
 import hex.structures.Point;
 import hex.structures.Size;
@@ -1147,4 +1149,22 @@ class XmlCompilerTest
 	}
 
 	function _getValue( key : String ) return "value";
+	
+	@Test( "test trigger injection" )
+	public function testTriggerInjection() : Void
+	{
+		this._applicationAssembler = XmlCompiler.compile( "context/xml/triggerInjection.xml" );
+
+		var model : MockWeatherModel = this._locate( "model" );
+		Assert.isInstanceOf( model, MockWeatherModel );
+		
+		var module : MockWeatherListener = this._locate( "module" );
+		
+		model.temperature.trigger( 13 );
+		model.weather.trigger( 'sunny' );
+		
+		
+		Assert.equals( 13, module.temperature );
+		Assert.equals( 'sunny', module.weather );
+	}
 }
