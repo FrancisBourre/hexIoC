@@ -11,8 +11,8 @@ import hex.domain.Domain;
 import hex.event.IDispatcher;
 import hex.event.MessageType;
 import hex.ioc.core.CoreFactory;
-import hex.log.DomainLogger;
 import hex.log.ILogger;
+import hex.log.LogManager;
 import hex.metadata.AnnotationProvider;
 import hex.metadata.IAnnotationProvider;
 import hex.state.State;
@@ -67,7 +67,7 @@ class ApplicationContext extends AbstractApplicationContext
 		injector.mapToValue( IDependencyInjector, injector );
 		injector.mapToType( IMacroExecutor, MacroExecutor );
 		
-		var logger = new DomainLogger( domain );
+		var logger = LogManager.getLogger( domain.getName() );
 		injector.mapToValue( ILogger, logger );
 		
 		//build annotation provider

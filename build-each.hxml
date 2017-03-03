@@ -1,22 +1,11 @@
 -main MainIoCTest
--cp src
+
+-lib hexioc
+-lib hexunit
+
 -cp test
--cp hexcore/src
--cp hexcore/test
--cp hexreflection/src
--cp hexreflection/test
--cp hexannotation/src
--cp hexannotation/test
--cp hexinject/src
--cp hexinject/test
--cp hexdsl/src
--cp hexdsl/test
--cp hexmvc/src
--cp hexmvc/test
--cp hexservice/src
--cp hexservice/test
--cp hexstate/src
--cp hexstate/test
--cp hexunit/src
--cp hexunit/test
 -D debug=true
+
+#this is needed for all the mock classes
+-cp hexdsl/test
+-cp hexmvc/test
