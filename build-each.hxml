@@ -8,3 +8,4 @@
 
 #this is needed for all the mock classes
 -cp hexdsl/test
+-cp hexmvc/test
