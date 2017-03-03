@@ -5,3 +5,6 @@
 
 -cp test
 -D debug=true
+
+#this is needed for all the mock classes
+-cp hexdsl/test
