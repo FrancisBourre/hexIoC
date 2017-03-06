@@ -6,16 +6,11 @@
   "description": "Inversion of Control system with DSL and modularity based on global and micro contexts.",
   "contributors": ["doclerlabs"],
   "releasenote": "First release. Still alpha testing",
-  "version": "0.1.0",
+  "version": "git",
   "url": "https://github.com/DoclerLabs/hexIoC",
   "dependencies": 
   {
-    "hexcore": "git:https://github.com/DoclerLabs/hexCore.git",
-	"hexreflection": "git:https://github.com/DoclerLabs/hexReflection.git",
-    "hexannotation": "git:https://github.com/DoclerLabs/hexAnnotation.git",
-    "hexinject": "git:https://github.com/DoclerLabs/hexInject.git",
     "hexdsl": "git:https://github.com/DoclerLabs/hexDsl.git",
-	"hexmvc": "git:https://github.com/DoclerLabs/hexMVC.git",
 	"hexstate": "git:https://github.com/DoclerLabs/hexState.git",
 	"hexservice": "git:https://github.com/DoclerLabs/hexService.git"
   }

@@ -1,7 +1,6 @@
 package hex.ioc.parser.xml.state.mock;
 
 import hex.control.command.BasicCommand;
-import hex.control.Request;
 
 /**
  * ...
@@ -9,7 +8,7 @@ import hex.control.Request;
  */
 class MockExitStateCommand extends BasicCommand
 {
-	public function execute( ?request : Request ) : Void 
+	override public function execute() : Void
 	{
 		( cast this.getOwner() ).commandWasCalled = true;
 	}

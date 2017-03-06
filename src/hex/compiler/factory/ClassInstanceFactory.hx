@@ -10,9 +10,7 @@ import hex.compiletime.factory.ArgumentFactory;
 import hex.di.IInjectorContainer;
 import hex.domain.Domain;
 import hex.domain.DomainExpert;
-import hex.domain.DomainUtil;
 import hex.error.PrivateConstructorException;
-import hex.metadata.AnnotationProvider;
 import hex.module.IModule;
 import hex.util.MacroUtil;
 
@@ -28,10 +26,8 @@ class ClassInstanceFactory
         throw new PrivateConstructorException();
     }
 
-	static var _annotationProviderClass 	: Array<String>;
-	static var _domainExpertClass 			: Array<String>;
-	static var _domainUtilClass 			: Array<String>;
-	static var _domainClass 				: Array<String>;
+	static var _domainExpertClass 		: Array<String>;
+	static var _domainClass 			: Array<String>;
 	
 	static var _moduleInterface 			: ClassType;
 	static var _injectorContainerInterface 	: ClassType;
@@ -40,9 +36,7 @@ class ClassInstanceFactory
 	
 	static function _init() : Bool
 	{
-		ClassInstanceFactory._annotationProviderClass 		= MacroUtil.getPack( Type.getClassName( AnnotationProvider ) );
 		ClassInstanceFactory._domainExpertClass 			= MacroUtil.getPack( Type.getClassName( DomainExpert ) );
-		ClassInstanceFactory._domainUtilClass 				= MacroUtil.getPack( Type.getClassName( DomainUtil ) );
 		ClassInstanceFactory._domainClass 					= MacroUtil.getPack( Type.getClassName( Domain ) );
 		ClassInstanceFactory._moduleInterface 				= MacroUtil.getClassType( Type.getClassName( IModule ) );
 		ClassInstanceFactory._injectorContainerInterface 	= MacroUtil.getClassType( Type.getClassName( IInjectorContainer ) );
@@ -106,19 +100,17 @@ class ClassInstanceFactory
 			{
 				var applicationContextName = factoryVO.contextFactory.getApplicationContext().getName();
 				
+				//concatenate domain's name with parent's domain
+				var domainName = factoryVO.contextFactory.getApplicationContext().getDomain().getName() 
+					+ '.' + idVar;
+				
 				//TODO register for every instance (from staticCall and/or factory)
 				result = macro 	@:mergeBlock 
 								{ 
 									$p { _domainExpertClass } .getInstance().registerDomain
 									( 
-										$p { _domainUtilClass } .getDomain( $v { idVar }, $p { _domainClass } ) 
+										$p { _domainClass } .getDomain( $v { domainName } ) 
 									);
-
-									$p { _annotationProviderClass } .registerToParentDomain
-									( 
-										$p{ _domainUtilClass } .getDomain( $v{ idVar }, $p{ _domainClass } ),
-										$p{ _domainUtilClass } .getDomain( $v{ applicationContextName }, $p{ _domainClass } )
-									); 
 								} 
 			}
 			

@@ -8,7 +8,6 @@ import hex.di.Injector;
 import hex.di.mapping.MappingConfiguration;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
-import hex.domain.DomainUtil;
 import hex.error.Exception;
 import hex.error.NoSuchElementException;
 import hex.event.Dispatcher;
@@ -54,6 +53,8 @@ import hex.mock.MockProxy;
 import hex.mock.MockReceiver;
 import hex.mock.MockRectangle;
 import hex.mock.MockServiceProvider;
+import hex.mock.MockWeatherListener;
+import hex.mock.MockWeatherModel;
 import hex.runtime.ApplicationAssembler;
 import hex.structures.Point;
 import hex.structures.Size;
@@ -884,7 +885,7 @@ class XmlCompilerTest
 		Assert.isInstanceOf( config, MappingConfiguration );
 
 		var injector = new Injector();
-		var domain = DomainUtil.getDomain( 'XmlCompilerTest.testBuildingMappingConfigurationWithInjectInto', Domain );
+		var domain = Domain.getDomain( 'XmlCompilerTest.testBuildingMappingConfigurationWithInjectInto' );
 		injector.mapToValue( Domain, domain );
 		
 		config.configure( injector, new Dispatcher(), null );
@@ -1148,4 +1149,22 @@ class XmlCompilerTest
 	}
 
 	function _getValue( key : String ) return "value";
+	
+	@Test( "test trigger injection" )
+	public function testTriggerInjection() : Void
+	{
+		this._applicationAssembler = XmlCompiler.compile( "context/xml/triggerInjection.xml" );
+
+		var model : MockWeatherModel = this._locate( "model" );
+		Assert.isInstanceOf( model, MockWeatherModel );
+		
+		var module : MockWeatherListener = this._locate( "module" );
+		
+		model.temperature.trigger( 13 );
+		model.weather.trigger( 'sunny' );
+		
+		
+		Assert.equals( 13, module.temperature );
+		Assert.equals( 'sunny', module.weather );
+	}
 }

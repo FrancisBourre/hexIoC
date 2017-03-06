@@ -5,7 +5,7 @@ import hex.core.ContextTypeList;
 import hex.error.Exception;
 import hex.factory.BuildRequest;
 import hex.ioc.core.ContextAttributeList;
-import hex.ioc.core.ContextNameList;
+import hex.ioc.core.ContextNodeNameList;
 import hex.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVO;
 import hex.vo.MethodCallVO;
@@ -105,7 +105,7 @@ class ObjectXMLParser extends AbstractXMLParser<BuildRequest>
 		
 
 		// Build property.
-		var propertyIterator = xml.elementsNamed( ContextNameList.PROPERTY );
+		var propertyIterator = xml.elementsNamed( ContextNodeNameList.PROPERTY );
 		while ( propertyIterator.hasNext() )
 		{
 			var property = propertyIterator.next();
@@ -124,7 +124,7 @@ class ObjectXMLParser extends AbstractXMLParser<BuildRequest>
 		}
 
 		// Build method call.
-		var methodCallIterator = xml.elementsNamed( ContextNameList.METHOD_CALL );
+		var methodCallIterator = xml.elementsNamed( ContextNodeNameList.METHOD_CALL );
 		while( methodCallIterator.hasNext() )
 		{
 			var methodCallItem 		= methodCallIterator.next();
@@ -136,7 +136,7 @@ class ObjectXMLParser extends AbstractXMLParser<BuildRequest>
 		}
 
 		// Build channel listener.
-		var listenIterator = xml.elementsNamed( ContextNameList.LISTEN );
+		var listenIterator = xml.elementsNamed( ContextNodeNameList.LISTEN );
 		while( listenIterator.hasNext() )
 		{
 			var listener = listenIterator.next();

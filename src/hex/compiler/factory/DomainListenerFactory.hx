@@ -8,7 +8,6 @@ import hex.collection.Locator;
 import hex.compiletime.basic.vo.FactoryVOTypeDef;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
-import hex.domain.DomainUtil;
 import hex.error.PrivateConstructorException;
 import hex.event.ClassAdapter;
 import hex.event.EventProxy;
@@ -34,24 +33,27 @@ class DomainListenerFactory
 	static var _observableInterface 				= MacroUtil.getClassType( Type.getClassName( IObservable ) );
 	
 	static var _applicationDomainDispatcherClass 	= MacroUtil.getPack( Type.getClassName( ApplicationDomainDispatcher )  );
-	static var _domainUtilClass 					= MacroUtil.getPack( Type.getClassName( DomainUtil )  );
 	static var _domainClass 						= MacroUtil.getPack( Type.getClassName( Domain )  );
 	
 	static var _classAdapterTypePath 				= MacroUtil.getTypePath( Type.getClassName( ClassAdapter ) );
 	
 	static function _getDomain( expressions: Array<Expr>, domainName : String, factoryVO : FactoryVOTypeDef ) : String
 	{
+		//concatenate domain's name with parent's domain
+		domainName = factoryVO.contextFactory.getApplicationContext().getDomain().getName()
+			+ '.' + domainName;
+			
 		if ( domainLocator.exists( domainName ) )
 		{
 			return domainLocator.get( domainName );
 		}
 		else
 		{
-			var domainVariable = "__domainName_" + domainName;
+			var domainVariable = "__domainName_" + domainName.split( '.' ).join( '_' );
 
 			expressions.push( macro @:mergeBlock 
 			{ 
-				var $domainVariable = $p { _domainUtilClass }.getDomain( $v{ domainName }, $p { _domainClass } ); 
+				var $domainVariable = $p { _domainClass }.getDomain( $v{ domainName } ); 
 			} );
 			
 			domainLocator.set( domainName, domainVariable );

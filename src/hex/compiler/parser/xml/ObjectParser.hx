@@ -8,7 +8,7 @@ import hex.factory.BuildRequest;
 import hex.ioc.assembler.ApplicationContext;
 import hex.compiletime.xml.XmlUtil;
 import hex.ioc.core.ContextAttributeList;
-import hex.ioc.core.ContextNameList;
+import hex.ioc.core.ContextNodeNameList;
 import hex.core.ContextTypeList;
 import hex.compiletime.error.IExceptionReporter;
 import hex.ioc.parser.xml.XMLAttributeUtil;
@@ -136,7 +136,7 @@ class ObjectParser extends AbstractXmlParser<BuildRequest>
 				else
 				{
 					args = [];
-					var iterator = xml.elementsNamed( ContextNameList.ARGUMENT );
+					var iterator = xml.elementsNamed( ContextNodeNameList.ARGUMENT );
 
 					if ( iterator.hasNext() )
 					{
@@ -238,7 +238,7 @@ class ObjectParser extends AbstractXmlParser<BuildRequest>
 		}
 
 		// Build property.
-		var propertyIterator = xml.elementsNamed( ContextNameList.PROPERTY );
+		var propertyIterator = xml.elementsNamed( ContextNodeNameList.PROPERTY );
 		while ( propertyIterator.hasNext() )
 		{
 			var property = propertyIterator.next();
@@ -274,13 +274,13 @@ class ObjectParser extends AbstractXmlParser<BuildRequest>
 		}
 
 		// Build method call.
-		var methodCallIterator = xml.elementsNamed( ContextNameList.METHOD_CALL );
+		var methodCallIterator = xml.elementsNamed( ContextNodeNameList.METHOD_CALL );
 		while( methodCallIterator.hasNext() )
 		{
 			var methodCallItem = methodCallIterator.next();
 
 			args = [];
-			var iterator = methodCallItem.elementsNamed( ContextNameList.ARGUMENT );
+			var iterator = methodCallItem.elementsNamed( ContextNodeNameList.ARGUMENT );
 
 			while ( iterator.hasNext() )
 			{
@@ -327,7 +327,7 @@ class ObjectParser extends AbstractXmlParser<BuildRequest>
 		}
 
 		// Build channel listener.
-		var listenIterator = xml.elementsNamed( ContextNameList.LISTEN );
+		var listenIterator = xml.elementsNamed( ContextNodeNameList.LISTEN );
 		while( listenIterator.hasNext() )
 		{
 			var listener = listenIterator.next();
@@ -336,7 +336,7 @@ class ObjectParser extends AbstractXmlParser<BuildRequest>
 			if ( channelName != null )
 			{
 				var listenerArgs : Array<DomainListenerVOArguments> = [];
-				var iterator = listener.elementsNamed( ContextNameList.EVENT );
+				var iterator = listener.elementsNamed( ContextNodeNameList.EVENT );
 
 				while ( iterator.hasNext() )
 				{
@@ -388,13 +388,13 @@ class ObjectParser extends AbstractXmlParser<BuildRequest>
 	function _getMapArguments( ownerID : String, xml : Xml, exceptionReporter : IExceptionReporter<Xml> ) : Array<MapVO>
 	{
 		var args : Array<MapVO> = [];
-		var iterator = xml.elementsNamed( ContextNameList.ITEM );
+		var iterator = xml.elementsNamed( ContextNodeNameList.ITEM );
 
 		while ( iterator.hasNext() )
 		{
 			var item = iterator.next();
-			var keyList 	= item.elementsNamed( ContextNameList.KEY );
-			var valueList 	= item.elementsNamed( ContextNameList.VALUE );
+			var keyList 	= item.elementsNamed( ContextNodeNameList.KEY );
+			var valueList 	= item.elementsNamed( ContextNodeNameList.VALUE );
 			
 			if ( keyList.hasNext() )
 			{

@@ -1,7 +1,7 @@
 package hex.ioc.parser.xml;
 
 import hex.ioc.core.ContextAttributeList;
-import hex.ioc.core.ContextNameList;
+import hex.ioc.core.ContextNodeNameList;
 import hex.core.ContextTypeList;
 import hex.vo.ConstructorVO;
 import hex.ioc.vo.DomainListenerVOArguments;
@@ -23,7 +23,7 @@ class XMLParserUtil
 	public static function getArguments( ownerID : String, xml : Xml, type : String ) : Array<Dynamic>
 	{
 		var args : Array<Dynamic> 	= [];
-		var iterator 				= xml.elementsNamed( ContextNameList.ARGUMENT );
+		var iterator 				= xml.elementsNamed( ContextNodeNameList.ARGUMENT );
 
 		if ( iterator.hasNext() )
 		{
@@ -129,7 +129,7 @@ class XMLParserUtil
 	public static function getMethodCallArguments( ownerID : String, xml : Xml ) : Array<ConstructorVO>
 	{
 		var args : Array<ConstructorVO> = [];
-		var iterator = xml.elementsNamed( ContextNameList.ARGUMENT );
+		var iterator = xml.elementsNamed( ContextNodeNameList.ARGUMENT );
 
 		while ( iterator.hasNext() )
 		{
@@ -142,7 +142,7 @@ class XMLParserUtil
 	public static function getEventArguments( xml : Xml ) : Array<DomainListenerVOArguments>
 	{
 		var args : Array<DomainListenerVOArguments> = [];
-		var iterator = xml.elementsNamed( ContextNameList.EVENT );
+		var iterator = xml.elementsNamed( ContextNodeNameList.EVENT );
 
 		while ( iterator.hasNext() )
 		{
@@ -165,13 +165,13 @@ class XMLParserUtil
 	public static function getMapArguments( ownerID : String, xml : Xml ) : Array<Dynamic>
 	{
 		var args : Array<Dynamic> = [];
-		var iterator = xml.elementsNamed( ContextNameList.ITEM );
+		var iterator = xml.elementsNamed( ContextNodeNameList.ITEM );
 
 		while ( iterator.hasNext() )
 		{
 			var item = iterator.next();
-			var keyList 	= item.elementsNamed( ContextNameList.KEY );
-			var valueList 	= item.elementsNamed( ContextNameList.VALUE );
+			var keyList 	= item.elementsNamed( ContextNodeNameList.KEY );
+			var valueList 	= item.elementsNamed( ContextNodeNameList.VALUE );
 			
 			if ( keyList.hasNext() )
 			{

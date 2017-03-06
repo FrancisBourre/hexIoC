@@ -2,7 +2,6 @@ package hex.ioc.parser.xml.mock;
 
 #if (!neko || haxe_ver >= "3.3")
 import haxe.Timer;
-import hex.control.Request;
 import hex.control.async.AsyncCommand;
 
 /**
@@ -22,7 +21,7 @@ class MockChatEventAdapterStrategyCommand extends AsyncCommand
 	@Inject
 	public var message : String;
 
-	public function execute( ?request : Request ) : Void
+	override public function execute() : Void
 	{
 		Timer.delay( this.testAsyncCallback, 300 );
 	}
