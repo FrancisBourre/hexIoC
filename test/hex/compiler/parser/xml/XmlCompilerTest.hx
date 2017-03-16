@@ -93,7 +93,7 @@ class XmlCompilerTest
 	{
 		return this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getCoreFactory().locate( key );
 	}
-//
+
 	@Test( "test building String with assembler" )
 	public function testBuildingStringWithAssembler() : Void
 	{
@@ -106,7 +106,7 @@ class XmlCompilerTest
 		Assert.equals( "bonjour", this._locate( "s2" ), "" );
 		Assert.equals( assembler, this._applicationAssembler, "" );
 	}
-//
+
 	@Test( "test building String instances with the same assembler at compile time and runtime" )
 	public function testBuildingStringsMixingCompileTimeAndRuntime() : Void
 	{
@@ -118,7 +118,7 @@ class XmlCompilerTest
 		Assert.equals( "hola", this._locate( "s2" ), "" );
 		Assert.equals( assembler, this._applicationAssembler, "" );
 	}
-//
+
 	@Test( "test building String" )
 	public function testBuildingString() : Void
 	{
@@ -126,7 +126,7 @@ class XmlCompilerTest
 		var s : String = this._locate( "s" );
 		Assert.equals( "hello", s, "" );
 	}
-//
+
 	@Test( "test building String with assembler property" )
 	public function testBuildingStringWithAssemblerProperty() : Void
 	{
@@ -135,7 +135,7 @@ class XmlCompilerTest
 		var s : String = this._locate( "s" );
 		Assert.equals( "hello", s, "" );
 	}
-//
+
 	@Ignore( "test building String with assembler static property" )
 	public function testBuildingStringWithAssemblerStaticProperty() : Void
 	{
@@ -144,7 +144,7 @@ class XmlCompilerTest
 		var s : String = this._locate( "s" );
 		Assert.equals( "hello", s, "" );
 	}
-//
+
 	@Test( "test read twice the same context" )
 	public function testReadTwiceTheSameContext() : Void
 	{
@@ -154,17 +154,17 @@ class XmlCompilerTest
 		XmlCompiler.compileWithAssembler( applicationAssembler, "context/xml/simpleInstanceWithoutArguments.xml" );
 		XmlCompiler.compileWithAssembler( this._applicationAssembler, "context/xml/simpleInstanceWithoutArguments.xml" );
 		
-		var coreFactory = applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getCoreFactory();
+		var localCoreFactory = applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getCoreFactory();
 
-		var instance1 = coreFactory.locate( "instance" );
+		var instance1 = localCoreFactory.locate( "instance" );
 		Assert.isInstanceOf( instance1, MockClassWithoutArgument );
 		
-		var instance2 = this._locate( "instance" );
+		var instance2 = this._getCoreFactory().locate( "instance" );
 		Assert.isInstanceOf( instance2, MockClassWithoutArgument );
 		
 		Assert.notEquals( instance1, instance2 );
 	}
-//
+
 	@Test( "test building Int" )
 	public function testBuildingInt() : Void
 	{
@@ -172,14 +172,14 @@ class XmlCompilerTest
 		var i : Int = this._locate( "i" );
 		Assert.equals( -3, i, "" );
 	}
-//
+
 	@Test( "test building Hex" )
 	public function testBuildingHex() : Void
 	{
 		this._applicationAssembler = XmlCompiler.compile( "context/xml/testBuildingHex.xml" );
 		Assert.equals( 0xFFFFFF, this._locate( "i" ) );
 	}
-//
+
 	@Test( "test building Bool" )
 	public function testBuildingBool() : Void
 	{
@@ -187,7 +187,7 @@ class XmlCompilerTest
 		var b : Bool = this._locate( "b" );
 		Assert.isTrue( b, "" );
 	}
-//
+
 	@Test( "test building UInt" )
 	public function testBuildingUInt() : Void
 	{
@@ -195,7 +195,7 @@ class XmlCompilerTest
 		var i : UInt = this._locate( "i" );
 		Assert.equals( 3, i, "" );
 	}
-//
+
 	@Test( "test building null" )
 	public function testBuildingNull() : Void
 	{
@@ -203,7 +203,7 @@ class XmlCompilerTest
 		var result : Dynamic = this._locate( "value" );
 		Assert.isNull( result, "" );
 	}
-//
+
 	@Test( "test building anonymous object" )
 	public function testBuildingAnonymousObject() : Void
 	{
@@ -217,7 +217,7 @@ class XmlCompilerTest
 		Assert.isFalse( obj.isSleeping );
 		Assert.equals( 1.75, this._locate( "obj.height" ) );
 	}
-//
+
 	@Test( "test building simple instance without arguments" )
 	public function testBuildingSimpleInstanceWithoutArguments() : Void
 	{
@@ -226,7 +226,7 @@ class XmlCompilerTest
 		var instance : MockClassWithoutArgument = this._locate( "instance" );
 		Assert.isInstanceOf( instance, MockClassWithoutArgument );
 	}
-//
+
 	@Test( "test building simple instance with arguments" )
 	public function testBuildingSimpleInstanceWithArguments() : Void
 	{
@@ -237,7 +237,7 @@ class XmlCompilerTest
 		Assert.equals( 10, size.width, "" );
 		Assert.equals( 20, size.height, "" );
 	}
-//
+
 	@Test( "test building multiple instances with arguments" )
 	public function testBuildingMultipleInstancesWithArguments() : Void
 	{
@@ -253,7 +253,7 @@ class XmlCompilerTest
 		Assert.equals( 35, position.x, "" );
 		Assert.equals( 45, position.y, "" );
 	}
-//
+
 	@Test( "test building single instance with primitives references" )
 	public function testBuildingSingleInstanceWithPrimitivesReferences() : Void
 	{
@@ -315,7 +315,7 @@ class XmlCompilerTest
 		Assert.equals( width, rect.size.x, "" );
 		Assert.equals( height, rect.size.y, "" );
 	}
-//
+
 	@Test( "test building multiple instances with references" )
 	public function testBuildingMultipleInstancesWithReferences() : Void
 	{
@@ -338,7 +338,7 @@ class XmlCompilerTest
 		Assert.equals( 30, rect.size.x, "" );
 		Assert.equals( 40, rect.size.y, "" );
 	}
-//
+
 	@Test( "test simple method call" )
 	public function testSimpleMethodCall() : Void
 	{
@@ -348,7 +348,7 @@ class XmlCompilerTest
 		Assert.isInstanceOf( caller, MockCaller, "" );
 		Assert.deepEquals( [ "hello", "world" ], MockCaller.passedArguments, "" );
 	}
-//
+
 	@Test( "test method call with type params" )
 	public function testCallWithTypeParams() : Void
 	{
@@ -358,7 +358,7 @@ class XmlCompilerTest
 		Assert.isInstanceOf( caller, MockCaller, "" );
 		Assert.equals( 3, MockCaller.passedArray.length, "" );
 	}
-//
+
 	@Test( "test building multiple instances with method calls" )
 	public function testBuildingMultipleInstancesWithMethodCall() : Void
 	{
@@ -389,7 +389,7 @@ class XmlCompilerTest
 		Assert.equals( 0, anotherRect.width, "" );
 		Assert.equals( 0, anotherRect.height, "" );
 	}
-//
+
 	@Test( "test building instance with static method" )
 	public function testBuildingInstanceWithStaticMethod() : Void
 	{
@@ -399,7 +399,7 @@ class XmlCompilerTest
 		Assert.isInstanceOf( service, MockServiceProvider, "" );
 		Assert.equals( "http://localhost/amfphp/gateway.php", MockServiceProvider.getInstance().getGateway(), "" );
 	}
-//
+
 	@Test( "test building instance with static method and arguments" )
 	public function testBuildingInstanceWithStaticMethodAndArguments() : Void
 	{
@@ -412,7 +412,7 @@ class XmlCompilerTest
 		Assert.equals( 30, rect.width, "" );
 		Assert.equals( 40, rect.height, "" );
 	}
-//
+
 	@Test( "test building instance with static method and factory method" )
 	public function testBuildingInstanceWithStaticMethodAndFactoryMethod() : Void
 	{
@@ -423,7 +423,7 @@ class XmlCompilerTest
 		Assert.equals( 10, point.x, "" );
 		Assert.equals( 20, point.y, "" );
 	}
-//
+
 	@Test( "test 'injector-creation' attribute" )
 	public function testInjectorCreationAttribute() : Void
 	{
@@ -438,7 +438,7 @@ class XmlCompilerTest
 		Assert.equals( "hola mundo", instance.property, "" );
 		Assert.isTrue( instance.postConstructWasCalled, "" );
 	}
-//
+
 	@Test( "test 'inject-into' attribute" )
 	public function testInjectIntoAttribute() : Void
 	{
@@ -453,7 +453,7 @@ class XmlCompilerTest
 		Assert.equals( "hola mundo", instance.property, "" );
 		Assert.isTrue( instance.postConstructWasCalled, "" );
 	}
-//
+
 	@Test( "test building XML without parser class" )
 	public function testBuildingXMLWithoutParserClass() : Void
 	{
@@ -463,7 +463,7 @@ class XmlCompilerTest
 		Assert.isNotNull( fruits );
 		Assert.isInstanceOf( fruits, Xml );
 	}
-//
+
 	@Test( "test building XML with parser class" )
 	public function testBuildingXMLWithParserClass() : Void
 	{
@@ -480,7 +480,7 @@ class XmlCompilerTest
 		Assert.equals( "apple", apple.toString(), "" );
 		Assert.equals( "banana", banana.toString(), "" );
 	}
-//
+
 	@Test( "test building Arrays" )
 	public function testBuildingArrays() : Void
 	{
@@ -505,7 +505,7 @@ class XmlCompilerTest
 		Assert.equals( "apple", apple.toString(), "" );
 		Assert.equals( "banana", banana.toString(), "" );
 	}
-//
+
 	@Test( "test building Map filled with references" )
 	public function testBuildingMapFilledWithReferences() : Void
 	{
@@ -525,7 +525,7 @@ class XmlCompilerTest
 		Assert.equals( "apple", apple.toString(), "" );
 		Assert.equals( "banana", banana.toString(), "" );
 	}
-//
+
 	@Test( "test building HashMap with map-type" )
 	public function testBuildingHashMapWithMapType() : Void
 	{
@@ -543,7 +543,7 @@ class XmlCompilerTest
 		var map = this._getCoreFactory().getInjector().getInstanceWithClassName( "hex.collection.HashMap<String,hex.mock.MockFruitVO>", "fruits" );
 		Assert.equals( fruits, map );
 	}
-//
+
 	@Test( "test map-type attribute with Array" )
 	public function testMapTypeWithArray() : Void
 	{
@@ -560,7 +560,7 @@ class XmlCompilerTest
 		Assert.equals( intCollection, uintCollection );
 		Assert.notEquals( intCollection, stringCollection );
 	}
-//
+
 	@Test( "test map-type attribute with instance" )
 	public function testMapTypeWithInstance() : Void
 	{
@@ -577,7 +577,7 @@ class XmlCompilerTest
 		Assert.equals( intInstance, uintInstance );
 		Assert.notEquals( intInstance, stringInstance );
 	}
-//
+
 	@Test( "test static-ref" )
 	public function testStaticRef() : Void
 	{
@@ -601,7 +601,7 @@ class XmlCompilerTest
 		Assert.isNotNull( object2 );
 		Assert.equals( MockClass, object2.property );
 	}
-//
+
 	@Test( "test static-ref argument" )
 	public function testStaticArgument() : Void
 	{
@@ -611,7 +611,7 @@ class XmlCompilerTest
 		Assert.isNotNull( instance, "" );
 		Assert.equals( instance.constant, MockClass.MESSAGE_TYPE );
 	}
-//
+
 	@Test( "test static-ref argument on method-call" )
 	public function testStaticArgumentOnMethodCall() : Void
 	{
@@ -621,7 +621,7 @@ class XmlCompilerTest
 		Assert.isNotNull( instance, "" );
 		Assert.equals( MockMethodCaller.staticVar, instance.argument, "" );
 	}
-//
+
 	@Test( "test map-type attribute" )
 	public function testMapTypeAttribute() : Void
 	{
@@ -633,7 +633,7 @@ class XmlCompilerTest
 		Assert.isInstanceOf( instance, IMockInterface );
 		Assert.equals( instance, this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getInjector().getInstance( IMockInterface, "instance" ) );
 	}
-//
+
 	@Test( "test multi map-type attributes" )
 	public function testMultiMapTypeAttributes() : Void
 	{
@@ -648,28 +648,28 @@ class XmlCompilerTest
 		Assert.equals( instance, this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getInjector().getInstance( IMockInterface, "instance" ) );
 		Assert.equals( instance, this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getInjector().getInstance( IAnotherMockInterface, "instance" ) );
 	}
-//
+
 	@Test( "test if attribute" )
 	public function testIfAttribute() : Void
 	{
 		this._applicationAssembler = XmlCompiler.compile( "context/xml/ifAttribute.xml", null, [ "production" => true, "test" => false, "release" => false ] );
 		Assert.equals( "hello production", this._locate( "message" ), "message value should equal 'hello production'" );
 	}
-//
+
 	@Test( "test include with if attribute" )
 	public function testIncludeWithIfAttribute() : Void
 	{
 		this._applicationAssembler = XmlCompiler.compile( "context/xml/includeWithIfAttribute.xml", null, [ "production" => true, "test" => false, "release" => false ] );
 		Assert.equals( "hello production", this._locate( "message" ), "message value should equal 'hello production'" );
 	}
-//
+
 	@Test( "test include fails with if attribute" )
 	public function testIncludeFailsWithIfAttribute() : Void
 	{
 		this._applicationAssembler = XmlCompiler.compile( "context/xml/includeWithIfAttribute.xml", null, [ "production" => false, "test" => true, "release" => true ] );
 		Assert.methodCallThrows( NoSuchElementException, this._getCoreFactory(), this._locate, [ "message" ], "'NoSuchElementException' should be thrown" );
 	}
-//
+
 	@Test( "test file preprocessor with Xml file" )
 	public function testFilePreprocessorWithXmlFile() : Void
 	{
@@ -680,7 +680,7 @@ class XmlCompilerTest
 
 		Assert.equals( "bonjour", this._locate( "message" ), "message value should equal 'bonjour'" );
 	}
-//
+
 	@Test( "test file preprocessor with Xml file and include" )
 	public function testFilePreprocessorWithXmlFileAndInclude() : Void
 	{
