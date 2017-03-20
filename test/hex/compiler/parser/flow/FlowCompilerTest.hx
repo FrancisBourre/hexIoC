@@ -113,24 +113,24 @@ class FlowCompilerTest
 		Assert.equals( "hello", s );
 	}
 	
-	@Ignore( "test read twice the same context" )
+	@Test( "test read twice the same context" )
 	public function testReadTwiceTheSameContext() : Void
 	{
 		var applicationAssembler = new ApplicationAssembler();
 		this._applicationAssembler = new ApplicationAssembler();
 		
-		FlowCompiler.compileWithAssembler( this._applicationAssembler, "context/flow/simpleInstanceWithoutArguments.flow" );
+		FlowCompiler.compileWithAssembler( applicationAssembler, "context/flow/simpleInstanceWithoutArguments.flow" );
 		FlowCompiler.compileWithAssembler( this._applicationAssembler, "context/flow/simpleInstanceWithoutArguments.flow" );
 		
-		var coreFactory = applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getCoreFactory();
+		var localCoreFactory = applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getCoreFactory();
 
-		var command1 = coreFactory.locate( "command" );
-		Assert.isInstanceOf( command1, BasicCommand );
+		var instance1 = localCoreFactory.locate( "instance" );
+		Assert.isInstanceOf( instance1, MockClassWithoutArgument );
 		
-		var command2 = this._getCoreFactory().locate( "command" );
-		Assert.isInstanceOf( command2, BasicCommand );
+		var instance2 = this._getCoreFactory().locate( "instance" );
+		Assert.isInstanceOf( instance2, MockClassWithoutArgument );
 		
-		Assert.notEquals( command1, command2 );
+		Assert.notEquals( instance1, instance2 );
 	}
 	
 	@Test( "test building Int" )
