@@ -1002,8 +1002,7 @@ class XmlCompilerTest
 		myService.setIntVO( new MockIntVO( 9 ) );
 		Assert.equals( 4.5, ( myModuleB.getFloatValue() ), "" );
 	}
-	
-	#if (!neko || haxe_ver >= "3.3")
+
 	@Async( "test EventTrigger" )
 	public function testEventTrigger() : Void
 	{
@@ -1054,7 +1053,6 @@ class XmlCompilerTest
 		var receiver : MockReceiverModule = this._locate( "receiver" );
 		Assert.equals( "BONJOUR:HTTP://GOOGLE.COM", receiver.message, "" );
 	}
-	#end
 	
 	function getColorByName( name : String ) : Int
 	{

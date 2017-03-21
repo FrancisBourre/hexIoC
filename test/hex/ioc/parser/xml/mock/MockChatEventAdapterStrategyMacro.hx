@@ -1,6 +1,5 @@
 package hex.ioc.parser.xml.mock;
 
-#if (!neko || haxe_ver >= "3.3")
 import hex.control.async.IAsyncCommand;
 import hex.control.payload.ExecutionPayload;
 import hex.event.MacroAdapterStrategy;
@@ -36,4 +35,3 @@ class MockChatEventAdapterStrategyMacro extends MacroAdapterStrategy
 		this._result = cmd.getResult();
 	}
 }
-#end
