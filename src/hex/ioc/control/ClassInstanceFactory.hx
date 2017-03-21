@@ -3,7 +3,7 @@ package hex.ioc.control;
 import hex.domain.Domain;
 import hex.domain.DomainExpert;
 import hex.error.PrivateConstructorException;
-import hex.module.IModule;
+import hex.module.IContextModule;
 import hex.runtime.basic.vo.FactoryVOTypeDef;
 import hex.runtime.factory.ArgumentFactory;
 import hex.runtime.factory.ReferenceFactory;
@@ -41,7 +41,7 @@ class ClassInstanceFactory
 			{
 				var classReference = ClassUtil.getClassReference( constructorVO.className );
 			
-				var isModule : Bool = ClassUtil.classExtendsOrImplements( classReference, IModule );
+				var isModule : Bool = ClassUtil.classExtendsOrImplements( classReference, IContextModule );
 				if ( isModule && constructorVO.ID != null && constructorVO.ID.length > 0 )
 				{
 					//concatenate domain's name with parent's domain

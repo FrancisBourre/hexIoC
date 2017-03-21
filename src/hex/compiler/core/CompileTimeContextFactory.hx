@@ -1,5 +1,4 @@
 package hex.compiler.core;
-import hex.compiletime.basic.CompileTimeCoreFactory;
 
 #if macro
 import haxe.macro.Context;
@@ -21,6 +20,7 @@ import hex.core.SymbolTable;
 import hex.di.IInjectorContainer;
 import hex.event.IDispatcher;
 import hex.factory.BuildRequest;
+import hex.compiletime.basic.CompileTimeCoreFactory;
 import hex.compiletime.basic.IContextFactory;
 import hex.ioc.vo.DomainListenerVO;
 import hex.vo.MethodCallVO;
@@ -28,7 +28,7 @@ import hex.vo.PropertyVO;
 import hex.ioc.vo.StateTransitionVO;
 import hex.ioc.vo.TransitionVO;
 import hex.metadata.IAnnotationProvider;
-import hex.module.IModule;
+import hex.module.IContextModule;
 import hex.util.MacroUtil;
 import hex.vo.ConstructorVO;
 import hex.compiletime.basic.vo.FactoryVOTypeDef;
@@ -44,7 +44,7 @@ class CompileTimeContextFactory
 {
 	static var _annotationParsableInterface = MacroUtil.getClassType( Type.getClassName( IAnnotationParsable ) );
 	static var _injectorContainerInterface 	= MacroUtil.getClassType( Type.getClassName( IInjectorContainer ) );
-	static var _moduleInterface 			= MacroUtil.getClassType( Type.getClassName( IModule ) );
+	static var _moduleInterface 			= MacroUtil.getClassType( Type.getClassName( IContextModule ) );
 	
 	var _isInitialized				: Bool;
 	var _expressions 				: Array<Expr>;

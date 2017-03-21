@@ -828,7 +828,7 @@ class XmlCompilerTest
 		Assert.isInstanceOf( config, MappingConfiguration );
 
 		var injector = new Injector();
-		config.configure( injector, new Dispatcher(), null );
+		config.configure( injector, null );
 
 		Assert.isInstanceOf( injector.getInstance( IMockInterface ), MockClass );
 		Assert.isInstanceOf( injector.getInstance( IAnotherMockInterface ), AnotherMockClass );
@@ -844,7 +844,7 @@ class XmlCompilerTest
 		Assert.isInstanceOf( config, MappingConfiguration );
 
 		var injector = new Injector();
-		config.configure( injector, new Dispatcher(), null );
+		config.configure( injector, null );
 
 		Assert.isInstanceOf( injector.getInstance( IAnotherMockInterface, "name1" ),  MockClass );
 		Assert.isInstanceOf( injector.getInstance( IAnotherMockInterface, "name2" ), AnotherMockClass );

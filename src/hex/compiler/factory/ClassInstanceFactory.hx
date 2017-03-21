@@ -11,7 +11,7 @@ import hex.di.IInjectorContainer;
 import hex.domain.Domain;
 import hex.domain.DomainExpert;
 import hex.error.PrivateConstructorException;
-import hex.module.IModule;
+import hex.module.IContextModule;
 import hex.util.MacroUtil;
 
 /**
@@ -38,7 +38,7 @@ class ClassInstanceFactory
 	{
 		ClassInstanceFactory._domainExpertClass 			= MacroUtil.getPack( Type.getClassName( DomainExpert ) );
 		ClassInstanceFactory._domainClass 					= MacroUtil.getPack( Type.getClassName( Domain ) );
-		ClassInstanceFactory._moduleInterface 				= MacroUtil.getClassType( Type.getClassName( IModule ) );
+		ClassInstanceFactory._moduleInterface 				= MacroUtil.getClassType( Type.getClassName( IContextModule ) );
 		ClassInstanceFactory._injectorContainerInterface 	= MacroUtil.getClassType( Type.getClassName( IInjectorContainer ) );
 
 		return true;

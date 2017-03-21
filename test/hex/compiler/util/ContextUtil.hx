@@ -29,7 +29,7 @@ class ContextUtil
 		return { expr: MacroUtil.instantiate( typePath ), pos: Context.currentPos() };
 	}
 	
-	public static function buildContextDefintion( assemblerID : String, contextName : String ) : TypeDefinition
+	public static function buildContextDefintion( assemblerID : Int, contextName : String ) : TypeDefinition
 	{
 		var className = "ContextNamed_" + contextName + "_WithAssemblerID_" + assemblerID;
 		var classExpr = macro class $className

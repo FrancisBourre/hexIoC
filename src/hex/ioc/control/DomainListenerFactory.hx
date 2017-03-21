@@ -104,7 +104,7 @@ class DomainListenerFactory
 			callback = Reflect.field( listener, method );
 		}
 		
-		var strategyClass : Class<IAdapterStrategy> 	= cast ClassUtil.getClassReference( strategyClassName );
+		var strategyClass : Class<IAdapterStrategy> = cast ClassUtil.getClassReference( strategyClassName );
 		
 		var adapter = new ClassAdapter();
 		adapter.setCallBackMethod( listener, callback );
