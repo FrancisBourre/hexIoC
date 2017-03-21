@@ -990,8 +990,7 @@ class XmlReaderTest
 		myService.setIntVO( new MockIntVO( 9 ) );
 		Assert.equals( 4.5, ( myModuleB.getFloatValue() ) );
 	}
-	
-	#if (!neko || haxe_ver >= "3.3")
+
 	@Async( "test EventProxy" )
 	public function testEventProxy() : Void
 	{
@@ -1042,8 +1041,7 @@ class XmlReaderTest
 		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandler ), 500 );
 		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "bonjour" ] );
 	}
-	#end
-	
+
 	@Test( "test static-ref with factory" )
 	public function testStaticRefWithFactory() : Void
 	{
