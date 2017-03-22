@@ -852,11 +852,11 @@ class XmlReaderTest
 	{
 		this.build( XmlReader.getXml( "context/xml/mappingConfigurationWithSingleton.xml" ) );
 
-		var config = this._locate( "config" );
+		var config : MappingConfiguration = this._locate( "config" );
 		Assert.isInstanceOf( config, MappingConfiguration );
 
 		var injector = new Injector();
-		config.configure( injector, new Dispatcher(), null );
+		config.configure( injector, null );
 
 		var instance1 = injector.getInstance( IAnotherMockInterface, "name1" );
 		Assert.isInstanceOf( instance1,  MockClass );
@@ -878,14 +878,14 @@ class XmlReaderTest
 	{
 		this.build( XmlReader.getXml( "context/xml/mappingConfigurationWithInjectInto.xml" ) );
 
-		var config = this._locate( "config" );
+		var config : MappingConfiguration = this._locate( "config" );
 		Assert.isInstanceOf( config, MappingConfiguration );
 
 		var injector = new Injector();
 		var domain = Domain.getDomain( 'XmlReaderTest.testBuildingMappingConfigurationWithInjectInto' );
 		injector.mapToValue( Domain, domain );
 		
-		config.configure( injector, new Dispatcher(), null );
+		config.configure( injector, null );
 
 		var mock0 = injector.getInstance( IMockInjectee, "name1" );
 		Assert.isInstanceOf( mock0,  MockInjectee );
