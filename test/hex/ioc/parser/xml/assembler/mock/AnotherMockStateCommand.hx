@@ -7,7 +7,7 @@ import hex.core.IApplicationContext;
  * ...
  * @author Francis Bourre
  */
-class MockStateCommand extends BasicCommand
+class AnotherMockStateCommand extends BasicCommand
 {
 	static public var callCount : Int = 0;
 	static public var lastInjectedContext: IApplicationContext;
@@ -17,7 +17,7 @@ class MockStateCommand extends BasicCommand
 	
 	override public function execute() : Void
 	{
-		MockStateCommand.callCount++;
-		MockStateCommand.lastInjectedContext = this.context;
+		AnotherMockStateCommand.callCount++;
+		AnotherMockStateCommand.lastInjectedContext = this.context;
 	}
 }

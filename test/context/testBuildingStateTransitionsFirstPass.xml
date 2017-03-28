@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<root name="applicationContext">
+
+	<state id="assemblingStart1" ref="applicationContext.state.ASSEMBLING_START">
+		<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand"/>
+		<exit command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand" fire-once="true"/>
+	</state>
+	
+	<state id="objectsBuilt1" ref="applicationContext.state.OBJECTS_BUILT">
+		<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand" fire-once="true"/>
+		<exit command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand" fire-once="true"/>
+	</state>
+	
+	<state id="domainListenersAssigned1" ref="applicationContext.state.DOMAIN_LISTENERS_ASSIGNED">
+		<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand" fire-once="true"/>
+		<exit command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand" fire-once="true"/>
+	</state>
+	
+	<state id="methodsCalled1" ref="applicationContext.state.METHODS_CALLED">
+		<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand" fire-once="true"/>
+		<exit command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand" fire-once="true"/>
+	</state>
+	
+	<state id="modulesInitialized1" ref="applicationContext.state.MODULES_INITIALIZED">
+		<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand" fire-once="true"/>
+		<exit command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand" fire-once="true"/>
+	</state>
+	
+	<state id="assemblingEnd1" ref="applicationContext.state.ASSEMBLING_END">
+		<enter command-class="hex.ioc.parser.xml.assembler.mock.MockBuildContextCommand" fire-once="true"/>
+		<exit command-class="hex.ioc.parser.xml.assembler.mock.MockBuildContextExitCommand" fire-once="true"/>
+	</state>
+	
+	<module id="module1" type="hex.ioc.parser.xml.assembler.mock.MockModule" map-type="hex.module.IModule"/>
+</root>
