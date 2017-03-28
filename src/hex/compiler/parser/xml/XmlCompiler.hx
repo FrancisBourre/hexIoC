@@ -24,7 +24,7 @@ using StringTools;
 class XmlCompiler
 {
 	#if macro
-	static function _readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr, ?applicationAssemblerExpr : Expr ) : ExprOf<IApplicationAssembler>
+	static function _readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr, ?applicationAssemblerExpr : Expr, ?applicationContextName : String ) : ExprOf<IApplicationAssembler>
 	{
 		var conditionalVariablesMap 	= MacroConditionalVariablesProcessor.parse( conditionalVariables );
 		var conditionalVariablesChecker = new ConditionalVariablesChecker( conditionalVariablesMap );
@@ -37,19 +37,19 @@ class XmlCompiler
 		
 		parser.setImportHelper( new ClassImportHelper() );
 		parser.setExceptionReporter( new ExceptionReporter( dslReader.positionTracker ) );
-		parser.parse( assembler, document, CompileTimeContextFactory, CompileTimeApplicationContext );
+		parser.parse( assembler, document, CompileTimeContextFactory, CompileTimeApplicationContext, applicationContextName );
 
 		return assembler.getMainExpression();
 	}
 	#end
 	
-	macro public static function compile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
+	macro public static function compile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr, ?applicationContextName : String ) : ExprOf<IApplicationAssembler>
 	{
-		return XmlCompiler._readXmlFile( fileName, preprocessingVariables, conditionalVariables );
+		return XmlCompiler._readXmlFile( fileName, preprocessingVariables, conditionalVariables, applicationContextName );
 	}
 	
-	macro public static function compileWithAssembler( assemblerExpr : Expr, fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
+	macro public static function compileWithAssembler( assemblerExpr : Expr, fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr, ?applicationContextName : String ) : ExprOf<IApplicationAssembler>
 	{
-		return XmlCompiler._readXmlFile( fileName, preprocessingVariables, conditionalVariables, assemblerExpr );
+		return XmlCompiler._readXmlFile( fileName, preprocessingVariables, conditionalVariables, assemblerExpr, applicationContextName );
 	}
 }

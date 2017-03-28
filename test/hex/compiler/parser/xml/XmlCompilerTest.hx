@@ -164,6 +164,26 @@ class XmlCompilerTest
 		
 		Assert.notEquals( instance1, instance2 );
 	}
+	
+	@Test( "test overriding context name" )
+	public function testOverridingContextName() : Void
+	{
+		this._applicationAssembler = new ApplicationAssembler();
+		
+		XmlCompiler.compileWithAssembler( this._applicationAssembler, "context/xml/simpleInstanceWithoutArguments.xml", null, null, 'name1' );
+		XmlCompiler.compileWithAssembler( this._applicationAssembler, "context/xml/simpleInstanceWithoutArguments.xml", null, null, 'name2' );
+		
+		var factory1 = this._applicationAssembler.getApplicationContext( "name1", ApplicationContext ).getCoreFactory();
+		var factory2 = this._applicationAssembler.getApplicationContext( "name2", ApplicationContext ).getCoreFactory();
+
+		var instance1 = factory1.locate( "instance" );
+		Assert.isInstanceOf( instance1, MockClassWithoutArgument );
+		
+		var instance2 = factory2.locate( "instance" );
+		Assert.isInstanceOf( instance2, MockClassWithoutArgument );
+		
+		Assert.notEquals( instance1, instance2 );
+	}
 
 	@Test( "test building Int" )
 	public function testBuildingInt() : Void
