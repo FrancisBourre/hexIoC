@@ -78,6 +78,7 @@ class CompileTimeContextFactory
 			
 			this._applicationContext 				= applicationContext;
 			this._coreFactory 						= cast ( applicationContext.getCoreFactory(), CompileTimeCoreFactory );
+			this._coreFactory.register( this._applicationContext.getName(), this._applicationContext );
 		
 		//
 			this._factoryMap 						= new Map();
