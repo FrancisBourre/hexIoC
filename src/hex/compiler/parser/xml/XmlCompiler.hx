@@ -25,7 +25,7 @@ class XmlCompiler
 {
 	#if macro
 	static function _readXmlFile( 	fileName : String, 
-									applicationContextName : String = "applicationContext", 
+									?applicationContextName : String, 
 									?preprocessingVariables : Expr, 
 									?conditionalVariables : Expr, 
 									?applicationAssemblerExpr : Expr ) : ExprOf<IApplicationAssembler>
@@ -48,7 +48,7 @@ class XmlCompiler
 	#end
 	
 	macro public static function compile( 	fileName : String, 
-											applicationContextName : String = "applicationContext", 
+											?applicationContextName : String, 
 											?preprocessingVariables : Expr, 
 											?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
 	{
@@ -57,7 +57,7 @@ class XmlCompiler
 	
 	macro public static function compileWithAssembler( 	assemblerExpr : Expr, 
 														fileName : String, 
-														applicationContextName : String = "applicationContext", 
+														?applicationContextName : String, 
 														?preprocessingVariables : Expr, 
 														?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
 	{
