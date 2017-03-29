@@ -24,7 +24,11 @@ using StringTools;
 class XmlCompiler
 {
 	#if macro
-	static function _readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr, ?applicationAssemblerExpr : Expr, ?applicationContextName : String ) : ExprOf<IApplicationAssembler>
+	static function _readXmlFile( 	fileName : String, 
+									applicationContextName : String = "applicationContext", 
+									?preprocessingVariables : Expr, 
+									?conditionalVariables : Expr, 
+									?applicationAssemblerExpr : Expr ) : ExprOf<IApplicationAssembler>
 	{
 		var conditionalVariablesMap 	= MacroConditionalVariablesProcessor.parse( conditionalVariables );
 		var conditionalVariablesChecker = new ConditionalVariablesChecker( conditionalVariablesMap );
@@ -43,13 +47,20 @@ class XmlCompiler
 	}
 	#end
 	
-	macro public static function compile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr, ?applicationContextName : String ) : ExprOf<IApplicationAssembler>
+	macro public static function compile( 	fileName : String, 
+											applicationContextName : String = "applicationContext", 
+											?preprocessingVariables : Expr, 
+											?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
 	{
-		return XmlCompiler._readXmlFile( fileName, preprocessingVariables, conditionalVariables, applicationContextName );
+		return XmlCompiler._readXmlFile( fileName, applicationContextName, preprocessingVariables, conditionalVariables  );
 	}
 	
-	macro public static function compileWithAssembler( assemblerExpr : Expr, fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr, ?applicationContextName : String ) : ExprOf<IApplicationAssembler>
+	macro public static function compileWithAssembler( 	assemblerExpr : Expr, 
+														fileName : String, 
+														applicationContextName : String = "applicationContext", 
+														?preprocessingVariables : Expr, 
+														?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
 	{
-		return XmlCompiler._readXmlFile( fileName, preprocessingVariables, conditionalVariables, assemblerExpr, applicationContextName );
+		return XmlCompiler._readXmlFile( fileName, applicationContextName, preprocessingVariables, conditionalVariables, assemblerExpr );
 	}
 }

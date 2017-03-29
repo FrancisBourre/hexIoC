@@ -170,8 +170,8 @@ class XmlCompilerTest
 	{
 		this._applicationAssembler = new ApplicationAssembler();
 		
-		XmlCompiler.compileWithAssembler( this._applicationAssembler, "context/xml/simpleInstanceWithoutArguments.xml", null, null, 'name1' );
-		XmlCompiler.compileWithAssembler( this._applicationAssembler, "context/xml/simpleInstanceWithoutArguments.xml", null, null, 'name2' );
+		XmlCompiler.compileWithAssembler( this._applicationAssembler, "context/xml/simpleInstanceWithoutArguments.xml", 'name1' );
+		XmlCompiler.compileWithAssembler( this._applicationAssembler, "context/xml/simpleInstanceWithoutArguments.xml", 'name2' );
 		
 		var factory1 = this._applicationAssembler.getApplicationContext( "name1", ApplicationContext ).getCoreFactory();
 		var factory2 = this._applicationAssembler.getApplicationContext( "name2", ApplicationContext ).getCoreFactory();
@@ -672,28 +672,28 @@ class XmlCompilerTest
 	@Test( "test if attribute" )
 	public function testIfAttribute() : Void
 	{
-		this._applicationAssembler = XmlCompiler.compile( "context/xml/ifAttribute.xml", null, [ "production" => true, "test" => false, "release" => false ] );
+		this._applicationAssembler = XmlCompiler.compile( "context/xml/ifAttribute.xml", null, null, [ "production" => true, "test" => false, "release" => false ] );
 		Assert.equals( "hello production", this._locate( "message" ), "message value should equal 'hello production'" );
 	}
 
 	@Test( "test include with if attribute" )
 	public function testIncludeWithIfAttribute() : Void
 	{
-		this._applicationAssembler = XmlCompiler.compile( "context/xml/includeWithIfAttribute.xml", null, [ "production" => true, "test" => false, "release" => false ] );
+		this._applicationAssembler = XmlCompiler.compile( "context/xml/includeWithIfAttribute.xml", null, null, [ "production" => true, "test" => false, "release" => false ] );
 		Assert.equals( "hello production", this._locate( "message" ), "message value should equal 'hello production'" );
 	}
 
 	@Test( "test include fails with if attribute" )
 	public function testIncludeFailsWithIfAttribute() : Void
 	{
-		this._applicationAssembler = XmlCompiler.compile( "context/xml/includeWithIfAttribute.xml", null, [ "production" => false, "test" => true, "release" => true ] );
+		this._applicationAssembler = XmlCompiler.compile( "context/xml/includeWithIfAttribute.xml", null, null, [ "production" => false, "test" => true, "release" => true ] );
 		Assert.methodCallThrows( NoSuchElementException, this._getCoreFactory(), this._locate, [ "message" ], "'NoSuchElementException' should be thrown" );
 	}
 
 	@Test( "test file preprocessor with Xml file" )
 	public function testFilePreprocessorWithXmlFile() : Void
 	{
-		this._applicationAssembler = XmlCompiler.compile( "context/xml/preprocessor.xml", [	"hello" 		=> "bonjour",
+		this._applicationAssembler = XmlCompiler.compile( "context/xml/preprocessor.xml", null, [	"hello" 		=> "bonjour",
 																					"contextName" 	=> 'applicationContext',
 																					"context" 		=> 'name="${contextName}"',
 																					"node" 			=> '<msg id="message" value="${hello}"/>' ] );
@@ -704,7 +704,7 @@ class XmlCompilerTest
 	@Test( "test file preprocessor with Xml file and include" )
 	public function testFilePreprocessorWithXmlFileAndInclude() : Void
 	{
-		this._applicationAssembler = XmlCompiler.compile( "context/xml/preprocessorWithInclude.xml", [	"hello" 		=> "bonjour",
+		this._applicationAssembler = XmlCompiler.compile( "context/xml/preprocessorWithInclude.xml", null, [	"hello" 		=> "bonjour",
 																					"contextName" 	=> 'applicationContext',
 																					"context" 		=> 'name="${contextName}"',
 																					"node" 			=> '<msg id="message" value="${hello}"/>' ] );

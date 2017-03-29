@@ -20,7 +20,10 @@ import hex.compiletime.basic.CompileTimeApplicationContext;
 class FlowCompiler 
 {
 	#if macro
-	static function _readFile( fileName : String, ?preprocessingVariables : Expr, ?applicationAssemblerExpr : Expr, ?applicationContextName : String ) : ExprOf<IApplicationAssembler>
+	static function _readFile( 	fileName : String, 
+								applicationContextName : String = "applicationContext",
+								?preprocessingVariables : Expr, 
+								?applicationAssemblerExpr : Expr ) : ExprOf<IApplicationAssembler>
 	{
 		var reader						= new DSLReader();
 		var document 					= reader.read( fileName, preprocessingVariables );
@@ -36,13 +39,18 @@ class FlowCompiler
 	}
 	#end
 
-	macro public static function compile( fileName : String, ?preprocessingVariables : Expr, ?applicationContextName : String ) : ExprOf<IApplicationAssembler>
+	macro public static function compile( 	fileName : String, 
+											applicationContextName : String = "applicationContext",
+											?preprocessingVariables : Expr ) : ExprOf<IApplicationAssembler>
 	{
-		return FlowCompiler._readFile( fileName, preprocessingVariables, applicationContextName );
+		return FlowCompiler._readFile( fileName, applicationContextName, preprocessingVariables );
 	}
 	
-	macro public static function compileWithAssembler( assemblerExpr : Expr, fileName : String, ?preprocessingVariables : Expr, ?applicationContextName : String ) : ExprOf<IApplicationAssembler>
+	macro public static function compileWithAssembler( 	assemblerExpr : Expr, 
+														fileName : String, 
+														applicationContextName : String = "applicationContext",
+														?preprocessingVariables : Expr ) : ExprOf<IApplicationAssembler>
 	{
-		return FlowCompiler._readFile( fileName, preprocessingVariables, assemblerExpr, applicationContextName );
+		return FlowCompiler._readFile( fileName, applicationContextName, preprocessingVariables, assemblerExpr );
 	}
 }
