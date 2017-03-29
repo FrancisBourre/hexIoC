@@ -4,6 +4,7 @@ import hex.collection.ILocatorListener;
 import hex.collection.LocatorMessage;
 import hex.core.CoreFactoryVODef;
 import hex.core.IAnnotationParsable;
+import hex.core.IApplicationContext;
 import hex.di.IDependencyInjector;
 import hex.error.IllegalArgumentException;
 import hex.error.NoSuchElementException;
@@ -94,6 +95,12 @@ class CoreFactory implements IRunTimeCoreFactory
         {
             var props : Array<String> = key.split( "." );
 			var baseKey : String = props.shift();
+			
+			if ( baseKey == "this" )
+			{
+				baseKey = this._injector.getInstance( IApplicationContext ).getName();
+			}
+			
 			if ( this._map.exists( baseKey ) )
 			{
 				var target : Dynamic = this._map.get( baseKey );

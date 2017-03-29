@@ -22,6 +22,7 @@ import hex.mock.MockClass;
 import hex.mock.MockClassWithGeneric;
 import hex.mock.MockClassWithInjectedProperty;
 import hex.mock.MockClassWithoutArgument;
+import hex.mock.MockContextHolder;
 import hex.mock.MockFruitVO;
 import hex.mock.MockMethodCaller;
 import hex.mock.MockProxy;
@@ -60,6 +61,15 @@ class FlowCompilerTest
 	function _getCoreFactory() : ICoreFactory
 	{
 		return this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getCoreFactory();
+	}
+	
+	@Test( "test context reference" )
+	public function testContextReference() : Void
+	{
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/contextReference.flow" );
+		var contextHolder : MockContextHolder = this._getCoreFactory().locate( "contextHolder" );
+		var context = this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext );
+		Assert.equals( context, contextHolder.context );
 	}
 	
 	@Test( "test building String with assembler" )
