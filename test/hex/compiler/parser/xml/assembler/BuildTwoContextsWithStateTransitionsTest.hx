@@ -50,7 +50,7 @@ class BuildTwoContextsWithStateTransitionsTest
 		Assert.equals( context.state.ASSEMBLING_END, context.getCurrentState() );
 		
 		//called one more time, because command registered in the 1st DSL pass is not setted to fire-once
-		Assert.equals( 11, MockStateCommand.callCount );
+		Assert.equals( 12, MockStateCommand.callCount );
 		
 		//
 		Assert.equals( 11, AnotherMockStateCommand.callCount );

@@ -27,9 +27,16 @@
 	</state>
 	
 	<state id="assemblingEnd1" ref="this.state.ASSEMBLING_END">
-		<enter command-class="hex.ioc.parser.xml.assembler.mock.MockBuildContextCommand" fire-once="true"/>
+		<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand" fire-once="true"/>
 		<exit command-class="hex.ioc.parser.xml.assembler.mock.MockBuildContextExitCommand" fire-once="true"/>
 	</state>
 	
-	<module id="module1" type="hex.ioc.parser.xml.assembler.mock.MockModule" map-type="hex.module.IModule"/>
+	<scratch ref="assemblingEnd1">
+		<method-call name="addEnterHandler">
+			<argument ref="module1.build"/>
+		</method-call>
+			
+	</scratch>
+	
+	<module id="module1" type="hex.ioc.parser.xml.assembler.mock.MockBuilderModule" map-type="hex.module.IModule"/>
 </root>
