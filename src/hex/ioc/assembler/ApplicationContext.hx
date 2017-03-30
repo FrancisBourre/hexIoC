@@ -8,6 +8,7 @@ import hex.di.IBasicInjector;
 import hex.di.IDependencyInjector;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
+import hex.error.IllegalStateException;
 import hex.event.IDispatcher;
 import hex.event.MessageType;
 import hex.ioc.core.CoreFactory;
@@ -15,6 +16,7 @@ import hex.log.ILogger;
 import hex.log.LogManager;
 import hex.metadata.AnnotationProvider;
 import hex.metadata.IAnnotationProvider;
+import hex.module.IContextModule;
 import hex.state.State;
 import hex.state.StateMachine;
 import hex.state.control.StateController;
@@ -80,6 +82,7 @@ class ApplicationContext extends AbstractApplicationContext
 		
 		//register applicationContext
 		injector.mapToValue( IApplicationContext, this );
+		injector.mapToValue( IContextModule, this );
 		coreFactory.register( applicationContextName, this );
 		
 		super( coreFactory, applicationContextName );
@@ -87,9 +90,22 @@ class ApplicationContext extends AbstractApplicationContext
 		coreFactory.getInjector().mapClassNameToValue( "hex.event.IDispatcher<{}>", contextDispatcher );
 		this._dispatcher = contextDispatcher;
 		this._initStateMachine();
+		
+		this.initialize();
 	}
 	
-	override public function dispose() : Void
+	/**
+	 * Override and implement
+	 */
+	override function _onInitialisation() : Void
+	{
+
+	}
+
+	/**
+	 * Override and implement
+	 */
+	override function _onRelease() : Void
 	{
 		var injector = this.getInjector();
 		var annotationProvider = AnnotationProvider.getAnnotationProvider( Domain.getDomain( this.getName() ) );
