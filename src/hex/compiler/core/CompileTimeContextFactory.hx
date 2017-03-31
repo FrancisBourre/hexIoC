@@ -1,4 +1,5 @@
 package hex.compiler.core;
+import hex.control.trigger.ICommandTrigger;
 
 #if macro
 import haxe.macro.Context;
@@ -43,6 +44,7 @@ class CompileTimeContextFactory
 	implements ILocatorListener<String, Dynamic>
 {
 	static var _annotationParsableInterface = MacroUtil.getClassType( Type.getClassName( IAnnotationParsable ) );
+	static var _commandTriggerInterface 	= MacroUtil.getClassType( Type.getClassName( ICommandTrigger ) );
 	static var _injectorContainerInterface 	= MacroUtil.getClassType( Type.getClassName( IInjectorContainer ) );
 	static var _moduleInterface 			= MacroUtil.getClassType( Type.getClassName( IContextModule ) );
 	
@@ -379,6 +381,7 @@ class CompileTimeContextFactory
 			var finalResult = result;
 			finalResult = this._parseInjectInto( constructorVO, finalResult );
 			finalResult = this._parseAnnotation( constructorVO, finalResult );
+			finalResult = this._parseCommandTrigger( constructorVO, finalResult );
 			finalResult = this._parseMapTypes( constructorVO, finalResult );
 
 			this._expressions.push( macro @:mergeBlock { $finalResult;  coreFactory.register( $v { id }, $i { id } ); } );
@@ -421,6 +424,21 @@ class CompileTimeContextFactory
 							{ 
 								$result; 
 								__annotationProvider.parse( $i{ constructorVO.ID } ); 
+							};
+		}
+		
+		return result;
+	}
+	
+	function _parseCommandTrigger( constructorVO : ConstructorVO, result : Expr ) : Expr
+	{
+		if ( MacroUtil.implementsInterface( this._getClassType( constructorVO.className ), _commandTriggerInterface ) )
+		{
+			result = macro 	@:pos( constructorVO.filePosition ) 
+							@:mergeBlock
+							{ 
+								$result; 
+								__applicationContextInjector.injectInto( $i{ constructorVO.ID } ); 
 							};
 		}
 		
