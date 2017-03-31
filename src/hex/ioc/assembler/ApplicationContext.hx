@@ -6,6 +6,7 @@ import hex.core.AbstractApplicationContext;
 import hex.core.IApplicationContext;
 import hex.di.IBasicInjector;
 import hex.di.IDependencyInjector;
+import hex.di.Injector;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
 import hex.error.IllegalStateException;
@@ -64,7 +65,7 @@ class ApplicationContext extends AbstractApplicationContext
 		var contextDispatcher = ApplicationDomainDispatcher.getInstance().getDomainDispatcher( domain );
 		
 		//build injector
-		var injector : IDependencyInjector = cast Type.createInstance( Type.resolveClass( 'hex.di.Injector' ), [] );
+		var injector : IDependencyInjector = cast Type.createInstance( Injector, [] );
 		injector.mapToValue( IBasicInjector, injector );
 		injector.mapToValue( IDependencyInjector, injector );
 		injector.mapToType( IMacroExecutor, MacroExecutor );
