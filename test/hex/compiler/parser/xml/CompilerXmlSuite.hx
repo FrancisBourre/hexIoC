@@ -3,6 +3,7 @@ package hex.compiler.parser.xml;
 import hex.compiler.parser.xml.assembler.ApplicationAssemblerStateTest;
 import hex.compiler.parser.xml.assembler.BuildTwoContextsWithStateTransitionsTest;
 import hex.compiler.parser.xml.context.ApplicationContextBuildingTest;
+import hex.compiler.parser.xml.control.ExternalControllerTest;
 import hex.compiler.parser.xml.state.StatefulStateMachineConfigTest;
 
 /**
@@ -17,6 +18,7 @@ class CompilerXmlSuite
 		ApplicationAssemblerStateTest, 
 		ApplicationContextBuildingTest, 
 		BuildTwoContextsWithStateTransitionsTest,
+		ExternalControllerTest,
 		StatefulStateMachineConfigTest, 
 		XmlCompilerTest 
 	];
