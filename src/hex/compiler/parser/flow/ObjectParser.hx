@@ -11,6 +11,8 @@ import hex.core.ContextTypeList;
 import hex.factory.BuildRequest;
 import hex.vo.ConstructorVO;
 import hex.vo.MethodCallVO;
+import hex.log.ILogger;
+import hex.log.LogManager;
 
 /**
  * ...
@@ -18,9 +20,12 @@ import hex.vo.MethodCallVO;
  */
 class ObjectParser extends AbstractExprParser<BuildRequest>
 {
+	var logger:ILogger;
+	
 	public function new() 
 	{
 		super();
+		logger = LogManager.getLoggerByInstance(this);
 	}
 	
 	override public function parse() : Void
@@ -77,7 +82,7 @@ class ObjectParser extends AbstractExprParser<BuildRequest>
 				this._builder.build( OBJECT( constructorVO ) );
 				
 			case _:
-				trace( e.expr );
+				logger.error( e.expr );
 		}
 	}
 	
@@ -104,7 +109,7 @@ class ObjectParser extends AbstractExprParser<BuildRequest>
 						constructorVO = new ConstructorVO( ident, ContextTypeList.BOOLEAN, [ v ] );
 						
 					case _:
-						trace( v );
+						logger.error( v );
 				}
 				
 			case ENew( t, params ):
@@ -149,7 +154,7 @@ class ObjectParser extends AbstractExprParser<BuildRequest>
 						}
 						
 					case _:
-						trace( exp );
+						logger.error( exp );
 				}
 				
 			case ECall( _.expr => EField( e, field ), params ):
@@ -193,12 +198,12 @@ class ObjectParser extends AbstractExprParser<BuildRequest>
 									
 									
 								case _:
-									trace( params[ 0 ].expr );
+									logger.error( params[ 0 ].expr );
 							}
 						}
 						
 					case _:
-						trace( e.expr );
+						logger.error( e.expr );
 				}
 				
 				if ( params.length > 0 )
@@ -209,7 +214,7 @@ class ObjectParser extends AbstractExprParser<BuildRequest>
 				}
 				
 			case _:
-				trace( value.expr );
+				logger.warn( value.expr );
 				constructorVO = new ConstructorVO( ident );
 				//break;
 				
@@ -239,7 +244,7 @@ class ObjectParser extends AbstractExprParser<BuildRequest>
 							constructorVO = new ConstructorVO( ident, ExpressionUtil.getFullClassDeclaration( t ), ExpressionUtil.getMapArguments( ident, values ) );
 							
 						case _:
-							trace( params[ 0 ].expr );
+							logger.error( params[ 0 ].expr );
 					}
 					//
 				}
