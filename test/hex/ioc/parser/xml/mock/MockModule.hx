@@ -61,12 +61,12 @@ class MockModule implements IModule
 		
 	}
 	
-	public function addHandler<T:haxe.Constraints.Function>( messageType : MessageType, scope : Dynamic, callback : T ) : Void
+	public function addHandler( messageType : MessageType, scope : Dynamic, callback : haxe.Constraints.Function ) : Void
 	{
 		
 	}
 	
-	public function removeHandler<T:haxe.Constraints.Function>( messageType : MessageType, scope : Dynamic, callback : T ) : Void
+	public function removeHandler( messageType : MessageType, scope : Dynamic, callback : haxe.Constraints.Function ) : Void
 	{
 		
 	}
