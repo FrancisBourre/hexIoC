@@ -22,6 +22,7 @@ import hex.mock.MockClass;
 import hex.mock.MockClassWithGeneric;
 import hex.mock.MockClassWithInjectedProperty;
 import hex.mock.MockClassWithoutArgument;
+import hex.mock.MockContextHolder;
 import hex.mock.MockFruitVO;
 import hex.mock.MockMethodCaller;
 import hex.mock.MockProxy;
@@ -60,6 +61,15 @@ class FlowCompilerTest
 	function _getCoreFactory() : ICoreFactory
 	{
 		return this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getCoreFactory();
+	}
+	
+	@Test( "test context reference" )
+	public function testContextReference() : Void
+	{
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/contextReference.flow" );
+		var contextHolder : MockContextHolder = this._getCoreFactory().locate( "contextHolder" );
+		var context = this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext );
+		Assert.equals( context, contextHolder.context );
 	}
 	
 	@Test( "test building String with assembler" )
@@ -128,6 +138,26 @@ class FlowCompilerTest
 		Assert.isInstanceOf( instance1, MockClassWithoutArgument );
 		
 		var instance2 = this._getCoreFactory().locate( "instance" );
+		Assert.isInstanceOf( instance2, MockClassWithoutArgument );
+		
+		Assert.notEquals( instance1, instance2 );
+	}
+	
+	@Test( "test overriding context name" )
+	public function testOverridingContextName() : Void
+	{
+		this._applicationAssembler = new ApplicationAssembler();
+		
+		FlowCompiler.compileWithAssembler( this._applicationAssembler, "context/flow/simpleInstanceWithoutArguments.flow", 'name1' );
+		FlowCompiler.compileWithAssembler( this._applicationAssembler, "context/flow/simpleInstanceWithoutArguments.flow", 'name2' );
+		
+		var factory1 = this._applicationAssembler.getApplicationContext( "name1", ApplicationContext ).getCoreFactory();
+		var factory2 = this._applicationAssembler.getApplicationContext( "name2", ApplicationContext ).getCoreFactory();
+
+		var instance1 = factory1.locate( "instance" );
+		Assert.isInstanceOf( instance1, MockClassWithoutArgument );
+		
+		var instance2 = factory2.locate( "instance" );
 		Assert.isInstanceOf( instance2, MockClassWithoutArgument );
 		
 		Assert.notEquals( instance1, instance2 );

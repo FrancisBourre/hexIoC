@@ -1,8 +1,10 @@
 package hex.compiler.parser.xml;
 
 import hex.compiler.parser.xml.assembler.ApplicationAssemblerStateTest;
-import hex.compiler.parser.xml.state.StatefulStateMachineConfigTest;
+import hex.compiler.parser.xml.assembler.BuildTwoContextsWithStateTransitionsTest;
 import hex.compiler.parser.xml.context.ApplicationContextBuildingTest;
+import hex.compiler.parser.xml.control.ExternalControllerTest;
+import hex.compiler.parser.xml.state.StatefulStateMachineConfigTest;
 
 /**
  * ...
@@ -11,5 +13,13 @@ import hex.compiler.parser.xml.context.ApplicationContextBuildingTest;
 class CompilerXmlSuite
 {
 	@Suite( "Xml" )
-    public var list : Array<Class<Dynamic>> = [ ApplicationAssemblerStateTest, ApplicationContextBuildingTest, StatefulStateMachineConfigTest, XmlCompilerTest ];
+    public var list : Array<Class<Dynamic>> = 
+	[ 
+		ApplicationAssemblerStateTest, 
+		ApplicationContextBuildingTest, 
+		BuildTwoContextsWithStateTransitionsTest,
+		ExternalControllerTest,
+		StatefulStateMachineConfigTest, 
+		XmlCompilerTest 
+	];
 }

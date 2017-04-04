@@ -22,7 +22,10 @@ import hex.log.LogManager;
 class FlowCompiler 
 {
 	#if macro
-	static function _readFile( fileName : String, ?preprocessingVariables : Expr, ?applicationAssemblerExpr : Expr ) : ExprOf<IApplicationAssembler>
+	static function _readFile( 	fileName : String, 
+								?applicationContextName : String,
+								?preprocessingVariables : Expr, 
+								?applicationAssemblerExpr : Expr ) : ExprOf<IApplicationAssembler>
 	{
 		LogManager.context = new MacroLoggerContext();
 		
@@ -34,19 +37,24 @@ class FlowCompiler
 		
 		parser.setImportHelper( new ClassImportHelper() );
 		parser.setExceptionReporter( new FlowAssemblingExceptionReporter() );
-		parser.parse( assembler, document, CompileTimeContextFactory, CompileTimeApplicationContext );
+		parser.parse( assembler, document, CompileTimeContextFactory, CompileTimeApplicationContext, applicationContextName );
 		
 		return assembler.getMainExpression();
 	}
 	#end
 
-	macro public static function compile( fileName : String, ?preprocessingVariables : Expr ) : ExprOf<IApplicationAssembler>
+	macro public static function compile( 	fileName : String, 
+											?applicationContextName : String,
+											?preprocessingVariables : Expr ) : ExprOf<IApplicationAssembler>
 	{
-		return FlowCompiler._readFile( fileName, preprocessingVariables );
+		return FlowCompiler._readFile( fileName, applicationContextName, preprocessingVariables );
 	}
 	
-	macro public static function compileWithAssembler( assemblerExpr : Expr, fileName : String, ?preprocessingVariables : Expr ) : ExprOf<IApplicationAssembler>
+	macro public static function compileWithAssembler( 	assemblerExpr : Expr, 
+														fileName : String, 
+														?applicationContextName : String,
+														?preprocessingVariables : Expr ) : ExprOf<IApplicationAssembler>
 	{
-		return FlowCompiler._readFile( fileName, preprocessingVariables, assemblerExpr );
+		return FlowCompiler._readFile( fileName, applicationContextName, preprocessingVariables, assemblerExpr );
 	}
 }

@@ -37,7 +37,7 @@ class ApplicationAssemblerStateTest
 		this._applicationAssembler.release();
 		
 		MockStateCommand.callCount 						= 0;
-		MockStateCommand.lastInjecteContext 			= null;
+		MockStateCommand.lastInjectedContext			= null;
 		MockStateCommandWithModule.callCount 			= 0;
 		MockStateCommandWithModule.lastInjectedModule 	= null;
 	}
@@ -50,14 +50,23 @@ class ApplicationAssemblerStateTest
 	@Test( "test building state transitions" )
 	public function testBuildingStateTransitions() : Void
 	{
+		MockStateCommand.callCount = 0;
+		MockStateCommand.lastInjectedContext = null;
+		
 		this._applicationAssembler = XmlCompiler.compile( "context/testBuildingStateTransitions.xml" );
+		var context : ApplicationContext = cast this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext );
+		var coreFactory = context.getCoreFactory();
+
+		Assert.equals( context.state.ASSEMBLING_END, context.getCurrentState() );
+		Assert.equals( 11, MockStateCommand.callCount );
+		Assert.equals( context, MockStateCommand.lastInjectedContext, "applicationContext should be the same" );
 	}
 	
 	@Test( "test extending state transitions" )
 	public function testExtendingStateTransitions() : Void
 	{
 		MockStateCommand.callCount = 0;
-		MockStateCommand.lastInjecteContext = null;
+		MockStateCommand.lastInjectedContext = null;
 		
 		this._applicationAssembler = XmlCompiler.compile( "context/testExtendingStateTransitions.xml" );
 
@@ -80,7 +89,7 @@ class ApplicationAssemblerStateTest
 		
 		applicationContext.fireSwitchState();
 		Assert.equals( 1, MockStateCommand.callCount, "'MockStateCommand' should have been called once" );
-		Assert.equals( applicationContext, MockStateCommand.lastInjecteContext, "applicationContext should be the same" );
+		Assert.equals( applicationContext, MockStateCommand.lastInjectedContext, "applicationContext should be the same" );
 		
 		MockStateCommandWithModule.lastInjectedModule = null;
 		applicationContext.fireSwitchBack();
@@ -88,9 +97,9 @@ class ApplicationAssemblerStateTest
 		Assert.equals( anotherModule, MockStateCommandWithModule.lastInjectedModule, "module should be the same" );
 		
 		applicationContext.fireSwitchState();
-		MockStateCommand.lastInjecteContext = null;
+		MockStateCommand.lastInjectedContext = null;
 		Assert.equals( 1, MockStateCommand.callCount, "'MockStateCommand' should have been called once" );
-		Assert.isNull( MockStateCommand.lastInjecteContext, "applicationContext should be null" );
+		Assert.isNull( MockStateCommand.lastInjectedContext, "applicationContext should be null" );
 	}
 	
 	@Test( "test custom state transition" )
@@ -98,7 +107,7 @@ class ApplicationAssemblerStateTest
 	{
 		MockStateCommand.callCount = 0;
 		MockExitStateCommand.callCount = 0;
-		MockStateCommand.lastInjecteContext = null;
+		MockStateCommand.lastInjectedContext = null;
 		
 		this._applicationAssembler = XmlCompiler.compile( "context/testCustomStateTransition.xml" );
 		

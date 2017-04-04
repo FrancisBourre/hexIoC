@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<data>
+	<controller id="controller" type="hex.mock.SayHelloExternalController"/>
+	
+	<sender id="sender" type="hex.mock.HelloSenderModule">
+		<argument ref="config"/>
+	</sender>
+	
+	<receiver id="receiver" type="hex.mock.MockMessageReceiver" map-type="hex.mock.IMessageReceiver"/>
+	
+	<config id="config" type="hex.di.mapping.MappingConfiguration">
+		<item> 
+			<key type="Class" value="hex.mock.MessageSenderTypeDef"/> 
+			<value ref="controller"/>
+		</item>
+    </config>
+</data>

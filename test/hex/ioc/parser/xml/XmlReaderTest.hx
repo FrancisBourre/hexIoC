@@ -30,6 +30,7 @@ import hex.ioc.parser.xml.mock.MockBooleanVO;
 import hex.ioc.parser.xml.mock.MockChatModule;
 import hex.ioc.parser.xml.mock.MockDocument;
 import hex.ioc.parser.xml.mock.MockFacebookService;
+import hex.mock.MockContextHolder;
 import hex.mock.MockInjectee;
 import hex.ioc.parser.xml.mock.MockIntVO;
 import hex.ioc.parser.xml.mock.MockMappedModule;
@@ -97,6 +98,14 @@ class XmlReaderTest
 	{
 		this._contextParser = new ApplicationXMLParser();
 		this._contextParser.parse( this._applicationAssembler, xml );
+	}
+	
+	@Test( "test context reference" )
+	public function testContextReference() : Void
+	{
+		this.build( XmlReader.getXml( "context/xml/contextReference.xml" ) );
+		var contextHolder : MockContextHolder = this._locate( "contextHolder" );
+		Assert.equals( this._applicationContext, contextHolder.context );
 	}
 
 	@Test( "test building String" )

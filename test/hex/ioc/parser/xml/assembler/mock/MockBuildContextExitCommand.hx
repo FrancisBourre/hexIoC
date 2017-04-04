@@ -1,5 +1,6 @@
 package hex.ioc.parser.xml.assembler.mock;
 
+import hex.compiler.parser.xml.XmlCompiler;
 import hex.control.command.BasicCommand;
 import hex.core.IApplicationContext;
 
@@ -7,17 +8,17 @@ import hex.core.IApplicationContext;
  * ...
  * @author Francis Bourre
  */
-class MockStateCommand extends BasicCommand
+class MockBuildContextExitCommand extends BasicCommand
 {
 	static public var callCount : Int = 0;
-	static public var lastInjectedContext: IApplicationContext;
+	static public var lastInjecteContext : IApplicationContext;
 	
 	@Inject
 	public var context : IApplicationContext;
 	
 	override public function execute() : Void
 	{
-		MockStateCommand.callCount++;
-		MockStateCommand.lastInjectedContext = this.context;
+		MockBuildContextExitCommand.callCount++;
+		MockBuildContextExitCommand.lastInjecteContext = this.context;
 	}
 }
