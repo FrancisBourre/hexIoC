@@ -450,7 +450,7 @@ class XmlReaderTest
 	{
 		this.build( XmlReader.getXml( "context/xml/hashmapFilledWithReferences.xml" ) );
 
-		var fruits : HashMap<Dynamic, MockFruitVO> = this._locate( "fruits" );
+		var fruits : HashMap<Any, MockFruitVO> = this._locate( "fruits" );
 		Assert.isNotNull( fruits );
 
 		var stubKey : Point = this._locate( "stubKey" );
@@ -470,7 +470,7 @@ class XmlReaderTest
 	{
 		this.build( XmlReader.getXml( "context/xml/hashmapWithMapType.xml" ) );
 
-		var fruits : HashMap<Dynamic, MockFruitVO> = this._locate( "fruits" );
+		var fruits : HashMap<Any, MockFruitVO> = this._locate( "fruits" );
 		Assert.isNotNull( fruits );
 
 		var orange 	: MockFruitVO = fruits.get( '0' );
@@ -1035,7 +1035,7 @@ class XmlReaderTest
 	{
 		this.build(  XmlReader.getXml( "context/eventTrigger.xml" ) );
 
-		var eventTrigger : Dynamic = this._locate( "eventTrigger" );
+		var eventTrigger = this._locate( "eventTrigger" );
 		Assert.isNotNull( eventTrigger );
 		
 		var chat : MockChatModule = this._locate( "chat" );
