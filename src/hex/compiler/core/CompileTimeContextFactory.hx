@@ -1,5 +1,4 @@
 package hex.compiler.core;
-import hex.control.trigger.ICommandTrigger;
 
 #if macro
 import haxe.macro.Context;
@@ -11,6 +10,7 @@ import hex.compiler.factory.DomainListenerFactory;
 import hex.compiletime.factory.FactoryUtil;
 import hex.compiletime.factory.PropertyFactory;
 import hex.compiler.factory.StateTransitionFactory;
+import hex.control.trigger.ICommandTrigger;
 import hex.core.ContextTypeList;
 import hex.core.HashCodeFactory;
 import hex.core.IAnnotationParsable;
@@ -66,7 +66,7 @@ class CompileTimeContextFactory
 	
 	var _transitions				: Array<TransitionVO>;
 	
-	public function new( expressions : Array<Expr> )
+	public function new( expressions : Array<Expr>, assemblerID : UInt )
 	{
 		this._expressions = expressions;
 		this._isInitialized = false;
