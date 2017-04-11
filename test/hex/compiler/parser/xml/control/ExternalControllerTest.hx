@@ -46,6 +46,7 @@ class ExternalControllerTest
 		Assert.equals( 'hello world', this._locate( 'receiver' ).message );
 	}
 	
+	#if (!neko && !php)
 	@Test( "test command execution in the context with function injection" )
 	public function testCommandExecutionInTheContextWithFunctionInjection() : Void
 	{
@@ -54,4 +55,5 @@ class ExternalControllerTest
 		this._locate( 'sender' ).sayHelloworldWithFunctionInjection();
 		Assert.equals( 'hello world', this._locate( 'receiver' ).message );
 	}
+	#end
 }
