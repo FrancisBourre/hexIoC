@@ -24,11 +24,11 @@ import hex.preprocess.flow.MacroConditionalVariablesProcessor;
 class FlowCompiler 
 {
 	#if macro
-	static function _readFile(	fileName 					: String, 
-								?applicationContextName 	: String,
-								?preprocessingVariables 	: Expr, 
-								?conditionalVariables 		: Expr, 
-								?applicationAssemblerExpr 	: Expr ) : ExprOf<IApplicationAssembler>
+	static function _readFile(	fileName 						: String, 
+								?applicationContextName 		: String,
+								?preprocessingVariables 		: Expr, 
+								?conditionalVariables 			: Expr, 
+								?applicationAssemblerExpression : Expr ) : ExprOf<IApplicationAssembler>
 	{
 		LogManager.context = new MacroLoggerContext();
 		
@@ -38,8 +38,9 @@ class FlowCompiler
 		var reader						= new DSLReader();
 		var document 					= reader.read( fileName, preprocessingVariables, conditionalVariablesChecker );
 		
-		var assembler 					= new CompileTimeApplicationAssembler( applicationAssemblerExpr );
-		var parser 						= new CompileTimeParser( new ParserCollection() );
+		var assembler 					= new CompileTimeApplicationAssembler();
+		var assemblerExpression			= { name: '', expression: applicationAssemblerExpression };
+		var parser 						= new CompileTimeParser( new ParserCollection( assemblerExpression ) );
 		
 		parser.setImportHelper( new ClassImportHelper() );
 		parser.setExceptionReporter( new FlowAssemblingExceptionReporter() );

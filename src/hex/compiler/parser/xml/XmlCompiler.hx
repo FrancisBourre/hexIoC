@@ -30,7 +30,7 @@ class XmlCompiler
 									?applicationContextName : String, 
 									?preprocessingVariables : Expr, 
 									?conditionalVariables : Expr, 
-									?applicationAssemblerExpr : Expr ) : ExprOf<IApplicationAssembler>
+									?applicationAssemblerExpression : Expr ) : ExprOf<IApplicationAssembler>
 	{
 		LogManager.context = new MacroLoggerContext();
 		
@@ -40,8 +40,9 @@ class XmlCompiler
 		var dslReader					= new DSLReader();
 		var document 					= dslReader.read( fileName, preprocessingVariables, conditionalVariablesChecker );
 		
-		var assembler 					= new CompileTimeApplicationAssembler( applicationAssemblerExpr );
-		var parser 						= new CompileTimeParser( new ParserCollection() );
+		var assembler 					= new CompileTimeApplicationAssembler();
+		var assemblerExpression			= { name: '', expression: applicationAssemblerExpression };
+		var parser 						= new CompileTimeParser( new ParserCollection( assemblerExpression ) );
 		
 		parser.setImportHelper( new ClassImportHelper() );
 		parser.setExceptionReporter( new ExceptionReporter( dslReader.positionTracker ) );
