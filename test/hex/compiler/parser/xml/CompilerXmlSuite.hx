@@ -20,6 +20,7 @@ class CompilerXmlSuite
 		BuildTwoContextsWithStateTransitionsTest,
 		ExternalControllerTest,
 		StatefulStateMachineConfigTest, 
+		StaticXmlCompilerTest,
 		XmlCompilerTest 
 	];
 }
