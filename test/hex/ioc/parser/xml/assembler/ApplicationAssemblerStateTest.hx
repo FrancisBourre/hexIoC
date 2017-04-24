@@ -21,6 +21,15 @@ class ApplicationAssemblerStateTest
 {
 	var _contextFactory 			: ContextFactory;
 	var _applicationAssembler 		: IApplicationAssembler;
+	
+	@Before
+	public function setUp() : Void
+	{
+		MockStateCommand.callCount 						= 0;
+		MockStateCommand.lastInjectedContext			= null;
+		MockStateCommandWithModule.callCount 			= 0;
+		MockStateCommandWithModule.lastInjectedModule 	= null;
+	}
 
 	@After
 	public function tearDown() : Void
@@ -75,7 +84,7 @@ class ApplicationAssemblerStateTest
 		Assert.equals( anotherModule, MockStateCommandWithModule.lastInjectedModule, "module should be the same" );
 		
 		applicationContext.fireSwitchState();
-		 MockStateCommand.lastInjectedContext = null;
+		MockStateCommand.lastInjectedContext = null;
 		Assert.equals( 1, MockStateCommand.callCount, "'MockStateCommand' should have been called once" );
 		Assert.isNull(  MockStateCommand.lastInjectedContext, "applicationContext should be null" );
 	}
