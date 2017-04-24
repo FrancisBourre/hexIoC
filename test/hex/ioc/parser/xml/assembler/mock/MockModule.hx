@@ -1,8 +1,8 @@
 package hex.ioc.parser.xml.assembler.mock;
 
+import hex.module.Module;
 import hex.module.dependency.IRuntimeDependencies;
 import hex.module.dependency.RuntimeDependencies;
-import hex.module.Module;
 import hex.state.State;
 
 /**

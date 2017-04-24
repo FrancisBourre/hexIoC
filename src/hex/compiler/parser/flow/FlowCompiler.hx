@@ -11,6 +11,10 @@ import hex.compiletime.flow.DSLReader;
 import hex.compiletime.flow.FlowAssemblingExceptionReporter;
 import hex.compiletime.util.ClassImportHelper;
 import hex.compiletime.basic.CompileTimeApplicationContext;
+import hex.log.MacroLoggerContext;
+import hex.log.LogManager;
+import hex.preprocess.ConditionalVariablesChecker;
+import hex.preprocess.flow.MacroConditionalVariablesProcessor;
 #end
 
 /**
@@ -20,29 +24,46 @@ import hex.compiletime.basic.CompileTimeApplicationContext;
 class FlowCompiler 
 {
 	#if macro
-	static function _readFile( fileName : String, ?preprocessingVariables : Expr, ?applicationAssemblerExpr : Expr ) : ExprOf<IApplicationAssembler>
+	static function _readFile(	fileName 						: String, 
+								?applicationContextName 		: String,
+								?preprocessingVariables 		: Expr, 
+								?conditionalVariables 			: Expr, 
+								?applicationAssemblerExpression : Expr ) : ExprOf<IApplicationAssembler>
 	{
-		var reader						= new DSLReader();
-		var document 					= reader.read( fileName, preprocessingVariables );
+		LogManager.context = new MacroLoggerContext();
 		
-		var assembler 					= new CompileTimeApplicationAssembler( applicationAssemblerExpr );
-		var parser 						= new CompileTimeParser( new ParserCollection() );
+		var conditionalVariablesMap 	= MacroConditionalVariablesProcessor.parse( conditionalVariables );
+		var conditionalVariablesChecker = new ConditionalVariablesChecker( conditionalVariablesMap );
+		
+		var reader						= new DSLReader();
+		var document 					= reader.read( fileName, preprocessingVariables, conditionalVariablesChecker );
+		
+		var assembler 					= new CompileTimeApplicationAssembler();
+		var assemblerExpression			= { name: '', expression: applicationAssemblerExpression };
+		var parser 						= new CompileTimeParser( new ParserCollection( assemblerExpression ) );
 		
 		parser.setImportHelper( new ClassImportHelper() );
 		parser.setExceptionReporter( new FlowAssemblingExceptionReporter() );
-		parser.parse( assembler, document, CompileTimeContextFactory, CompileTimeApplicationContext );
+		parser.parse( assembler, document, CompileTimeContextFactory, CompileTimeApplicationContext, applicationContextName );
 		
 		return assembler.getMainExpression();
 	}
 	#end
 
-	macro public static function compile( fileName : String, ?preprocessingVariables : Expr ) : ExprOf<IApplicationAssembler>
+	macro public static function compile( 	fileName 				: String, 
+											?applicationContextName : String,
+											?preprocessingVariables : Expr, 
+											?conditionalVariables 	: Expr ) : ExprOf<IApplicationAssembler>
 	{
-		return FlowCompiler._readFile( fileName, preprocessingVariables );
+		return FlowCompiler._readFile( fileName, applicationContextName, preprocessingVariables, conditionalVariables );
 	}
 	
-	macro public static function compileWithAssembler( assemblerExpr : Expr, fileName : String, ?preprocessingVariables : Expr ) : ExprOf<IApplicationAssembler>
+	macro public static function compileWithAssembler( 	assemblerExpr 			: Expr, 
+														fileName 				: String,
+														?applicationContextName : String,
+														?preprocessingVariables : Expr, 
+														?conditionalVariables 	: Expr ) : ExprOf<IApplicationAssembler>
 	{
-		return FlowCompiler._readFile( fileName, preprocessingVariables, assemblerExpr );
+		return FlowCompiler._readFile( fileName, applicationContextName, preprocessingVariables, conditionalVariables, assemblerExpr );
 	}
 }

@@ -1,27 +1,36 @@
 package hex.compiler.parser.xml;
-import hex.compiletime.xml.AbstractXmlParser;
-import hex.factory.BuildRequest;
 
 #if macro
-import hex.ioc.core.ContextAttributeList;
+import hex.core.VariableExpression;
 import hex.util.MacroUtil;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class ApplicationContextParser extends AbstractXmlParser<BuildRequest>
+class ApplicationContextParser extends hex.compiletime.xml.AbstractXmlParser<hex.factory.BuildRequest>
 {
-	public function new() 
+	var _assemblerVariable : VariableExpression;
+	
+	public function new( assemblerVariable : VariableExpression ) 
 	{
+		this._assemblerVariable = assemblerVariable;
 		super();
 	}
 	
 	override public function parse() : Void
 	{
-		//Create runtime applicationContext
-		var assemblerExpr	 	= ( cast this._applicationAssembler ).getAssemblerExpression();
+		//Create runtime applicationAssembler
+		var applicationAssemblerTypePath = MacroUtil.getTypePath( "hex.runtime.ApplicationAssembler" );
 
+		if ( this._assemblerVariable.expression == null )
+		{
+			var applicationAssemblerVarName = this._assemblerVariable.name = 'applicationAssembler';
+			( cast this._applicationAssembler ).addExpression( macro @:mergeBlock { var $applicationAssemblerVarName = new $applicationAssemblerTypePath(); } );
+			this._assemblerVariable.expression = macro $i { applicationAssemblerVarName };
+		}
+
+		//Create runtime applicationContext
 		var applicationContextClass = null;
 		
 		if ( this._applicationContextClass.name != null )
@@ -41,7 +50,8 @@ class ApplicationContextParser extends AbstractXmlParser<BuildRequest>
 			applicationContextClass = MacroUtil.getPack( 'hex.ioc.assembler.ApplicationContext' );
 		}
 		
-		var expr = macro @:mergeBlock { var applicationContext = $assemblerExpr.getApplicationContext( $v { this._applicationContextName }, $p { applicationContextClass } ); };
+		var assemblerVarExpression = this._assemblerVariable.expression;
+		var expr = macro @:mergeBlock { var applicationContext = $assemblerVarExpression.getApplicationContext( $v { this._applicationContextName }, $p { applicationContextClass } ); };
 		( cast this._applicationAssembler ).addExpression( expr );
 	}
 }

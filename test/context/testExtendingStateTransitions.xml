@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<root name="applicationContext" type="hex.ioc.parser.xml.assembler.mock.MockApplicationContext">
+<root type="hex.ioc.parser.xml.assembler.mock.MockApplicationContext">
 
-	<state id="customState" ref="applicationContext.state.CUSTOM_STATE">
+	<state id="customState" ref="this.state.CUSTOM_STATE">
 		<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommandWithModule" context-owner="anotherModule"/>
 	</state>
 	
-	<state id="anotherState" ref="applicationContext.state.ANOTHER_STATE">
+	<state id="anotherState" ref="this.state.ANOTHER_STATE">
 		<enter command-class="hex.ioc.parser.xml.assembler.mock.MockStateCommand" fire-once="true"/>
 	</state>
 	

@@ -13,6 +13,8 @@ import hex.compiletime.xml.ExceptionReporter;
 import hex.compiletime.basic.CompileTimeApplicationContext;
 import hex.preprocess.ConditionalVariablesChecker;
 import hex.preprocess.MacroConditionalVariablesProcessor;
+import hex.log.MacroLoggerContext;
+import hex.log.LogManager;
 
 using StringTools;
 #end
@@ -24,32 +26,46 @@ using StringTools;
 class XmlCompiler
 {
 	#if macro
-	static function _readXmlFile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr, ?applicationAssemblerExpr : Expr ) : ExprOf<IApplicationAssembler>
+	static function _readXmlFile( 	fileName : String, 
+									?applicationContextName : String, 
+									?preprocessingVariables : Expr, 
+									?conditionalVariables : Expr, 
+									?applicationAssemblerExpression : Expr ) : ExprOf<IApplicationAssembler>
 	{
+		LogManager.context = new MacroLoggerContext();
+		
 		var conditionalVariablesMap 	= MacroConditionalVariablesProcessor.parse( conditionalVariables );
 		var conditionalVariablesChecker = new ConditionalVariablesChecker( conditionalVariablesMap );
 		
 		var dslReader					= new DSLReader();
 		var document 					= dslReader.read( fileName, preprocessingVariables, conditionalVariablesChecker );
 		
-		var assembler 					= new CompileTimeApplicationAssembler( applicationAssemblerExpr );
-		var parser 						= new CompileTimeParser( new ParserCollection() );
+		var assembler 					= new CompileTimeApplicationAssembler();
+		var assemblerExpression			= { name: '', expression: applicationAssemblerExpression };
+		var parser 						= new CompileTimeParser( new ParserCollection( assemblerExpression ) );
 		
 		parser.setImportHelper( new ClassImportHelper() );
 		parser.setExceptionReporter( new ExceptionReporter( dslReader.positionTracker ) );
-		parser.parse( assembler, document, CompileTimeContextFactory, CompileTimeApplicationContext );
+		parser.parse( assembler, document, CompileTimeContextFactory, CompileTimeApplicationContext, applicationContextName );
 
 		return assembler.getMainExpression();
 	}
 	#end
 	
-	macro public static function compile( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
+	macro public static function compile( 	fileName : String, 
+											?applicationContextName : String, 
+											?preprocessingVariables : Expr, 
+											?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
 	{
-		return XmlCompiler._readXmlFile( fileName, preprocessingVariables, conditionalVariables );
+		return XmlCompiler._readXmlFile( fileName, applicationContextName, preprocessingVariables, conditionalVariables  );
 	}
 	
-	macro public static function compileWithAssembler( assemblerExpr : Expr, fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
+	macro public static function compileWithAssembler( 	assemblerExpr : Expr, 
+														fileName : String, 
+														?applicationContextName : String, 
+														?preprocessingVariables : Expr, 
+														?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
 	{
-		return XmlCompiler._readXmlFile( fileName, preprocessingVariables, conditionalVariables, assemblerExpr );
+		return XmlCompiler._readXmlFile( fileName, applicationContextName, preprocessingVariables, conditionalVariables, assemblerExpr );
 	}
 }

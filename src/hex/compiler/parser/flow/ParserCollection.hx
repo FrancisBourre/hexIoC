@@ -1,28 +1,28 @@
 package hex.compiler.parser.flow;
-import hex.compiletime.flow.AbstractExprParser;
 
 #if macro
-import haxe.macro.Expr;
-import hex.factory.BuildRequest;
-import hex.parser.AbstractParserCollection;
+import hex.core.VariableExpression;
 
 /**
  * ...
  * @author Francis Bourre
  */
-class ParserCollection extends AbstractParserCollection<AbstractExprParser<BuildRequest>>
+class ParserCollection extends hex.parser.AbstractParserCollection<hex.compiletime.flow.AbstractExprParser<hex.factory.BuildRequest>>
 {
-	public function new() 
+	var _assemblerVariable : VariableExpression;
+	
+	public function new( assemblerVar : VariableExpression ) 
 	{
+		this._assemblerVariable = assemblerVar;
 		super();
 	}
 	
 	override function _buildParserList() : Void
 	{
-		this._parserCollection.push( new ApplicationContextParser() );
+		this._parserCollection.push( new ApplicationContextParser( this._assemblerVariable ) );
 		this._parserCollection.push( new StateParser() );
 		this._parserCollection.push( new ObjectParser() );
-		this._parserCollection.push( new Launcher() );
+		this._parserCollection.push( new Launcher( this._assemblerVariable ) );
 	}
 }
 #end

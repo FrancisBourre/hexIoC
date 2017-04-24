@@ -38,7 +38,7 @@ import hex.compiletime.basic.vo.FactoryVOTypeDef;
  * ...
  * @author Francis Bourre
  */
-class CompileTimeContextFactory 
+class StaticCompileTimeContextFactory 
 	implements IBuilder<BuildRequest>
 	implements IContextFactory 
 	implements ILocatorListener<String, Dynamic>
@@ -383,8 +383,8 @@ class CompileTimeContextFactory
 			finalResult = this._parseAnnotation( constructorVO, finalResult );
 			finalResult = this._parseCommandTrigger( constructorVO, finalResult );
 			finalResult = this._parseMapTypes( constructorVO, finalResult );
-
-			this._expressions.push( macro @:mergeBlock { $finalResult;  coreFactory.register( $v { id }, $i { id } ); } );
+			hex.compiletime.util.ContextBuilder.getInstance( this ).addField( id, constructorVO.type );
+			this._expressions.push( macro @:mergeBlock { $finalResult;  coreFactory.register( $v { id }, $i { id } ); this.$id = $i { id }; } );
 			this._coreFactory.register( id, result );
 		}
 

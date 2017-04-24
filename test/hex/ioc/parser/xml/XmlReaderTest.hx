@@ -30,6 +30,7 @@ import hex.ioc.parser.xml.mock.MockBooleanVO;
 import hex.ioc.parser.xml.mock.MockChatModule;
 import hex.ioc.parser.xml.mock.MockDocument;
 import hex.ioc.parser.xml.mock.MockFacebookService;
+import hex.mock.MockContextHolder;
 import hex.mock.MockInjectee;
 import hex.ioc.parser.xml.mock.MockIntVO;
 import hex.ioc.parser.xml.mock.MockMappedModule;
@@ -97,6 +98,14 @@ class XmlReaderTest
 	{
 		this._contextParser = new ApplicationXMLParser();
 		this._contextParser.parse( this._applicationAssembler, xml );
+	}
+	
+	@Test( "test context reference" )
+	public function testContextReference() : Void
+	{
+		this.build( XmlReader.getXml( "context/xml/contextReference.xml" ) );
+		var contextHolder : MockContextHolder = this._locate( "contextHolder" );
+		Assert.equals( this._applicationContext, contextHolder.context );
 	}
 
 	@Test( "test building String" )
@@ -441,7 +450,7 @@ class XmlReaderTest
 	{
 		this.build( XmlReader.getXml( "context/xml/hashmapFilledWithReferences.xml" ) );
 
-		var fruits : HashMap<Dynamic, MockFruitVO> = this._locate( "fruits" );
+		var fruits : HashMap<Any, MockFruitVO> = this._locate( "fruits" );
 		Assert.isNotNull( fruits );
 
 		var stubKey : Point = this._locate( "stubKey" );
@@ -461,7 +470,7 @@ class XmlReaderTest
 	{
 		this.build( XmlReader.getXml( "context/xml/hashmapWithMapType.xml" ) );
 
-		var fruits : HashMap<Dynamic, MockFruitVO> = this._locate( "fruits" );
+		var fruits : HashMap<Any, MockFruitVO> = this._locate( "fruits" );
 		Assert.isNotNull( fruits );
 
 		var orange 	: MockFruitVO = fruits.get( '0' );
@@ -825,7 +834,7 @@ class XmlReaderTest
 		Assert.isInstanceOf( config, MappingConfiguration );
 
 		var injector = new Injector();
-		config.configure( injector, new Dispatcher(), null );
+		config.configure( injector, null );
 
 		Assert.isInstanceOf( injector.getInstance( IMockInterface ), MockClass );
 		Assert.isInstanceOf( injector.getInstance( IAnotherMockInterface ), AnotherMockClass );
@@ -841,7 +850,7 @@ class XmlReaderTest
 		Assert.isInstanceOf( config, MappingConfiguration );
 
 		var injector = new Injector();
-		config.configure( injector, new Dispatcher(), null );
+		config.configure( injector, null );
 
 		Assert.isInstanceOf( injector.getInstance( IAnotherMockInterface, "name1" ),  MockClass );
 		Assert.isInstanceOf( injector.getInstance( IAnotherMockInterface, "name2" ), AnotherMockClass );
@@ -852,11 +861,11 @@ class XmlReaderTest
 	{
 		this.build( XmlReader.getXml( "context/xml/mappingConfigurationWithSingleton.xml" ) );
 
-		var config = this._locate( "config" );
+		var config : MappingConfiguration = this._locate( "config" );
 		Assert.isInstanceOf( config, MappingConfiguration );
 
 		var injector = new Injector();
-		config.configure( injector, new Dispatcher(), null );
+		config.configure( injector, null );
 
 		var instance1 = injector.getInstance( IAnotherMockInterface, "name1" );
 		Assert.isInstanceOf( instance1,  MockClass );
@@ -878,14 +887,14 @@ class XmlReaderTest
 	{
 		this.build( XmlReader.getXml( "context/xml/mappingConfigurationWithInjectInto.xml" ) );
 
-		var config = this._locate( "config" );
+		var config : MappingConfiguration = this._locate( "config" );
 		Assert.isInstanceOf( config, MappingConfiguration );
 
 		var injector = new Injector();
 		var domain = Domain.getDomain( 'XmlReaderTest.testBuildingMappingConfigurationWithInjectInto' );
 		injector.mapToValue( Domain, domain );
 		
-		config.configure( injector, new Dispatcher(), null );
+		config.configure( injector, null );
 
 		var mock0 = injector.getInstance( IMockInjectee, "name1" );
 		Assert.isInstanceOf( mock0,  MockInjectee );
@@ -1026,7 +1035,7 @@ class XmlReaderTest
 	{
 		this.build(  XmlReader.getXml( "context/eventTrigger.xml" ) );
 
-		var eventTrigger : Dynamic = this._locate( "eventTrigger" );
+		var eventTrigger = this._locate( "eventTrigger" );
 		Assert.isNotNull( eventTrigger );
 		
 		var chat : MockChatModule = this._locate( "chat" );
