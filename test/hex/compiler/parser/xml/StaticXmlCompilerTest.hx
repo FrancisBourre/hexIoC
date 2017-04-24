@@ -1011,18 +1011,16 @@ class StaticXmlCompilerTest
 	public function testMockObjectWithAnnotation() : Void
 	{
 		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/testMockObjectWithAnnotation.xml", "StaticXmlCompiler_testMockObjectWithAnnotation" );
-		code.execute();
-		
 		var annotationProvider : IAnnotationProvider = code.applicationContext.getInjector().getInstance( IAnnotationProvider );
 
 		annotationProvider.registerMetaData( "color", this.getColorByName );
 		annotationProvider.registerMetaData( "language", this.getText );
 		
-		var mockObjectWithMetaData = code.locator.mockObjectWithAnnotation;
+		code.execute();
 		
-		Assert.equals( 0xffffff, mockObjectWithMetaData.colorTest, "color should be the same" );
-		Assert.equals( "Bienvenue", mockObjectWithMetaData.languageTest, "text should be the same" );
-		Assert.isNull( mockObjectWithMetaData.propWithoutMetaData, "property should be null" );
+		Assert.equals( 0xffffff, code.locator.mockObjectWithAnnotation.colorTest, "color should be the same" );
+		Assert.equals( "Bienvenue", code.locator.mockObjectWithAnnotation.languageTest, "text should be the same" );
+		Assert.isNull( code.locator.mockObjectWithAnnotation.propWithoutMetaData, "property should be null" );
 	}
 	
 	@Test( "Test AnnotationProvider with inheritance" )
