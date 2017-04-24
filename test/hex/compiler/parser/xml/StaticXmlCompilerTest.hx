@@ -1090,7 +1090,7 @@ class StaticXmlCompilerTest
 	@Test( "test trigger injection" )
 	public function testTriggerInjection() : Void
 	{
-		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/triggerInjection.xml", "StaticXmlCompiler_testMockObjectWithAnnotation" );
+		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/triggerInjection.xml", "StaticXmlCompiler_testTriggerInjection" );
 		code.execute();
 
 		Assert.isInstanceOf( code.locator.model, MockWeatherModel );
