@@ -31,8 +31,8 @@ class BuildTwoContextsWithStateTransitionsTest
 		ApplicationDomainDispatcher.getInstance().clear();
 		applicationAssembler.release();
 	}
-		
 	function _getCoreFactory() : ICoreFactory
+		
 	{
 		return applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getCoreFactory();
 	}
@@ -48,7 +48,7 @@ class BuildTwoContextsWithStateTransitionsTest
 		
 		var context = applicationAssembler.getApplicationContext( 'applicationContext', ApplicationContext );
 		Assert.equals( context.state.ASSEMBLING_END, context.getCurrentState() );
-		
+
 		//called one more time, because command registered in the 1st DSL pass is not setted to fire-once
 		Assert.equals( 12, MockStateCommand.callCount );
 		
