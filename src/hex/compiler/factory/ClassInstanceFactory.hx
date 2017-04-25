@@ -98,7 +98,17 @@ class ClassInstanceFactory
 		else if ( staticCall != null )//simple static method call
 		{
 			//Assign right type description
-			constructorVO.type = MacroUtil.getFQCNFromExpression( macro $p { tp } .$staticCall( $a { constructorArgs } ) );
+			try
+			{
+				constructorVO.type = MacroUtil.getFQCNFromExpression( macro $p { tp } .$staticCall( $a { constructorArgs } ) );
+			}
+			catch( e : Dynamic )
+			{
+				//TODO Find a better way
+				var args = [];
+				for ( i in 0...constructorArgs.length ) args.push( macro null );
+				constructorVO.type = MacroUtil.getFQCNFromExpression( macro $p { tp } .$staticCall( $a { args } ) );
+			}
 			
 			result = macro 	@:pos( constructorVO.filePosition ) 
 							var $idVar = $p { tp }.$staticCall( $a{ constructorArgs } ); 
