@@ -39,27 +39,28 @@ class ClassInstanceFactory
 	static inline function _nullArray( length : UInt ) return  [ for ( i in 0...length ) macro null ];
 	static inline function _implementsInterface( classRef, interfaceRef ) return  MacroUtil.implementsInterface( classRef, MacroUtil.getClassType( Type.getClassName( interfaceRef ) ) );
 	static inline function _varType( type, position ) return TypeTools.toComplexType( Context.typeof( Context.parseInlineString( '( null : ${type})', position ) ) );
-	static inline function _result( e, idVar, type, position ){var t = _varType( type, position ); return macro @:pos( position ) var $idVar : $t = $e; }
+	static inline function _result( e, id, type, position ){var t = _varType( type, position ); return macro @:pos( position ) var $id : $t = $e; }
 	
 	static public function build<T:FactoryVOTypeDef>( factoryVO : T ) : Expr
 	{
 		if ( !ClassInstanceFactory._isInitialized ) ClassInstanceFactory._isInitialized = ClassInstanceFactory._init();
 
 		var result : Expr 	= null;
-		var constructorVO 	= factoryVO.constructorVO;
-		var idVar 			= constructorVO.ID;
-		var constructorArgs = ArgumentFactory.build( factoryVO );
-		var tp 				= MacroUtil.getPack( constructorVO.className, constructorVO.filePosition );
-		var typePath 		= MacroUtil.getTypePath( constructorVO.className, constructorVO.filePosition );
-		var staticCall 		= constructorVO.staticCall;
-		var factoryMethod 	= constructorVO.factory;
-		var staticRef 		= constructorVO.staticRef;
-		var classType 		= MacroUtil.getClassType( constructorVO.className, constructorVO.filePosition );
+		var vo 				= factoryVO.constructorVO;
+		var pos 			= vo.filePosition;
+		var id 				= vo.ID;
+		var args 			= ArgumentFactory.build( factoryVO );
+		var argsLength 		= args.length;
+		var pack 			= MacroUtil.getPack( vo.className, pos );
+		var typePath 		= MacroUtil.getTypePath( vo.className, pos );
+		var staticCall 		= vo.staticCall;
+		var factoryMethod 	= vo.factory;
+		var staticRef 		= vo.staticRef;
+		var classType 		= MacroUtil.getClassType( vo.className, pos );
 		
-		if ( constructorVO.injectorCreation && _implementsInterface( classType, hex.di.IInjectorContainer )  )
+		if ( vo.injectorCreation && _implementsInterface( classType, hex.di.IInjectorContainer ) )
 		{
-			result = macro 	@:pos( constructorVO.filePosition ) 
-				var $idVar = __applicationContextInjector.instantiateUnmapped( $p { tp } ); 
+			result = macro @:pos(pos) var $id = __applicationContextInjector.instantiateUnmapped( $p{ pack } ); 
 
 		}
 		else if ( factoryMethod != null )//factory method
@@ -67,30 +68,30 @@ class ClassInstanceFactory
 			//TODO implement the same behavior @runtime issue#1
 			if ( staticRef != null )//static variable - with factory method
 			{
-				var e = _staticRefFactory( tp, staticRef, factoryMethod, constructorArgs );
-				constructorVO.type = try _fqcn( result ) 
-					catch ( e : Dynamic ) _fqcn( _staticRefFactory( tp, staticRef, factoryMethod, _nullArray( constructorArgs.length ) ) );
-				result = _result( e, constructorVO.ID, constructorVO.type, constructorVO.filePosition );
+				var e = _staticRefFactory( pack, staticRef, factoryMethod, args );
+				vo.type = try _fqcn( result ) 
+					catch ( e : Dynamic ) _fqcn( _staticRefFactory( pack, staticRef, factoryMethod, _nullArray( argsLength ) ) );
+				result = _result( e, id, vo.type, pos );
 			}
 			else if ( staticCall != null )//static method call - with factory method
 			{
-				var e = _staticCallFactory( tp, staticCall, factoryMethod, constructorArgs );
-				constructorVO.type = try _fqcn( result ) 
-					catch ( e : Dynamic ) _fqcn( _staticCallFactory( tp, staticCall, factoryMethod, _nullArray( constructorArgs.length ) ) );
-				result = _result( e, constructorVO.ID, constructorVO.type, constructorVO.filePosition );
+				var e = _staticCallFactory( pack, staticCall, factoryMethod, args );
+				vo.type = try _fqcn( result ) 
+					catch ( e : Dynamic ) _fqcn( _staticCallFactory( pack, staticCall, factoryMethod, _nullArray( argsLength ) ) );
+				result = _result( e, id, vo.type, pos );
 			}
 			else//factory method error
 			{
-				Context.error( 	"'" + factoryMethod + "' method cannot be called on '" +  constructorVO.className + 
-								"' class. Add static method or variable to make it working.", constructorVO.filePosition );
+				Context.error( 	"'" + factoryMethod + "' method cannot be called on '" +  vo.className + 
+								"' class. Add static method or variable to make it working.", pos );
 			}
 		}
 		else if ( staticCall != null )//simple static method call
 		{
-			var e = _staticCall( tp, staticCall, constructorArgs );
-			constructorVO.type = try _fqcn( result ) 
-				catch ( e : Dynamic ) _fqcn( _staticCall( tp, staticCall, _nullArray( constructorArgs.length ) ) );
-			result = _result( e, constructorVO.ID, constructorVO.type, constructorVO.filePosition );
+			var e = _staticCall( pack, staticCall, args );
+			vo.type = try _fqcn( result ) 
+				catch ( e : Dynamic ) _fqcn( _staticCall( pack, staticCall, _nullArray( argsLength ) ) );
+			result = _result( e, id, vo.type, pos );
 		}
 		else//Standard instantiation
 		{
@@ -99,7 +100,7 @@ class ClassInstanceFactory
 				var applicationContextName = factoryVO.contextFactory.getApplicationContext().getName();
 				
 				//concatenate domain's name with parent's domain
-				var domainName = factoryVO.contextFactory.getApplicationContext().getDomain().getName() + '.' + constructorVO.ID;
+				var domainName = factoryVO.contextFactory.getApplicationContext().getDomain().getName() + '.' + id;
 				
 				//TODO register for every instance (from staticCall and/or factory)
 				result = macro 	@:mergeBlock 
@@ -111,10 +112,10 @@ class ClassInstanceFactory
 								} 
 			}
 			
-			var exp = _result( macro new $typePath( $a{ constructorArgs } ), constructorVO.ID, constructorVO.type, constructorVO.filePosition );
+			var exp = _result( macro new $typePath( $a{ args } ), id, vo.type, pos );
 							
 			result = result == null ? exp:
-				macro 	@:pos( constructorVO.filePosition )
+				macro 	@:pos(pos)
 						@:mergeBlock 
 						{ 
 							$result; 
@@ -122,7 +123,7 @@ class ClassInstanceFactory
 						};
 		}
 		
-		return macro @:pos( constructorVO.filePosition ) $result;
+		return macro @:pos(pos) $result;
 	}
 }
 #end
