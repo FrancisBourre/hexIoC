@@ -5,11 +5,7 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Type.ClassType;
 import haxe.macro.TypeTools;
-import hex.compiletime.basic.vo.FactoryVOTypeDef;
 import hex.compiletime.factory.ArgumentFactory;
-import hex.domain.Domain;
-import hex.domain.DomainExpert;
-import hex.error.PrivateConstructorException;
 import hex.util.MacroUtil;
 
 /**
@@ -18,21 +14,11 @@ import hex.util.MacroUtil;
  */
 class ClassInstanceFactory
 {
-	/** @private */
-    function new() throw new PrivateConstructorException();
+	/** @private */ function new() throw new hex.error.PrivateConstructorException();
 
-	static var _domainExpertClass 			: Array<String>;
-	static var _domainClass 				: Array<String>;
-	
-	static var _isInitialized = false;
-	static function _init() : Bool
-	{
-		ClassInstanceFactory._domainExpertClass 			= MacroUtil.getPack( Type.getClassName( DomainExpert ) );
-		ClassInstanceFactory._domainClass 					= MacroUtil.getPack( Type.getClassName( Domain ) );
-		return true;
-	}
-	
 	static var _fqcn = MacroUtil.getFQCNFromExpression;
+	static inline function _domainExpert() return MacroUtil.getPack( Type.getClassName( hex.domain.DomainExpert ) );
+	static inline function _domain() return MacroUtil.getPack( Type.getClassName( hex.domain.Domain ) );
 	static inline function _staticRefFactory( tp, staticRef, factoryMethod, args ) return macro $p{ tp }.$staticRef.$factoryMethod( $a{ args } );
 	static inline function _staticCallFactory( tp, staticCall, factoryMethod, args ) return macro $p{ tp }.$staticCall().$factoryMethod( $a{ args } );
 	static inline function _staticCall( tp, staticCall, args ) return macro $p{ tp }.$staticCall( $a{ args } );
@@ -41,11 +27,8 @@ class ClassInstanceFactory
 	static inline function _varType( type, position ) return TypeTools.toComplexType( Context.typeof( Context.parseInlineString( '( null : ${type})', position ) ) );
 	static inline function _result( e, id, type, position ){var t = _varType( type, position ); return macro @:pos( position ) var $id : $t = $e; }
 	
-	static public function build<T:FactoryVOTypeDef>( factoryVO : T ) : Expr
+	static public function build<T:hex.compiletime.basic.vo.FactoryVOTypeDef>( factoryVO : T ) : Expr
 	{
-		if ( !ClassInstanceFactory._isInitialized ) ClassInstanceFactory._isInitialized = ClassInstanceFactory._init();
-
-		var result : Expr 	= null;
 		var vo 				= factoryVO.constructorVO;
 		var pos 			= vo.filePosition;
 		var id 				= vo.ID;
@@ -58,9 +41,10 @@ class ClassInstanceFactory
 		var staticRef 		= vo.staticRef;
 		var classType 		= MacroUtil.getClassType( vo.className, pos );
 		
+		var result = //Assign result
 		if ( vo.injectorCreation && _implementsInterface( classType, hex.di.IInjectorContainer ) )
 		{
-			result = macro @:pos(pos) var $id = __applicationContextInjector.instantiateUnmapped( $p{ pack } ); 
+			macro @:pos(pos) var $id = __applicationContextInjector.instantiateUnmapped( $p{ pack } ); 
 
 		}
 		else if ( factoryMethod != null )//factory method
@@ -69,58 +53,46 @@ class ClassInstanceFactory
 			if ( staticRef != null )//static variable - with factory method
 			{
 				var e = _staticRefFactory( pack, staticRef, factoryMethod, args );
-				vo.type = try _fqcn( result ) 
+				vo.type = try _fqcn( e )//Assign right type description 
 					catch ( e : Dynamic ) _fqcn( _staticRefFactory( pack, staticRef, factoryMethod, _nullArray( argsLength ) ) );
-				result = _result( e, id, vo.type, pos );
+				_result( e, id, vo.type, pos );
 			}
 			else if ( staticCall != null )//static method call - with factory method
 			{
 				var e = _staticCallFactory( pack, staticCall, factoryMethod, args );
-				vo.type = try _fqcn( result ) 
+				vo.type = try _fqcn( e )//Assign right type description 
 					catch ( e : Dynamic ) _fqcn( _staticCallFactory( pack, staticCall, factoryMethod, _nullArray( argsLength ) ) );
-				result = _result( e, id, vo.type, pos );
+				_result( e, id, vo.type, pos );
 			}
 			else//factory method error
 			{
 				Context.error( 	"'" + factoryMethod + "' method cannot be called on '" +  vo.className + 
 								"' class. Add static method or variable to make it working.", pos );
+				null;
 			}
 		}
 		else if ( staticCall != null )//simple static method call
 		{
 			var e = _staticCall( pack, staticCall, args );
-			vo.type = try _fqcn( result ) 
+			vo.type = try _fqcn( e )//Assign right type description 
 				catch ( e : Dynamic ) _fqcn( _staticCall( pack, staticCall, _nullArray( argsLength ) ) );
-			result = _result( e, id, vo.type, pos );
+			_result( e, id, vo.type, pos );
 		}
 		else//Standard instantiation
 		{
+			var moduleExpr;
 			if ( _implementsInterface( classType, hex.module.IContextModule ) )
 			{
 				var applicationContextName = factoryVO.contextFactory.getApplicationContext().getName();
-				
 				//concatenate domain's name with parent's domain
 				var domainName = factoryVO.contextFactory.getApplicationContext().getDomain().getName() + '.' + id;
-				
 				//TODO register for every instance (from staticCall and/or factory)
-				result = macro 	@:mergeBlock 
-								{ 
-									$p{ _domainExpertClass } .getInstance().registerDomain
-									( 
-										$p{ _domainClass }.getDomain( $v{ domainName } ) 
-									);
-								} 
+				moduleExpr = macro @:mergeBlock{ $p{ _domainExpert() } .getInstance().registerDomain( $p{_domain()}.getDomain( $v{domainName} ) ); } 
 			}
 			
 			var exp = _result( macro new $typePath( $a{ args } ), id, vo.type, pos );
-							
-			result = result == null ? exp:
-				macro 	@:pos(pos)
-						@:mergeBlock 
-						{ 
-							$result; 
-							$exp; 
-						};
+			//Check if the instance is an IContextModule
+			moduleExpr == null ? exp: macro @:pos(pos) @:mergeBlock{ $moduleExpr; $exp; };
 		}
 		
 		return macro @:pos(pos) $result;
