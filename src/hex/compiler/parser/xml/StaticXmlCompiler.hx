@@ -103,12 +103,15 @@ class StaticXmlCompiler
 #if macro
 class StaticParserCollection extends hex.parser.AbstractParserCollection<hex.compiletime.xml.AbstractXmlParser<hex.factory.BuildRequest>>
 {
+	var _runtimeParam 			: hex.preprocess.RuntimeParam;
 	var _assemblerExpression 	: VariableExpression;
 	var _fileName 				: String;
 	var _isExtending 			: Bool;
 	
 	public function new( assemblerExpression : VariableExpression, fileName : String, isExtending : Bool = false ) 
 	{
+		//Null pattern
+		this._runtimeParam			= { type: null, block: [] };
 		this._assemblerExpression 	= assemblerExpression;
 		this._fileName 				= fileName;
 		this._isExtending 			= isExtending;
@@ -118,10 +121,72 @@ class StaticParserCollection extends hex.parser.AbstractParserCollection<hex.com
 	
 	override function _buildParserList() : Void
 	{
+		this._parserCollection.push( new RuntimeParamsParser( this._runtimeParam ) );
 		this._parserCollection.push( new StaticContextParser( this._assemblerExpression, this._isExtending ) );
 		this._parserCollection.push( new hex.compiler.parser.xml.StateParser() );
 		this._parserCollection.push( new hex.compiler.parser.xml.ObjectParser() );
-		this._parserCollection.push( new StaticLauncher( this._assemblerExpression, this._fileName, this._isExtending ) );
+		this._parserCollection.push( new StaticLauncher( this._assemblerExpression, this._fileName, this._isExtending, this._runtimeParam ) );
+	}
+}
+
+class RuntimeParamsParser extends hex.compiletime.xml.AbstractXmlParser<hex.factory.BuildRequest>
+{
+	var _runtimeParam : hex.preprocess.RuntimeParam;
+	
+	public function new( runtimeParam : hex.preprocess.RuntimeParam )
+	{
+		this._runtimeParam = runtimeParam;
+		
+		super();
+	}
+	
+	override public function parse() : Void
+	{
+		var iterator = this._contextData.firstElement().elementsNamed( hex.compiletime.xml.ContextNodeNameList.PARAMS );
+
+		while ( iterator.hasNext() )
+		{
+			var node = iterator.next();
+			this._parseNode( node );
+			this._contextData.firstElement().removeChild( node );
+		}
+	}
+	
+	function _parseNode( xml : Xml ) : Void
+	{
+		var block : Array<Expr> = [];
+		var o = "var o:{";
+		
+		var elements = xml.elements();
+		while ( elements.hasNext() )
+		{
+			var element = elements.next();
+			
+			var identifier = element.get( hex.compiletime.xml.ContextAttributeList.ID );
+			if ( identifier == null )
+			{
+				this._exceptionReporter.report( "Parsing error with '" + xml.nodeName + 
+												"' node, 'id' attribute not found.",
+												this._positionTracker.getPosition( xml ) );
+			}
+			
+			var type = element.get( hex.compiletime.xml.ContextAttributeList.TYPE );
+			
+			block.push( haxe.macro.Context.parse( "var " + identifier + " = param." + identifier, haxe.macro.Context.currentPos() ) );
+			o += identifier + ":" + type + ",";
+		}
+		
+		var e = haxe.macro.Context.parse( o.substr( 0, o.length - 1 ) + "}", haxe.macro.Context.currentPos() );
+		var param = switch( e.expr )
+		{
+			case EVars(a):
+					a[0].type;
+			case _:
+				null;
+		}
+		
+		this._runtimeParam.type = param;
+		this._runtimeParam.block = block;
 	}
 }
 
@@ -173,14 +238,16 @@ class StaticLauncher extends hex.compiletime.xml.AbstractXmlParser<hex.factory.B
 	var _assemblerVariable 	: VariableExpression;
 	var _fileName 			: String;
 	var _isExtending 		: Bool;
+	var _runtimeParam 		: hex.preprocess.RuntimeParam;
 	
-	public function new( assemblerVariable : VariableExpression, fileName : String, isExtending : Bool = false  ) 
+	public function new( assemblerVariable : VariableExpression, fileName : String, isExtending : Bool = false, runtimeParam : hex.preprocess.RuntimeParam = null ) 
 	{
 		super();
 		
 		this._assemblerVariable = assemblerVariable;
 		this._fileName 			= fileName;
 		this._isExtending 		= isExtending;
+		this._runtimeParam 		= runtimeParam;
 	}
 	
 	override public function parse() : Void
@@ -207,7 +274,7 @@ class StaticLauncher extends hex.compiletime.xml.AbstractXmlParser<hex.factory.B
 		var assemblerVarExpression = this._assemblerVariable.expression;
 		var factory = assembler.getFactory( this._factoryClass, this.getApplicationContext() );
 		var builder = ContextBuilder.getInstance( factory );
-		var file 	= ContextBuilder.getInstance( factory ).buildFileExecution( this._fileName, assembler.getMainExpression() );
+		var file 	= ContextBuilder.getInstance( factory ).buildFileExecution( this._fileName, assembler.getMainExpression(), this._runtimeParam );
 		
 		var contextName = this._applicationContextName;
 		var varType = builder.getType();
@@ -268,15 +335,21 @@ class StaticLauncher extends hex.compiletime.xml.AbstractXmlParser<hex.factory.B
 			access: [ APublic ]
 		});
 		
+		var locatorArguments = if ( this._runtimeParam.type != null ) [ { name: 'param', type:_runtimeParam.type } ] else [];
+		
+		var locatorBody = this._runtimeParam.type != null ?
+			macro hex.compiletime.CodeLocator.get( $v { contextName } ).$file(param) :
+				macro hex.compiletime.CodeLocator.get( $v { contextName } ).$file();
+		
 		classExpr.fields.push(
 		{
 			name: 'execute',
 			pos: haxe.macro.Context.currentPos(),
 			kind: FFun( 
 			{
-				args: [],
+				args: locatorArguments,
 				ret: macro : Void,
-				expr: macro hex.compiletime.CodeLocator.get( $v { contextName } ).$file()
+				expr: locatorBody
 			}),
 			access: [ APublic ]
 		});

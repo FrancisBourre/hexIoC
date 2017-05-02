@@ -1215,4 +1215,19 @@ class StaticXmlCompilerTest
 		Assert.equals( 30, code2.locator.rect2.width );
 		Assert.equals( 40, code2.locator.rect2.height );
 	}
+	
+	@Test( "test runtime arguments" )
+	public function testRuntimeArguments() : Void
+	{
+		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/runtimeArguments.xml", "StaticXmlCompiler_testRuntimeArguments" );
+		code.execute( { x:10, y: 20, p: new hex.structures.Point( 30, 40 ) } );
+		
+		Assert.isInstanceOf( code.locator.size, Size );
+		Assert.equals( 10, code.locator.size.width );
+		Assert.equals( 20, code.locator.size.height );
+		
+		Assert.isInstanceOf( code.locator.anotherSize, Size );
+		Assert.equals( 30, code.locator.anotherSize.width );
+		Assert.equals( 40, code.locator.anotherSize.height );
+	}
 }
