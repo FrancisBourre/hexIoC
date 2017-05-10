@@ -1,0 +1,5 @@
+<root name="applicationContext">
+
+    <service id="myService" type="hex.ioc.parser.xml.mock.MockStubStatefulService"/>
+
+</root>

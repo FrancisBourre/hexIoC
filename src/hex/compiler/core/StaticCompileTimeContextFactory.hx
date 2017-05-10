@@ -43,6 +43,8 @@ class StaticCompileTimeContextFactory
 	implements IContextFactory 
 	implements ILocatorListener<String, Dynamic>
 {
+	static var _coreFactories 				: Map<String, ICoreFactory> = new Map();
+	
 	static var _annotationParsableInterface = MacroUtil.getClassType( Type.getClassName( IAnnotationParsable ) );
 	static var _commandTriggerInterface 	= MacroUtil.getClassType( Type.getClassName( ICommandTrigger ) );
 	static var _injectorContainerInterface 	= MacroUtil.getClassType( Type.getClassName( IInjectorContainer ) );
@@ -80,7 +82,13 @@ class StaticCompileTimeContextFactory
 			
 			this._applicationContext 				= applicationContext;
 			this._coreFactory 						= cast ( applicationContext.getCoreFactory(), CompileTimeCoreFactory );
-			this._coreFactory.register( this._applicationContext.getName(), this._applicationContext );
+			
+			if ( !StaticCompileTimeContextFactory._coreFactories.exists( applicationContext.getName() ) )
+			{
+				StaticCompileTimeContextFactory._coreFactories.set( this._applicationContext.getName(), cast ( applicationContext.getCoreFactory(), CompileTimeCoreFactory ) );
+			}
+			
+			this._coreFactory = StaticCompileTimeContextFactory._coreFactories.get( this._applicationContext.getName() );
 		
 		//
 			this._factoryMap 						= new Map();

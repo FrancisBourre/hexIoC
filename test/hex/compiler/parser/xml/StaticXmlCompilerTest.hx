@@ -1230,4 +1230,21 @@ class StaticXmlCompilerTest
 		Assert.equals( 30, code.locator.anotherSize.width );
 		Assert.equals( 40, code.locator.anotherSize.height );
 	}
+	
+	@Test( "test module listening service" )
+	public function testModuleListeningServiceWith2Passes() : Void
+	{
+		var code1 = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/serviceToBeListened.xml", "StaticXmlCompiler_testModuleListeningServiceWith2Passes" );
+		code1.execute();
+		
+		var code = StaticXmlCompiler.extend( code1, "context/xml/moduleListener.xml" );
+		code.execute();
+		
+		Assert.isNotNull( code.locator.myService );
+		Assert.isNotNull( code.locator.myModule );
+
+		var booleanVO = new MockBooleanVO( true );
+		code.locator.myService.setBooleanVO( booleanVO );
+		Assert.isTrue( code.locator.myModule.getBooleanValue() );
+	}
 }
