@@ -13,5 +13,9 @@
 			<key type="Function" value="String->hex.control.async.Expect<String>"/> 
 			<value ref="controller.sayHelloTo"/>
 		</item>
+		<item map-name="name"> 
+			<key type="Function" value="String->hex.control.async.Expect<String>"/> 
+			<value ref="controller.sayHelloTo"/>
+		</item>
     </config>
 </data>

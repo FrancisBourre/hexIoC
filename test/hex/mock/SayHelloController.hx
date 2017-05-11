@@ -24,4 +24,11 @@ class SayHelloController implements ICommandTrigger
 		var sayHelloTo : String->Expect<String>;
 		sayHelloTo( 'world' );
 	}
+	
+	public function sayHelloWithFunctionInjectionWithName() : Void
+	{
+		@Inject( 'name' )
+		var sayHelloTo : String->Expect<String>;
+		sayHelloTo( 'world' );
+	}
 }
