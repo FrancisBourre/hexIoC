@@ -54,14 +54,18 @@ class ClassInstanceFactory
 			{
 				var e = _staticRefFactory( pack, staticRef, factoryMethod, args );
 				vo.type = try _fqcn( e )//Assign right type description 
-					catch ( e : Dynamic ) _fqcn( _staticRefFactory( pack, staticRef, factoryMethod, _nullArray( argsLength ) ) );
+					catch ( e : Dynamic ) 
+						try _fqcn( _staticRefFactory( pack, staticRef, factoryMethod, _nullArray( argsLength ) ) ) 
+							catch ( e : Dynamic ) "Dynamic";
 				_result( e, id, vo.type, pos );
 			}
 			else if ( staticCall != null )//static method call - with factory method
 			{
 				var e = _staticCallFactory( pack, staticCall, factoryMethod, args );
 				vo.type = try _fqcn( e )//Assign right type description 
-					catch ( e : Dynamic ) _fqcn( _staticCallFactory( pack, staticCall, factoryMethod, _nullArray( argsLength ) ) );
+					catch ( e : Dynamic ) 
+						try _fqcn( _staticCallFactory( pack, staticCall, factoryMethod, _nullArray( argsLength ) ) ) 
+							catch ( e : Dynamic ) "Dynamic";
 				_result( e, id, vo.type, pos );
 			}
 			else//factory method error
@@ -74,8 +78,10 @@ class ClassInstanceFactory
 		else if ( staticCall != null )//simple static method call
 		{
 			var e = _staticCall( pack, staticCall, args );
-			vo.type = try _fqcn( e )//Assign right type description 
-				catch ( e : Dynamic ) _fqcn( _staticCall( pack, staticCall, _nullArray( argsLength ) ) );
+			vo.type = try _fqcn( e )//Assign right type description
+				catch ( e : Dynamic ) 
+					try _fqcn( _staticCall( pack, staticCall, _nullArray( argsLength ) ) ) 
+						catch ( e : Dynamic ) "Dynamic";
 			_result( e, id, vo.type, pos );
 		}
 		else//Standard instantiation
