@@ -43,15 +43,15 @@ class ObjectParser extends AbstractExprParser<BuildRequest>
 	{
 		switch ( e )
 		{
-			case macro $i { ident } = $value:
+			case macro $i{ ident } = $value:
 				var constructorVO = this._getConstructorVO( ident, value );
 				this._builder.build( OBJECT( constructorVO ) );
 			
-			case macro $i{ident}.$field = $assigned:	
+			case macro $i{ ident }.$field = $assigned:	
 				var propertyVO = ExpressionUtil.getProperty( ident, field, assigned );
 				this._builder.build( PROPERTY( propertyVO ) );
 			
-			case macro $i{ident}.$field( $a{params} ):
+			case macro $i{ ident }.$field( $a{ params } ):
 				
 				var it = params.iterator();
 				var methodArguments = [];
@@ -62,7 +62,7 @@ class ObjectParser extends AbstractExprParser<BuildRequest>
 				var methodCallVO = new MethodCallVO( ident, field, methodArguments );
 				this._builder.build( METHOD_CALL( methodCallVO ) );
 			
-			case macro @inject_into($a{args}) $i{ident} = $value:
+			case macro @inject_into( $a{args}) $i{ident} = $value:
 				var constructorVO = this._getConstructorVO( ident, value );
 				constructorVO.injectInto = true;
 				this._builder.build( OBJECT( constructorVO ) );
