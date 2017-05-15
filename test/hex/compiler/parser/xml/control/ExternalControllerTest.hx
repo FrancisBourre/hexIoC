@@ -55,5 +55,14 @@ class ExternalControllerTest
 		this._locate( 'sender' ).sayHelloworldWithFunctionInjection();
 		Assert.equals( 'hello world', this._locate( 'receiver' ).message );
 	}
+	
+	@Test( "test command execution in the context with function injection named" )
+	public function testCommandExecutionInTheContextWithFunctionInjectionNamed() : Void
+	{
+		this._applicationAssembler = XmlCompiler.compile( "context/xml/externalControllerMethodInjection.xml" );
+		
+		this._locate( 'sender' ).sayHelloworldWithFunctionInjectionNamed();
+		Assert.equals( 'hello world', this._locate( 'receiver' ).message );
+	}
 	#end
 }
