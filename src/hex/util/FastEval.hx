@@ -23,7 +23,7 @@ class FastEval
 		while ( members.length > 0 )
 		{
 			var member : String = members.shift();
-			result = Reflect.field( target, member );
+			result = Reflect.getProperty( target, member );
 			
 			if ( result == null )
 			{
