@@ -64,5 +64,32 @@ class ExternalControllerTest
 		this._locate( 'sender' ).sayHelloworldWithFunctionInjectionNamed();
 		Assert.equals( 'hello world', this._locate( 'receiver' ).message );
 	}
+	
+	@Test( "test command execution in the context with function injection named constant" )
+	public function testCommandExecutionInTheContextWithFunctionInjectionNamedConstant() : Void
+	{
+		this._applicationAssembler = XmlCompiler.compile( "context/xml/externalControllerMethodInjection.xml" );
+		
+		this._locate( 'sender' ).sayHelloworldWithFunctionInjectionConstantName();
+		Assert.equals( 'hello world', this._locate( 'receiver' ).message );
+	}
+	
+	@Test( "test command execution in the context with function injection named constant from other class" )
+	public function testCommandExecutionInTheContextWithFunctionInjectionNamedConstantFromOtherClass() : Void
+	{
+		this._applicationAssembler = XmlCompiler.compile( "context/xml/externalControllerMethodInjection.xml" );
+		
+		this._locate( 'sender' ).sayHelloworldWithFunctionInjectionConstantNameFromOtherClass();
+		Assert.equals( 'hello world', this._locate( 'receiver' ).message );
+	}
+	
+	@Test( "test command execution in the context with function injection named constant from other class with FQCN" )
+	public function testCommandExecutionInTheContextWithFunctionInjectionNamedConstantFromOtherClassWithFQCN() : Void
+	{
+		this._applicationAssembler = XmlCompiler.compile( "context/xml/externalControllerMethodInjection.xml" );
+		
+		this._locate( 'sender' ).sayHelloworldWithFunctionInjectionConstantNameFromOtherClassWithFQCN();
+		Assert.equals( 'hello world', this._locate( 'receiver' ).message );
+	}
 	#end
 }

@@ -31,4 +31,20 @@ class HelloSenderModule extends ContextModule
 	{
 		this._get( SayHelloController ).sayHelloWithFunctionInjectionWithName();
 	}
+	
+	public function sayHelloworldWithFunctionInjectionConstantName() : Void 
+	{
+		this._get( SayHelloController ).sayHelloWithFunctionInjectionWithConstantName();
+	}
+	
+	public function sayHelloworldWithFunctionInjectionConstantNameFromOtherClass() : Void 
+	{
+		this._get( SayHelloController ).sayHelloWithFunctionInjectionWithConstantNameFromOtherClass();
+	}
+	
+	public function sayHelloworldWithFunctionInjectionConstantNameFromOtherClassWithFQCN() : Void 
+	{
+		this._get( SayHelloController ).sayHelloWithFunctionInjectionWithConstantNameFromOtherClassWithFQCN();
+	}
+	
 }
