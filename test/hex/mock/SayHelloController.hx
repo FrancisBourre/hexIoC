@@ -9,6 +9,8 @@ import hex.control.trigger.ICommandTrigger;
  */
 class SayHelloController implements ICommandTrigger
 {
+	static var TEST = "name";
+	
 	public function new() {}
 	
 	public function sayHelloWithControllerInjection() : Void
@@ -31,4 +33,30 @@ class SayHelloController implements ICommandTrigger
 		var sayHelloTo : String->Expect<String>;
 		sayHelloTo( 'world' );
 	}
+	
+	public function sayHelloWithFunctionInjectionWithConstantName() : Void
+	{
+		@Inject( TEST )
+		var sayHelloTo : String->Expect<String>;
+		sayHelloTo( 'world' );
+	}
+	
+	public function sayHelloWithFunctionInjectionWithConstantNameFromOtherClass() : Void
+	{
+		@Inject( Constants.TEST )
+		var sayHelloTo : String->Expect<String>;
+		sayHelloTo( 'world' );
+	}
+	
+	public function sayHelloWithFunctionInjectionWithConstantNameFromOtherClassWithFQCN() : Void
+	{
+		@Inject( hex.mock.SayHelloController.Constants.TEST )
+		var sayHelloTo : String->Expect<String>;
+		sayHelloTo( 'world' );
+	}
+}
+
+class Constants
+{
+	public static var TEST = "name";
 }
