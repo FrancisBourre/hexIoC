@@ -31,7 +31,7 @@ import hex.util.MacroUtil;
 class StaticXmlCompiler 
 {
 	#if macro
-	static function _readFile(	fileName 						: String, 
+	static public function _readFile(	fileName 				: String, 
 								?applicationContextName 		: String,
 								?preprocessingVariables 		: Expr, 
 								?conditionalVariables 			: Expr, 
@@ -77,7 +77,7 @@ class StaticXmlCompiler
 	}
 	
 	#if macro
-	static function _getContextName( context )
+	static public function _getContextName( context )
 	{
 		var ident = switch( context.expr ) 
 		{ 
