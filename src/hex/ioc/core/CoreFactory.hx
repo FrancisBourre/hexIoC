@@ -197,7 +197,6 @@ class CoreFactory implements IRunTimeCoreFactory
 		var factoryMethod 		= constructorVO.factory;
 		var staticCall 			= constructorVO.staticCall;
 		var staticRef 			= constructorVO.staticRef;
-		var injectorCreation 	= constructorVO.injectorCreation;
 		var injectInto 			= constructorVO.injectInto;
 		
 		var classReference 	: Class<Dynamic> 			= null;
@@ -221,11 +220,7 @@ class CoreFactory implements IRunTimeCoreFactory
 
 		var obj : Dynamic = null;
 		
-		if ( injectorCreation )
-		{
-			obj = this._injector.instantiateUnmapped( classReference );
-		}
-		else if ( factoryMethod != null )//factory method
+		if ( factoryMethod != null )//factory method
 		{
 			if ( staticRef != null )//static variable - with factory method
 			{
@@ -326,10 +321,10 @@ class CoreFactory implements IRunTimeCoreFactory
 				}
 			}
 			
-			if ( injectInto )
+			/*if ( injectInto )
 			{
 				this._injector.injectInto( obj );
-			}
+			}*/
 
 			if ( Std.is( obj, IAnnotationParsable ) )
 			{

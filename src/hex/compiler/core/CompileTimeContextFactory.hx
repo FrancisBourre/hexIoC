@@ -50,6 +50,8 @@ class CompileTimeContextFactory
 	
 	var _isInitialized				: Bool;
 	var _expressions 				: Array<Expr>;
+	var _mappedTypes 				: Array<Expr>;
+	var _injectedInto 				: Array<Expr>;
 	
 	var _annotationProvider			: IAnnotationProvider;
 	var _contextDispatcher			: IDispatcher<{}>;
@@ -91,6 +93,8 @@ class CompileTimeContextFactory
 			this._domainListenerVOLocator 			= new Locator();
 			this._stateTransitionVOLocator 			= new Locator();
 			this._moduleLocator 					= new Locator();
+			this._mappedTypes 						= [];
+			this._injectedInto 						= [];
 			
 			DomainListenerFactory.domainLocator = new Map();
 			
@@ -150,6 +154,8 @@ class CompileTimeContextFactory
 		this._moduleLocator.release();
 		this._factoryMap = new Map();
 		this._symbolTable.clear();
+		this._mappedTypes = [];
+		this._injectedInto = [];
 		
 		DomainListenerFactory.domainLocator = null;
 	}
@@ -256,11 +262,11 @@ class CompileTimeContextFactory
 	
 	public function buildAllObjects() : Void
 	{
-		var keys : Array<String> = this._constructorVOLocator.keys();
-		for ( key in keys )
-		{
-			this.buildObject( key );
-		}
+		this._constructorVOLocator.keys().map( this.buildObject );
+		
+		//Append to final expressions stack
+		this._mappedTypes.map( this._expressions.push );
+		this._injectedInto.map( this._expressions.push );
 		
 		var messageType = MacroUtil.getStaticVariable( "hex.core.ApplicationAssemblerMessage.OBJECTS_BUILT" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
@@ -377,12 +383,12 @@ class CompileTimeContextFactory
 		if ( id != null )
 		{
 			this._tryToRegisterModule( constructorVO );
+			this._parseInjectInto( constructorVO );
+			this._parseMapTypes( constructorVO );
 			
 			var finalResult = result;
-			finalResult = this._parseInjectInto( constructorVO, finalResult );
 			finalResult = this._parseAnnotation( constructorVO, finalResult );
 			finalResult = this._parseCommandTrigger( constructorVO, finalResult );
-			finalResult = this._parseMapTypes( constructorVO, finalResult );
 
 			this._expressions.push( macro @:mergeBlock { $finalResult;  coreFactory.register( $v { id }, $i { id } ); } );
 			this._coreFactory.register( id, result );
@@ -399,20 +405,19 @@ class CompileTimeContextFactory
 		}
 	}
 	
-	function _parseInjectInto( constructorVO : ConstructorVO, result : Expr ) : Expr
+	function _parseInjectInto( constructorVO : ConstructorVO ) : Void
 	{
 		if ( constructorVO.injectInto && MacroUtil.implementsInterface( this._getClassType( constructorVO.className ), _injectorContainerInterface ) )
 		{
 			//TODO throws an error if interface is not implemented
-			result = macro 	@:pos( constructorVO.filePosition )
-							@:mergeBlock
-							{ 
-								$result; 
-								__applicationContextInjector.injectInto( $i{ constructorVO.ID } ); 
-							};
+			this._injectedInto.push( 
+				macro 	@:pos( constructorVO.filePosition )
+						@:mergeBlock
+						{ 
+							__applicationContextInjector.injectInto( $i{ constructorVO.ID } ); 
+						}
+			);
 		}
-		
-		return result;
 	}
 
 	function _parseAnnotation( constructorVO : ConstructorVO, result : Expr ) : Expr
@@ -432,7 +437,7 @@ class CompileTimeContextFactory
 	
 	function _parseCommandTrigger( constructorVO : ConstructorVO, result : Expr ) : Expr
 	{
-		if ( MacroUtil.implementsInterface( this._getClassType( constructorVO.className ), _commandTriggerInterface ) )
+		if ( !constructorVO.injectInto && MacroUtil.implementsInterface( this._getClassType( constructorVO.className ), _commandTriggerInterface ) )
 		{
 			result = macro 	@:pos( constructorVO.filePosition ) 
 							@:mergeBlock
@@ -445,7 +450,7 @@ class CompileTimeContextFactory
 		return result;
 	}
 	
-	function _parseMapTypes( constructorVO : ConstructorVO, result : Expr ) : Expr
+	function _parseMapTypes( constructorVO : ConstructorVO ) : Void
 	{
 		if ( constructorVO.mapTypes != null )
 		{
@@ -459,18 +464,17 @@ class CompileTimeContextFactory
 				mapType = mapType.split( ' ' ).join( '' );
 				
 				//Map it
-				result = macro 	@:pos( constructorVO.filePosition ) 
-				@:mergeBlock 
-				{
-					$result; 
-					__applicationContextInjector.mapClassNameToValue
-					( $v{ mapType }, $i{ constructorVO.ID }, $v{ constructorVO.ID } 
-					);
-				};
+				this._mappedTypes.push( 
+					macro 	@:pos( constructorVO.filePosition ) 
+							@:mergeBlock 
+							{
+								__applicationContextInjector.mapClassNameToValue
+								( $v{ mapType }, $i{ constructorVO.ID }, $v{ constructorVO.ID } 
+								);
+							}
+				);
 			}
 		}
-		
-		return result;
 	}
 	
 	function _getFactoryVO( constructorVO : ConstructorVO = null ) : FactoryVOTypeDef

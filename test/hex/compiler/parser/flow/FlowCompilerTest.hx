@@ -416,29 +416,10 @@ class FlowCompilerTest
 		Assert.equals( 20, point.y );
 	}
 	
-	@Test( "test 'injector-creation' attribute" )
-	public function testInjectorCreationAttribute() : Void
-	{
-		var assembler = new ApplicationAssembler();
-		var injector = assembler.getApplicationContext( "applicationContext", ApplicationContext ).getCoreFactory().getInjector();
-		injector.mapToValue( String, 'hola mundo' );
-		
-		this._applicationAssembler = FlowCompiler.compileWithAssembler( assembler, "context/flow/injectorCreationAttribute.flow" );
-
-		var instance : MockClassWithInjectedProperty = this._getCoreFactory().locate( "instance" );
-		Assert.isInstanceOf( instance, MockClassWithInjectedProperty, "" );
-		Assert.equals( "hola mundo", instance.property, "" );
-		Assert.isTrue( instance.postConstructWasCalled, "" );
-	}
-	
 	@Test( "test 'inject-into' attribute" )
 	public function testInjectIntoAttribute() : Void
 	{
-		var assembler = new ApplicationAssembler();
-		var injector = assembler.getApplicationContext( "applicationContext", ApplicationContext ).getCoreFactory().getInjector();
-		injector.mapToValue( String, 'hola mundo' );
-
-		this._applicationAssembler = FlowCompiler.compileWithAssembler( assembler, "context/flow/injectIntoAttribute.flow" );
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/injectIntoAttribute.flow" );
 
 		var instance : MockClassWithInjectedProperty = this._getCoreFactory().locate( "instance" );
 		Assert.isInstanceOf( instance, MockClassWithInjectedProperty, "" );

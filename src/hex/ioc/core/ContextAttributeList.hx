@@ -16,7 +16,6 @@ class ContextAttributeList
 	static public inline var FACTORY_METHOD 		: String = hex.compiletime.xml.ContextAttributeList.FACTORY_METHOD;
 	public static inline var STATIC_REF 			: String = hex.compiletime.xml.ContextAttributeList.STATIC_REF;
 	static public inline var STATIC_CALL 			: String = hex.compiletime.xml.ContextAttributeList.STATIC_CALL;
-	static public inline var INJECTOR_CREATION 		: String = hex.compiletime.xml.ContextAttributeList.INJECTOR_CREATION;
 	static public inline var INJECT_INTO 			: String = hex.compiletime.xml.ContextAttributeList.INJECT_INTO;
 	static public inline var METHOD 				: String = hex.compiletime.xml.ContextAttributeList.METHOD;
 	static public inline var PARSER_CLASS 			: String = hex.compiletime.xml.ContextAttributeList.PARSER_CLASS;

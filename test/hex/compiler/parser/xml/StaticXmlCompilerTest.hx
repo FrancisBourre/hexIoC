@@ -488,26 +488,9 @@ class StaticXmlCompilerTest
 		Assert.equals( 20, code.locator.point.y );
 	}
 	
-	@Test( "test 'injector-creation' attribute" )
-	public function testInjectorCreationAttribute() : Void
-	{
-		var injector = this._applicationAssembler.getApplicationContext( "StaticXmlCompiler_testInjectorCreationAttribute", ApplicationContext ).getCoreFactory().getInjector();
-		injector.mapToValue( String, 'hola mundo' );
-		
-		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/injectorCreationAttribute.xml", "StaticXmlCompiler_testInjectorCreationAttribute" );
-		code.execute();
-
-		Assert.isInstanceOf( code.locator.instance, MockClassWithInjectedProperty );
-		Assert.equals( "hola mundo", code.locator.instance.property );
-		Assert.isTrue( code.locator.instance.postConstructWasCalled );
-	}
-	
 	@Test( "test 'inject-into' attribute" )
 	public function testInjectIntoAttribute() : Void
 	{
-		var injector = this._applicationAssembler.getApplicationContext( "StaticXmlCompiler_testInjectIntoAttribute", ApplicationContext ).getCoreFactory().getInjector();
-		injector.mapToValue( String, 'hola mundo' );
-		
 		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/injectIntoAttribute.xml", "StaticXmlCompiler_testInjectIntoAttribute" );
 		code.execute();
 

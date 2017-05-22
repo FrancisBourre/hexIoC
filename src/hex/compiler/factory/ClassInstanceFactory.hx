@@ -42,12 +42,7 @@ class ClassInstanceFactory
 		var classType 		= MacroUtil.getClassType( vo.className, pos );
 		
 		var result = //Assign result
-		if ( vo.injectorCreation && _implementsInterface( classType, hex.di.IInjectorContainer ) )
-		{
-			macro @:pos(pos) var $id = __applicationContextInjector.instantiateUnmapped( $p{ pack } ); 
-
-		}
-		else if ( factoryMethod != null )//factory method
+		if ( factoryMethod != null )//factory method
 		{
 			//TODO implement the same behavior @runtime issue#1
 			if ( staticRef != null )//static variable - with factory method
