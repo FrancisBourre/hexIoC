@@ -1089,7 +1089,7 @@ class StaticXmlCompilerTest
 	@Test( "test if attribute" )
 	public function testIfAttribute() : Void
 	{
-		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/static/ifAttribute.xml", "StaticXmlCompiler_testIfAttribute", null, [ "prodz" => true, "testing" => false, "releasing" => false ] );
+		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/static/ifAttribute.xml", "StaticXmlCompiler_testIfAttribute", null, [ "prodz2" => true, "testing2" => false, "releasing2" => false ] );
 		code.execute();
 		
 		Assert.equals( "hello prod", code.locator.message );
@@ -1098,7 +1098,7 @@ class StaticXmlCompilerTest
 	@Test( "test include with if attribute" )
 	public function testIncludeWithIfAttribute() : Void
 	{
-		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/static/includeWithIfAttribute.xml", "StaticXmlCompiler_testIncludeWithIfAttribute", null, [ "prodz" => true, "testing" => false, "releasing" => false ] );
+		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/static/includeWithIfAttribute.xml", "StaticXmlCompiler_testIncludeWithIfAttribute", null, [ "prodz2" => true, "testing2" => false, "releasing2" => false ] );
 		code.execute();
 		
 		Assert.equals( "hello prod", code.locator.message );
@@ -1107,7 +1107,7 @@ class StaticXmlCompilerTest
 	@Test( "test include fails with if attribute" )
 	public function testIncludeFailsWithIfAttribute() : Void
 	{
-		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/static/includeWithIfAttribute.xml", "StaticXmlCompiler_testIncludeFailsWithIfAttribute", null, [ "prodz" => false, "testing" => true, "releasing" => true ] );
+		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/static/includeWithIfAttribute.xml", "StaticXmlCompiler_testIncludeFailsWithIfAttribute", null, [ "prodz2" => false, "testing2" => true, "releasing2" => true ] );
 		code.execute();
 		
 		var coreFactory = this._applicationAssembler.getApplicationContext( "BasicStaticXmlCompiler_testIncludeFailsWithIfAttribute", ApplicationContext ).getCoreFactory();
