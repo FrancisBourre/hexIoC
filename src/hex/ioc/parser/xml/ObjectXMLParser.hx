@@ -57,7 +57,6 @@ class ObjectXMLParser extends AbstractXMLParser<BuildRequest>
 		var factory 			: String;
 		var staticCall 			: String;
 		var injectInto			: Bool;
-		var injectorCreation	: Bool;
 		var mapType				: Array<String>;
 		var staticRef			: String;
 		var ifList				: Array<String>;
@@ -86,7 +85,6 @@ class ObjectXMLParser extends AbstractXMLParser<BuildRequest>
 				factory 			= XMLAttributeUtil.getFactoryMethod( xml );
 				staticCall 			= XMLAttributeUtil.getStaticCall( xml );
 				injectInto			= XMLAttributeUtil.getInjectInto( xml );
-				injectorCreation	= XMLAttributeUtil.getInjectorCreation( xml );
 				mapType 			= XMLParserUtil.getMapType( xml );
 				staticRef 			= XMLAttributeUtil.getStaticRef( xml );
 
@@ -95,7 +93,7 @@ class ObjectXMLParser extends AbstractXMLParser<BuildRequest>
 					type = staticRef != null ? ContextTypeList.STATIC_VARIABLE : ContextTypeList.STRING;
 				}
 				
-				var constructorVO 		= new ConstructorVO( identifier, type, args, factory, staticCall, injectInto, null, mapType, staticRef, injectorCreation );
+				var constructorVO 		= new ConstructorVO( identifier, type, args, factory, staticCall, injectInto, null, mapType, staticRef );
 				constructorVO.ifList 	= XmlUtil.getIfList( xml );
 				constructorVO.ifNotList = XmlUtil.getIfNotList( xml );
 
@@ -103,7 +101,6 @@ class ObjectXMLParser extends AbstractXMLParser<BuildRequest>
 			}
 		}
 		
-
 		// Build property.
 		var propertyIterator = xml.elementsNamed( ContextNodeNameList.PROPERTY );
 		while ( propertyIterator.hasNext() )

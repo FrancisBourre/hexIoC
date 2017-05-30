@@ -1,12 +1,11 @@
 package hex.compiler.parser.flow;
-import hex.compiletime.flow.AbstractExprParser;
-import hex.compiletime.flow.parser.ExpressionUtil;
 
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.ExprTools;
 import haxe.macro.TypeTools;
+import hex.compiletime.flow.parser.ExpressionUtil;
 import hex.core.ContextTypeList;
 import hex.factory.BuildRequest;
 import hex.vo.ConstructorVO;
@@ -18,7 +17,7 @@ import hex.log.LogManager;
  * ...
  * @author Francis Bourre
  */
-class ObjectParser extends AbstractExprParser<BuildRequest>
+class ObjectParser extends hex.compiletime.flow.AbstractExprParser<BuildRequest>
 {
 	var logger:ILogger;
 	
@@ -39,7 +38,7 @@ class ObjectParser extends AbstractExprParser<BuildRequest>
 		}
 	}
 	
-	private function _parseExpression( e : Expr ) : Void
+	function _parseExpression( e : Expr ) : Void
 	{
 		switch ( e )
 		{
@@ -50,7 +49,7 @@ class ObjectParser extends AbstractExprParser<BuildRequest>
 			case macro $i{ ident }.$field = $assigned:	
 				var propertyVO = ExpressionUtil.getProperty( ident, field, assigned );
 				this._builder.build( PROPERTY( propertyVO ) );
-			
+
 			case macro $i{ ident }.$field( $a{ params } ):
 				
 				var it = params.iterator();
@@ -62,16 +61,11 @@ class ObjectParser extends AbstractExprParser<BuildRequest>
 				var methodCallVO = new MethodCallVO( ident, field, methodArguments );
 				this._builder.build( METHOD_CALL( methodCallVO ) );
 			
-			case macro @inject_into( $a{args}) $i{ident} = $value:
+			case macro @inject_into( $a{ args } ) $i{ ident } = $value:
 				var constructorVO = this._getConstructorVO( ident, value );
 				constructorVO.injectInto = true;
 				this._builder.build( OBJECT( constructorVO ) );
-						
-			case macro @injector_creation $i{ident} = $value:	
-				var constructorVO = this._getConstructorVO( ident, value );
-				constructorVO.injectorCreation = true;
-				this._builder.build( OBJECT( constructorVO ) );
-				
+
 			case macro @map_type($a{args}) $i{ident} = $value:
 				var constructorVO = this._getConstructorVO( ident, value );
 				constructorVO.mapTypes = args.map( function( e ) return switch( e.expr ) 
@@ -80,7 +74,7 @@ class ObjectParser extends AbstractExprParser<BuildRequest>
 					case _: "";
 				} );
 				this._builder.build( OBJECT( constructorVO ) );
-				
+
 			case _:
 				logger.error( e.expr );
 		}

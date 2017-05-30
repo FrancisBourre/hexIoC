@@ -20,7 +20,7 @@ import hex.log.LogManager;
 import hex.log.MacroLoggerContext;
 import hex.parser.AbstractParserCollection;
 import hex.preprocess.ConditionalVariablesChecker;
-import hex.preprocess.flow.MacroConditionalVariablesProcessor;
+import hex.preprocess.MacroConditionalVariablesProcessor;
 import hex.util.MacroUtil;
 #end
 

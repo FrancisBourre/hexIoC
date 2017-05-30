@@ -67,6 +67,7 @@ class ContextFactory
 	var _stateTransitionVOLocator 	: Locator<String, StateTransitionVO>;
 	
 	var _transitions				: Array<TransitionVO>;
+	var _injectedInto				: Array<Any>;
 
 	public function new()
 	{
@@ -98,6 +99,7 @@ class ContextFactory
 			this._domainListenerVOLocator 	= new Locator();
 			this._stateTransitionVOLocator 	= new Locator();
 			this._moduleLocator 			= new Locator();
+			this._injectedInto				= [];
 
 			this._factoryMap.set( ContextTypeList.ARRAY, ArrayFactory.build );
 			this._factoryMap.set( ContextTypeList.BOOLEAN, BoolFactory.build );
@@ -156,6 +158,7 @@ class ContextFactory
 		this._moduleLocator.release();
 		this._factoryMap = new Map();
 		this._symbolTable.clear();
+		this._injectedInto = [];
 	}
 	
 	public function getCoreFactory() : IRunTimeCoreFactory
@@ -260,6 +263,15 @@ class ContextFactory
 			this.buildObject( key );
 		}
 		
+		if ( this._injectedInto.length > 0 )
+		{
+			var injector = this._applicationContext.getInjector();
+			for ( element in this._injectedInto )
+			{
+				injector.injectInto( element );
+			}
+		}
+		
 		this._contextDispatcher.dispatch( ApplicationAssemblerMessage.OBJECTS_BUILT );
 		
 		StateTransitionFactory.flush( this._coreFactory, this._transitions );
@@ -359,6 +371,26 @@ class ContextFactory
 		//build instance with the expected factory method
 		var result 	= buildMethod( this._getFactoryVO( constructorVO ) );
 
+		//Mapped types
+		if ( constructorVO.mapTypes != null )
+		{
+			var mapTypes = constructorVO.mapTypes;
+			for ( mapType in mapTypes )
+			{
+				//Remove whitespaces
+				mapType = mapType.split( ' ' ).join( '' );
+				
+				this.getApplicationContext().getInjector()
+					.mapClassNameToValue( mapType, result, constructorVO.ID );
+			}
+		}
+
+		//Inject into
+		if ( constructorVO.injectInto )
+		{
+			this._injectedInto.push( result );
+		}
+		
 		if ( id != null )
 		{
 			//keep track of Module instances for initializing them

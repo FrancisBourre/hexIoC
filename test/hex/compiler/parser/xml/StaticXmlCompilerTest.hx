@@ -488,26 +488,9 @@ class StaticXmlCompilerTest
 		Assert.equals( 20, code.locator.point.y );
 	}
 	
-	@Test( "test 'injector-creation' attribute" )
-	public function testInjectorCreationAttribute() : Void
-	{
-		var injector = this._applicationAssembler.getApplicationContext( "StaticXmlCompiler_testInjectorCreationAttribute", ApplicationContext ).getCoreFactory().getInjector();
-		injector.mapToValue( String, 'hola mundo' );
-		
-		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/injectorCreationAttribute.xml", "StaticXmlCompiler_testInjectorCreationAttribute" );
-		code.execute();
-
-		Assert.isInstanceOf( code.locator.instance, MockClassWithInjectedProperty );
-		Assert.equals( "hola mundo", code.locator.instance.property );
-		Assert.isTrue( code.locator.instance.postConstructWasCalled );
-	}
-	
 	@Test( "test 'inject-into' attribute" )
 	public function testInjectIntoAttribute() : Void
 	{
-		var injector = this._applicationAssembler.getApplicationContext( "StaticXmlCompiler_testInjectIntoAttribute", ApplicationContext ).getCoreFactory().getInjector();
-		injector.mapToValue( String, 'hola mundo' );
-		
 		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/injectIntoAttribute.xml", "StaticXmlCompiler_testInjectIntoAttribute" );
 		code.execute();
 
@@ -1106,7 +1089,7 @@ class StaticXmlCompilerTest
 	@Test( "test if attribute" )
 	public function testIfAttribute() : Void
 	{
-		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/static/ifAttribute.xml", "StaticXmlCompiler_testIfAttribute", null, [ "prodz" => true, "testing" => false, "releasing" => false ] );
+		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/static/ifAttribute.xml", "StaticXmlCompiler_testIfAttribute", null, [ "prodz2" => true, "testing2" => false, "releasing2" => false ] );
 		code.execute();
 		
 		Assert.equals( "hello prod", code.locator.message );
@@ -1115,7 +1098,7 @@ class StaticXmlCompilerTest
 	@Test( "test include with if attribute" )
 	public function testIncludeWithIfAttribute() : Void
 	{
-		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/static/includeWithIfAttribute.xml", "StaticXmlCompiler_testIncludeWithIfAttribute", null, [ "prodz" => true, "testing" => false, "releasing" => false ] );
+		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/static/includeWithIfAttribute.xml", "StaticXmlCompiler_testIncludeWithIfAttribute", null, [ "prodz2" => true, "testing2" => false, "releasing2" => false ] );
 		code.execute();
 		
 		Assert.equals( "hello prod", code.locator.message );
@@ -1124,7 +1107,7 @@ class StaticXmlCompilerTest
 	@Test( "test include fails with if attribute" )
 	public function testIncludeFailsWithIfAttribute() : Void
 	{
-		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/static/includeWithIfAttribute.xml", "StaticXmlCompiler_testIncludeFailsWithIfAttribute", null, [ "prodz" => false, "testing" => true, "releasing" => true ] );
+		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/static/includeWithIfAttribute.xml", "StaticXmlCompiler_testIncludeFailsWithIfAttribute", null, [ "prodz2" => false, "testing2" => true, "releasing2" => true ] );
 		code.execute();
 		
 		var coreFactory = this._applicationAssembler.getApplicationContext( "BasicStaticXmlCompiler_testIncludeFailsWithIfAttribute", ApplicationContext ).getCoreFactory();
