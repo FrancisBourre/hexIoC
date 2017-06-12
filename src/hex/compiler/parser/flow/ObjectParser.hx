@@ -45,6 +45,8 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 			methodParser:		
 			[
 				'mapping' 							=> hex.compiletime.flow.parser.custom.MappingParser.parse,
+				'injectInto' 						=> hex.compiletime.flow.parser.custom.InjectIntoParser.parse,
+				'mapType' 							=> hex.compiletime.flow.parser.custom.MapTypeParser.parse,
 				'xml' 								=> hex.compiletime.flow.parser.custom.XmlParser.parse
 			]
 		};
@@ -117,7 +119,7 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 				}
 				
 			case ENew( t, params ):
-				constructorVO = this.parser.parseType( this.parser, ident, value );
+				constructorVO = this.parser.parseType( this.parser, new ConstructorVO( ident ), value );
 				constructorVO.type = ExprTools.toString( value ).split( 'new ' )[ 1 ].split( '(' )[ 0 ];
 				
 			case EObjectDecl( fields ):
@@ -155,7 +157,7 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 				}
 				
 			case ECall( _.expr => EConst(CIdent(keyword)), params ):
-				return this.parser.methodParser.get( keyword )( this.parser, ident, params, value );
+				return this.parser.methodParser.get( keyword )( this.parser, new ConstructorVO( ident ), params, value );
 				
 			case ECall( _.expr => EField( e, field ), params ):
 				switch( e.expr )
