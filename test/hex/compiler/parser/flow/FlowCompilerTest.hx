@@ -2,14 +2,12 @@ package hex.compiler.parser.flow;
 
 import hex.collection.HashMap;
 import hex.compiler.parser.flow.FlowCompiler;
-import hex.control.command.BasicCommand;
 import hex.core.IApplicationAssembler;
 import hex.core.ICoreFactory;
 import hex.di.Injector;
 import hex.di.mapping.MappingConfiguration;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.error.NoSuchElementException;
-import hex.event.Dispatcher;
 import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.core.ContextFactory;
 import hex.ioc.parser.xml.ApplicationXMLParser;
