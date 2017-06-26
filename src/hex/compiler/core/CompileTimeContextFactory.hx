@@ -4,6 +4,7 @@ package hex.compiler.core;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Type.ClassType;
+import hex.collection.ILocator;
 import hex.collection.ILocatorListener;
 import hex.collection.Locator;
 import hex.compiler.factory.DomainListenerFactory;
@@ -63,6 +64,7 @@ class CompileTimeContextFactory
 	var _constructorVOLocator 		: Locator<String, ConstructorVO>;
 	var _propertyVOLocator 			: Locator<String, Array<PropertyVO>>;
 	var _methodCallVOLocator 		: Locator<String, MethodCallVO>;
+	var _typeLocator 				: Locator<String, String>;
 	var _domainListenerVOLocator 	: Locator<String, DomainListenerVO>;
 	var _stateTransitionVOLocator 	: Locator<String, StateTransitionVO>;
 	
@@ -90,6 +92,7 @@ class CompileTimeContextFactory
 			this._constructorVOLocator 				= new Locator();
 			this._propertyVOLocator 				= new Locator();
 			this._methodCallVOLocator 				= new Locator();
+			this._typeLocator 						= new Locator();
 			this._domainListenerVOLocator 			= new Locator();
 			this._stateTransitionVOLocator 			= new Locator();
 			this._moduleLocator 					= new Locator();
@@ -113,7 +116,8 @@ class CompileTimeContextFactory
 			this._factoryMap.set( ContextTypeList.FUNCTION, 		hex.compiletime.factory.FunctionFactory.build );
 			this._factoryMap.set( ContextTypeList.STATIC_VARIABLE, 	hex.compiletime.factory.StaticVariableFactory.build );
 			this._factoryMap.set( ContextTypeList.MAPPING_CONFIG, 	hex.compiletime.factory.MappingConfigurationFactory.build );
-			
+			this._factoryMap.set( ContextTypeList.ALIAS, 			hex.compiletime.factory.AliasFactory.build );
+	
 			this._coreFactory.addListener( this );
 		}
 	}
@@ -122,6 +126,7 @@ class CompileTimeContextFactory
 	{
 		switch( request )
 		{
+			case PREPROCESS( vo ): this.preprocess( vo );
 			case OBJECT( vo ): this.registerConstructorVO( vo );
 			case PROPERTY( vo ): this.registerPropertyVO( vo );
 			case METHOD_CALL( vo ): this.registerMethodCallVO( vo );
@@ -149,6 +154,7 @@ class CompileTimeContextFactory
 		this._constructorVOLocator.release();
 		this._propertyVOLocator.release();
 		this._methodCallVOLocator.release();
+		this._typeLocator.release();
 		this._domainListenerVOLocator.release();
 		this._stateTransitionVOLocator.release();
 		this._moduleLocator.release();
@@ -163,6 +169,11 @@ class CompileTimeContextFactory
 	public function getCoreFactory() : ICoreFactory
 	{
 		return this._coreFactory;
+	}
+	
+	public function getTypeLocator() : ILocator<String, String>
+	{
+		return this._typeLocator;
 	}
 	
 	public function dispatchAssemblingStart() : Void
@@ -218,6 +229,13 @@ class CompileTimeContextFactory
 	}
 	
 	//
+	public function preprocess( vo : hex.vo.PreProcessVO ) : Void
+	{
+		//We have only 1 preprocessor for now
+		var e = hex.compiletime.factory.RuntimeParameterProcessor.process( this, vo );
+		if ( e != null ) this._expressions.push( e );
+	}
+	
 	public function registerPropertyVO( propertyVO : PropertyVO ) : Void
 	{
 		var id = propertyVO.ownerID;
@@ -382,6 +400,8 @@ class CompileTimeContextFactory
 
 		if ( id != null )
 		{
+			this._typeLocator.register( id, constructorVO.type );
+			
 			this._tryToRegisterModule( constructorVO );
 			this._parseInjectInto( constructorVO );
 			this._parseMapTypes( constructorVO );
