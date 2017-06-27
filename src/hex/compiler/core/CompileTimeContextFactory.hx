@@ -35,6 +35,8 @@ import hex.util.MacroUtil;
 import hex.vo.ConstructorVO;
 import hex.compiletime.basic.vo.FactoryVOTypeDef;
 
+using Lambda;
+
 /**
  * ...
  * @author Francis Bourre
@@ -48,6 +50,7 @@ class CompileTimeContextFactory
 	static var _commandTriggerInterface 	= MacroUtil.getClassType( Type.getClassName( ICommandTrigger ) );
 	static var _injectorContainerInterface 	= MacroUtil.getClassType( Type.getClassName( IInjectorContainer ) );
 	static var _moduleInterface 			= MacroUtil.getClassType( Type.getClassName( IContextModule ) );
+	static var _dependencyInterface 		= MacroUtil.getClassType( Type.getClassName( hex.di.mapping.IDependencyOwner ) );
 	
 	var _isInitialized				: Bool;
 	var _expressions 				: Array<Expr>;
@@ -86,8 +89,6 @@ class CompileTimeContextFactory
 			this._coreFactory 						= cast ( applicationContext.getCoreFactory(), CompileTimeCoreFactory );
 			this._coreFactory.register( this._applicationContext.getName(), this._applicationContext );
 		
-		//
-			this._factoryMap 						= new Map();
 			this._symbolTable 						= new SymbolTable();
 			this._constructorVOLocator 				= new Locator();
 			this._propertyVOLocator 				= new Locator();
@@ -100,24 +101,7 @@ class CompileTimeContextFactory
 			this._injectedInto 						= [];
 			
 			DomainListenerFactory.domainLocator = new Map();
-			
-			this._factoryMap.set( ContextTypeList.ARRAY, 			hex.compiletime.factory.ArrayFactory.build );
-			this._factoryMap.set( ContextTypeList.BOOLEAN, 			hex.compiletime.factory.BoolFactory.build );
-			this._factoryMap.set( ContextTypeList.INT, 				hex.compiletime.factory.IntFactory.build );
-			this._factoryMap.set( ContextTypeList.NULL, 			hex.compiletime.factory.NullFactory.build );
-			this._factoryMap.set( ContextTypeList.FLOAT, 			hex.compiletime.factory.FloatFactory.build );
-			this._factoryMap.set( ContextTypeList.OBJECT, 			hex.compiletime.factory.DynamicObjectFactory.build );
-			this._factoryMap.set( ContextTypeList.STRING, 			hex.compiletime.factory.StringFactory.build );
-			this._factoryMap.set( ContextTypeList.UINT, 			hex.compiletime.factory.UIntFactory.build );
-			this._factoryMap.set( ContextTypeList.DEFAULT, 			hex.compiletime.factory.StringFactory.build );
-			this._factoryMap.set( ContextTypeList.HASHMAP, 			hex.compiletime.factory.HashMapFactory.build );
-			this._factoryMap.set( ContextTypeList.CLASS, 			hex.compiletime.factory.ClassFactory.build );
-			this._factoryMap.set( ContextTypeList.XML, 				hex.compiletime.factory.XmlFactory.build );
-			this._factoryMap.set( ContextTypeList.FUNCTION, 		hex.compiletime.factory.FunctionFactory.build );
-			this._factoryMap.set( ContextTypeList.STATIC_VARIABLE, 	hex.compiletime.factory.StaticVariableFactory.build );
-			this._factoryMap.set( ContextTypeList.MAPPING_CONFIG, 	hex.compiletime.factory.MappingConfigurationFactory.build );
-			this._factoryMap.set( ContextTypeList.ALIAS, 			hex.compiletime.factory.AliasFactory.build );
-	
+			this._factoryMap = hex.compiler.core.CompileTimeSettings.factoryMap;
 			this._coreFactory.addListener( this );
 		}
 	}
@@ -158,7 +142,7 @@ class CompileTimeContextFactory
 		this._domainListenerVOLocator.release();
 		this._stateTransitionVOLocator.release();
 		this._moduleLocator.release();
-		this._factoryMap = new Map();
+		this._factoryMap = hex.compiler.core.CompileTimeSettings.factoryMap;
 		this._symbolTable.clear();
 		this._mappedTypes = [];
 		this._injectedInto = [];
@@ -397,6 +381,8 @@ class CompileTimeContextFactory
 		}
 		
 		var result = buildMethod( this._getFactoryVO( constructorVO ) );
+		
+		this._checkDependencies( constructorVO );
 
 		if ( id != null )
 		{
@@ -415,6 +401,93 @@ class CompileTimeContextFactory
 		}
 
 		return result;
+	}
+	
+	function _getMappingDefinition( e )
+	{
+		switch( e.expr )
+		{
+			case EObjectDecl( fields ):
+
+				return fields.fold ( 
+					function (f, o) 
+					{
+						switch( f.field )
+						{
+							case 'fromType': Reflect.setField( o, f.field, haxe.macro.ExprTools.getValue( f.expr ) );
+							case 'withName': Reflect.setField( o, f.field, haxe.macro.ExprTools.getValue( f.expr ) );
+							case _:
+						}
+						return o;
+					}, {} );
+
+			case _:
+		}
+		
+		return null;
+	}
+	
+	function _getMappingDefinitions( e : Expr )
+	{
+		var a = [];
+		switch( e.expr )
+		{
+			case EVars( vars ) :
+				if ( vars[ 0 ].type != null )
+				{
+					if ( haxe.macro.ComplexTypeTools.toString( vars[ 0 ].type ) == 'Array<hex.di.mapping.MappingDefinition>' )
+					{
+						switch( vars[ 0 ].expr.expr )
+						{
+							case EArrayDecl( values ):
+								for ( value in values ) 
+								{
+									switch( value.expr )
+									{
+										case EObjectDecl( fields ):
+											var mapping = _getMappingDefinition( value );
+											if ( mapping != null ) a.push( mapping );
+											
+										case EConst(CIdent(ident)):
+											a = a.concat( _getMappingDefinitions( this._coreFactory.locate( ident ) ) );
+											
+										case wtf:
+											trace( 'wtf', wtf );
+									}
+								}
+
+							case _:
+						}
+						
+					}
+					else if ( haxe.macro.ComplexTypeTools.toString( vars[ 0 ].type ) == 'hex.di.mapping.MappingDefinition' )
+					{
+						var mapping = _getMappingDefinition( vars[ 0 ].expr );
+						if ( mapping != null ) a.push( mapping );
+					}
+				}
+				
+			case _:
+		}
+		
+		return a;
+	}
+	
+	function _checkDependencies( constructorVO : ConstructorVO ) : Void
+	{
+		if ( MacroUtil.implementsInterface( this._getClassType( constructorVO.className ), _dependencyInterface ) )
+		{
+			var mappings = constructorVO.arguments.filter(
+				function ( arg ) return arg.ref != null )
+			.map( function ( arg ) return this._coreFactory.locate( arg.ref ) )
+			.flatMap( _getMappingDefinitions );
+			
+			if ( !hex.di.mapping.MappingChecker.matchForClassName( constructorVO.className, cast mappings ) )
+			{
+				var missingMappings = hex.di.mapping.MappingChecker.getMissingMapping( constructorVO.className, cast mappings );
+				Context.fatalError( "Missing mappings:" + missingMappings, constructorVO.filePosition );
+			}
+		}
 	}
 	
 	function _tryToRegisterModule( constructorVO : ConstructorVO ) : Void

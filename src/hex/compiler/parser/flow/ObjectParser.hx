@@ -1,18 +1,17 @@
 package hex.compiler.parser.flow;
 
 #if macro
+import haxe.macro.*;
+import haxe.macro.Expr;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.ExprTools;
-import haxe.macro.TypeTools;
+import hex.compiletime.flow.AbstractExprParser;
 import hex.compiletime.flow.parser.ExpressionParser;
 import hex.compiletime.flow.parser.ExpressionUtil;
 import hex.core.ContextTypeList;
 import hex.vo.ConstructorVO;
-import hex.vo.MapVO;
 import hex.vo.MethodCallVO;
-import hex.vo.PropertyVO;
-import hex.compiletime.flow.AbstractExprParser;
 
 /**
  * ...
@@ -20,36 +19,17 @@ import hex.compiletime.flow.AbstractExprParser;
  */
 class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 {
-	var logger : hex.log.ILogger;
-	var parser : ExpressionParser;
-	//
-	
-	public function new() 
+	var logger 				: hex.log.ILogger;
+	var parser 				: ExpressionParser;
+	var _runtimeParam 		: hex.preprocess.RuntimeParam;
+
+	public function new( parser : ExpressionParser, ?runtimeParam : hex.preprocess.RuntimeParam ) 
 	{
 		super();
-		this.logger = hex.log.LogManager.getLoggerByInstance( this );
-		this.parser = 
-		{
-			parseProperty: 		hex.compiletime.flow.parser.expr.PropertyParser.parse, 
-			parseType: 			hex.compiletime.flow.parser.expr.TypeParser.parse, 
-			parseArgument: 		hex.compiletime.flow.parser.expr.ArgumentParser.parse, 
-			parseMapArgument:	hex.compiletime.flow.parser.expr.MapArgumentParser.parse,
-			
-			typeParser:		
-			[
-				ContextTypeList.HASHMAP 			=> hex.compiletime.flow.parser.custom.HashMapParser.parse,
-				ContextTypeList.MAPPING_CONFIG		=> hex.compiletime.flow.parser.custom.MappingConfigParser.parse,
-				ContextTypeList.MAPPING_DEFINITION	=> hex.compiletime.flow.parser.custom.MappingParser.parse
-			],
-			
-			methodParser:		
-			[
-				'mapping' 							=> hex.compiletime.flow.parser.custom.MappingParser.parse,
-				'injectInto' 						=> hex.compiletime.flow.parser.custom.InjectIntoParser.parse,
-				'mapType' 							=> hex.compiletime.flow.parser.custom.MapTypeParser.parse,
-				'xml' 								=> hex.compiletime.flow.parser.custom.XmlParser.parse
-			]
-		};
+		
+		this.logger 		= hex.log.LogManager.getLoggerByInstance( this );
+		this.parser 		= parser;
+		this._runtimeParam 	= runtimeParam;
 	}
 	
 	override public function parse() : Void this._getExpressions().map( this._parseExpression );
@@ -82,12 +62,25 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 					case _: "";
 				} );
 				this._builder.build( OBJECT( constructorVO ) );
-
+				
 			case _:
-				//TODO remove
-				//logger.error("Unknown expression");
-				//logger.debug(e);
-				//logger.debug(e.expr);
+				
+				switch( e.expr )
+				{
+					//TODO refactor - Should be part of the property parser
+					case EBinop( OpAssign, _.expr => EField( ref, field ), value ):
+						var fields = ExpressionUtil.compressField( ref, field ).split('.');
+						var ident = fields.shift();
+						var fieldName = fields.join('.');
+						this._builder.build( PROPERTY( this.parser.parseProperty( this.parser, ident, fieldName, value ) ) );
+						
+						case _:
+							//TODO remove
+							logger.error('Unknown expression');
+							logger.debug(e.pos);
+							logger.debug(e.expr);
+				}
+				
 		}
 		//logger.debug(e);
 	}
@@ -115,7 +108,10 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 						constructorVO = new ConstructorVO( ident, ContextTypeList.BOOLEAN, [ v ] );
 						
 					case _:
-						logger.error( v );
+						var type = hex.preprocess.RuntimeParametersPreprocessor.getType( v, this._runtimeParam );
+						var arg = new ConstructorVO( ident, (type==null? ContextTypeList.INSTANCE : type), null, null, null, v );
+						arg.filePosition = value.pos;
+						constructorVO = new ConstructorVO( ident, ContextTypeList.ALIAS, [ arg ], null, null, null, v );
 				}
 				
 			case ENew( t, params ):
@@ -135,29 +131,50 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 			case EField( e, field ):
 				
 				var className = ExpressionUtil.compressField( e, field );
-				var exp = Context.parse( '(null: ${className})', e.pos );
 
-				switch( exp.expr )
+				try
 				{
-					case EParenthesis( _.expr => ECheckType( ee, TPath(p) ) ):
-						
-						constructorVO =
-						if ( p.sub != null )
-						{
-							new ConstructorVO( ident, ContextTypeList.STATIC_VARIABLE, [], null, null, false, null, null, className );
+					//
+					var exp = Context.parse( '(null: ${className})', e.pos );
 
-						}
-						else
-						{
-							new ConstructorVO( ident, ContextTypeList.CLASS, [ className ] );
-						}
-						
-					case _:
-						logger.error( exp );
+					switch( exp.expr )
+					{
+						case EParenthesis( _.expr => ECheckType( ee, TPath(p) ) ):
+							
+							constructorVO =
+							if ( p.sub != null )
+							{
+								new ConstructorVO( ident, ContextTypeList.STATIC_VARIABLE, [], null, null, false, null, null, className );
+
+							}
+							else
+							{
+								new ConstructorVO( ident, ContextTypeList.CLASS, [ className ] );
+							}
+							
+						case _:
+							logger.error( exp );
+					}
+				}
+				catch ( e : Dynamic )
+				{
+					//TODO refactor
+					var type = hex.preprocess.RuntimeParametersPreprocessor.getType( className, this._runtimeParam );
+					var arg = new ConstructorVO( ident, (type==null? ContextTypeList.INSTANCE : type), null, null, null, className );
+					arg.filePosition = e.pos;
+					constructorVO = new ConstructorVO( ident, ContextTypeList.ALIAS, [ arg ], null, null, null, className );
 				}
 				
 			case ECall( _.expr => EConst(CIdent(keyword)), params ):
-				return this.parser.methodParser.get( keyword )( this.parser, new ConstructorVO( ident ), params, value );
+				if ( this.parser.methodParser.exists( keyword ) )
+				{
+					return this.parser.methodParser.get( keyword )( this.parser, new ConstructorVO( ident ), params, value );
+				}
+				else
+				{
+					Context.error( "'" + keyword + "' keyword is not defined for your current compiler", value.pos );
+				}
+				
 				
 			case ECall( _.expr => EField( e, field ), params ):
 				switch( e.expr )
@@ -187,7 +204,6 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 			case _:
 				logger.error( value.expr );
 				constructorVO = new ConstructorVO( ident );
-				//break;
 		}
 		
 		constructorVO.filePosition = value.pos;
