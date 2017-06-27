@@ -21,7 +21,7 @@ class ParserCollection extends hex.parser.AbstractParserCollection<hex.compileti
 	{
 		this._parserCollection.push( new ApplicationContextParser( this._assemblerVariable ) );
 		this._parserCollection.push( new StateParser() );
-		this._parserCollection.push( new ObjectParser() );
+		this._parserCollection.push( new ObjectParser( hex.compiletime.flow.parser.FlowExpressionParser.parser/*, this._runtimeParam*/ ) );
 		this._parserCollection.push( new Launcher( this._assemblerVariable ) );
 	}
 }

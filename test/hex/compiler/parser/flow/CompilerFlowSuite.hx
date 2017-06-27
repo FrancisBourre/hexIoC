@@ -10,5 +10,10 @@ import hex.compiler.parser.flow.context.ApplicationContextBuildingTest;
 class CompilerFlowSuite
 {
 	@Suite( "Flow" )
-    public var list : Array<Class<Dynamic>> = [ ApplicationContextBuildingTest, FlowCompilerTest ];
+    public var list : Array<Class<Dynamic>> = 
+	[ 
+		ApplicationContextBuildingTest, 
+		FlowCompilerTest,
+		StaticFlowCompilerTest
+	];
 }

@@ -12,4 +12,9 @@ class MockApplicationContext extends ApplicationContext
 	{
 		super( applicationContextName );
 	}
+	
+	public function getTest() : String
+	{
+		return 'test';
+	}
 }

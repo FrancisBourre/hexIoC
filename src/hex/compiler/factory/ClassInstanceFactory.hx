@@ -41,62 +41,69 @@ class ClassInstanceFactory
 		var staticRef 		= vo.staticRef;
 		var classType 		= MacroUtil.getClassType( vo.className, pos );
 		
-		var result = //Assign result
-		if ( factoryMethod != null )//factory method
+		if ( !vo.shouldAssign )
 		{
-			//TODO implement the same behavior @runtime issue#1
-			if ( staticRef != null )//static variable - with factory method
+			return macro @:pos( pos ) new $typePath( $a { args } );
+		}
+		else
+		{
+			var result = //Assign result
+			if ( factoryMethod != null )//factory method
 			{
-				var e = _staticRefFactory( pack, staticRef, factoryMethod, args );
-				vo.type = try _fqcn( e )//Assign right type description 
+				//TODO implement the same behavior @runtime issue#1
+				if ( staticRef != null )//static variable - with factory method
+				{
+					var e = _staticRefFactory( pack, staticRef, factoryMethod, args );
+					vo.type = try _fqcn( e )//Assign right type description 
+						catch ( e : Dynamic ) 
+							try _fqcn( _staticRefFactory( pack, staticRef, factoryMethod, _nullArray( argsLength ) ) ) 
+								catch ( e : Dynamic ) "Dynamic";
+					_result( e, id, vo.type, pos );
+				}
+				else if ( staticCall != null )//static method call - with factory method
+				{
+					var e = _staticCallFactory( pack, staticCall, factoryMethod, args );
+					vo.type = try _fqcn( e )//Assign right type description 
+						catch ( e : Dynamic ) 
+							try _fqcn( _staticCallFactory( pack, staticCall, factoryMethod, _nullArray( argsLength ) ) ) 
+								catch ( e : Dynamic ) "Dynamic";
+					_result( e, id, vo.type, pos );
+				}
+				else//factory method error
+				{
+					Context.error( 	"'" + factoryMethod + "' method cannot be called on '" +  vo.className + 
+									"' class. Add static method or variable to make it working.", pos );
+					null;
+				}
+			}
+			else if ( staticCall != null )//simple static method call
+			{
+				var e = _staticCall( pack, staticCall, args );
+				vo.type = try _fqcn( e )//Assign right type description
 					catch ( e : Dynamic ) 
-						try _fqcn( _staticRefFactory( pack, staticRef, factoryMethod, _nullArray( argsLength ) ) ) 
+						try _fqcn( _staticCall( pack, staticCall, _nullArray( argsLength ) ) ) 
 							catch ( e : Dynamic ) "Dynamic";
 				_result( e, id, vo.type, pos );
 			}
-			else if ( staticCall != null )//static method call - with factory method
+			else//Standard instantiation
 			{
-				var e = _staticCallFactory( pack, staticCall, factoryMethod, args );
-				vo.type = try _fqcn( e )//Assign right type description 
-					catch ( e : Dynamic ) 
-						try _fqcn( _staticCallFactory( pack, staticCall, factoryMethod, _nullArray( argsLength ) ) ) 
-							catch ( e : Dynamic ) "Dynamic";
-				_result( e, id, vo.type, pos );
-			}
-			else//factory method error
-			{
-				Context.error( 	"'" + factoryMethod + "' method cannot be called on '" +  vo.className + 
-								"' class. Add static method or variable to make it working.", pos );
-				null;
-			}
-		}
-		else if ( staticCall != null )//simple static method call
-		{
-			var e = _staticCall( pack, staticCall, args );
-			vo.type = try _fqcn( e )//Assign right type description
-				catch ( e : Dynamic ) 
-					try _fqcn( _staticCall( pack, staticCall, _nullArray( argsLength ) ) ) 
-						catch ( e : Dynamic ) "Dynamic";
-			_result( e, id, vo.type, pos );
-		}
-		else//Standard instantiation
-		{
-			var moduleExpr;
-			if ( _implementsInterface( classType, hex.module.IContextModule ) )
-			{
-				var applicationContextName = factoryVO.contextFactory.getApplicationContext().getName();
-				//concatenate domain's name with parent's domain
-				var domainName = factoryVO.contextFactory.getApplicationContext().getDomain().getName() + '.' + id;
-				//TODO register for every instance (from staticCall and/or factory)
-				moduleExpr = macro @:mergeBlock{ $p{ _domainExpert() } .getInstance().registerDomain( $p{_domain()}.getDomain( $v{domainName} ) ); } 
+				var moduleExpr;
+				if ( _implementsInterface( classType, hex.module.IContextModule ) )
+				{
+					var applicationContextName = factoryVO.contextFactory.getApplicationContext().getName();
+					//concatenate domain's name with parent's domain
+					var domainName = factoryVO.contextFactory.getApplicationContext().getDomain().getName() + '.' + id;
+					//TODO register for every instance (from staticCall and/or factory)
+					moduleExpr = macro @:mergeBlock{ $p{ _domainExpert() } .getInstance().registerDomain( $p{_domain()}.getDomain( $v{domainName} ) ); } 
+				}
+				
+				var exp = _result( macro new $typePath( $a{ args } ), id, vo.type, pos );
+				//Check if the instance is an IContextModule
+				moduleExpr == null ? exp: macro @:pos(pos) @:mergeBlock{ $moduleExpr; $exp; };
 			}
 			
-			var exp = _result( macro new $typePath( $a{ args } ), id, vo.type, pos );
-			//Check if the instance is an IContextModule
-			moduleExpr == null ? exp: macro @:pos(pos) @:mergeBlock{ $moduleExpr; $exp; };
+			return macro @:pos(pos) $result;
 		}
-		
-		return macro @:pos(pos) $result;
 	}
 }
 #end
