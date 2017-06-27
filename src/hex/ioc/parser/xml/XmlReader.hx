@@ -244,15 +244,21 @@ class XmlReader
 	}
 	#end
 	
-	macro public static function getXmlFileContent( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<String>
+	macro public static function getXmlFileContent( fileName : String,
+													?applicationContextName : String,
+													?preprocessingVariables : Expr,
+													?conditionalVariables : Expr ) : ExprOf<String>
 	{
-		return XmlReader._readXmlFile( fileName, preprocessingVariables, conditionalVariables );
+		return XmlReader._readXmlFile( fileName, applicationContextName, preprocessingVariables, conditionalVariables );
 	}
 	
-	macro public static function getXml( fileName : String, ?preprocessingVariables : Expr, ?conditionalVariables : Expr ) : ExprOf<Xml>
+	macro public static function getXml( fileName : String,
+										 ?applicationContextName : String,
+										 ?preprocessingVariables : Expr,
+										 ?conditionalVariables : Expr ) : ExprOf<Xml>
 	{
 		var tp = MacroUtil.getPack( Type.getClassName( Xml ) );
-		var data = XmlReader._readXmlFile( fileName, preprocessingVariables, conditionalVariables );
+		var data = XmlReader._readXmlFile( fileName, applicationContextName, preprocessingVariables, conditionalVariables );
 		return macro @:pos( Context.currentPos() ){ $p { tp }.parse( $data ); }
 	}
 	
@@ -264,7 +270,7 @@ class XmlReader
 		var xmlPack = MacroUtil.getPack( Type.getClassName( Xml ) );
 		var applicationAssemblerTypePath = MacroUtil.getTypePath( "hex.runtime.ApplicationAssembler" );
 		var applicationXMLParserTypePath = MacroUtil.getTypePath( Type.getClassName( ApplicationXMLParser ) );
-		var data = XmlReader._readXmlFile( fileName, preprocessingVariables, conditionalVariables );
+		var data = XmlReader._readXmlFile( fileName, applicationContextName, preprocessingVariables, conditionalVariables );
 		
 		return macro @:pos( Context.currentPos() )
 		{ 

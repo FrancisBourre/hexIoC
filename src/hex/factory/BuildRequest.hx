@@ -1,19 +1,14 @@
 package hex.factory;
 
-import hex.vo.ConstructorVO;
-import hex.ioc.vo.DomainListenerVO;
-import hex.vo.MethodCallVO;
-import hex.vo.PropertyVO;
-import hex.ioc.vo.StateTransitionVO;
-
 /**
  * @author Francis Bourre
  */
 enum BuildRequest 
 {
-	OBJECT( vo : ConstructorVO );
-	PROPERTY( vo : PropertyVO );
-	METHOD_CALL( vo : MethodCallVO );
-	DOMAIN_LISTENER( vo : DomainListenerVO );
-	STATE_TRANSITION( vo : StateTransitionVO );
+	PREPROCESS( vo : hex.vo.PreProcessVO );
+	OBJECT( vo : hex.vo.ConstructorVO );
+	PROPERTY( vo : hex.vo.PropertyVO );
+	METHOD_CALL( vo : hex.vo.MethodCallVO );
+	DOMAIN_LISTENER( vo : hex.ioc.vo.DomainListenerVO );
+	STATE_TRANSITION( vo : hex.ioc.vo.StateTransitionVO );
 }

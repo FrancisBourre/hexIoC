@@ -42,6 +42,7 @@ class StaticCompileTimeContextFactory
 			this._constructorVOLocator 				= new Locator();
 			this._propertyVOLocator 				= new Locator();
 			this._methodCallVOLocator 				= new Locator();
+			this._typeLocator 						= new Locator();
 			this._domainListenerVOLocator 			= new Locator();
 			this._stateTransitionVOLocator 			= new Locator();
 			this._moduleLocator 					= new Locator();

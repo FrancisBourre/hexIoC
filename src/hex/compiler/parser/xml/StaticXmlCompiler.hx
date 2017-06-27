@@ -111,7 +111,7 @@ class StaticParserCollection extends hex.parser.AbstractParserCollection<hex.com
 	public function new( assemblerExpression : VariableExpression, fileName : String, isExtending : Bool = false ) 
 	{
 		//Null pattern
-		this._runtimeParam			= { type: null, block: [] };
+		this._runtimeParam			= { type: null };
 		this._assemblerExpression 	= assemblerExpression;
 		this._fileName 				= fileName;
 		this._isExtending 			= isExtending;
@@ -154,7 +154,6 @@ class RuntimeParamsParser extends hex.compiletime.xml.AbstractXmlParser<hex.fact
 	
 	function _parseNode( xml : Xml ) : Void
 	{
-		var block : Array<Expr> = [];
 		var o = "var o:{";
 		
 		var elements = xml.elements();
@@ -171,8 +170,9 @@ class RuntimeParamsParser extends hex.compiletime.xml.AbstractXmlParser<hex.fact
 			}
 			
 			var type = element.get( hex.compiletime.xml.ContextAttributeList.TYPE );
-			
-			block.push( haxe.macro.Context.parse( "var " + identifier + " = param." + identifier, haxe.macro.Context.currentPos() ) );
+			var vo = new hex.vo.PreProcessVO( identifier, [type] );
+			vo.filePosition = haxe.macro.Context.currentPos();
+			this._builder.build( PREPROCESS( vo ) );
 			o += identifier + ":" + type + ",";
 		}
 		
@@ -186,7 +186,6 @@ class RuntimeParamsParser extends hex.compiletime.xml.AbstractXmlParser<hex.fact
 		}
 		
 		this._runtimeParam.type = param;
-		this._runtimeParam.block = block;
 	}
 }
 

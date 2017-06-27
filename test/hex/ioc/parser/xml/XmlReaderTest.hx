@@ -593,7 +593,7 @@ class XmlReaderTest
 	@Test( "test if attribute" )
 	public function testIfAttribute() : Void
 	{
-		this.build(  XmlReader.getXml( "context/xml/ifAttribute.xml", nuul, ["production" => true, "test" => false, "release" => false] ) );
+		this.build(  XmlReader.getXml( "context/xml/ifAttribute.xml", null, null, ["production" => true, "test" => false, "release" => false] ) );
 		Assert.equals( "hello production", this._locate( "message" ), "message value should equal 'hello production'" );
 	}
 
@@ -601,7 +601,7 @@ class XmlReaderTest
 	public function testIncludeWithIfAttribute() : Void
 	{
 		var variables = [ "production" => true, "test" => false, "release" => false ];
-		this.build( XmlReader.getXml( "context/xml/includeWithIfAttribute.xml", null, [ "production" => true, "test" => false, "release" => false ] ) );
+		this.build( XmlReader.getXml( "context/xml/includeWithIfAttribute.xml", null, null, [ "production" => true, "test" => false, "release" => false ] ) );
 		Assert.equals( "hello production", this._locate( "message" ), "message value should equal 'hello production'" );
 	}
 
@@ -609,17 +609,17 @@ class XmlReaderTest
 	public function testIncludeFailsWithIfAttribute() : Void
 	{
 		var variables = [ "production" => false, "test" => true, "release" => true ];
-		this.build( XmlReader.getXml( "context/xml/includeWithIfAttribute.xml", null,  [ "production" => false, "test" => true, "release" => true ] ) );
+		this.build( XmlReader.getXml( "context/xml/includeWithIfAttribute.xml", null, null, [ "production" => false, "test" => true, "release" => true ] ) );
 		Assert.methodCallThrows( NoSuchElementException, this._applicationContext.getCoreFactory(), this._locate, [ "message" ], "message value should equal 'hello production'" );
 	}
 
 	@Test( "test file preprocessor with Xml file" )
 	public function testFilePreprocessorWithXmlFile() : Void
 	{
-		this.build(  XmlReader.getXml( "context/xml/preprocessor.xml", [				"hello" 		=> "bonjour",
-																					"contextName" 	=> 'applicationContext',
-																					"context" 		=> 'name="${contextName}"',
-																					"node" 			=> '<msg id="message" value="${hello}"/>' ] ) );
+		this.build(  XmlReader.getXml( "context/xml/preprocessor.xml", null, [  "hello" 		=> "bonjour",
+																				"contextName" 	=> 'applicationContext',
+																				"context" 		=> 'name="${contextName}"',
+																				"node" 			=> '<msg id="message" value="${hello}"/>' ] ) );
 
 		Assert.equals( "bonjour", this._locate( "message" ), "message value should equal 'bonjour'" );
 	}
@@ -627,10 +627,10 @@ class XmlReaderTest
 	@Test( "test file preprocessor with Xml file and include" )
 	public function testFilePreprocessorWithXmlFileAndInclude() : Void
 	{
-		this.build(  XmlReader.getXml( "context/xml/preprocessorWithInclude.xml", [		"hello" 		=> "bonjour",
-																					"contextName" 	=> 'applicationContext',
-																					"context" 		=> 'name="${contextName}"',
-																					"node" 			=> '<msg id="message" value="${hello}"/>' ] ) );
+		this.build(  XmlReader.getXml( "context/xml/preprocessorWithInclude.xml", null, [ 	"hello" 		=> "bonjour",
+																							"contextName" 	=> 'applicationContext',
+																							"context" 		=> 'name="${contextName}"',
+																							"node" 			=> '<msg id="message" value="${hello}"/>' ] ) );
 
 		try
         {

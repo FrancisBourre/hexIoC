@@ -1,6 +1,7 @@
 package hex.ioc.core;
 
 import hex.collection.ILocatorListener;
+import hex.collection.ILocator;
 import hex.collection.Locator;
 import hex.core.ApplicationAssemblerMessage;
 import hex.core.ContextTypeList;
@@ -63,6 +64,7 @@ class ContextFactory
 	var _constructorVOLocator 		: Locator<String, ConstructorVO>;
 	var _propertyVOLocator 			: Locator<String, Array<PropertyVO>>;
 	var _methodCallVOLocator 		: Locator<String, MethodCallVO>;
+	var _typeLocator 				: Locator<String, String>;
 	var _domainListenerVOLocator 	: Locator<String, DomainListenerVO>;
 	var _stateTransitionVOLocator 	: Locator<String, StateTransitionVO>;
 	
@@ -96,6 +98,7 @@ class ContextFactory
 			this._constructorVOLocator 		= new Locator();
 			this._propertyVOLocator 		= new Locator();
 			this._methodCallVOLocator 		= new Locator();
+			this._typeLocator 				= new Locator();
 			this._domainListenerVOLocator 	= new Locator();
 			this._stateTransitionVOLocator 	= new Locator();
 			this._moduleLocator 			= new Locator();
@@ -126,6 +129,7 @@ class ContextFactory
 	{
 		switch( request )
 		{
+			case PREPROCESS( vo ): this.preprocess( vo );
 			case OBJECT( vo ): this.registerConstructorVO( vo );
 			case PROPERTY( vo ): this.registerPropertyVO( vo );
 			case METHOD_CALL( vo ): this.registerMethodCallVO( vo );
@@ -153,6 +157,7 @@ class ContextFactory
 		this._constructorVOLocator.release();
 		this._propertyVOLocator.release();
 		this._methodCallVOLocator.release();
+		this._typeLocator.release();
 		this._domainListenerVOLocator.release();
 		this._stateTransitionVOLocator.release();
 		this._moduleLocator.release();
@@ -164,6 +169,11 @@ class ContextFactory
 	public function getCoreFactory() : IRunTimeCoreFactory
 	{
 		return this._coreFactory;
+	}
+	
+	public function getTypeLocator() : ILocator<String, String>
+	{
+		return this._typeLocator;
 	}
 	
 	public function dispatchAssemblingStart() : Void
@@ -213,6 +223,11 @@ class ContextFactory
 	}
 	
 	//
+	public function preprocess( vo : hex.vo.PreProcessVO ) : Void
+	{
+		//We don't have any preprocessor for now
+	}
+	
 	public function registerPropertyVO( propertyVO : PropertyVO  ) : Void
 	{
 		var id = propertyVO.ownerID;
@@ -393,6 +408,8 @@ class ContextFactory
 		
 		if ( id != null )
 		{
+			this._typeLocator.register( id, constructorVO.type );
+			
 			//keep track of Module instances for initializing them
 			// bugfix : should cast result to prevent that var result is typed as IModule on Flash target
 			if ( Std.is( result, IModule ) )
