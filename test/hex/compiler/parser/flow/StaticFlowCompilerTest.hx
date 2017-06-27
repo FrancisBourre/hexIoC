@@ -345,11 +345,11 @@ class StaticFlowCompilerTest
 		Assert.equals( locator2, locator3 );
 	}
 	
-	/*@Test( "test applicationContext building" )
+	@Test( "test applicationContext building" )
 	public function testApplicationContextBuilding() : Void
 	{
 		var applicationAssembler = new ApplicationAssembler();
-		var code1 = StaticFlowCompiler.compile( applicationAssembler, "context/flow/applicationContextBuildingTest.flow", "StaticFlowCompiler_testApplicationContextBuilding1" );
+		var code1 = StaticFlowCompiler.compile( applicationAssembler, "context/flow/extendApplicationContextTest.flow", "StaticFlowCompiler_testApplicationContextBuilding1" );
 		
 		//application assembler reference stored
 		Assert.equals( applicationAssembler, code1.applicationAssembler );
@@ -365,12 +365,12 @@ class StaticFlowCompilerTest
 		code1.execute();
 
 		//
-		Assert.isInstanceOf( code1.locator.StaticFlowCompiler_testApplicationContextBuilding1, hex.mock.MockApplicationContext );
+		Assert.isInstanceOf( code1.locator.StaticFlowCompiler_testApplicationContextBuilding1, hex.ioc.parser.xml.context.mock.MockApplicationContext );
 		Assert.equals( "Hola Mundo", code1.locator.test );
 		
 		//
-		var code2 = StaticFlowCompiler.compile( applicationAssembler, "context/flow/applicationContextBuildingTest.flow", "StaticFlowCompiler_testApplicationContextBuilding2" );
-		Assert.isInstanceOf( code2.locator.StaticFlowCompiler_testApplicationContextBuilding2, hex.mock.MockApplicationContext );
+		var code2 = StaticFlowCompiler.compile( applicationAssembler, "context/flow/extendApplicationContextTest.flow", "StaticFlowCompiler_testApplicationContextBuilding2" );
+		Assert.isInstanceOf( code2.locator.StaticFlowCompiler_testApplicationContextBuilding2, hex.ioc.parser.xml.context.mock.MockApplicationContext );
 		Assert.equals( "Hola Mundo", code1.locator.test );
 		
 		//Parallel duplicated code generations and contexts are not the same
@@ -389,7 +389,7 @@ class StaticFlowCompilerTest
 		Assert.equals( code1.applicationAssembler, code3.applicationAssembler );
 		Assert.equals( code2.applicationAssembler, code3.applicationAssembler );
 	}
-	*/
+	
 	@Test( "test simple method call" )
 	public function testSimpleMethodCall() : Void
 	{
