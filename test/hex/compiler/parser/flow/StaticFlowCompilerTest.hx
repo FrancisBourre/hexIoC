@@ -16,6 +16,7 @@ import hex.ioc.parser.xml.mock.MockChatModule;
 import hex.ioc.parser.xml.mock.MockIntVO;
 import hex.ioc.parser.xml.mock.MockReceiverModule;
 import hex.ioc.parser.xml.mock.MockTranslationModule;
+import hex.metadata.IAnnotationProvider;
 import hex.mock.AnotherMockClass;
 import hex.mock.ArrayOfDependenciesOwner;
 import hex.mock.IAnotherMockInterface;
@@ -869,6 +870,118 @@ class StaticFlowCompilerTest
 		return this._applicationAssembler.getApplicationContext( contextName, ApplicationContext ).getCoreFactory().locate( key );
 	}
 	
+	function getColorByName( name : String ) : Int
+	{
+		return name == "white" ? 0xFFFFFF : 0;
+	}
+
+	function getText( name : String ) : String
+	{
+		return name == "welcome" ? "Bienvenue" : null;
+	}
+	
+	function getAnotherText( name : String ) : String
+	{
+		return "anotherText";
+	}
+	
+	//
+	@Test( "Test MockObject with annotation" )
+	public function testMockObjectWithAnnotation() : Void
+	{
+		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/testMockObjectWithAnnotation.flow", "StaticFlowCompiler_testMockObjectWithAnnotation" );
+		var annotationProvider : IAnnotationProvider = code.applicationContext.getInjector().getInstance( IAnnotationProvider );
+
+		annotationProvider.registerMetaData( "color", this.getColorByName );
+		annotationProvider.registerMetaData( "language", this.getText );
+		
+		code.execute();
+		
+		Assert.equals( 0xffffff, code.locator.mockObjectWithAnnotation.colorTest, "color should be the same" );
+		Assert.equals( "Bienvenue", code.locator.mockObjectWithAnnotation.languageTest, "text should be the same" );
+		Assert.isNull( code.locator.mockObjectWithAnnotation.propWithoutMetaData, "property should be null" );
+	}
+	
+	@Test( "Test AnnotationProvider with inheritance" )
+	public function testAnnotationProviderWithInheritance() : Void
+	{
+		var assembler = new ApplicationAssembler();
+		this._applicationAssembler = assembler;
+		
+		var code = StaticFlowCompiler.compile( assembler, "context/flow/testMockObjectWithAnnotation.flow", "StaticFlowCompiler_testAnnotationProviderWithInheritance" );
+		code.execute();
+		
+		var annotationProvider : IAnnotationProvider = code.applicationContext.getInjector().getInstance( IAnnotationProvider );
+		annotationProvider.registerMetaData( "color", this.getColorByName );
+		annotationProvider.registerMetaData( "language", this.getText );
+		
+		var code2 = StaticFlowCompiler.extend( code, "context/flow/testAnnotationProviderWithInheritance.flow" );
+		code2.execute();
+		
+		var mockObjectWithMetaData = code2.locator.mockObjectWithAnnotation;
+		
+		Assert.equals( 0xffffff, mockObjectWithMetaData.colorTest, "color should be the same" );
+		Assert.equals( "Bienvenue", mockObjectWithMetaData.languageTest, "text should be the same" );
+		Assert.isNull( mockObjectWithMetaData.propWithoutMetaData, "property should be null" );
+		
+		//
+		var provider = code2.locator.module.getAnnotationProvider();
+		code2.locator.module.buildComponents();
+
+		Assert.equals( 0xffffff, code2.locator.module.mockObjectWithMetaData.colorTest, "color should be the same" );
+		Assert.equals( "Bienvenue", code2.locator.module.mockObjectWithMetaData.languageTest, "text should be the same" );
+		Assert.isNull( code2.locator.module.anotherMockObjectWithMetaData.languageTest, "property should be null when class is not implementing IAnnotationParsable" );
+		
+		provider.registerMetaData( "language", this.getAnotherText );
+		code2.locator.module.buildComponents();
+		
+		Assert.equals( 0xffffff, code2.locator.module.mockObjectWithMetaData.colorTest, "color should be the same" );
+		Assert.equals( "anotherText", code2.locator.module.mockObjectWithMetaData.languageTest, "text should be the same" );
+		Assert.isNull( code2.locator.module.anotherMockObjectWithMetaData.languageTest, "property should be null when class is not implementing IAnnotationParsable" );
+	}
+	
+	/*@Test( "Test Macro with annotation" )
+	public function testMacroWithAnnotation() : Void
+	{
+		MockMacroWithAnnotation.lastResult = null;
+		MockCommandWithAnnotation.lastResult = null;
+		MockAsyncCommandWithAnnotation.lastResult = null;
+		
+		var applicationAssembler = new ApplicationAssembler();
+        var applicationContext = applicationAssembler.getApplicationContext( "StaticFlowCompiler_testMacroWithAnnotation", ApplicationContext );
+        var injector = applicationContext.getInjector();
+        
+        var annotationProvider = AnnotationProvider.getAnnotationProvider( applicationContext.getDomain() );
+        annotationProvider.registerMetaData( "Value", this._getValue );
+		
+		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/macroWithAnnotation.flow", "StaticFlowCompiler_testMacroWithAnnotation" );
+		code.execute();
+		
+		var annotationProvider : IAnnotationProvider = this._applicationAssembler.getApplicationContext( "StaticFlowCompiler_testMacroWithAnnotation", ApplicationContext ).getInjector().getInstance( IAnnotationProvider );
+
+		Assert.equals( "value", MockMacroWithAnnotation.lastResult, "text should be the same" );
+		Assert.equals( "value", MockCommandWithAnnotation.lastResult, "text should be the same" );
+		Assert.equals( "value", MockAsyncCommandWithAnnotation.lastResult, "text should be the same" );
+	}
+
+	function _getValue( key : String ) return "value";
+	
+	@Test( "test trigger injection" )
+	public function testTriggerInjection() : Void
+	{
+		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/triggerInjection.flow", "StaticFlowCompiler_testTriggerInjection" );
+		code.execute();
+
+		Assert.isInstanceOf( code.locator.model, MockWeatherModel );
+		
+		code.locator.model.temperature.trigger( 13 );
+		code.locator.model.weather.trigger( 'sunny' );
+		
+		Assert.equals( 13, code.locator.module.temperature );
+		Assert.equals( 'sunny', code.locator.module.weather );
+	}*/
+	
+	//
 	@Test( "test file preprocessor with flow file" )
 	public function testFilePreprocessorWithFlowFile() : Void
 	{
