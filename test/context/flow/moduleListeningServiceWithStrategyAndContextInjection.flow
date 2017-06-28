@@ -1,0 +1,17 @@
+@context( name = 'applicationContext' )
+{
+	@map_type( 'hex.ioc.parser.xml.mock.IMockDividerHelper' )
+	mockDividerHelper = new hex.ioc.parser.xml.mock.MockDividerHelper();
+	
+	myService = new hex.ioc.parser.xml.mock.MockStubStatefulService();
+	myModuleA = new hex.ioc.parser.xml.mock.MockModuleWithServiceCallback();
+	myModuleB = new hex.ioc.parser.xml.mock.AnotherMockModuleWithServiceCallback();
+	
+	when( myService, hex.ioc.parser.xml.mock.MockStubStatefulService.INT_VO_UPDATE )
+		.adapt( hex.ioc.parser.xml.mock.MockIntDividerEventAdapterStrategy, true )
+		.then( myModuleA.onFloatServiceCallback );
+		
+	when( myService, hex.ioc.parser.xml.mock.MockStubStatefulService.INT_VO_UPDATE )
+		.adapt( hex.ioc.parser.xml.mock.MockIntDividerEventAdapterStrategy, false )
+		.then( myModuleB.onFloatServiceCallback );
+}

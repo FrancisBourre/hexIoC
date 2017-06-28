@@ -69,13 +69,17 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 				trace( args );*/
 
 			case macro when( $a { when } ).then( $a { then } ):
-
 				var vo = _getDomainListenerVO( when, then );
 				vo.filePosition = e.pos;
 				this._builder.build( DOMAIN_LISTENER( vo ) );
 				
 			case macro when( $a { when } ).adapt( $a { adapt } ).then( $a { then } ):
 				var vo = _getDomainListenerVO( when, then, adapt );
+				vo.filePosition = e.pos;
+				this._builder.build( DOMAIN_LISTENER( vo ) );
+				
+			case macro when( $a { when } ).execute( $a { adapt } ):
+				var vo = _getDomainListenerVO( when, null, adapt );
 				vo.filePosition = e.pos;
 				this._builder.build( DOMAIN_LISTENER( vo ) );
 				
@@ -103,7 +107,20 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 	
 	function _getDomainListenerVO( when, then, ?adapt ) : hex.ioc.vo.DomainListenerVO 
 	{
-		var callback = ExpressionUtil.compressField( then[0] );
+		var callback;
+		
+		if ( then == null )
+		{
+			callback = 'uniquefuckingID';
+			var cvo = new ConstructorVO( callback, ContextTypeList.OBJECT );
+			cvo.filePosition = Context.currentPos();
+			this._builder.build( OBJECT( cvo ) );
+		}
+		else
+		{
+			callback = ExpressionUtil.compressField( then[0] );
+		}
+		
 		var ident = callback.split('.').shift();
 		var vo = new hex.ioc.vo.DomainListenerVO( ident, ExpressionUtil.getIdent( when[0] ) );
 		
@@ -113,7 +130,11 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 			arg.staticRef 	= ExpressionUtil.compressField( when[1] );
 			var cb = callback.split('.');
 			if ( cb.length > 1 ) arg.method = cb[ 1 ];
-			if ( adapt != null ) arg.strategy = ExpressionUtil.compressField( adapt[ 0 ] );
+			if ( adapt != null ) 
+			{
+				arg.strategy = ExpressionUtil.compressField( adapt[ 0 ] );
+				if ( adapt.length == 2 ) arg.injectedInModule = ExpressionUtil.getBool( adapt[1] );
+			}
 			vo.arguments 	= [ arg ];
 			arg.filePosition = when[1].pos;
 		}

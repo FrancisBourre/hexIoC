@@ -1,5 +1,6 @@
 package hex.compiler.parser.flow;
 
+import haxe.Timer;
 import hex.compiler.parser.flow.StaticFlowCompiler;
 import hex.core.IApplicationAssembler;
 import hex.di.Injector;
@@ -9,6 +10,12 @@ import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
 import hex.error.NoSuchElementException;
 import hex.ioc.assembler.ApplicationContext;
+import hex.ioc.parser.xml.mock.IMockStubStatefulService;
+import hex.ioc.parser.xml.mock.MockBooleanVO;
+import hex.ioc.parser.xml.mock.MockChatModule;
+import hex.ioc.parser.xml.mock.MockIntVO;
+import hex.ioc.parser.xml.mock.MockReceiverModule;
+import hex.ioc.parser.xml.mock.MockTranslationModule;
 import hex.mock.AnotherMockClass;
 import hex.mock.ArrayOfDependenciesOwner;
 import hex.mock.IAnotherMockInterface;
@@ -29,6 +36,7 @@ import hex.runtime.ApplicationAssembler;
 import hex.structures.Point;
 import hex.structures.Size;
 import hex.unittest.assertion.Assert;
+import hex.unittest.runner.MethodRunner;
 
 /**
  * ...
@@ -601,6 +609,49 @@ class StaticFlowCompilerTest
 		Assert.notEquals( intInstance, stringInstance );
 	}
 	
+	@Test( "test building two modules listening each other" )
+	public function testBuildingTwoModulesListeningEachOther() : Void
+	{
+		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/twoModulesListeningEachOther.flow", "StaticFlowCompiler_testBuildingTwoModulesListeningEachOther" );
+		code.execute();
+		
+		Assert.isNotNull( code.locator.chat );
+		Assert.isNull( code.locator.chat.translatedMessage );
+		Assert.isNotNull( code.locator.translation );
+
+		code.locator.chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "Bonjour" ] );
+		Assert.equals( "Hello", code.locator.chat.translatedMessage );
+	}
+	
+	@Test( "test building two modules listening each other with adapter" )
+	public function testBuildingTwoModulesListeningEachOtherWithAdapter() : Void
+	{
+		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/twoModulesListeningEachOtherWithAdapter.flow", "StaticFlowCompiler_testBuildingTwoModulesListeningEachOtherWithAdapter" );
+		code.execute();
+
+		Assert.isNotNull( code.locator.chat );
+		Assert.isNull( code.locator.chat.translatedMessage );
+		Assert.isNotNull( code.locator.translation );
+
+		code.locator.chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "Bonjour" ] );
+		Assert.equals( "Hello", code.locator.chat.translatedMessage, "" );
+		Assert.isInstanceOf( code.locator.chat.date, Date, "" );
+	}
+	
+	@Test( "test building two modules listening each other with adapter and injection" )
+	public function testBuildingTwoModulesListeningEachOtherWithAdapterAndInjection() : Void
+	{
+		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/twoModulesListeningEachOtherWithAdapterAndInjection.flow", "StaticFlowCompiler_testBuildingTwoModulesListeningEachOtherWithAdapterAndInjection" );
+		code.execute();
+		
+		Assert.isNotNull( code.locator.chat );
+		Assert.isNotNull( code.locator.receiver );
+		Assert.isNotNull( code.locator.parser );
+
+		code.locator.chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "Bonjour" ] );
+		Assert.equals( "BONJOUR", code.locator.receiver.message );
+	}
+	
 	@Test( "test building class reference" )
 	public function testBuildingClassReference() : Void
 	{
@@ -706,6 +757,116 @@ class StaticFlowCompilerTest
 		
 		Assert.equals( 'property', code.locator.oClass.property );
 		Assert.equals( 'property', code.locator.oDynamic.p );
+	}
+	
+	//
+	@Test( "test module listening service" )
+	public function testModuleListeningService() : Void
+	{
+		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/moduleListeningService.flow", "StaticFlowCompiler_testModuleListeningService" );
+		code.execute();
+		
+		Assert.isNotNull( code.locator.myService );
+		Assert.isNotNull( code.locator.myModule );
+
+		var booleanVO = new MockBooleanVO( true );
+		code.locator.myService.setBooleanVO( booleanVO );
+		Assert.isTrue( code.locator.myModule.getBooleanValue() );
+	}
+	
+	@Test( "test module listening service with map-type" )
+	public function testModuleListeningServiceWithMapType() : Void
+	{
+		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/moduleListeningServiceWithMapType.flow", "StaticFlowCompiler_testModuleListeningServiceWithMapType" );
+		code.execute();
+
+		Assert.isNotNull( code.locator.myService );
+		Assert.isNotNull( code.locator.myModule );
+
+		var booleanVO = new MockBooleanVO( true );
+		code.locator.myService.setBooleanVO( booleanVO );
+		Assert.isTrue( code.locator.myModule.getBooleanValue() );
+		
+		Assert.equals( code.locator.myService, code.applicationContext.getInjector().getInstance( IMockStubStatefulService, "myService" ) );
+	}
+	
+	@Test( "test module listening service with strategy and module injection" )
+	public function testModuleListeningServiceWithStrategyAndModuleInjection() : Void
+	{
+		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/moduleListeningServiceWithStrategyAndModuleInjection.flow", "StaticFlowCompiler_testModuleListeningServiceWithStrategyAndModuleInjection" );
+		code.execute();
+
+		Assert.isNotNull( code.locator.myService );
+		Assert.isNotNull( code.locator.myModule );
+
+		var intVO = new MockIntVO( 7 );
+		code.locator.myService.setIntVO( intVO );
+		Assert.equals( 3.5, code.locator.myModule.getFloatValue() );
+	}
+	
+	@Test( "test module listening service with strategy and context injection" )
+	public function testModuleListeningServiceWithStrategyAndContextInjection() : Void
+	{
+		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/moduleListeningServiceWithStrategyAndContextInjection.flow", "StaticFlowCompiler_testModuleListeningServiceWithStrategyAndContextInjection" );
+		code.execute();
+
+		Assert.isNotNull( code.locator.mockDividerHelper );
+		Assert.isNotNull( code.locator.myService );
+		Assert.isNotNull( code.locator.myModuleA );
+		Assert.isNotNull( code.locator.myModuleB );
+
+		code.locator.myService.setIntVO( new MockIntVO( 7 ) );
+		Assert.equals( 3.5, ( code.locator.myModuleA.getFloatValue() ), "" );
+
+		code.locator.myService.setIntVO( new MockIntVO( 9 ) );
+		Assert.equals( 4.5, ( code.locator.myModuleB.getFloatValue() ), "" );
+	}
+	
+	@Async( "test EventTrigger" )
+	public function testEventTrigger() : Void
+	{
+		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/eventTrigger.flow", "StaticFlowCompiler_testEventTrigger" );
+		code.execute();
+		
+		Assert.isNotNull( code.locator.chat );
+		Assert.isNotNull( code.locator.receiver );
+		Assert.isNotNull( code.locator.parser );
+
+		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandlerEventTrigger ), 500 );
+		code.locator.chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "bonjour" ] );
+	}
+	
+	function _onCompleteHandlerEventTrigger() : Void
+	{
+		var receiver : MockReceiverModule = this._locate( "StaticFlowCompiler_testEventTrigger", "receiver" );
+		Assert.equals( "BONJOUR:HTTP://GOOGLE.COM", receiver.message, "" );
+	}
+	
+	@Async( "test EventProxy" )
+	public function testEventProxy() : Void
+	{
+		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/eventProxy.flow", "StaticFlowCompiler_testEventProxy" );
+		code.execute();
+
+		//Assert.isNotNull( code.locator.eventProxy );
+		Assert.isNotNull( code.locator.chat );
+		Assert.isNotNull( code.locator.receiver );
+		//Assert.isNotNull( code.locator.eventProxy );
+		Assert.isNotNull( code.locator.parser );
+
+		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandlerEventProxy ), 500 );
+		code.locator.chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "bonjour" ] );
+	}
+	
+	function _onCompleteHandlerEventProxy() : Void
+	{
+		var receiver : MockReceiverModule = this._locate( "StaticFlowCompiler_testEventProxy", "receiver" );
+		Assert.equals( "BONJOUR:HTTP://GOOGLE.COM", receiver.message, "" );
+	}
+	
+	function _locate( contextName : String, key : String ) : Dynamic
+	{
+		return this._applicationAssembler.getApplicationContext( contextName, ApplicationContext ).getCoreFactory().locate( key );
 	}
 	
 	@Test( "test file preprocessor with flow file" )
