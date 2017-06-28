@@ -24,11 +24,11 @@ import hex.preprocess.flow.MacroConditionalVariablesProcessor;
 class FlowCompiler 
 {
 	#if macro
-	static function _readFile(	fileName 						: String, 
-								?applicationContextName 		: String,
-								?preprocessingVariables 		: Expr, 
-								?conditionalVariables 			: Expr, 
-								?applicationAssemblerExpression : Expr ) : ExprOf<IApplicationAssembler>
+	public static function _readFile(	fileName 						: String,
+										?applicationContextName 		: String,
+										?preprocessingVariables 		: Expr,
+										?conditionalVariables 			: Expr,
+										?applicationAssemblerExpression : Expr ) : ExprOf<IApplicationAssembler>
 	{
 		LogManager.context = new MacroLoggerContext();
 		
