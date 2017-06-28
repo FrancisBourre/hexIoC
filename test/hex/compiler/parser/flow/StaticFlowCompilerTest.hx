@@ -1,6 +1,5 @@
 package hex.compiler.parser.flow;
 
-
 import hex.compiler.parser.flow.StaticFlowCompiler;
 import hex.core.IApplicationAssembler;
 import hex.di.Injector;

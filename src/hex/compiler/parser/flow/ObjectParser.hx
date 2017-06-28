@@ -63,6 +63,30 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 				} );
 				this._builder.build( OBJECT( constructorVO ) );
 				
+			/*case macro $keyword( $a { args } ):
+				trace( new haxe.macro.Printer().printExpr( e ) );
+				trace( keyword );
+				trace( args );*/
+
+			case macro when( $a { when } ).then( $a { then } ):
+				
+				var callback = ExpressionUtil.compressField( then[0] );
+				var ident = callback.split('.').shift();
+				var vo = new hex.ioc.vo.DomainListenerVO( ident, ExpressionUtil.getIdent( when[0] ) );
+				
+				if ( when.length == 2 )
+				{
+					var arg 		= new hex.ioc.vo.DomainListenerVOArguments();
+					arg.staticRef 	= ExpressionUtil.compressField( when[1] );
+					var cb = callback.split('.');
+					if ( cb.length > 1 ) arg.method = cb[ 1 ];
+					vo.arguments 	= [ arg ];
+					arg.filePosition = e.pos;
+				}
+				
+				vo.filePosition = e.pos;
+				this._builder.build( DOMAIN_LISTENER( vo ) );
+				
 			case _:
 				
 				switch( e.expr )
@@ -84,6 +108,8 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 		}
 		//logger.debug(e);
 	}
+	
+	
 
 	function _getConstructorVO( ident : String, value : Expr ) : ConstructorVO 
 	{
@@ -166,9 +192,9 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 				}
 				
 			case ECall( _.expr => EConst(CIdent(keyword)), params ):
-				if ( this.parser.methodParser.exists( keyword ) )
+				if ( this.parser.buildMethodParser.exists( keyword ) )
 				{
-					return this.parser.methodParser.get( keyword )( this.parser, new ConstructorVO( ident ), params, value );
+					return this.parser.buildMethodParser.get( keyword )( this.parser, new ConstructorVO( ident ), params, value );
 				}
 				else
 				{

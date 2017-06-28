@@ -554,7 +554,7 @@ class FlowCompilerTest
 		Assert.notEquals( intInstance, stringInstance );
 	}
 	
-	/*@Test( "test building two modules listening each other" )
+	@Test( "test building two modules listening each other" )
 	public function testBuildingTwoModulesListeningEachOther() : Void
 	{
 		this._applicationAssembler = FlowCompiler.compile( "context/flow/twoModulesListeningEachOther.flow" );
@@ -568,7 +568,7 @@ class FlowCompilerTest
 
 		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "Bonjour" ] );
 		Assert.equals( "Hello", chat.translatedMessage, "" );
-	}*/
+	}
 	
 	/*@Ignore( "test building two modules listening each other with adapter" )
 	public function testBuildingTwoModulesListeningEachOtherWithAdapter() : Void
@@ -949,7 +949,7 @@ class FlowCompilerTest
 		Assert.equals( 20, r.height );
 	}
 	
-	/*@Test( "test add custom parser" )
+	@Test( "test add custom parser" )
 	public function testAddCustomParser() : Void
 	{
 		MockCustomStaticFlowParser.prepareCompiler();
@@ -959,7 +959,7 @@ class FlowCompilerTest
 		Assert.equals( 11, this._getCoreFactory().locate( "i" ) );
 		Assert.equals( 11, this._getCoreFactory().locate( "p" ).x );
 		Assert.equals( 13, this._getCoreFactory().locate( "p" ).y );
-	}*/
+	}
 	
 	@Test( "test alias primitive" )
 	public function testAliasPrimitive() : Void
