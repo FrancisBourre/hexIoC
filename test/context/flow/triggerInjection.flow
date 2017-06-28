@@ -1,0 +1,23 @@
+/*
+<?xml version="1.0" encoding="utf-8" ?>
+<root name="applicationContext">
+
+	<model id="model" type="hex.mock.MockWeatherModel"/>
+	
+    <config id="config" type="hex.di.mapping.MappingConfiguration">
+        <item map-name="temperature"> 
+			<key type="Class" value="hex.event.ITrigger<Int->Void>"/> 
+			<value ref="model.temperature"/>
+		</item>
+		<item map-name="weather"> 
+			<key type="Class" value="hex.event.ITrigger<String->Void>"/> 
+			<value ref="model.weather"/>
+		</item>
+    </config>
+	
+	<view id="module" type="hex.mock.MockWeatherListener">
+		<argument ref="config"/>
+	</view>
+
+</root>
+*/

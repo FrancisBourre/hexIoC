@@ -1214,7 +1214,7 @@ class StaticXmlCompilerTest
 		Assert.equals( 40, code.locator.anotherSize.height );
 	}
 	
-	@Test( "test module listening service" )
+	@Test( "test module listening service with 2 passes" )
 	public function testModuleListeningServiceWith2Passes() : Void
 	{
 		var code1 = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/serviceToBeListened.xml", "StaticXmlCompiler_testModuleListeningServiceWith2Passes" );
