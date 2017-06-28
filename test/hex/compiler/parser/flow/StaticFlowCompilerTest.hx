@@ -15,7 +15,6 @@ import hex.ioc.parser.xml.mock.MockBooleanVO;
 import hex.ioc.parser.xml.mock.MockChatModule;
 import hex.ioc.parser.xml.mock.MockIntVO;
 import hex.ioc.parser.xml.mock.MockReceiverModule;
-import hex.ioc.parser.xml.mock.MockTranslationModule;
 import hex.metadata.IAnnotationProvider;
 import hex.mock.AnotherMockClass;
 import hex.mock.ArrayOfDependenciesOwner;
@@ -849,10 +848,10 @@ class StaticFlowCompilerTest
 		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/eventProxy.flow", "StaticFlowCompiler_testEventProxy" );
 		code.execute();
 
-		//Assert.isNotNull( code.locator.eventProxy );
+		Assert.isNotNull( code.locator.eventProxy );
 		Assert.isNotNull( code.locator.chat );
 		Assert.isNotNull( code.locator.receiver );
-		//Assert.isNotNull( code.locator.eventProxy );
+		Assert.isNotNull( code.locator.eventProxy );
 		Assert.isNotNull( code.locator.parser );
 
 		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandlerEventProxy ), 500 );
@@ -1317,5 +1316,23 @@ class StaticFlowCompilerTest
 		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/static/importWithParentDependency.flow", "StaticFlowCompiler_testImportWithParentContextDependency" );
 		code.execute();
 		Assert.equals( 'hello world', code.locator.childContext.text );
+	}
+	
+	//
+	@Test( "test module listening service with 2 passes" )
+	public function testModuleListeningServiceWith2Passes() : Void
+	{
+		var code1 = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/serviceToBeListened.flow", "StaticFlowCompiler_testModuleListeningServiceWith2Passes" );
+		code1.execute();
+		
+		var code = StaticFlowCompiler.extend( code1, "context/flow/moduleListener.flow" );
+		code.execute();
+		
+		Assert.isNotNull( code.locator.myService );
+		Assert.isNotNull( code.locator.myModule );
+
+		var booleanVO = new MockBooleanVO( true );
+		code.locator.myService.setBooleanVO( booleanVO );
+		Assert.isTrue( code.locator.myModule.getBooleanValue() );
 	}
 }

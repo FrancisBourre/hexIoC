@@ -1,0 +1,4 @@
+@context( name = 'applicationContext' )
+{
+	myService = new hex.ioc.parser.xml.mock.MockStubStatefulService();
+}
