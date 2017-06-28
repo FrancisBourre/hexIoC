@@ -822,6 +822,17 @@ class StaticFlowCompilerTest
 		Assert.equals( 4.5, ( code.locator.myModuleB.getFloatValue() ), "" );
 	}
 	
+	@Test( "test domain dispatch after module initialisation" )
+	public function testDomainDispatchAfterModuleInitialisation() : Void
+	{
+		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/domainDispatchAfterModuleInitialisation.flow", "StaticFlowCompiler_testDomainDispatchAfterModuleInitialisation" );
+		code.execute();
+
+		Assert.isNotNull( code.locator.sender );
+		Assert.isNotNull( code.locator.receiver );
+		Assert.equals( "hello receiver", code.locator.receiver.message );
+	}
+	
 	@Async( "test EventTrigger" )
 	public function testEventTrigger() : Void
 	{
