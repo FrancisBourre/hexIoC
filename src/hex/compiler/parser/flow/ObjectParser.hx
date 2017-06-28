@@ -69,21 +69,13 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 				trace( args );*/
 
 			case macro when( $a { when } ).then( $a { then } ):
+
+				var vo = _getDomainListenerVO( when, then );
+				vo.filePosition = e.pos;
+				this._builder.build( DOMAIN_LISTENER( vo ) );
 				
-				var callback = ExpressionUtil.compressField( then[0] );
-				var ident = callback.split('.').shift();
-				var vo = new hex.ioc.vo.DomainListenerVO( ident, ExpressionUtil.getIdent( when[0] ) );
-				
-				if ( when.length == 2 )
-				{
-					var arg 		= new hex.ioc.vo.DomainListenerVOArguments();
-					arg.staticRef 	= ExpressionUtil.compressField( when[1] );
-					var cb = callback.split('.');
-					if ( cb.length > 1 ) arg.method = cb[ 1 ];
-					vo.arguments 	= [ arg ];
-					arg.filePosition = e.pos;
-				}
-				
+			case macro when( $a { when } ).adapt( $a { adapt } ).then( $a { then } ):
+				var vo = _getDomainListenerVO( when, then, adapt );
 				vo.filePosition = e.pos;
 				this._builder.build( DOMAIN_LISTENER( vo ) );
 				
@@ -109,7 +101,25 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 		//logger.debug(e);
 	}
 	
-	
+	function _getDomainListenerVO( when, then, ?adapt ) : hex.ioc.vo.DomainListenerVO 
+	{
+		var callback = ExpressionUtil.compressField( then[0] );
+		var ident = callback.split('.').shift();
+		var vo = new hex.ioc.vo.DomainListenerVO( ident, ExpressionUtil.getIdent( when[0] ) );
+		
+		if ( when.length == 2 )
+		{
+			var arg 		= new hex.ioc.vo.DomainListenerVOArguments();
+			arg.staticRef 	= ExpressionUtil.compressField( when[1] );
+			var cb = callback.split('.');
+			if ( cb.length > 1 ) arg.method = cb[ 1 ];
+			if ( adapt != null ) arg.strategy = ExpressionUtil.compressField( adapt[ 0 ] );
+			vo.arguments 	= [ arg ];
+			arg.filePosition = when[1].pos;
+		}
+		
+		return vo;
+	}
 
 	function _getConstructorVO( ident : String, value : Expr ) : ConstructorVO 
 	{
