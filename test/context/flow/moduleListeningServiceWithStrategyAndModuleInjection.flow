@@ -1,0 +1,9 @@
+@context( name = 'applicationContext' )
+{
+	myService = new hex.ioc.parser.xml.mock.MockStubStatefulService();
+	myModule = new hex.ioc.parser.xml.mock.MockModuleWithServiceCallback();
+	
+	when( myService, hex.ioc.parser.xml.mock.MockStubStatefulService.INT_VO_UPDATE )
+		.adapt( hex.ioc.parser.xml.mock.MockIntDividerEventAdapterStrategy, true )
+		.then( myModule.onFloatServiceCallback );
+}

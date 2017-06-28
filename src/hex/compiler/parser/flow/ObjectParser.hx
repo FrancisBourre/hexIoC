@@ -63,6 +63,26 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 				} );
 				this._builder.build( OBJECT( constructorVO ) );
 				
+			/*case macro $keyword( $a { args } ):
+				trace( new haxe.macro.Printer().printExpr( e ) );
+				trace( keyword );
+				trace( args );*/
+
+			case macro when( $a { when } ).then( $a { then } ):
+				var vo = _getDomainListenerVO( when, then );
+				vo.filePosition = e.pos;
+				this._builder.build( DOMAIN_LISTENER( vo ) );
+				
+			case macro when( $a { when } ).adapt( $a { adapt } ).then( $a { then } ):
+				var vo = _getDomainListenerVO( when, then, adapt );
+				vo.filePosition = e.pos;
+				this._builder.build( DOMAIN_LISTENER( vo ) );
+				
+			case macro when( $a { when } ).execute( $a { adapt } ):
+				var vo = _getDomainListenerVO( when, null, adapt );
+				vo.filePosition = e.pos;
+				this._builder.build( DOMAIN_LISTENER( vo ) );
+				
 			case _:
 				
 				switch( e.expr )
@@ -83,6 +103,43 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 				
 		}
 		//logger.debug(e);
+	}
+	
+	function _getDomainListenerVO( when, then, ?adapt ) : hex.ioc.vo.DomainListenerVO 
+	{
+		var callback;
+		
+		if ( then == null )
+		{
+			callback = 'uniquefuckingID';
+			var cvo = new ConstructorVO( callback, ContextTypeList.OBJECT );
+			cvo.filePosition = Context.currentPos();
+			this._builder.build( OBJECT( cvo ) );
+		}
+		else
+		{
+			callback = ExpressionUtil.compressField( then[0] );
+		}
+		
+		var ident = callback.split('.').shift();
+		var vo = new hex.ioc.vo.DomainListenerVO( ident, ExpressionUtil.getIdent( when[0] ) );
+		
+		if ( when.length == 2 )
+		{
+			var arg 		= new hex.ioc.vo.DomainListenerVOArguments();
+			arg.staticRef 	= ExpressionUtil.compressField( when[1] );
+			var cb = callback.split('.');
+			if ( cb.length > 1 ) arg.method = cb[ 1 ];
+			if ( adapt != null ) 
+			{
+				arg.strategy = ExpressionUtil.compressField( adapt[ 0 ] );
+				if ( adapt.length == 2 ) arg.injectedInModule = ExpressionUtil.getBool( adapt[1] );
+			}
+			vo.arguments 	= [ arg ];
+			arg.filePosition = when[1].pos;
+		}
+		
+		return vo;
 	}
 
 	function _getConstructorVO( ident : String, value : Expr ) : ConstructorVO 
@@ -166,9 +223,9 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 				}
 				
 			case ECall( _.expr => EConst(CIdent(keyword)), params ):
-				if ( this.parser.methodParser.exists( keyword ) )
+				if ( this.parser.buildMethodParser.exists( keyword ) )
 				{
-					return this.parser.methodParser.get( keyword )( this.parser, new ConstructorVO( ident ), params, value );
+					return this.parser.buildMethodParser.get( keyword )( this.parser, new ConstructorVO( ident ), params, value );
 				}
 				else
 				{

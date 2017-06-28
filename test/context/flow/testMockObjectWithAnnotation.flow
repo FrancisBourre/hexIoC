@@ -1,0 +1,4 @@
+@context( name = 'applicationContext' )
+{
+	mockObjectWithAnnotation = new hex.metadata.MockObjectWithAnnotation();
+}

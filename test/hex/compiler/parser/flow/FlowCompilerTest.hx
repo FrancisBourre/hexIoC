@@ -554,7 +554,7 @@ class FlowCompilerTest
 		Assert.notEquals( intInstance, stringInstance );
 	}
 	
-	/*@Test( "test building two modules listening each other" )
+	@Test( "test building two modules listening each other" )
 	public function testBuildingTwoModulesListeningEachOther() : Void
 	{
 		this._applicationAssembler = FlowCompiler.compile( "context/flow/twoModulesListeningEachOther.flow" );
@@ -568,12 +568,12 @@ class FlowCompilerTest
 
 		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "Bonjour" ] );
 		Assert.equals( "Hello", chat.translatedMessage, "" );
-	}*/
+	}
 	
-	/*@Ignore( "test building two modules listening each other with adapter" )
+	@Test( "test building two modules listening each other with adapter" )
 	public function testBuildingTwoModulesListeningEachOtherWithAdapter() : Void
 	{
-		this._applicationAssembler = XmlCompiler.readXmlFile( "context/twoModulesListeningEachOtherWithAdapter.xml" );
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/twoModulesListeningEachOtherWithAdapter.flow" );
 
 		var chat : MockChatModule = this._getCoreFactory().locate( "chat" );
 		Assert.isNotNull( chat, "" );
@@ -587,25 +587,25 @@ class FlowCompilerTest
 		Assert.isInstanceOf( chat.date, Date, "" );
 	}
 	
-	@Ignore( "test building two modules listening each other with adapter and injection" )
+	@Test( "test building two modules listening each other with adapter and injection" )
 	public function testBuildingTwoModulesListeningEachOtherWithAdapterAndInjection() : Void
 	{
-		this._applicationAssembler = XmlCompiler.readXmlFile( "context/twoModulesListeningEachOtherWithAdapterAndInjection.xml" );
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/twoModulesListeningEachOtherWithAdapterAndInjection.flow" );
 
 		var chat : MockChatModule = this._getCoreFactory().locate( "chat" );
 		Assert.isNotNull( chat, "" );
 
-		var receiver : MockReceiverModule = this._getCoreFactory().locate( "receiver" );
+		var receiver : hex.ioc.parser.xml.mock.MockReceiverModule = this._getCoreFactory().locate( "receiver" );
 		Assert.isNotNull( receiver, "" );
 
-		var parser : MockMessageParserModule = this._getCoreFactory().locate( "parser" );
+		var parser : hex.ioc.parser.xml.mock.MockMessageParserModule = this._getCoreFactory().locate( "parser" );
 		Assert.isNotNull( parser, "" );
 
 		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "Bonjour" ] );
 		Assert.equals( "BONJOUR", receiver.message, "" );
 	}
 	
-	@Ignore( "test domain dispatch after module initialisation" )
+	/*@Ignore( "test domain dispatch after module initialisation" )
 	public function testDomainDispatchAfterModuleInitialisation() : Void
 	{
 		this._applicationAssembler = XmlCompiler.readXmlFile( "context/domainDispatchAfterModuleInitialisation.xml" );
@@ -949,7 +949,7 @@ class FlowCompilerTest
 		Assert.equals( 20, r.height );
 	}
 	
-	/*@Test( "test add custom parser" )
+	@Test( "test add custom parser" )
 	public function testAddCustomParser() : Void
 	{
 		MockCustomStaticFlowParser.prepareCompiler();
@@ -959,7 +959,7 @@ class FlowCompilerTest
 		Assert.equals( 11, this._getCoreFactory().locate( "i" ) );
 		Assert.equals( 11, this._getCoreFactory().locate( "p" ).x );
 		Assert.equals( 13, this._getCoreFactory().locate( "p" ).y );
-	}*/
+	}
 	
 	@Test( "test alias primitive" )
 	public function testAliasPrimitive() : Void

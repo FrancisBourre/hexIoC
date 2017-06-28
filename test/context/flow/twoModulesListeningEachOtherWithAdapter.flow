@@ -1,0 +1,11 @@
+@context( name = 'applicationContext' )
+{
+	chat = new hex.ioc.parser.xml.mock.MockChatModule();
+	translation = new hex.ioc.parser.xml.mock.MockTranslationModule();
+	
+	when( chat, hex.ioc.parser.xml.mock.MockChatModule.TEXT_INPUT )
+		.adapt( hex.ioc.parser.xml.mock.MockChatAdapterStrategy )
+		.then( translation.onTranslateWithTime );
+	
+	when( translation ).then( chat );
+}

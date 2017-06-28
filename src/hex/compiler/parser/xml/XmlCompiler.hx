@@ -26,11 +26,11 @@ using StringTools;
 class XmlCompiler
 {
 	#if macro
-	static function _readXmlFile( 	fileName : String, 
-									?applicationContextName : String, 
-									?preprocessingVariables : Expr, 
-									?conditionalVariables : Expr, 
-									?applicationAssemblerExpression : Expr ) : ExprOf<IApplicationAssembler>
+	public static function _readFile( 	fileName : String,
+										?applicationContextName : String,
+										?preprocessingVariables : Expr,
+										?conditionalVariables : Expr,
+										?applicationAssemblerExpression : Expr ) : ExprOf<IApplicationAssembler>
 	{
 		LogManager.context = new MacroLoggerContext();
 		
@@ -57,7 +57,7 @@ class XmlCompiler
 											?preprocessingVariables : Expr, 
 											?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
 	{
-		return XmlCompiler._readXmlFile( fileName, applicationContextName, preprocessingVariables, conditionalVariables  );
+		return XmlCompiler._readFile( fileName, applicationContextName, preprocessingVariables, conditionalVariables  );
 	}
 	
 	macro public static function compileWithAssembler( 	assemblerExpr : Expr, 
@@ -66,6 +66,6 @@ class XmlCompiler
 														?preprocessingVariables : Expr, 
 														?conditionalVariables : Expr ) : ExprOf<IApplicationAssembler>
 	{
-		return XmlCompiler._readXmlFile( fileName, applicationContextName, preprocessingVariables, conditionalVariables, assemblerExpr );
+		return XmlCompiler._readFile( fileName, applicationContextName, preprocessingVariables, conditionalVariables, assemblerExpr );
 	}
 }

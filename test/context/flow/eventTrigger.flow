@@ -1,0 +1,13 @@
+@context( name = 'applicationContext' )
+{
+	chat = new hex.ioc.parser.xml.mock.MockChatModule();
+	
+	@map_type( 'hex.ioc.parser.xml.mock.MockReceiverModule' ) 
+	receiver = new hex.ioc.parser.xml.mock.MockReceiverModule();
+	
+	@map_type( 'hex.ioc.parser.xml.mock.IMockMessageParserModule' ) 
+	parser = new hex.ioc.parser.xml.mock.MockMessageParserModule();
+
+	when( chat, hex.ioc.parser.xml.mock.MockChatModule.TEXT_INPUT )
+		.execute( hex.ioc.parser.xml.mock.MockChatAdapterStrategyMacro );
+}
