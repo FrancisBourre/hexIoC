@@ -643,6 +643,11 @@ class XmlCompilerTest
 		Assert.isInstanceOf( instance, MockClass );
 		Assert.isInstanceOf( instance, IMockInterface );
 		Assert.equals( instance, this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getInjector().getInstance( IMockInterface, "instance" ) );
+
+		var instance2 : MockClass = this._getCoreFactory().locate( "instance2" );
+		Assert.isNotNull( instance2 );
+		Assert.isInstanceOf( instance2, MockClass );
+		Assert.equals( instance2, this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getInjector().getInstanceWithClassName( "hex.mock.MockModuleWithInternalType.GetInfosInternalTypedef", "instance2" ) );
 	}
 
 	@Test( "test multi map-type attributes" )

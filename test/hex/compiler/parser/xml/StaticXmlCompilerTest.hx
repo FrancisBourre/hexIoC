@@ -684,6 +684,10 @@ class StaticXmlCompilerTest
 		Assert.isInstanceOf( code.locator.instance, MockClass );
 		Assert.isInstanceOf( code.locator.instance, IMockInterface );
 		Assert.equals( code.locator.instance, code.applicationContext.getInjector().getInstance( IMockInterface, "instance" ) );
+		
+		Assert.isNotNull( code.locator.instance2 );
+		Assert.isInstanceOf( code.locator.instance2, MockClass );
+		Assert.equals( code.locator.instance2, code.applicationContext.getInjector().getInstanceWithClassName( 'hex.mock.MockModuleWithInternalType.GetInfosInternalTypedef', "instance2" ) );
 	}
 	
 	@Test( "test multi map-type attributes" )
