@@ -861,10 +861,60 @@ class FlowCompilerTest
 		this._applicationAssembler = FlowCompiler.compile( "context/flow/arrayRecursivity.flow" );
 		
 		var test = this._getCoreFactory().locate( "test" );
-		Assert.isInstanceOf( test[ 0 ] , MockClass );
-		Assert.isInstanceOf( test[ 1 ] , AnotherMockClass );
-		Assert.isInstanceOf( test[ 2 ] , hex.mock.MockClassWithIntGeneric );
-		Assert.equals( 3, test[2].property );
+		Assert.isInstanceOf( test[ 0 ] , Array );
+		Assert.isInstanceOf( test[ 1 ] , Array );
+		Assert.isInstanceOf( test[ 2 ] , Array );
+		Assert.isInstanceOf( test[0][0], hex.mock.MockClassWithIntGeneric );
+		Assert.isInstanceOf( test[1][0], hex.mock.MockClassWithIntGeneric );
+		Assert.isInstanceOf( test[2][0], hex.mock.MockClassWithIntGeneric );
+		Assert.equals( 1, test[0][0].property );
+		Assert.equals( 2, test[1][0].property );
+		Assert.equals( 3, test[2][0].property );
+		
+		var a = cast test[ 3 ];
+		Assert.isInstanceOf( a[ 0 ] , hex.mock.MockClassWithIntGeneric );
+		Assert.equals( 4, a[ 0 ].property );
+		Assert.isInstanceOf( a[ 1 ] , hex.mock.MockClassWithIntGeneric );
+		Assert.equals( 5, a[ 1 ].property );
+	}
+	
+	@Test( "test array recursivity with new" )
+	public function testArrayRecursivityWithNew() : Void
+	{
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/arrayRecursivityWithNew.flow" );
+		
+		var test = this._getCoreFactory().locate( "test" );
+		Assert.isInstanceOf( test[ 0 ] , Array );
+		Assert.isInstanceOf( test[ 1 ] , Array );
+		Assert.isInstanceOf( test[ 2 ] , Array );
+		Assert.isInstanceOf( test[0][0], hex.mock.MockClassWithIntGeneric );
+		Assert.isInstanceOf( test[1][0], hex.mock.MockClassWithIntGeneric );
+		Assert.isInstanceOf( test[2][0], hex.mock.MockClassWithIntGeneric );
+		Assert.equals( 1, test[0][0].property );
+		Assert.equals( 2, test[1][0].property );
+		Assert.equals( 3, test[2][0].property );
+		
+		var a = cast test[ 3 ];
+		Assert.isInstanceOf( a[ 0 ] , hex.mock.MockClassWithIntGeneric );
+		Assert.equals( 4, a[ 0 ].property );
+		Assert.equals( 5, a[ 1 ] );
+	}
+	
+	@Test( "test array recursivity with new mixed with brackets" )
+	public function testArrayRecursivityWithNewMixedWithBrackets() : Void
+	{
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/arrayRecursivityWithNewMixedWithBrackets.flow" );
+		
+		var test = this._getCoreFactory().locate( "test" );
+		Assert.isInstanceOf( test[ 0 ] , Array );
+		Assert.isInstanceOf( test[ 1 ] , Array );
+		Assert.isInstanceOf( test[ 2 ] , Array );
+		Assert.isInstanceOf( test[0][0], hex.mock.MockClassWithIntGeneric );
+		Assert.isInstanceOf( test[1][0], hex.mock.MockClassWithIntGeneric );
+		Assert.isInstanceOf( test[2][0], hex.mock.MockClassWithIntGeneric );
+		Assert.equals( 1, test[0][0].property );
+		Assert.equals( 2, test[1][0].property );
+		Assert.equals( 3, test[2][0].property );
 		
 		var a = cast test[ 3 ];
 		Assert.isInstanceOf( a[ 0 ] , hex.mock.MockClassWithIntGeneric );
@@ -986,5 +1036,12 @@ class FlowCompilerTest
 		var position = this._getCoreFactory().locate( "reference" );
 		Assert.equals( 1, this._getCoreFactory().locate( "position" ).x );
 		Assert.equals( 2, this._getCoreFactory().locate( "position" ).y );
+	}
+	
+	@Test( "test Array concat with util" )
+	public function testArrayConcatWithUtil() : Void
+	{
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/arrayConcat.flow" );
+		Assert.deepEquals( [1,2,3,4,5,6], this._getCoreFactory().locate( "result" ) );
 	}
 }

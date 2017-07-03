@@ -1137,10 +1137,60 @@ class StaticFlowCompilerTest
 		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/arrayRecursivity.flow", "StaticFlowCompiler_testArrayRecursivity" );
 		code.execute();
 		
-		Assert.isInstanceOf( code.locator.test[ 0 ] , MockClass );
-		Assert.isInstanceOf( code.locator.test[ 1 ] , AnotherMockClass );
-		Assert.isInstanceOf( code.locator.test[ 2 ] , hex.mock.MockClassWithIntGeneric );
-		Assert.equals( 3, code.locator.test[2].property );
+		Assert.isInstanceOf( code.locator.test[ 0 ] , Array );
+		Assert.isInstanceOf( code.locator.test[ 1 ] , Array );
+		Assert.isInstanceOf( code.locator.test[ 2 ] , Array );
+		Assert.isInstanceOf( code.locator.test[0][0], hex.mock.MockClassWithIntGeneric );
+		Assert.isInstanceOf( code.locator.test[1][0], hex.mock.MockClassWithIntGeneric );
+		Assert.isInstanceOf( code.locator.test[2][0], hex.mock.MockClassWithIntGeneric );
+		Assert.equals( 1, code.locator.test[0][0].property );
+		Assert.equals( 2, code.locator.test[1][0].property );
+		Assert.equals( 3, code.locator.test[2][0].property );
+		
+		var a = code.locator.test[ 3 ];
+		Assert.isInstanceOf( a[ 0 ] , hex.mock.MockClassWithIntGeneric );
+		Assert.equals( 4, a[ 0 ].property );
+		Assert.isInstanceOf( a[ 1 ] , hex.mock.MockClassWithIntGeneric );
+		Assert.equals( 5, a[ 1 ].property );
+	}
+	
+	@Test( "test array recursivity with new" )
+	public function testArrayRecursivityWithNew() : Void
+	{
+		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/arrayRecursivityWithNew.flow", "StaticFlowCompiler_testArrayRecursivityWithNew" );
+		code.execute();
+		
+		Assert.isInstanceOf( code.locator.test[ 0 ] , Array );
+		Assert.isInstanceOf( code.locator.test[ 1 ] , Array );
+		Assert.isInstanceOf( code.locator.test[ 2 ] , Array );
+		Assert.isInstanceOf( code.locator.test[0][0], hex.mock.MockClassWithIntGeneric );
+		Assert.isInstanceOf( code.locator.test[1][0], hex.mock.MockClassWithIntGeneric );
+		Assert.isInstanceOf( code.locator.test[2][0], hex.mock.MockClassWithIntGeneric );
+		Assert.equals( 1, code.locator.test[0][0].property );
+		Assert.equals( 2, code.locator.test[1][0].property );
+		Assert.equals( 3, code.locator.test[2][0].property );
+		
+		var a = code.locator.test[ 3 ];
+		Assert.isInstanceOf( a[ 0 ] , hex.mock.MockClassWithIntGeneric );
+		Assert.equals( 4, a[ 0 ].property );
+		Assert.equals( 5, a[ 1 ] );
+	}
+	
+	@Test( "test array recursivity with new mixed with brackets" )
+	public function testArrayRecursivityWithNewMixedWithBrackets() : Void
+	{
+		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/arrayRecursivityWithNewMixedWithBrackets.flow", "StaticFlowCompiler_testArrayRecursivityWithNewMixedWithBrackets" );
+		code.execute();
+		
+		Assert.isInstanceOf( code.locator.test[ 0 ] , Array );
+		Assert.isInstanceOf( code.locator.test[ 1 ] , Array );
+		Assert.isInstanceOf( code.locator.test[ 2 ] , Array );
+		Assert.isInstanceOf( code.locator.test[0][0], hex.mock.MockClassWithIntGeneric );
+		Assert.isInstanceOf( code.locator.test[1][0], hex.mock.MockClassWithIntGeneric );
+		Assert.isInstanceOf( code.locator.test[2][0], hex.mock.MockClassWithIntGeneric );
+		Assert.equals( 1, code.locator.test[0][0].property );
+		Assert.equals( 2, code.locator.test[1][0].property );
+		Assert.equals( 3, code.locator.test[2][0].property );
 		
 		var a = code.locator.test[ 3 ];
 		Assert.isInstanceOf( a[ 0 ] , hex.mock.MockClassWithIntGeneric );
