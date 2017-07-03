@@ -25,7 +25,8 @@ class ClassInstanceFactory
 	static inline function _nullArray( length : UInt ) return  [ for ( i in 0...length ) macro null ];
 	static inline function _implementsInterface( classRef, interfaceRef ) return  MacroUtil.implementsInterface( classRef, MacroUtil.getClassType( Type.getClassName( interfaceRef ) ) );
 	static inline function _varType( type, position ) return TypeTools.toComplexType( Context.typeof( Context.parseInlineString( '( null : ${type})', position ) ) );
-	static inline function _result( e, id, type, position ){var t = _varType( type, position ); return macro @:pos( position ) var $id : $t = $e; }
+	static inline function _result( e, id, vo ) { var t = vo.cType != null ? vo.cType : _varType( vo.type, vo.filePosition ); return macro @:pos( vo.filePosition ) var $id : $t = $e; }
+	static inline function _blankType( vo ) { vo.cType = tink.macro.Positions.makeBlankType( vo.filePosition ); return MacroUtil.getFQCNFromComplexType( vo.cType ); }
 	
 	static public function build<T:hex.compiletime.basic.vo.FactoryVOTypeDef>( factoryVO : T ) : Expr
 	{
@@ -57,8 +58,8 @@ class ClassInstanceFactory
 					vo.type = try _fqcn( e )//Assign right type description 
 						catch ( e : Dynamic ) 
 							try _fqcn( _staticRefFactory( pack, staticRef, factoryMethod, _nullArray( argsLength ) ) ) 
-								catch ( e : Dynamic ) "Dynamic";
-					_result( e, id, vo.type, pos );
+								catch ( e : Dynamic ) _blankType( vo );
+					_result( e, id, vo );
 				}
 				else if ( staticCall != null )//static method call - with factory method
 				{
@@ -66,8 +67,8 @@ class ClassInstanceFactory
 					vo.type = try _fqcn( e )//Assign right type description 
 						catch ( e : Dynamic ) 
 							try _fqcn( _staticCallFactory( pack, staticCall, factoryMethod, _nullArray( argsLength ) ) ) 
-								catch ( e : Dynamic ) "Dynamic";
-					_result( e, id, vo.type, pos );
+								catch ( e : Dynamic ) _blankType( vo );
+					_result( e, id, vo );
 				}
 				else//factory method error
 				{
@@ -79,11 +80,11 @@ class ClassInstanceFactory
 			else if ( staticCall != null )//simple static method call
 			{
 				var e = _staticCall( pack, staticCall, args );
-				vo.type = try _fqcn( e )//Assign right type description
+				vo.type = try _fqcn( e )//Assign right type description 
 					catch ( e : Dynamic ) 
-						try _fqcn( _staticCall( pack, staticCall, _nullArray( argsLength ) ) ) 
-							catch ( e : Dynamic ) "Dynamic";
-				_result( e, id, vo.type, pos );
+						try _fqcn( _staticCall( pack, staticCall, _nullArray( argsLength ) ) )
+							catch ( e : Dynamic ) _blankType( vo );
+				_result( e, id, vo );
 			}
 			else//Standard instantiation
 			{
@@ -97,7 +98,7 @@ class ClassInstanceFactory
 					moduleExpr = macro @:mergeBlock{ $p{ _domainExpert() } .getInstance().registerDomain( $p{_domain()}.getDomain( $v{domainName} ) ); } 
 				}
 				
-				var exp = _result( macro new $typePath( $a{ args } ), id, vo.type, pos );
+				var exp = _result( macro new $typePath( $a{ args } ), id, vo );
 				//Check if the instance is an IContextModule
 				moduleExpr == null ? exp: macro @:pos(pos) @:mergeBlock{ $moduleExpr; $exp; };
 			}
