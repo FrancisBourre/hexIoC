@@ -69,7 +69,7 @@ class StaticXmlCompilerTest
 	@Test( "test building String" )
 	public function testBuildingString() : Void
 	{
-		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/testBuildingString.xml", "StaticXmlCompiler_testBuildingString" );
+		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/primitives/string.xml", "StaticXmlCompiler_testBuildingString" );
 		
 		var locator = code.locator;
 		Assert.isNull( locator.s );
@@ -99,7 +99,7 @@ class StaticXmlCompilerTest
 	public function testBuildingStringWithAssemblerStaticProperty() : Void
 	{
 		StaticXmlCompilerTest.applicationAssembler = new ApplicationAssembler();
-		var code = StaticXmlCompiler.compile( StaticXmlCompilerTest.applicationAssembler, "context/xml/testBuildingString.xml", "StaticXmlCompiler_testBuildingStringWithAssemblerStaticProperty" );
+		var code = StaticXmlCompiler.compile( StaticXmlCompilerTest.applicationAssembler, "context/xml/primitives/string.xml", "StaticXmlCompiler_testBuildingStringWithAssemblerStaticProperty" );
 		code.execute();
 		
 		var s : String = StaticXmlCompilerTest.applicationAssembler.getApplicationContext( "StaticXmlCompiler_testBuildingStringWithAssemblerStaticProperty", ApplicationContext ).getCoreFactory().locate( "s" );
@@ -124,7 +124,7 @@ class StaticXmlCompilerTest
 	@Test( "test building Int" )
 	public function testBuildingInt() : Void
 	{
-		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/testBuildingInt.xml", "StaticXmlCompiler_testBuildingInt" );
+		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/primitives/int.xml", "StaticXmlCompiler_testBuildingInt" );
 		code.execute();
 		Assert.equals( -3, code.locator.i );
 	}
@@ -132,7 +132,7 @@ class StaticXmlCompilerTest
 	@Test( "test building Hex" )
 	public function testBuildingHex() : Void
 	{
-		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/testBuildingHex.xml", "StaticXmlCompiler_testBuildingHex" );
+		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/primitives/hex.xml", "StaticXmlCompiler_testBuildingHex" );
 		code.execute();
 		Assert.equals( 0xFFFFFF, code.locator.i );
 	}
@@ -140,7 +140,7 @@ class StaticXmlCompilerTest
 	@Test( "test building Bool" )
 	public function testBuildingBool() : Void
 	{
-		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/testBuildingBool.xml", "StaticXmlCompiler_testBuildingBool" );
+		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/primitives/bool.xml", "StaticXmlCompiler_testBuildingBool" );
 		code.execute();
 		Assert.isTrue( code.locator.b );
 	}
@@ -148,7 +148,7 @@ class StaticXmlCompilerTest
 	@Test( "test building UInt" )
 	public function testBuildingUInt() : Void
 	{
-		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/testBuildingUInt.xml", "StaticXmlCompiler_testBuildingUInt" );
+		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/primitives/uint.xml", "StaticXmlCompiler_testBuildingUInt" );
 		code.execute();
 		Assert.equals( 3, code.locator.i );
 	}
@@ -156,7 +156,7 @@ class StaticXmlCompilerTest
 	@Test( "test building null" )
 	public function testBuildingNull() : Void
 	{
-		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/testBuildingNull.xml", "StaticXmlCompiler_testBuildingNull" );
+		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/primitives/null.xml", "StaticXmlCompiler_testBuildingNull" );
 		code.execute();
 		Assert.isNull( code.locator.value );
 	}
@@ -590,7 +590,7 @@ class StaticXmlCompilerTest
 	@Test( "test map-type attribute with Array" )
 	public function testMapTypeWithArray() : Void
 	{
-		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/testMapTypeWithArray.xml", "StaticXmlCompiler_testMapTypeWithArray" );
+		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/mapTypeWithArray.xml", "StaticXmlCompiler_testMapTypeWithArray" );
 		code.execute();
 		
 		var intCollection = code.applicationContext.getInjector().getInstanceWithClassName( "Array<Int>", "intCollection" );
@@ -608,7 +608,7 @@ class StaticXmlCompilerTest
 	@Test( "test map-type attribute with instance" )
 	public function testMapTypeWithInstance() : Void
 	{
-		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/testMapTypeWithInstance.xml", "StaticXmlCompiler_testMapTypeWithInstance" );
+		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/mapTypeWithInstance.xml", "StaticXmlCompiler_testMapTypeWithInstance" );
 		code.execute();
 		
 		var intInstance = code.applicationContext.getInjector().getInstanceWithClassName( "hex.mock.IMockInterfaceWithGeneric<Int>", "intInstance" );
@@ -1193,7 +1193,7 @@ class StaticXmlCompilerTest
 		Assert.equals( 30, code.locator.rect.width );
 		Assert.equals( 40, code.locator.rect.height );
 		
-		var code2 = StaticXmlCompiler.extend( code, "context/xml/testRecursiveStaticCalls.xml" );
+		var code2 = StaticXmlCompiler.extend( code, "context/xml/recursiveStaticCalls.xml" );
 		code2.execute();
 		
 		Assert.isInstanceOf( code2.locator.rect2, MockRectangle );

@@ -111,42 +111,42 @@ class XmlReaderTest
 	@Test( "test building String" )
 	public function testBuildingString() : Void
 	{
-		this.build( XmlReader.getXml( "context/xml/testBuildingString.xml" ) );
+		this.build( XmlReader.getXml( "context/xml/primitives/string.xml" ) );
 		Assert.equals( "hello", this._locate( "s" ) );
 	}
 
 	@Test( "test building Int" )
 	public function testBuildingInt() : Void
 	{
-		this.build( XmlReader.getXml( "context/xml/testBuildingInt.xml" ) );
+		this.build( XmlReader.getXml( "context/xml/primitives/int.xml" ) );
 		Assert.equals( -3, this._locate( "i" ) );
 	}
 	
 	@Test( "test building Hex" )
 	public function testBuildingHex() : Void
 	{
-		this.build( XmlReader.getXml( "context/xml/testBuildingHex.xml" ) );
+		this.build( XmlReader.getXml( "context/xml/primitives/hex.xml" ) );
 		Assert.equals( 0xFFFFFF, this._locate( "i" ) );
 	}
 
 	@Test( "test building Bool" )
 	public function testBuildingBool() : Void
 	{
-		this.build( XmlReader.getXml( "context/xml/testBuildingBool.xml" ) );
+		this.build( XmlReader.getXml( "context/xml/primitives/bool.xml" ) );
 		Assert.isTrue( this._locate( "b" ) );
 	}
 
 	@Test( "test building UInt" )
 	public function testBuildingUInt() : Void
 	{
-		this.build( XmlReader.getXml( "context/xml/testBuildingUInt.xml" ) );
+		this.build( XmlReader.getXml( "context/xml/primitives/uint.xml" ) );
 		Assert.equals( 3, this._locate( "i" ) );
 	}
 
 	@Test( "test building null" )
 	public function testBuildingNull() : Void
 	{
-		this.build( XmlReader.getXml( "context/xml/testBuildingNull.xml" ) );
+		this.build( XmlReader.getXml( "context/xml/primitives/null.xml" ) );
 		Assert.isNull( this._locate( "value" ) );
 	}
 
@@ -469,7 +469,7 @@ class XmlReaderTest
 	@Test( "test map-type attribute with Array" )
 	public function testMapTypeWithArray() : Void
 	{
-		this.build( XmlReader.getXml( "context/xml/testMapTypeWithArray.xml" ) );
+		this.build( XmlReader.getXml( "context/xml/mapTypeWithArray.xml" ) );
 		
 		var intCollection = this._applicationContext.getInjector().getInstanceWithClassName( "Array<Int>", "intCollection" );
 		var intCollection = this._applicationContext.getInjector().getInstanceWithClassName( "Array<UInt>", "intCollection" );
@@ -483,7 +483,7 @@ class XmlReaderTest
 	@Test( "test map-type attribute with instance" )
 	public function testMapTypeWithInstance() : Void
 	{
-		this.build( XmlReader.getXml( "context/xml/testMapTypeWithInstance.xml" ) );
+		this.build( XmlReader.getXml( "context/xml/mapTypeWithInstance.xml" ) );
 		
 		var intInstance = this._applicationContext.getInjector().getInstanceWithClassName( "hex.mock.IMockInterfaceWithGeneric<Int>", "intInstance" );
 		var uintInstance = this._applicationContext.getInjector().getInstanceWithClassName( "hex.mock.IMockInterfaceWithGeneric<UInt>", "intInstance" );

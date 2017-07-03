@@ -110,7 +110,7 @@ class XmlCompilerTest
 		var assembler = new ApplicationAssembler();
 		assembler.getApplicationContext( "applicationContext", ApplicationContext ).getCoreFactory().register( "s2", "bonjour" );
 		
-		this._applicationAssembler = XmlCompiler.compileWithAssembler( assembler, "context/xml/testBuildingString.xml" );
+		this._applicationAssembler = XmlCompiler.compileWithAssembler( assembler, "context/xml/primitives/string.xml" );
 
 		Assert.equals( "hello", this._locate( "s" ), "" );
 		Assert.equals( "bonjour", this._locate( "s2" ), "" );
@@ -122,7 +122,7 @@ class XmlCompilerTest
 	{
 		var assembler = new ApplicationAssembler();
 		ApplicationXMLParser.parseString( assembler, '<root name="applicationContext"><test id="s2" value="hola"/></root>' );
-		this._applicationAssembler = XmlCompiler.compileWithAssembler( assembler, "context/xml/testBuildingString.xml" );
+		this._applicationAssembler = XmlCompiler.compileWithAssembler( assembler, "context/xml/primitives/string.xml" );
 
 		Assert.equals( "hello", this._locate( "s" ), "" );
 		Assert.equals( "hola", this._locate( "s2" ), "" );
@@ -132,7 +132,7 @@ class XmlCompilerTest
 	@Test( "test building String" )
 	public function testBuildingString() : Void
 	{
-		this._applicationAssembler = XmlCompiler.compile( "context/xml/testBuildingString.xml" );
+		this._applicationAssembler = XmlCompiler.compile( "context/xml/primitives/string.xml" );
 		var s : String = this._locate( "s" );
 		Assert.equals( "hello", s, "" );
 	}
@@ -141,7 +141,7 @@ class XmlCompilerTest
 	public function testBuildingStringWithAssemblerProperty() : Void
 	{
 		this._applicationAssembler = new ApplicationAssembler();
-		XmlCompiler.compileWithAssembler( this._applicationAssembler, "context/xml/testBuildingString.xml" );
+		XmlCompiler.compileWithAssembler( this._applicationAssembler, "context/xml/primitives/string.xml" );
 		var s : String = this._locate( "s" );
 		Assert.equals( "hello", s, "" );
 	}
@@ -150,7 +150,7 @@ class XmlCompilerTest
 	public function testBuildingStringWithAssemblerStaticProperty() : Void
 	{
 		XmlCompilerTest.applicationAssembler = new ApplicationAssembler();
-		XmlCompiler.compileWithAssembler( XmlCompilerTest.applicationAssembler, "context/xml/testBuildingString.xml" );
+		XmlCompiler.compileWithAssembler( XmlCompilerTest.applicationAssembler, "context/xml/primitives/string.xml" );
 		var s : String = this._locate( "s" );
 		Assert.equals( "hello", s, "" );
 	}
@@ -198,7 +198,7 @@ class XmlCompilerTest
 	@Test( "test building Int" )
 	public function testBuildingInt() : Void
 	{
-		this._applicationAssembler = XmlCompiler.compile( "context/xml/testBuildingInt.xml" );
+		this._applicationAssembler = XmlCompiler.compile( "context/xml/primitives/int.xml" );
 		var i : Int = this._locate( "i" );
 		Assert.equals( -3, i, "" );
 	}
@@ -206,14 +206,14 @@ class XmlCompilerTest
 	@Test( "test building Hex" )
 	public function testBuildingHex() : Void
 	{
-		this._applicationAssembler = XmlCompiler.compile( "context/xml/testBuildingHex.xml" );
+		this._applicationAssembler = XmlCompiler.compile( "context/xml/primitives/hex.xml" );
 		Assert.equals( 0xFFFFFF, this._locate( "i" ) );
 	}
 
 	@Test( "test building Bool" )
 	public function testBuildingBool() : Void
 	{
-		this._applicationAssembler = XmlCompiler.compile( "context/xml/testBuildingBool.xml" );
+		this._applicationAssembler = XmlCompiler.compile( "context/xml/primitives/bool.xml" );
 		var b : Bool = this._locate( "b" );
 		Assert.isTrue( b, "" );
 	}
@@ -221,7 +221,7 @@ class XmlCompilerTest
 	@Test( "test building UInt" )
 	public function testBuildingUInt() : Void
 	{
-		this._applicationAssembler = XmlCompiler.compile( "context/xml/testBuildingUInt.xml" );
+		this._applicationAssembler = XmlCompiler.compile( "context/xml/primitives/uint.xml" );
 		var i : UInt = this._locate( "i" );
 		Assert.equals( 3, i, "" );
 	}
@@ -229,7 +229,7 @@ class XmlCompilerTest
 	@Test( "test building null" )
 	public function testBuildingNull() : Void
 	{
-		this._applicationAssembler = XmlCompiler.compile( "context/xml/testBuildingNull.xml" );
+		this._applicationAssembler = XmlCompiler.compile( "context/xml/primitives/null.xml" );
 		var result = this._locate( "value" );
 		Assert.isNull( result, "" );
 	}
@@ -558,7 +558,7 @@ class XmlCompilerTest
 	@Test( "test map-type attribute with Array" )
 	public function testMapTypeWithArray() : Void
 	{
-		this._applicationAssembler = XmlCompiler.compile( "context/xml/testMapTypeWithArray.xml" );
+		this._applicationAssembler = XmlCompiler.compile( "context/xml/mapTypeWithArray.xml" );
 		
 		var intCollection = this._getCoreFactory().getInjector().getInstanceWithClassName( "Array<Int>", "intCollection" );
 		var uintCollection = this._getCoreFactory().getInjector().getInstanceWithClassName( "Array<UInt>", "intCollection" );
@@ -575,7 +575,7 @@ class XmlCompilerTest
 	@Test( "test map-type attribute with instance" )
 	public function testMapTypeWithInstance() : Void
 	{
-		this._applicationAssembler = XmlCompiler.compile( "context/xml/testMapTypeWithInstance.xml" );
+		this._applicationAssembler = XmlCompiler.compile( "context/xml/mapTypeWithInstance.xml" );
 		
 		var intInstance = this._getCoreFactory().getInjector().getInstanceWithClassName( "hex.mock.IMockInterfaceWithGeneric<Int>", "intInstance" );
 		var uintInstance = this._getCoreFactory().getInjector().getInstanceWithClassName( "hex.mock.IMockInterfaceWithGeneric<UInt>", "intInstance" );
