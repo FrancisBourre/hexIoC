@@ -1,5 +1,4 @@
 package hex.compiler.parser.flow;
-import hex.core.HashCodeFactory;
 
 #if macro
 import haxe.macro.*;
