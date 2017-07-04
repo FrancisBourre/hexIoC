@@ -44,26 +44,26 @@ import hex.unittest.runner.MethodRunner;
  */
 class StaticFlowCompilerTest 
 {
-	var _applicationAssembler : IApplicationAssembler;
+	var _myApplicationAssembler : IApplicationAssembler;
 	static var applicationAssembler : IApplicationAssembler;
 
 	@Before
 	public function setUp() : Void
 	{
-		this._applicationAssembler = new ApplicationAssembler();
+		this._myApplicationAssembler = new ApplicationAssembler();
 	}
 	
 	@After
 	public function tearDown() : Void
 	{
 		ApplicationDomainDispatcher.getInstance().clear();
-		this._applicationAssembler.release();
+		this._myApplicationAssembler.release();
 	}
 	
 	@Test( "test building String" )
 	public function testBuildingString() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/primitives/string.flow", "StaticFlowCompiler_testBuildingString" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/primitives/string.flow", "StaticFlowCompiler_testBuildingString" );
 		
 		var locator = code.locator;
 		Assert.isNull( locator.s );
@@ -76,7 +76,7 @@ class StaticFlowCompilerTest
 	@Test( "test context reference" )
 	public function testContextReference() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/contextReference.flow", "StaticFlowCompiler_testContextReference" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/contextReference.flow", "StaticFlowCompiler_testContextReference" );
 		code.execute();
 		Assert.equals( code.applicationContext, code.locator.contextHolder.context );
 	}
@@ -84,7 +84,7 @@ class StaticFlowCompilerTest
 	@Test( "test building String without context name" )
 	public function testBuildingStringWithoutContextName() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/contextWithoutName.flow", "StaticFlowCompiler_testBuildingStringWithoutContextName" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/contextWithoutName.flow", "StaticFlowCompiler_testBuildingStringWithoutContextName" );
 		code.execute();
 		Assert.equals( "hello", code.locator.s );
 	}
@@ -105,8 +105,8 @@ class StaticFlowCompilerTest
 	@Test( "test overriding context name" )
 	public function testOverridingContextName() : Void
 	{
-		var code1 = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/simpleInstanceWithoutArguments.flow", "StaticFlowCompiler_testOverridingContextName1" );
-		var code2 = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/simpleInstanceWithoutArguments.flow", "StaticFlowCompiler_testOverridingContextName2" );
+		var code1 = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/simpleInstanceWithoutArguments.flow", "StaticFlowCompiler_testOverridingContextName1" );
+		var code2 = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/simpleInstanceWithoutArguments.flow", "StaticFlowCompiler_testOverridingContextName2" );
 		
 		code1.execute();
 		code2.execute();
@@ -120,7 +120,7 @@ class StaticFlowCompilerTest
 	@Test( "test building Int" )
 	public function testBuildingInt() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/primitives/int.flow", "StaticFlowCompiler_testBuildingInt" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/primitives/int.flow", "StaticFlowCompiler_testBuildingInt" );
 		code.execute();
 		Assert.equals( -3, code.locator.i );
 	}
@@ -128,7 +128,7 @@ class StaticFlowCompilerTest
 	@Test( "test building Hex" )
 	public function testBuildingHex() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/primitives/hex.flow", "StaticFlowCompiler_testBuildingHex" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/primitives/hex.flow", "StaticFlowCompiler_testBuildingHex" );
 		code.execute();
 		Assert.equals( 0xFFFFFF, code.locator.i );
 	}
@@ -136,7 +136,7 @@ class StaticFlowCompilerTest
 	@Test( "test building Bool" )
 	public function testBuildingBool() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/primitives/bool.flow", "StaticFlowCompiler_testBuildingBool" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/primitives/bool.flow", "StaticFlowCompiler_testBuildingBool" );
 		code.execute();
 		Assert.isTrue( code.locator.b );
 	}
@@ -144,7 +144,7 @@ class StaticFlowCompilerTest
 	@Test( "test building UInt" )
 	public function testBuildingUInt() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/primitives/uint.flow", "StaticFlowCompiler_testBuildingUInt" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/primitives/uint.flow", "StaticFlowCompiler_testBuildingUInt" );
 		code.execute();
 		Assert.equals( 3, code.locator.i );
 	}
@@ -152,7 +152,7 @@ class StaticFlowCompilerTest
 	@Test( "test building null" )
 	public function testBuildingNull() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/primitives/null.flow", "StaticFlowCompiler_testBuildingNull" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/primitives/null.flow", "StaticFlowCompiler_testBuildingNull" );
 		code.execute();
 		Assert.isNull( code.locator.value );
 	}
@@ -160,7 +160,7 @@ class StaticFlowCompilerTest
 	@Test( "test building anonymous object" )
 	public function testBuildingAnonymousObject() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/anonymousObject.flow", "StaticFlowCompiler_testBuildingAnonymousObject" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/anonymousObject.flow", "StaticFlowCompiler_testBuildingAnonymousObject" );
 		code.execute();
 		
 		//TODO make structure with typed properties
@@ -176,7 +176,7 @@ class StaticFlowCompilerTest
 	@Test( "test building simple instance without arguments" )
 	public function testBuildingSimpleInstanceWithoutArguments() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/simpleInstanceWithoutArguments.flow", "StaticFlowCompiler_testBuildingSimpleInstanceWithoutArguments" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/simpleInstanceWithoutArguments.flow", "StaticFlowCompiler_testBuildingSimpleInstanceWithoutArguments" );
 		code.execute();
 
 		Assert.isInstanceOf( code.locator.instance, MockClassWithoutArgument );
@@ -185,7 +185,7 @@ class StaticFlowCompilerTest
 	@Test( "test building simple instance with arguments" )
 	public function testBuildingSimpleInstanceWithArguments() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/simpleInstanceWithArguments.flow", "StaticFlowCompiler_testBuildingSimpleInstanceWithArguments" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/simpleInstanceWithArguments.flow", "StaticFlowCompiler_testBuildingSimpleInstanceWithArguments" );
 		
 		var locator = code.locator;
 		Assert.isNull( locator.size );
@@ -200,7 +200,7 @@ class StaticFlowCompilerTest
 	@Test( "test building multiple instances with arguments" )
 	public function testBuildingMultipleInstancesWithArguments() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/multipleInstancesWithArguments.flow", "StaticFlowCompiler_testBuildingMultipleInstancesWithArguments" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/multipleInstancesWithArguments.flow", "StaticFlowCompiler_testBuildingMultipleInstancesWithArguments" );
 		var locator = code.locator;
 		code.execute();
 		
@@ -398,7 +398,7 @@ class StaticFlowCompilerTest
 	@Test( "test simple method call" )
 	public function testSimpleMethodCall() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/simpleMethodCall.flow", "StaticFlowCompiler_testSimpleMethodCall" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/simpleMethodCall.flow", "StaticFlowCompiler_testSimpleMethodCall" );
 		code.execute();
 
 		Assert.isInstanceOf( code.locator.caller, MockCaller );
@@ -408,7 +408,7 @@ class StaticFlowCompilerTest
 	@Test( "test method call with type params" )
 	public function testCallWithTypeParams() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/methodCallWithTypeParams.flow", "StaticFlowCompiler_testCallWithTypeParams" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/methodCallWithTypeParams.flow", "StaticFlowCompiler_testCallWithTypeParams" );
 		code.execute();
 
 		Assert.isInstanceOf( code.locator.caller, MockCaller );
@@ -418,7 +418,7 @@ class StaticFlowCompilerTest
 	@Test( "test building multiple instances with method calls" )
 	public function testBuildingMultipleInstancesWithMethodCall() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/multipleInstancesWithMethodCall.flow", "StaticFlowCompiler_testBuildingMultipleInstancesWithMethodCall" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/multipleInstancesWithMethodCall.flow", "StaticFlowCompiler_testBuildingMultipleInstancesWithMethodCall" );
 		code.execute();
 
 		Assert.equals( 30, code.locator.rectSize.x );
@@ -443,7 +443,7 @@ class StaticFlowCompilerTest
 	@Test( "test building instance with static method" )
 	public function testBuildingInstanceWithStaticMethod() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/instanceWithStaticMethod.flow", "StaticFlowCompiler_testBuildingInstanceWithStaticMethod" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/instanceWithStaticMethod.flow", "StaticFlowCompiler_testBuildingInstanceWithStaticMethod" );
 		code.execute();
 		
 		Assert.isInstanceOf( code.locator.service, MockServiceProvider );
@@ -454,7 +454,7 @@ class StaticFlowCompilerTest
 	@Test( "test building instance with static method and arguments" )
 	public function testBuildingInstanceWithStaticMethodAndArguments() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/instanceWithStaticMethodAndArguments.flow", "StaticFlowCompiler_testBuildingInstanceWithStaticMethodAndArguments" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/instanceWithStaticMethodAndArguments.flow", "StaticFlowCompiler_testBuildingInstanceWithStaticMethodAndArguments" );
 		code.execute();
 		
 		Assert.isInstanceOf( code.locator.rect, MockRectangle );
@@ -467,7 +467,7 @@ class StaticFlowCompilerTest
 	@Test( "test building instance with static method and factory method" )
 	public function testBuildingInstanceWithStaticMethodAndFactoryMethod() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/instanceWithStaticMethodAndFactoryMethod.flow", "StaticFlowCompiler_testBuildingInstanceWithStaticMethodAndFactoryMethod" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/instanceWithStaticMethodAndFactoryMethod.flow", "StaticFlowCompiler_testBuildingInstanceWithStaticMethodAndFactoryMethod" );
 		code.execute();
 		
 		Assert.equals( 10, code.locator.point.x );
@@ -477,7 +477,7 @@ class StaticFlowCompilerTest
 	@Test( "test 'inject-into' attribute" )
 	public function testInjectIntoAttribute() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/injectIntoAttribute.flow", "StaticFlowCompiler_testInjectIntoAttribute" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/injectIntoAttribute.flow", "StaticFlowCompiler_testInjectIntoAttribute" );
 		code.execute();
 
 		Assert.isInstanceOf( code.locator.instance, MockClassWithInjectedProperty );
@@ -488,7 +488,7 @@ class StaticFlowCompilerTest
 	@Test( "test building XML without parser class" )
 	public function testBuildingXMLWithoutParserClass() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/xmlWithoutParserClass.flow", "StaticFlowCompiler_testBuildingXMLWithoutParserClass" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/xmlWithoutParserClass.flow", "StaticFlowCompiler_testBuildingXMLWithoutParserClass" );
 		code.execute();
 		
 		Assert.isInstanceOf( code.locator.fruits, Xml );
@@ -497,7 +497,7 @@ class StaticFlowCompilerTest
 	@Test( "test building XML with parser class" )
 	public function testBuildingXMLWithParserClass() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/xmlWithParserClass.flow", "StaticFlowCompiler_testBuildingXMLWithParserClass" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/xmlWithParserClass.flow", "StaticFlowCompiler_testBuildingXMLWithParserClass" );
 		code.execute();
 
 		Assert.equals( 3, code.locator.fruits.length );
@@ -514,7 +514,7 @@ class StaticFlowCompilerTest
 	@Test( "test building Arrays" )
 	public function testBuildingArrays() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/arrayFilledWithReferences.flow", "StaticFlowCompiler_testBuildingArrays" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/arrayFilledWithReferences.flow", "StaticFlowCompiler_testBuildingArrays" );
 		code.execute();
 		
 		Assert.equals( 2, code.locator.text.length );
@@ -537,7 +537,7 @@ class StaticFlowCompilerTest
 	@Test( "test building Map filled with references" )
 	public function testBuildingMapFilledWithReferences() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/hashmapFilledWithReferences.flow", "StaticFlowCompiler_testBuildingMapFilledWithReferences" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/hashmapFilledWithReferences.flow", "StaticFlowCompiler_testBuildingMapFilledWithReferences" );
 		code.execute();
 
 		var fruits = code.locator.fruits;
@@ -558,7 +558,7 @@ class StaticFlowCompilerTest
 	@Test( "test building HashMap with map-type" )
 	public function testBuildingHashMapWithMapType() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/hashmapWithMapType.flow", "StaticFlowCompiler_testBuildingHashMapWithMapType" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/hashmapWithMapType.flow", "StaticFlowCompiler_testBuildingHashMapWithMapType" );
 		code.execute();
 
 		Assert.isNotNull( code.locator.fruits );
@@ -576,7 +576,7 @@ class StaticFlowCompilerTest
 	@Test( "test map-type attribute with Array" )
 	public function testMapTypeWithArray() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/mapTypeWithArray.flow", "StaticFlowCompiler_testMapTypeWithArray" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/mapTypeWithArray.flow", "StaticFlowCompiler_testMapTypeWithArray" );
 		code.execute();
 		
 		var intCollection = code.applicationContext.getInjector().getInstanceWithClassName( "Array<Int>", "intCollection" );
@@ -594,7 +594,7 @@ class StaticFlowCompilerTest
 	@Test( "test map-type attribute with instance" )
 	public function testMapTypeWithInstance() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/mapTypeWithInstance.flow", "StaticFlowCompiler_testMapTypeWithInstance" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/mapTypeWithInstance.flow", "StaticFlowCompiler_testMapTypeWithInstance" );
 		code.execute();
 		
 		var intInstance = code.applicationContext.getInjector().getInstanceWithClassName( "hex.mock.IMockInterfaceWithGeneric<Int>", "intInstance" );
@@ -612,7 +612,7 @@ class StaticFlowCompilerTest
 	@Test( "test building two modules listening each other" )
 	public function testBuildingTwoModulesListeningEachOther() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/twoModulesListeningEachOther.flow", "StaticFlowCompiler_testBuildingTwoModulesListeningEachOther" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/twoModulesListeningEachOther.flow", "StaticFlowCompiler_testBuildingTwoModulesListeningEachOther" );
 		code.execute();
 		
 		Assert.isNotNull( code.locator.chat );
@@ -626,7 +626,7 @@ class StaticFlowCompilerTest
 	@Test( "test building two modules listening each other with adapter" )
 	public function testBuildingTwoModulesListeningEachOtherWithAdapter() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/twoModulesListeningEachOtherWithAdapter.flow", "StaticFlowCompiler_testBuildingTwoModulesListeningEachOtherWithAdapter" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/twoModulesListeningEachOtherWithAdapter.flow", "StaticFlowCompiler_testBuildingTwoModulesListeningEachOtherWithAdapter" );
 		code.execute();
 
 		Assert.isNotNull( code.locator.chat );
@@ -641,7 +641,7 @@ class StaticFlowCompilerTest
 	@Test( "test building two modules listening each other with adapter and injection" )
 	public function testBuildingTwoModulesListeningEachOtherWithAdapterAndInjection() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/twoModulesListeningEachOtherWithAdapterAndInjection.flow", "StaticFlowCompiler_testBuildingTwoModulesListeningEachOtherWithAdapterAndInjection" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/twoModulesListeningEachOtherWithAdapterAndInjection.flow", "StaticFlowCompiler_testBuildingTwoModulesListeningEachOtherWithAdapterAndInjection" );
 		code.execute();
 		
 		Assert.isNotNull( code.locator.chat );
@@ -655,7 +655,7 @@ class StaticFlowCompilerTest
 	@Test( "test building class reference" )
 	public function testBuildingClassReference() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/classReference.flow", "StaticFlowCompiler_testBuildingClassReference" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/classReference.flow", "StaticFlowCompiler_testBuildingClassReference" );
 		code.execute();
 
 		Assert.isInstanceOf( code.locator.RectangleClass, Class );
@@ -670,7 +670,7 @@ class StaticFlowCompilerTest
 	@Test( "test static-ref" )
 	public function testStaticRef() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/staticRef.flow", "StaticFlowCompiler_testStaticRef" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/staticRef.flow", "StaticFlowCompiler_testStaticRef" );
 		code.execute();
 
 		Assert.equals( code.locator.constant, MockClass.MESSAGE_TYPE );
@@ -679,7 +679,7 @@ class StaticFlowCompilerTest
 	@Test( "test static-ref property" )
 	public function testStaticProperty() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/staticRefProperty.flow", "StaticFlowCompiler_testStaticProperty" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/staticRefProperty.flow", "StaticFlowCompiler_testStaticProperty" );
 		code.execute();
 
 		Assert.equals( MockClass.MESSAGE_TYPE, code.locator.object.property );
@@ -689,7 +689,7 @@ class StaticFlowCompilerTest
 	@Test( "test static-ref argument" )
 	public function testStaticArgument() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/staticRefArgument.flow", "StaticFlowCompiler_testStaticArgument" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/staticRefArgument.flow", "StaticFlowCompiler_testStaticArgument" );
 		code.execute();
 
 		Assert.equals( code.locator.instance.constant, MockClass.MESSAGE_TYPE );
@@ -698,7 +698,7 @@ class StaticFlowCompilerTest
 	@Test( "test static-ref argument on method-call" )
 	public function testStaticArgumentOnMethodCall() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/staticRefArgumentOnMethodCall.flow", "StaticFlowCompiler_testStaticArgumentOnMethodCall" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/staticRefArgumentOnMethodCall.flow", "StaticFlowCompiler_testStaticArgumentOnMethodCall" );
 		code.execute();
 
 		Assert.equals( MockMethodCaller.staticVar, code.locator.instance.argument );
@@ -707,7 +707,7 @@ class StaticFlowCompilerTest
 	@Test( "test map-type attribute" )
 	public function testMapTypeAttribute() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/mapTypeAttribute.flow", "StaticFlowCompiler_testMapTypeAttribute" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/mapTypeAttribute.flow", "StaticFlowCompiler_testMapTypeAttribute" );
 		code.execute();
 
 		Assert.isInstanceOf( code.locator.instance, MockClass );
@@ -722,7 +722,7 @@ class StaticFlowCompilerTest
 	@Test( "test multi map-type attributes" )
 	public function testMultiMapTypeAttributes() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/multiMapTypeAttributes.flow", "StaticFlowCompiler_testMultiMapTypeAttributes" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/multiMapTypeAttributes.flow", "StaticFlowCompiler_testMultiMapTypeAttributes" );
 		code.execute();
 
 		Assert.isInstanceOf( code.locator.instance, MockClass );
@@ -736,7 +736,7 @@ class StaticFlowCompilerTest
 	@Test( "test building Map with class reference" )
 	public function testBuildingMapWithClassReference() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/hashmapWithClassReference.flow", "StaticFlowCompiler_testBuildingMapWithClassReference" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/hashmapWithClassReference.flow", "StaticFlowCompiler_testBuildingMapWithClassReference" );
 		code.execute();
 
 		Assert.equals( IMockInterface, code.locator.map.getKeys()[ 0 ] );
@@ -746,7 +746,7 @@ class StaticFlowCompilerTest
 	@Test( "test target sub property" )
 	public function testTargetSubProperty() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/targetSubProperty.flow", "StaticFlowCompiler_testTargetSubProperty" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/targetSubProperty.flow", "StaticFlowCompiler_testTargetSubProperty" );
 		code.execute();
 		
 		Assert.isInstanceOf( code.locator.mockObject, MockObjectWithRegtangleProperty );
@@ -756,7 +756,7 @@ class StaticFlowCompilerTest
 	@Test( "test recursive property reference" )
 	public function testRecursivePropertyReference() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/propertyReference.flow", "StaticFlowCompiler_testRecursivePropertyReference" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/propertyReference.flow", "StaticFlowCompiler_testRecursivePropertyReference" );
 		code.execute();
 		
 		Assert.equals( 'property', code.locator.oClass.property );
@@ -767,7 +767,7 @@ class StaticFlowCompilerTest
 	@Test( "test module listening service" )
 	public function testModuleListeningService() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/moduleListeningService.flow", "StaticFlowCompiler_testModuleListeningService" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/moduleListeningService.flow", "StaticFlowCompiler_testModuleListeningService" );
 		code.execute();
 		
 		Assert.isNotNull( code.locator.myService );
@@ -781,7 +781,7 @@ class StaticFlowCompilerTest
 	@Test( "test module listening service with map-type" )
 	public function testModuleListeningServiceWithMapType() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/moduleListeningServiceWithMapType.flow", "StaticFlowCompiler_testModuleListeningServiceWithMapType" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/moduleListeningServiceWithMapType.flow", "StaticFlowCompiler_testModuleListeningServiceWithMapType" );
 		code.execute();
 
 		Assert.isNotNull( code.locator.myService );
@@ -797,7 +797,7 @@ class StaticFlowCompilerTest
 	@Test( "test module listening service with strategy and module injection" )
 	public function testModuleListeningServiceWithStrategyAndModuleInjection() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/moduleListeningServiceWithStrategyAndModuleInjection.flow", "StaticFlowCompiler_testModuleListeningServiceWithStrategyAndModuleInjection" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/moduleListeningServiceWithStrategyAndModuleInjection.flow", "StaticFlowCompiler_testModuleListeningServiceWithStrategyAndModuleInjection" );
 		code.execute();
 
 		Assert.isNotNull( code.locator.myService );
@@ -811,7 +811,7 @@ class StaticFlowCompilerTest
 	@Test( "test module listening service with strategy and context injection" )
 	public function testModuleListeningServiceWithStrategyAndContextInjection() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/moduleListeningServiceWithStrategyAndContextInjection.flow", "StaticFlowCompiler_testModuleListeningServiceWithStrategyAndContextInjection" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/moduleListeningServiceWithStrategyAndContextInjection.flow", "StaticFlowCompiler_testModuleListeningServiceWithStrategyAndContextInjection" );
 		code.execute();
 
 		Assert.isNotNull( code.locator.mockDividerHelper );
@@ -829,7 +829,7 @@ class StaticFlowCompilerTest
 	@Test( "test domain dispatch after module initialisation" )
 	public function testDomainDispatchAfterModuleInitialisation() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/domainDispatchAfterModuleInitialisation.flow", "StaticFlowCompiler_testDomainDispatchAfterModuleInitialisation" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/domainDispatchAfterModuleInitialisation.flow", "StaticFlowCompiler_testDomainDispatchAfterModuleInitialisation" );
 		code.execute();
 
 		Assert.isNotNull( code.locator.sender );
@@ -840,7 +840,7 @@ class StaticFlowCompilerTest
 	@Async( "test EventTrigger" )
 	public function testEventTrigger() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/eventTrigger.flow", "StaticFlowCompiler_testEventTrigger" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/eventTrigger.flow", "StaticFlowCompiler_testEventTrigger" );
 		code.execute();
 		
 		Assert.isNotNull( code.locator.chat );
@@ -860,7 +860,7 @@ class StaticFlowCompilerTest
 	@Async( "test EventProxy" )
 	public function testEventProxy() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/eventProxy.flow", "StaticFlowCompiler_testEventProxy" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/eventProxy.flow", "StaticFlowCompiler_testEventProxy" );
 		code.execute();
 
 		Assert.isNotNull( code.locator.eventProxy );
@@ -881,7 +881,7 @@ class StaticFlowCompilerTest
 	
 	function _locate( contextName : String, key : String ) : Dynamic
 	{
-		return this._applicationAssembler.getApplicationContext( contextName, ApplicationContext ).getCoreFactory().locate( key );
+		return this._myApplicationAssembler.getApplicationContext( contextName, ApplicationContext ).getCoreFactory().locate( key );
 	}
 	
 	function getColorByName( name : String ) : Int
@@ -903,7 +903,7 @@ class StaticFlowCompilerTest
 	@Test( "Test MockObject with annotation" )
 	public function testMockObjectWithAnnotation() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/testMockObjectWithAnnotation.flow", "StaticFlowCompiler_testMockObjectWithAnnotation" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/testMockObjectWithAnnotation.flow", "StaticFlowCompiler_testMockObjectWithAnnotation" );
 		var annotationProvider : IAnnotationProvider = code.applicationContext.getInjector().getInstance( IAnnotationProvider );
 
 		annotationProvider.registerMetaData( "color", this.getColorByName );
@@ -920,7 +920,7 @@ class StaticFlowCompilerTest
 	public function testAnnotationProviderWithInheritance() : Void
 	{
 		var assembler = new ApplicationAssembler();
-		this._applicationAssembler = assembler;
+		this._myApplicationAssembler = assembler;
 		
 		var code = StaticFlowCompiler.compile( assembler, "context/flow/testMockObjectWithAnnotation.flow", "StaticFlowCompiler_testAnnotationProviderWithInheritance" );
 		code.execute();
@@ -999,7 +999,7 @@ class StaticFlowCompilerTest
 	@Test( "test file preprocessor with flow file" )
 	public function testFilePreprocessorWithFlowFile() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/preprocessor.flow", "StaticFlowCompiler_testFilePreprocessorWithFlowFile", 
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/preprocessor.flow", "StaticFlowCompiler_testFilePreprocessorWithFlowFile", 
 															[	"hello" 		=> "bonjour",
 																"contextName" 	=> 'applicationContext',
 																"context" 		=> 'name="${contextName}"',
@@ -1012,7 +1012,7 @@ class StaticFlowCompilerTest
 	@Test( "test if attribute" )
 	public function testIfAttribute() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/ifAttribute.flow", "StaticFlowCompiler_testIfAttribute", null, [ "prodz" => true, "testing" => false, "releasing" => false ] );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/ifAttribute.flow", "StaticFlowCompiler_testIfAttribute", null, [ "prodz" => true, "testing" => false, "releasing" => false ] );
 		code.execute();
 		
 		Assert.equals( "hello prod", code.locator.message, "message value should equal 'hello prod'" );
@@ -1021,7 +1021,7 @@ class StaticFlowCompilerTest
 	@Test( "test include with if attribute" )
 	public function testIncludeWithIfAttribute() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/includeWithIfAttribute.flow", "StaticFlowCompiler_testIncludeWithIfAttribute", null, [ "prodz" => true, "testing" => false, "releasing" => false ] );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/includeWithIfAttribute.flow", "StaticFlowCompiler_testIncludeWithIfAttribute", null, [ "prodz" => true, "testing" => false, "releasing" => false ] );
 		code.execute();
 		
 		Assert.equals( "hello prod", code.locator.message, "message value should equal 'hello prod'" );
@@ -1030,17 +1030,17 @@ class StaticFlowCompilerTest
 	@Test( "test include fails with if attribute" )
 	public function testIncludeFailsWithIfAttribute() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/includeWithIfAttribute.flow", "StaticFlowCompiler_testIncludeFailsWithIfAttribute", null, [ "prodz" => false, "testing" => true, "releasing" => true ] );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/includeWithIfAttribute.flow", "StaticFlowCompiler_testIncludeFailsWithIfAttribute", null, [ "prodz" => false, "testing" => true, "releasing" => true ] );
 		code.execute();
 		
-		var coreFactory = this._applicationAssembler.getApplicationContext( "StaticFlowCompiler_testIncludeFailsWithIfAttribute", ApplicationContext ).getCoreFactory();
+		var coreFactory = this._myApplicationAssembler.getApplicationContext( "StaticFlowCompiler_testIncludeFailsWithIfAttribute", ApplicationContext ).getCoreFactory();
 		Assert.methodCallThrows( NoSuchElementException, coreFactory, coreFactory.locate, [ "message" ], "'NoSuchElementException' should be thrown" );
 	}
 	
 	@Test( "test building mapping configuration" )
 	public function testBuildingMappingConfiguration() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/mappingConfiguration.flow", "StaticFlowCompiler_testBuildingMappingConfiguration" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/mappingConfiguration.flow", "StaticFlowCompiler_testBuildingMappingConfiguration" );
 		code.execute();
 		
 		Assert.isInstanceOf( code.locator.config, MappingConfiguration );
@@ -1088,7 +1088,7 @@ class StaticFlowCompilerTest
 	@Test( "test build domain" )
 	public function testBuildDomain() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/buildDomain.flow", "StaticFlowCompiler_testBuildDomain" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/buildDomain.flow", "StaticFlowCompiler_testBuildDomain" );
 		code.execute();
 		
 		Assert.isInstanceOf( code.locator.applicationDomain, Domain );
@@ -1097,7 +1097,7 @@ class StaticFlowCompilerTest
 	@Test( "test recursive static calls" )
 	public function testRecursiveStaticCalls() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/instanceWithStaticMethodAndArguments.flow", "StaticFlowCompiler_testRecursiveStaticCalls" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/instanceWithStaticMethodAndArguments.flow", "StaticFlowCompiler_testRecursiveStaticCalls" );
 		code.execute();
 		
 		Assert.isInstanceOf( code.locator.rect, MockRectangle );
@@ -1119,7 +1119,7 @@ class StaticFlowCompilerTest
 	@Test( "test runtime arguments" )
 	public function testRuntimeArguments() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/runtimeArguments.flow", "StaticFlowCompiler_testRuntimeArguments" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/runtimeArguments.flow", "StaticFlowCompiler_testRuntimeArguments" );
 		code.execute( { x:10, y: 20, p: new Point( 30, 40 ) } );
 		
 		Assert.isInstanceOf( code.locator.size, Size );
@@ -1134,7 +1134,7 @@ class StaticFlowCompilerTest
 	@Test( "test array recursivity" )
 	public function testArrayRecursivity() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/arrayRecursivity.flow", "StaticFlowCompiler_testArrayRecursivity" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/arrayRecursivity.flow", "StaticFlowCompiler_testArrayRecursivity" );
 		code.execute();
 		
 		Assert.isInstanceOf( code.locator.test[ 0 ] , Array );
@@ -1157,7 +1157,7 @@ class StaticFlowCompilerTest
 	@Test( "test array recursivity with new" )
 	public function testArrayRecursivityWithNew() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/arrayRecursivityWithNew.flow", "StaticFlowCompiler_testArrayRecursivityWithNew" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/arrayRecursivityWithNew.flow", "StaticFlowCompiler_testArrayRecursivityWithNew" );
 		code.execute();
 		
 		Assert.isInstanceOf( code.locator.test[ 0 ] , Array );
@@ -1179,7 +1179,7 @@ class StaticFlowCompilerTest
 	@Test( "test array recursivity with new mixed with brackets" )
 	public function testArrayRecursivityWithNewMixedWithBrackets() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/arrayRecursivityWithNewMixedWithBrackets.flow", "StaticFlowCompiler_testArrayRecursivityWithNewMixedWithBrackets" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/arrayRecursivityWithNewMixedWithBrackets.flow", "StaticFlowCompiler_testArrayRecursivityWithNewMixedWithBrackets" );
 		code.execute();
 		
 		Assert.isInstanceOf( code.locator.test[ 0 ] , Array );
@@ -1201,7 +1201,7 @@ class StaticFlowCompilerTest
 	@Test( "test new recursivity" )
 	public function testNewRecursivity() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/newRecursivity.flow", "StaticFlowCompiler_testNewRecursivity" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/newRecursivity.flow", "StaticFlowCompiler_testNewRecursivity" );
 		code.execute();
 		
 		Assert.isInstanceOf( code.locator.test, hex.mock.MockContextHolder );
@@ -1211,14 +1211,14 @@ class StaticFlowCompilerTest
 	@Test( "test dependencies checking" )
 	public function testDependenciesChecking() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/static/dependencies.flow", "StaticFlowCompiler_testDependenciesChecking" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/static/dependencies.flow", "StaticFlowCompiler_testDependenciesChecking" );
 		code.execute();
 	}
 	
 	@Test( "test array of dependencies checking" )
 	public function testArrayOfDependenciesChecking() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/static/arrayOfDependencies.flow", "StaticFlowCompiler_testArrayOfDependenciesChecking" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/static/arrayOfDependencies.flow", "StaticFlowCompiler_testArrayOfDependenciesChecking" );
 		code.execute();
 
 		Assert.isTrue( MappingChecker.match( ArrayOfDependenciesOwner, code.locator.mappings1 ) );
@@ -1229,7 +1229,7 @@ class StaticFlowCompilerTest
 	@Test( "test mixed dependencies checking" )
 	public function testMixedDependenciesChecking() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/static/mixedDependencies.flow", "StaticFlowCompiler_testMixedDependenciesChecking" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/static/mixedDependencies.flow", "StaticFlowCompiler_testMixedDependenciesChecking" );
 		code.execute();
 		
 		Assert.equals( "String", code.locator.mapping1.fromType );
@@ -1260,7 +1260,7 @@ class StaticFlowCompilerTest
 	@Test( "test property recursivity" )
 	public function testPropertyRecursivity() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/propertyRecursivity.flow", "StaticFlowCompiler_testPropertyRecursivity" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/propertyRecursivity.flow", "StaticFlowCompiler_testPropertyRecursivity" );
 		code.execute();
 		
 		Assert.isInstanceOf( code.locator.o1.p, hex.mock.Clazz );
@@ -1276,7 +1276,7 @@ class StaticFlowCompilerTest
 	public function testAddCustomParser() : Void
 	{
 		MockCustomStaticFlowParser.prepareCompiler();
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/static/addParser.flow", "StaticFlowCompiler_testAddCustomParser" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/static/addParser.flow", "StaticFlowCompiler_testAddCustomParser" );
 		code.execute();
 		
 		Assert.equals( 'hello world !', code.locator.s );
@@ -1288,7 +1288,7 @@ class StaticFlowCompilerTest
 	@Test( "test alias primitive" )
 	public function testAliasPrimitive() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/aliasPrimitive.flow", "StaticFlowCompiler_aliasPrimitive" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/aliasPrimitive.flow", "StaticFlowCompiler_aliasPrimitive" );
 		code.execute();
 		
 		Assert.equals( 5, code.locator.value );
@@ -1302,7 +1302,7 @@ class StaticFlowCompilerTest
 	@Test( "test alias instance" )
 	public function testAliasInstance() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/aliasInstance.flow", "StaticFlowCompiler_aliasInstance" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/aliasInstance.flow", "StaticFlowCompiler_aliasInstance" );
 		code.execute();
 
 		var position = code.locator.reference;
@@ -1313,7 +1313,7 @@ class StaticFlowCompilerTest
 	@Test( "test runtime alias primitive" )
 	public function testRuntimeAliasPrimitive() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/runtimeAliasPrimitive.flow", "StaticFlowCompiler_runtimeAliasPrimitive" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/runtimeAliasPrimitive.flow", "StaticFlowCompiler_runtimeAliasPrimitive" );
 		code.execute( {value: 5} );
 		
 		Assert.equals( 5, code.locator.x );
@@ -1326,7 +1326,7 @@ class StaticFlowCompilerTest
 	@Test( "test runtime alias instance" )
 	public function testRuntimeAliasInstance() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/runtimeAliasInstance.flow", "StaticFlowCompiler_runtimeAliasInstance" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/runtimeAliasInstance.flow", "StaticFlowCompiler_runtimeAliasInstance" );
 		var p = new hex.structures.Point(1, 2);
 		code.execute( {p: p} );
 		
@@ -1340,7 +1340,7 @@ class StaticFlowCompilerTest
 	@Test( "test Array concat with runtime parameters" )
 	public function testArrayConcatWithRuntimeParameter() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/static/arrayConcatRuntimeParam.flow", "StaticFlowCompiler_testArrayConcatWithRuntimeParameter" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/static/arrayConcatRuntimeParam.flow", "StaticFlowCompiler_testArrayConcatWithRuntimeParameter" );
 		code.execute( { collection:[1, 2, 3] } );
 		Assert.deepEquals( [1,2,3,4,5,6], code.locator.result );
 	}
@@ -1351,7 +1351,7 @@ class StaticFlowCompilerTest
 	{
 		if ( js.Browser.supported )
 		{
-			var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/static/divSelection.flow", "StaticFlowCompiler_testDivSelection" );
+			var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/static/divSelection.flow", "StaticFlowCompiler_testDivSelection" );
 			code.execute( { divName: '#console' } );
 			Assert.equals( code.locator.div1, code.locator.div2 );
 			Assert.isInstanceOf( code.locator.div1, js.html.DivElement );
@@ -1364,7 +1364,7 @@ class StaticFlowCompilerTest
 	@Test( "test two Int import" )
 	public function testTwoIntImport() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/static/twoIntImport.flow", "StaticFlowCompiler_testTwoIntImport" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/static/twoIntImport.flow", "StaticFlowCompiler_testTwoIntImport" );
 		code.execute( {x:10, y:20} );
 		
 		Assert.equals( 10, code.locator.size.width );
@@ -1376,7 +1376,7 @@ class StaticFlowCompilerTest
 	@Test( "test Size import" )
 	public function testSizeImport() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/static/sizeImport.flow", "StaticFlowCompiler_testSizeImport" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/static/sizeImport.flow", "StaticFlowCompiler_testSizeImport" );
 		code.execute( {x:10, y:20} );
 
 		Assert.equals( 10, code.locator.sizeContext.size.width );
@@ -1389,7 +1389,7 @@ class StaticFlowCompilerTest
 	@Test( "test recursive Size import" )
 	public function testRecursiveSizeImport() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/static/recursiveSizeImport.flow", "StaticFlowCompiler_testRecursiveSizeImport" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/static/recursiveSizeImport.flow", "StaticFlowCompiler_testRecursiveSizeImport" );
 		code.execute( {x:10, y:20} );
 
 		Assert.equals( 10, code.locator.sizeContext1.sizeContext.size.width );
@@ -1401,7 +1401,8 @@ class StaticFlowCompilerTest
 	@Test( "test import with parent context dependency" )
 	public function testImportWithParentContextDependency() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/static/importWithParentDependency.flow", "StaticFlowCompiler_testImportWithParentContextDependency" );
+		var applicationAssembler = new ApplicationAssembler();
+		var code = StaticFlowCompiler.compile( applicationAssembler, "context/flow/static/importWithParentDependency.flow", "StaticFlowCompiler_testImportWithParentContextDependency" );
 		code.execute();
 		Assert.equals( 'hello world', code.locator.childContext.text );
 	}
@@ -1410,7 +1411,7 @@ class StaticFlowCompilerTest
 	@Test( "test module listening service with 2 passes" )
 	public function testModuleListeningServiceWith2Passes() : Void
 	{
-		var code1 = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/serviceToBeListened.flow", "StaticFlowCompiler_testModuleListeningServiceWith2Passes" );
+		var code1 = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/serviceToBeListened.flow", "StaticFlowCompiler_testModuleListeningServiceWith2Passes" );
 		code1.execute();
 		
 		var code = StaticFlowCompiler.extend( code1, "context/flow/moduleListener.flow" );
