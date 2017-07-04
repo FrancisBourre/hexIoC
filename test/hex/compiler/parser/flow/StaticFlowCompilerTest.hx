@@ -1361,6 +1361,14 @@ class StaticFlowCompilerTest
 	#end
 
 	//Import
+	@Test( "test recursive empty import" )
+	public function testRecursiveEmptyImport() : Void
+	{
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/static/emptyImport.flow", "StaticFlowCompiler_testRecursiveEmptyImport" );
+		code.execute();
+		Assert.equals( 'hello world', code.locator.childContext.childContext.test );
+	}
+	
 	@Test( "test two Int import" )
 	public function testTwoIntImport() : Void
 	{
