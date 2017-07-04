@@ -1,4 +1,5 @@
 package hex.compiler.parser.flow;
+import hex.core.HashCodeFactory;
 
 #if macro
 import haxe.macro.*;
@@ -111,8 +112,9 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 		
 		if ( then == null )
 		{
-			callback = 'uniquefuckingID';
-			var cvo = new ConstructorVO( callback, ContextTypeList.OBJECT );
+			var cvo = new ConstructorVO( '', ContextTypeList.OBJECT );
+			callback = '__then__' + hex.core.HashCodeFactory.getKey( cvo );
+			cvo.ID = callback;
 			cvo.filePosition = Context.currentPos();
 			this._builder.build( OBJECT( cvo ) );
 		}
