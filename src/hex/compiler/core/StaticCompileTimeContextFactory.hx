@@ -87,7 +87,11 @@ class StaticCompileTimeContextFactory
 			finalResult = this._parseAnnotation( constructorVO, finalResult );
 			finalResult = this._parseCommandTrigger( constructorVO, finalResult );
 			
-			if ( constructorVO.cType != null )
+			if ( constructorVO.abstractType != null )
+			{
+				hex.compiletime.util.ContextBuilder.getInstance( this ).addFieldWithClassName( id, constructorVO.abstractType );
+			}
+			else if ( constructorVO.cType != null )
 			{
 				hex.compiletime.util.ContextBuilder.getInstance( this ).addField( id, constructorVO.cType );
 			}

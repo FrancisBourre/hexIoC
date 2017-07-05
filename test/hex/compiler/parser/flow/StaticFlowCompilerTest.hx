@@ -1337,6 +1337,14 @@ class StaticFlowCompilerTest
 		Assert.equals( code.locator.position, code.locator.anotherPosition );
 	}
 	
+	@Test( "test Array concat with util" )
+	public function testArrayConcatWithUtil() : Void
+	{
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/arrayConcat.flow", "StaticFlowCompiler_testArrayConcatWithUtil" );
+		code.execute();
+		Assert.deepEquals( [1,2,3,4,5,6], code.locator.result );
+	}
+	
 	@Test( "test Array concat with runtime parameters" )
 	public function testArrayConcatWithRuntimeParameter() : Void
 	{
@@ -1449,5 +1457,21 @@ class StaticFlowCompilerTest
 		var booleanVO = new MockBooleanVO( true );
 		code.locator.myService.setBooleanVO( booleanVO );
 		Assert.isTrue( code.locator.myModule.getBooleanValue() );
+	}
+	
+	@Test( "test abstract typed field with map-type" )
+	public function testAbstractTypedFieldWithMapType() : Void
+	{
+		var applicationAssembler = new ApplicationAssembler();
+		var code = StaticFlowCompiler.compile( applicationAssembler, "context/flow/static/abstractTypeField.flow", "StaticFlowCompiler_testAbstractTypedFieldWithMapType" );
+		code.execute();
+		
+		Assert.isInstanceOf( code.locator.test, MockClass );
+
+		var map = code.applicationContext.getInjector().getInstanceWithClassName( "hex.mock.IMockInterface", "test" );
+		Assert.isInstanceOf( map, MockClass );
+		Assert.equals( code.locator.test, map );
+		
+		code.locator.test = new AnotherMockClass();
 	}
 }

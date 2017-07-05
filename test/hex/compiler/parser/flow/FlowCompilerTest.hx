@@ -1044,4 +1044,17 @@ class FlowCompilerTest
 		this._applicationAssembler = FlowCompiler.compile( "context/flow/arrayConcat.flow" );
 		Assert.deepEquals( [1,2,3,4,5,6], this._getCoreFactory().locate( "result" ) );
 	}
+	
+	@Test( "test abstract typed field with map-type" )
+	public function testAbstractTypedFieldWithMapType() : Void
+	{
+		//We just check here that @type metadata doesn't prevent flow compilation
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/static/abstractTypeField.flow" );
+
+		Assert.isInstanceOf( this._getCoreFactory().locate( "test" ), MockClass );
+
+		var map = this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getInjector().getInstanceWithClassName( "hex.mock.IMockInterface", "test" );
+		Assert.isInstanceOf( map, MockClass );
+		Assert.equals( this._getCoreFactory().locate( "test" ), map );
+	}
 }
