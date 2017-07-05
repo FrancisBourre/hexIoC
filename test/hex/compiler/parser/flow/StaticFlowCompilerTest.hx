@@ -1415,6 +1415,24 @@ class StaticFlowCompilerTest
 		Assert.equals( 'hello world', code.locator.childContext.text );
 	}
 	
+	@Test( "test import with child depending on another child" )
+	public function testImportWithChildDependingOnAnotherChild() : Void
+	{
+		var applicationAssembler = new ApplicationAssembler();
+		var code = StaticFlowCompiler.compile( applicationAssembler, "context/flow/static/importWithChildDependsOnChild.flow", "StaticFlowCompiler_testImportWithChildDependingOnAnotherChild" );
+		code.execute();
+		Assert.equals( 'hello world', code.locator.childContext2.text );
+	}
+	
+	@Test( "test child method call with another child argument" )
+	public function testChildMethodCallWithAnotherChildArgument() : Void
+	{
+		var applicationAssembler = new ApplicationAssembler();
+		var code = StaticFlowCompiler.compile( applicationAssembler, "context/flow/static/childMethodCallWithAnotherChildArg.flow", "StaticFlowCompiler_testChildMethodCallWithAnotherChildArgument" );
+		code.execute();
+		Assert.deepEquals( [ 3, 4 ], code.locator.childContext3.o.owner.collection );
+	}
+	
 	//
 	@Test( "test module listening service with 2 passes" )
 	public function testModuleListeningServiceWith2Passes() : Void

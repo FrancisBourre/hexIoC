@@ -323,7 +323,7 @@ class CompileTimeContextFactory
 			args.push( this.buildVO( arguments[ i ] ) );
 		}
 		
-		var varOwner = macro $i{ method.ownerID };
+		var varOwner = macro $p{ method.ownerID.split('.') };
 		this._expressions.push( macro @:mergeBlock { $varOwner.$methodName( $a{ args } ); } );
 	}
 

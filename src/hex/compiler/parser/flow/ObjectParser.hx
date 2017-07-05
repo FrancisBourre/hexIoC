@@ -94,11 +94,17 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 						var fieldName = fields.join('.');
 						this._builder.build( PROPERTY( this.parser.parseProperty( this.parser, ident, fieldName, value ) ) );
 						
-						case _:
-							//TODO remove
-							logger.error('Unknown expression');
-							logger.debug(e.pos);
-							logger.debug(e.expr);
+					//TODO refactor - Should be part of the method parser	
+					case ECall( _.expr => EField( ref, field ), params ):
+						var ident = ExpressionUtil.compressField( ref );
+						var args = params.map( function( param ) return this.parser.parseArgument( this.parser, ident, param ) );
+						this._builder.build( METHOD_CALL( new MethodCallVO( ident, field, args ) ) );
+						
+					case _:
+						//TODO remove
+						logger.error( 'Unknown expression' );
+						logger.debug( e.pos );
+						logger.debug( e.expr );
 				}
 				
 		}
