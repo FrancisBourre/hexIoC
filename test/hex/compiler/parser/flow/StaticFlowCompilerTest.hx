@@ -149,6 +149,14 @@ class StaticFlowCompilerTest
 		Assert.equals( 3, code.locator.i );
 	}
 	
+	@Test( "test building Float" )
+	public function testBuildingFloat() : Void
+	{
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/primitives/float.flow", "StaticFlowCompiler_testBuildingFloat" );
+		code.execute();
+		Assert.equals( -12.5, code.locator.f );
+	}
+	
 	@Test( "test building null" )
 	public function testBuildingNull() : Void
 	{
