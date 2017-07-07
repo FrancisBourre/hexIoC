@@ -4,6 +4,7 @@ package hex.compiler.core;
 import hex.collection.Locator;
 import hex.compiler.factory.DomainListenerFactory;
 import hex.compiletime.basic.CompileTimeCoreFactory;
+import hex.compiletime.basic.ContextFactoryUtil;
 import hex.compiletime.basic.vo.FactoryVOTypeDef;
 import hex.core.ContextTypeList;
 import hex.core.IApplicationContext;
@@ -86,9 +87,25 @@ class StaticCompileTimeContextFactory
 			var finalResult = result;
 			finalResult = this._parseAnnotation( constructorVO, finalResult );
 			finalResult = this._parseCommandTrigger( constructorVO, finalResult );
+	
+			if ( constructorVO.abstractType != null )
+			{
+				hex.compiletime.util.ContextBuilder.getInstance( this ).addField( id, ContextFactoryUtil.getComplexType( constructorVO.abstractType, constructorVO.filePosition ), constructorVO.filePosition, (constructorVO.lazy?finalResult:null) );
+			}
+			else if ( constructorVO.cType != null )
+			{
+				hex.compiletime.util.ContextBuilder.getInstance( this ).addField( id, constructorVO.cType, constructorVO.filePosition, (constructorVO.lazy?finalResult:null) );
+			}
+			else
+			{
+				hex.compiletime.util.ContextBuilder.getInstance( this ).addField( id, ContextFactoryUtil.getComplexType( constructorVO.type, constructorVO.filePosition ), constructorVO.filePosition, (constructorVO.lazy?finalResult:null) );
+			}
+
+			if ( !constructorVO.lazy )
+			{
+				this._expressions.push( macro @:mergeBlock { $finalResult;  coreFactory.register( $v { id }, $i { id } ); this.$id = $i { id }; } );
+			}
 			
-			hex.compiletime.util.ContextBuilder.getInstance( this ).addField( id, constructorVO.type );
-			this._expressions.push( macro @:mergeBlock { $finalResult;  coreFactory.register( $v { id }, $i { id } ); this.$id = $i { id }; } );
 			this._coreFactory.register( id, result );
 		}
 

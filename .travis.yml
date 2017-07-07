@@ -62,6 +62,8 @@ install:
 #hexState
   - git clone --recursive -b $DEPENDENCIES_BRANCH https://github.com/DoclerLabs/hexState.git ./hexstate
   - haxelib dev hexstate ./hexstate
+#tink_macro
+  - haxelib install tink_macro 0.14.0
 #hexIoC
   - haxelib dev hexioc .
   - export DISPLAY=:99.0;

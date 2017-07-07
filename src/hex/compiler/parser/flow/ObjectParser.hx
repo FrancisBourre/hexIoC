@@ -32,53 +32,60 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 		this._runtimeParam 	= runtimeParam;
 	}
 	
-	override public function parse() : Void this._getExpressions().map( this._parseExpression );
+	override public function parse() : Void this._getExpressions().map( this._parse );
+	private function _parse( e : Expr ) this._parseExpression( e, new ConstructorVO( '' ) );
 
-	private function _parseExpression( e : Expr ) : Void
+	private function _parseExpression( e : Expr, constructorVO : ConstructorVO ) : Void
 	{
 		switch ( e )
 		{
-			case macro $i { ident } = $value:
-				this._builder.build( OBJECT( this._getConstructorVO( ident, value ) ) );
+			case macro $i{ ident } = $value:
+				constructorVO.ID = ident;
+				this._builder.build( OBJECT( this._getConstructorVO( constructorVO, value ) ) );
 			
-			case macro $i{ident}.$field = $assigned:	
+			case macro $i{ ident }.$field = $assigned:	
 				var propertyVO = this.parser.parseProperty( this.parser, ident, field, assigned );
 				this._builder.build( PROPERTY( propertyVO ) );
 			
-			case macro $i{ident}.$field( $a{params} ):
-				var args = params.map( function(param) return this.parser.parseArgument(this.parser, ident, param) );
+			case macro $i{ ident }.$field( $a{ params } ):
+				var args = params.map( function( param ) return this.parser.parseArgument( this.parser, ident, param ) );
 				this._builder.build( METHOD_CALL( new MethodCallVO( ident, field, args ) ) );
 			
-			case macro @inject_into($a{args}) $i{ident} = $value:
-				var constructorVO = this._getConstructorVO( ident, value );
+			case macro @inject_into( $a{ args } ) $e:
 				constructorVO.injectInto = true;
-				this._builder.build( OBJECT( constructorVO ) );
+				this._parseExpression ( e, constructorVO );
 				
-			case macro @map_type($a{args}) $i{ident} = $value:
-				var constructorVO = this._getConstructorVO( ident, value );
+			case macro @map_type( $a{ args } ) $e:
 				constructorVO.mapTypes = args.map( function( e ) return switch( e.expr ) 
 				{ 
 					case EConst(CString( mapType )) : mapType; 
 					case _: "";
 				} );
-				this._builder.build( OBJECT( constructorVO ) );
+				this._parseExpression ( e, constructorVO );
 				
-			/*case macro $keyword( $a { args } ):
-				trace( new haxe.macro.Printer().printExpr( e ) );
-				trace( keyword );
-				trace( args );*/
+			case macro @type( $a{ args } ) $e:
+				constructorVO.abstractType = switch( args[ 0 ].expr ) 
+				{ 
+					case EConst(CString( abstractType )) : abstractType; 
+					case _: "";
+				}
+				this._parseExpression ( e, constructorVO );
+				
+			case macro @lazy( $a{ args } ) $e:
+				constructorVO.lazy = true;
+				this._parseExpression ( e, constructorVO );
 
-			case macro when( $a { when } ).then( $a { then } ):
+			case macro when( $a{ when } ).then( $a{ then } ):
 				var vo = _getDomainListenerVO( when, then );
 				vo.filePosition = e.pos;
 				this._builder.build( DOMAIN_LISTENER( vo ) );
 				
-			case macro when( $a { when } ).adapt( $a { adapt } ).then( $a { then } ):
+			case macro when( $a{ when } ).adapt( $a { adapt } ).then( $a{ then } ):
 				var vo = _getDomainListenerVO( when, then, adapt );
 				vo.filePosition = e.pos;
 				this._builder.build( DOMAIN_LISTENER( vo ) );
 				
-			case macro when( $a { when } ).execute( $a { adapt } ):
+			case macro when( $a{ when } ).execute( $a{ adapt } ):
 				var vo = _getDomainListenerVO( when, null, adapt );
 				vo.filePosition = e.pos;
 				this._builder.build( DOMAIN_LISTENER( vo ) );
@@ -94,11 +101,18 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 						var fieldName = fields.join('.');
 						this._builder.build( PROPERTY( this.parser.parseProperty( this.parser, ident, fieldName, value ) ) );
 						
-						case _:
-							//TODO remove
-							logger.error('Unknown expression');
-							logger.debug(e.pos);
-							logger.debug(e.expr);
+					//TODO refactor - Should be part of the method parser	
+					case ECall( _.expr => EField( ref, field ), params ):
+						var ident = ExpressionUtil.compressField( ref );
+						var args = params.map( function( param ) return this.parser.parseArgument( this.parser, ident, param ) );
+						this._builder.build( METHOD_CALL( new MethodCallVO( ident, field, args ) ) );
+						
+					case _:
+						//TODO remove
+						logger.error( 'Unknown expression' );
+						logger.debug( e.pos );
+						logger.debug( e );
+						logger.debug( e.expr );
 				}
 				
 		}
@@ -111,8 +125,9 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 		
 		if ( then == null )
 		{
-			callback = 'uniquefuckingID';
-			var cvo = new ConstructorVO( callback, ContextTypeList.OBJECT );
+			var cvo = new ConstructorVO( '', ContextTypeList.OBJECT );
+			callback = '__then__' + hex.core.HashCodeFactory.getKey( cvo );
+			cvo.ID = callback;
 			cvo.filePosition = Context.currentPos();
 			this._builder.build( OBJECT( cvo ) );
 		}
@@ -142,48 +157,59 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 		return vo;
 	}
 
-	function _getConstructorVO( ident : String, value : Expr ) : ConstructorVO 
+	function _getConstructorVO( constructorVO : ConstructorVO, value : Expr ) : ConstructorVO 
 	{
-		var constructorVO : ConstructorVO;
-		
 		switch( value.expr )
 		{
 			case EConst(CString(v)):
-				constructorVO = new ConstructorVO( ident, ContextTypeList.STRING, [ v ] );
+				constructorVO.type = ContextTypeList.STRING;
+				constructorVO.arguments = [ v ];
 			
 			case EConst(CInt(v)):
-				constructorVO = new ConstructorVO( ident, ContextTypeList.INT, [ v ] );
+				constructorVO.type = ContextTypeList.INT;
+				constructorVO.arguments = [ v ];
+				
+			case EConst(CFloat(v)):
+				constructorVO.type = ContextTypeList.FLOAT;
+				constructorVO.arguments = [ v ];
 				
 			case EConst(CIdent(v)):
 				
 				switch( v )
 				{
 					case "null":
-						constructorVO = new ConstructorVO( ident, ContextTypeList.NULL, [ v ] );
+						constructorVO.type = ContextTypeList.NULL;
+						constructorVO.arguments = [ v ];
 						
 					case "true" | "false":
-						constructorVO = new ConstructorVO( ident, ContextTypeList.BOOLEAN, [ v ] );
+						constructorVO.type = ContextTypeList.BOOLEAN;
+						constructorVO.arguments = [ v ];
 						
 					case _:
 						var type = hex.preprocess.RuntimeParametersPreprocessor.getType( v, this._runtimeParam );
-						var arg = new ConstructorVO( ident, (type==null? ContextTypeList.INSTANCE : type), null, null, null, v );
+						var arg = new ConstructorVO( constructorVO.ID, (type==null? ContextTypeList.INSTANCE : type), null, null, null, v );
 						arg.filePosition = value.pos;
-						constructorVO = new ConstructorVO( ident, ContextTypeList.ALIAS, [ arg ], null, null, null, v );
+						
+						constructorVO.type = ContextTypeList.ALIAS;
+						constructorVO.arguments = [ arg ];
+						constructorVO.ref = v;
 				}
 				
 			case ENew( t, params ):
-				constructorVO = this.parser.parseType( this.parser, new ConstructorVO( ident ), value );
+				this.parser.parseType( this.parser, constructorVO, value );
 				constructorVO.type = ExprTools.toString( value ).split( 'new ' )[ 1 ].split( '(' )[ 0 ];
 				
 			case EObjectDecl( fields ):
-				constructorVO = new ConstructorVO( ident, ContextTypeList.OBJECT, [] );
+				constructorVO.type = ContextTypeList.OBJECT;
+				constructorVO.arguments = [];
 				fields.map( function(field) this._builder.build( 
-					PROPERTY( this.parser.parseProperty( this.parser, ident, field.field, field.expr ) )
+					PROPERTY( this.parser.parseProperty( this.parser, constructorVO.ID, field.field, field.expr ) )
 				) );
 				
 			case EArrayDecl( values ):
-				constructorVO = new ConstructorVO( ident, ContextTypeList.ARRAY, [] );
-				values.map( function( e ) constructorVO.arguments.push( this.parser.parseArgument( this.parser, ident, e ) ) );
+				constructorVO.type = ContextTypeList.ARRAY;
+				constructorVO.arguments = [];
+				values.map( function( e ) constructorVO.arguments.push( this.parser.parseArgument( this.parser, constructorVO.ID, e ) ) );
 					
 			case EField( e, field ):
 				
@@ -198,15 +224,17 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 					{
 						case EParenthesis( _.expr => ECheckType( ee, TPath(p) ) ):
 							
-							constructorVO =
+							//constructorVO =
 							if ( p.sub != null )
 							{
-								new ConstructorVO( ident, ContextTypeList.STATIC_VARIABLE, [], null, null, false, null, null, className );
-
+								constructorVO.type = ContextTypeList.STATIC_VARIABLE;
+								constructorVO.arguments = [];
+								constructorVO.staticRef = className;
 							}
 							else
 							{
-								new ConstructorVO( ident, ContextTypeList.CLASS, [ className ] );
+								constructorVO.type = ContextTypeList.CLASS;
+								constructorVO.arguments = [ className];
 							}
 							
 						case _:
@@ -217,15 +245,18 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 				{
 					//TODO refactor
 					var type = hex.preprocess.RuntimeParametersPreprocessor.getType( className, this._runtimeParam );
-					var arg = new ConstructorVO( ident, (type==null? ContextTypeList.INSTANCE : type), null, null, null, className );
+					var arg = new ConstructorVO( constructorVO.ID, (type==null? ContextTypeList.INSTANCE : type), null, null, null, className );
 					arg.filePosition = e.pos;
-					constructorVO = new ConstructorVO( ident, ContextTypeList.ALIAS, [ arg ], null, null, null, className );
+					
+					constructorVO.type = ContextTypeList.ALIAS;
+					constructorVO.arguments = [ arg ];
+					constructorVO.ref = className;
 				}
 				
 			case ECall( _.expr => EConst(CIdent(keyword)), params ):
 				if ( this.parser.buildMethodParser.exists( keyword ) )
 				{
-					return this.parser.buildMethodParser.get( keyword )( this.parser, new ConstructorVO( ident ), params, value );
+					return this.parser.buildMethodParser.get( keyword )( this.parser, constructorVO, params, value );
 				}
 				else
 				{
@@ -237,7 +268,9 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 				switch( e.expr )
 				{
 					case EField( ee, ff ):
-						constructorVO = new ConstructorVO( ident, ExpressionUtil.compressField( e ), [], null, field );
+						constructorVO.type = ExpressionUtil.compressField( e );
+						constructorVO.arguments = [];
+						constructorVO.staticCall = field;
 						
 					case ECall( ee, pp ):
 
@@ -247,7 +280,10 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 						var factory = field;
 						var type = a.join( '.' );
 						
-						constructorVO = new ConstructorVO( ident, type, [], factory, staticCall );
+						constructorVO.type = type;
+						constructorVO.arguments = [];
+						constructorVO.factory = factory;
+						constructorVO.staticCall = staticCall;
 						
 					case _:
 						logger.error( e.expr );
@@ -255,12 +291,11 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 				
 				if ( params.length > 0 )
 				{
-					constructorVO.arguments = params.map( function (e) return this.parser.parseArgument( this.parser, ident, e ) );
+					constructorVO.arguments = params.map( function (e) return this.parser.parseArgument( this.parser, constructorVO.ID, e ) );
 				}
 				
 			case _:
 				logger.error( value.expr );
-				constructorVO = new ConstructorVO( ident );
 		}
 		
 		constructorVO.filePosition = value.pos;

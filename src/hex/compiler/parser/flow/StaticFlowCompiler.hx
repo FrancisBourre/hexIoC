@@ -131,7 +131,7 @@ class StaticParserCollection extends AbstractParserCollection<AbstractExprParser
 	{
 		this._parserCollection.push( new StaticContextParser( this._assemblerExpression, this._isExtending ) );
 		this._parserCollection.push( new RuntimeParameterParser( this._runtimeParam ) );
-		this._parserCollection.push( new ImportContextParser( hex.compiletime.flow.parser.FlowExpressionParser.parser, this._assemblerExpression ) );
+		this._parserCollection.push( new ImportContextParser( hex.compiletime.flow.parser.FlowExpressionParser.parser ) );
 		this._parserCollection.push( new hex.compiler.parser.flow.ObjectParser( hex.compiletime.flow.parser.FlowExpressionParser.parser, this._runtimeParam ) );
 		this._parserCollection.push( new StaticLauncher( this._assemblerExpression, this._fileName, this._isExtending, this._runtimeParam ) );
 	}
@@ -139,14 +139,12 @@ class StaticParserCollection extends AbstractParserCollection<AbstractExprParser
 
 class ImportContextParser extends AbstractExprParser<hex.factory.BuildRequest>
 {
-	var _parser 			: ExpressionParser;
-	var _assemblerVariable 	: VariableExpression;
+	var _parser : ExpressionParser;
 	
-	public function new( parser : ExpressionParser, assemblerVariable : VariableExpression ) 
+	public function new( parser : ExpressionParser ) 
 	{
 		super();
 		this._parser 			= parser;
-		this._assemblerVariable = assemblerVariable;
 	}
 	
 	override public function parse() : Void 
@@ -185,7 +183,7 @@ class ImportContextParser extends AbstractExprParser<hex.factory.BuildRequest>
 	function _parseImport( i : ContextImport )
 	{
 		var className = this._applicationContextName + '_' + i.id;
-		var e = this._getCompiler( i.fileName)( i.fileName, className, null, null, this._assemblerVariable.expression  );
+		var e = this._getCompiler( i.fileName)( i.fileName, className, null, null, macro this._applicationAssembler  );
 		ContextBuilder.forceGeneration( className );
 		
 		var args = [ { className: 'hex.context.' + className/*this._getClassName( e )*/, expr: e, arg: i.arg } ];
