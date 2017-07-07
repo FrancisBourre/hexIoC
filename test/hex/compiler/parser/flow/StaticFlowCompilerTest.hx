@@ -20,6 +20,8 @@ import hex.mock.AnotherMockClass;
 import hex.mock.ArrayOfDependenciesOwner;
 import hex.mock.IAnotherMockInterface;
 import hex.mock.IMockInterface;
+import hex.mock.LazyClass;
+import hex.mock.LazyProvider;
 import hex.mock.MockCaller;
 import hex.mock.MockChat;
 import hex.mock.MockClass;
@@ -1482,5 +1484,22 @@ class StaticFlowCompilerTest
 		Assert.equals( code.locator.test, map );
 		
 		code.locator.test = new AnotherMockClass();
+	}
+	
+	@Test( "test building lazy primitive" )
+	public function testBuildingLazyInt() : Void
+	{
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/primitives/lazyInt.flow", "StaticFlowCompiler_testBuildingLazyInt" );
+		LazyProvider.value = null;
+		LazyClass.value = null;
+		code.execute();
+		
+		Assert.isNull( LazyProvider.value  );
+		Assert.equals( -3, code.locator.i );
+		Assert.equals( -3, LazyProvider.value  );
+		
+		Assert.isNull( LazyClass.value  );
+		Assert.isNotNull( code.locator.o );
+		Assert.equals( 'test', LazyClass.value  );
 	}
 }

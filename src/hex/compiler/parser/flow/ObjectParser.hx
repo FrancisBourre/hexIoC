@@ -39,19 +39,19 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 	{
 		switch ( e )
 		{
-			case macro $i { ident } = $value:
+			case macro $i{ ident } = $value:
 				constructorVO.ID = ident;
 				this._builder.build( OBJECT( this._getConstructorVO( constructorVO, value ) ) );
 			
-			case macro $i{ident}.$field = $assigned:	
+			case macro $i{ ident }.$field = $assigned:	
 				var propertyVO = this.parser.parseProperty( this.parser, ident, field, assigned );
 				this._builder.build( PROPERTY( propertyVO ) );
 			
-			case macro $i{ident}.$field( $a{params} ):
-				var args = params.map( function(param) return this.parser.parseArgument(this.parser, ident, param) );
+			case macro $i{ ident }.$field( $a{ params } ):
+				var args = params.map( function( param ) return this.parser.parseArgument( this.parser, ident, param ) );
 				this._builder.build( METHOD_CALL( new MethodCallVO( ident, field, args ) ) );
 			
-			case macro @inject_into($a { args } ) $e:
+			case macro @inject_into( $a{ args } ) $e:
 				constructorVO.injectInto = true;
 				this._parseExpression ( e, constructorVO );
 				
@@ -70,18 +70,22 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 					case _: "";
 				}
 				this._parseExpression ( e, constructorVO );
+				
+			case macro @lazy( $a{ args } ) $e:
+				constructorVO.lazy = true;
+				this._parseExpression ( e, constructorVO );
 
-			case macro when( $a { when } ).then( $a { then } ):
+			case macro when( $a{ when } ).then( $a{ then } ):
 				var vo = _getDomainListenerVO( when, then );
 				vo.filePosition = e.pos;
 				this._builder.build( DOMAIN_LISTENER( vo ) );
 				
-			case macro when( $a { when } ).adapt( $a { adapt } ).then( $a { then } ):
+			case macro when( $a{ when } ).adapt( $a { adapt } ).then( $a{ then } ):
 				var vo = _getDomainListenerVO( when, then, adapt );
 				vo.filePosition = e.pos;
 				this._builder.build( DOMAIN_LISTENER( vo ) );
 				
-			case macro when( $a { when } ).execute( $a { adapt } ):
+			case macro when( $a{ when } ).execute( $a{ adapt } ):
 				var vo = _getDomainListenerVO( when, null, adapt );
 				vo.filePosition = e.pos;
 				this._builder.build( DOMAIN_LISTENER( vo ) );
@@ -107,6 +111,7 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 						//TODO remove
 						logger.error( 'Unknown expression' );
 						logger.debug( e.pos );
+						logger.debug( e );
 						logger.debug( e.expr );
 				}
 				
