@@ -4,6 +4,7 @@ package hex.compiler.core;
 import hex.collection.Locator;
 import hex.compiler.factory.DomainListenerFactory;
 import hex.compiletime.basic.CompileTimeCoreFactory;
+import hex.compiletime.basic.ContextFactoryUtil;
 import hex.compiletime.basic.vo.FactoryVOTypeDef;
 import hex.core.ContextTypeList;
 import hex.core.IApplicationContext;
@@ -89,15 +90,15 @@ class StaticCompileTimeContextFactory
 	
 			if ( constructorVO.abstractType != null )
 			{
-				hex.compiletime.util.ContextBuilder.getInstance( this ).addFieldWithClassName( id, constructorVO.abstractType, constructorVO.filePosition, (constructorVO.lazy?result:null) );
+				hex.compiletime.util.ContextBuilder.getInstance( this ).addField( id, ContextFactoryUtil.getComplexType( constructorVO.abstractType, constructorVO.filePosition ), constructorVO.filePosition, (constructorVO.lazy?finalResult:null) );
 			}
 			else if ( constructorVO.cType != null )
 			{
-				hex.compiletime.util.ContextBuilder.getInstance( this ).addField( id, constructorVO.cType, constructorVO.filePosition, (constructorVO.lazy?result:null) );
+				hex.compiletime.util.ContextBuilder.getInstance( this ).addField( id, constructorVO.cType, constructorVO.filePosition, (constructorVO.lazy?finalResult:null) );
 			}
 			else
 			{
-				hex.compiletime.util.ContextBuilder.getInstance( this ).addFieldWithClassName( id, constructorVO.type, constructorVO.filePosition, (constructorVO.lazy?result:null) );
+				hex.compiletime.util.ContextBuilder.getInstance( this ).addField( id, ContextFactoryUtil.getComplexType( constructorVO.type, constructorVO.filePosition ), constructorVO.filePosition, (constructorVO.lazy?finalResult:null) );
 			}
 
 			if ( !constructorVO.lazy )
