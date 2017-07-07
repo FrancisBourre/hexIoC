@@ -1487,16 +1487,16 @@ class StaticFlowCompilerTest
 	}
 	
 	@Test( "test building lazy primitive" )
-	public function testBuildingLazyInt() : Void
+	public function testBuildingLazyString() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/primitives/lazyInt.flow", "StaticFlowCompiler_testBuildingLazyInt" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/primitives/lazyString.flow", "StaticFlowCompiler_testBuildingLazyString" );
 		LazyProvider.value = null;
 		LazyClass.value = null;
 		code.execute();
 		
 		Assert.isNull( LazyProvider.value  );
-		Assert.equals( -3, code.locator.i );
-		Assert.equals( -3, LazyProvider.value  );
+		Assert.equals( 'test', code.locator.s );
+		Assert.equals( 'test', LazyProvider.value  );
 		
 		Assert.isNull( LazyClass.value  );
 		Assert.isNotNull( code.locator.o );
