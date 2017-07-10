@@ -1515,4 +1515,18 @@ class StaticFlowCompilerTest
 		Assert.isNotNull( code.locator.o );
 		Assert.equals( 'test', LazyClass.value  );
 	}
+	
+	@Test( "test composite runtine parameters" )
+	public function testCompositeRuntimeParameters() : Void
+	{
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/static/compositeRuntimeParams.flow", "StaticFlowCompiler_testCompositeRuntimeParameters" );
+		var mock = new MockClass();
+		code.execute( { p:{x: 30, y: 40}, test:{p:mock} } );
+		
+		Assert.isInstanceOf( code.locator.size, Size );
+		Assert.equals( 30, code.locator.size.width );
+		Assert.equals( 40, code.locator.size.height );
+		
+		Assert.equals( mock, code.locator.alias );
+	}
 }
