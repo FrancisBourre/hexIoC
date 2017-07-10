@@ -88,18 +88,16 @@ class StaticCompileTimeContextFactory
 			finalResult = this._parseAnnotation( constructorVO, finalResult );
 			finalResult = this._parseCommandTrigger( constructorVO, finalResult );
 	
-			if ( constructorVO.abstractType != null )
-			{
-				hex.compiletime.util.ContextBuilder.getInstance( this ).addField( id, ContextFactoryUtil.getComplexType( constructorVO.abstractType, constructorVO.filePosition ), constructorVO.filePosition, (constructorVO.lazy?finalResult:null) );
-			}
-			else if ( constructorVO.cType != null )
-			{
-				hex.compiletime.util.ContextBuilder.getInstance( this ).addField( id, constructorVO.cType, constructorVO.filePosition, (constructorVO.lazy?finalResult:null) );
-			}
-			else
-			{
-				hex.compiletime.util.ContextBuilder.getInstance( this ).addField( id, ContextFactoryUtil.getComplexType( constructorVO.type, constructorVO.filePosition ), constructorVO.filePosition, (constructorVO.lazy?finalResult:null) );
-			}
+			var type = 
+			if ( constructorVO.abstractType != null ) 	
+				ContextFactoryUtil.getComplexType( constructorVO.abstractType, constructorVO.filePosition );
+					else if ( constructorVO.cType != null ) 
+						constructorVO.cType;
+							else 								
+								ContextFactoryUtil.getComplexType( constructorVO.type, constructorVO.filePosition );
+					
+			hex.compiletime.util.ContextBuilder.getInstance( this )
+				.addField( id, type, constructorVO.filePosition, (constructorVO.lazy?finalResult:null) );
 
 			if ( !constructorVO.lazy )
 			{
