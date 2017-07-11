@@ -12,7 +12,6 @@
   {
     "hexdsl": "git:https://github.com/DoclerLabs/hexDsl.git",
 	"hexstate": "git:https://github.com/DoclerLabs/hexState.git",
-	"hexservice": "git:https://github.com/DoclerLabs/hexService.git",
-	"tink_macro": "0.14.0"
+	"hexservice": "git:https://github.com/DoclerLabs/hexService.git"
   }
 }
