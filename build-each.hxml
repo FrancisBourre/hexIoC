@@ -2,7 +2,6 @@
 
 -lib hexioc
 -lib hexunit
--lib tink_macro
 
 -cp test
 -D debug=true
