@@ -1,5 +1,6 @@
 package hex.compiler.parser.flow;
 
+import haxe.Timer;
 import hex.collection.HashMap;
 import hex.compiler.parser.flow.FlowCompiler;
 import hex.core.IApplicationAssembler;
@@ -14,6 +15,8 @@ import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.core.ContextFactory;
 import hex.ioc.parser.xml.ApplicationXMLParser;
 import hex.ioc.parser.xml.mock.MockChatModule;
+import hex.ioc.parser.xml.mock.MockReceiverModule;
+import hex.ioc.parser.xml.mock.MockSenderModule;
 import hex.ioc.parser.xml.mock.MockTranslationModule;
 import hex.mock.AnotherMockClass;
 import hex.mock.ArrayOfDependenciesOwner;
@@ -37,6 +40,7 @@ import hex.runtime.ApplicationAssembler;
 import hex.structures.Point;
 import hex.structures.Size;
 import hex.unittest.assertion.Assert;
+import hex.unittest.runner.MethodRunner;
 
 /**
  * ...
@@ -614,33 +618,45 @@ class FlowCompilerTest
 		Assert.equals( "BONJOUR", receiver.message, "" );
 	}
 	
-	/*@Ignore( "test domain dispatch after module initialisation" )
+	@Test( "test domain dispatch after module initialisation" )
 	public function testDomainDispatchAfterModuleInitialisation() : Void
 	{
-		this._applicationAssembler = XmlCompiler.readXmlFile( "context/domainDispatchAfterModuleInitialisation.xml" );
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/domainDispatchAfterModuleInitialisation.flow" );
 
 		var sender : MockSenderModule = this._getCoreFactory().locate( "sender" );
-		Assert.isNotNull( sender, "" );
+		Assert.isNotNull( sender );
 
 		var receiver : MockReceiverModule = this._getCoreFactory().locate( "receiver" );
-		Assert.isNotNull( receiver, "" );
+		Assert.isNotNull( receiver );
 
-		Assert.equals( "hello receiver", receiver.message, "" );
+		Assert.equals( "hello receiver", receiver.message );
 	}
 	
-	@Ignore( "test building Map with class reference" )
+	@Async( "test event adapter strategy macro" )
+	public function testEventAdapterStrategyMacro() : Void
+	{
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/eventAdapterStrategyMacro.flow" );
+
+		Assert.isNotNull( this._getCoreFactory().locate( "sender" ) );
+		Assert.isNotNull( this._getCoreFactory().locate( "receiver" ) );
+		Timer.delay( MethodRunner.asyncHandler( this._onEventAdapterStrategyMacro ), 350 );
+	}
+	
+	function _onEventAdapterStrategyMacro()
+	{
+		var receiver : MockReceiverModule = this._getCoreFactory().locate( "receiver" );
+		Assert.equals( "HELLO RECEIVER:HTTP://GOOGLE.COM", receiver.message );
+	}
+	
+	@Test( "test building Map with class reference" )
 	public function testBuildingMapWithClassReference() : Void
 	{
-		this._applicationAssembler = XmlCompiler.readXmlFile( "context/hashmapWithClassReference.xml" );
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/hashmapWithClassReference.flow" );
 
-		var map : HashMap<Class<IMockAmazonService>, Class<MockAmazonService>> = this._getCoreFactory().locate( "map" );
-		Assert.isNotNull( map, "" );
-		
-		var amazonServiceClass : Class<MockAmazonService> = map.get( IMockAmazonService );
-		Assert.equals( IMockAmazonService, map.getKeys()[ 0 ], "" );
-		Assert.equals( MockAmazonService, amazonServiceClass, "" );
+		var map : HashMap<Class<hex.mock.IMockInterface>, Class<hex.mock.MockClass>> = this._getCoreFactory().locate( "map" );
+		Assert.equals( IMockInterface, map.getKeys()[ 0 ] );
+		Assert.equals( MockClass, map.get( IMockInterface ) );
 	}
-	*/
 	
 	@Test( "test building class reference" )
 	public function testBuildingClassReference() : Void

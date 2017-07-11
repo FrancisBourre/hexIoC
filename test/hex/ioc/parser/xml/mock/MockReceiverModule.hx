@@ -22,4 +22,9 @@ class MockReceiverModule extends MockModule
 	{
 		this.message = message;
 	}
+	
+	public function onMessageArgument( args : Array<String> ) : Void
+	{
+		this.message = args[ 0 ];
+	}
 }
