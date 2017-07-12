@@ -106,6 +106,7 @@ class XmlReaderTest
 		this.build( XmlReader.getXml( "context/xml/contextReference.xml" ) );
 		var contextHolder : MockContextHolder = this._locate( "contextHolder" );
 		Assert.equals( this._applicationContext, contextHolder.context );
+		Assert.equals( contextHolder, this._applicationContext.getCoreFactory().getInjector().getInstanceWithClassName( "hex.mock.MockContextHolder", "contextHolder" ) );
 	}
 
 	@Test( "test building String" )
