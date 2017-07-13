@@ -106,6 +106,7 @@ class XmlReaderTest
 		this.build( XmlReader.getXml( "context/xml/contextReference.xml" ) );
 		var contextHolder : MockContextHolder = this._locate( "contextHolder" );
 		Assert.equals( this._applicationContext, contextHolder.context );
+		Assert.equals( contextHolder, this._applicationContext.getCoreFactory().getInjector().getInstanceWithClassName( "hex.mock.MockContextHolder", "contextHolder" ) );
 	}
 
 	@Test( "test building String" )
@@ -786,6 +787,22 @@ class XmlReaderTest
 		Assert.isNotNull( receiver );
 
 		Assert.equals( "hello receiver", receiver.message );
+	}
+	
+	@Async( "test event adapter strategy macro" )
+	public function testEventAdapterStrategyMacro() : Void
+	{
+		this.build( XmlReader.getXml( "context/xml/eventAdapterStrategyMacro.xml" ) );
+
+		Assert.isNotNull( this._locate( "sender" ) );
+		Assert.isNotNull( this._locate( "receiver" ) );
+		Timer.delay( MethodRunner.asyncHandler( this._onEventAdapterStrategyMacro ), 350 );
+	}
+	
+	function _onEventAdapterStrategyMacro()
+	{
+		var receiver : MockReceiverModule = this._locate( "receiver" );
+		Assert.equals( "HELLO RECEIVER:HTTP://GOOGLE.COM", receiver.message );
 	}
 	
 	@Test( "test simple method call from another node" )

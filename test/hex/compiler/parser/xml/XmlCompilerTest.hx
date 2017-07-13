@@ -805,6 +805,22 @@ class XmlCompilerTest
 		Assert.equals( "hello receiver", receiver.message, "" );
 	}
 	
+	@Async( "test event adapter strategy macro" )
+	public function testEventAdapterStrategyMacro() : Void
+	{
+		this._applicationAssembler = XmlCompiler.compile( "context/xml/eventAdapterStrategyMacro.xml" );
+
+		Assert.isNotNull( this._getCoreFactory().locate( "sender" ) );
+		Assert.isNotNull( this._getCoreFactory().locate( "receiver" ) );
+		Timer.delay( MethodRunner.asyncHandler( this._onEventAdapterStrategyMacro ), 350 );
+	}
+	
+	function _onEventAdapterStrategyMacro()
+	{
+		var receiver : MockReceiverModule = this._getCoreFactory().locate( "receiver" );
+		Assert.equals( "HELLO RECEIVER:HTTP://GOOGLE.COM", receiver.message );
+	}
+	
 	@Test( "test building Map with class reference" )
 	public function testBuildingMapWithClassReference() : Void
 	{

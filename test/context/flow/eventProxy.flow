@@ -1,4 +1,4 @@
-@context( name = 'applicationContext' )
+@context()
 {
 	chat = new hex.ioc.parser.xml.mock.MockChatModule();
 	receiver = new hex.ioc.parser.xml.mock.MockReceiverModule();
@@ -6,13 +6,13 @@
 	@map_type( 'hex.ioc.parser.xml.mock.IMockMessageParserModule' ) 
 	parser = new hex.ioc.parser.xml.mock.MockMessageParserModule();
 	
-	//Don't do that
+	//Do that if you need array arguments to be applied to the function callback
 	eventProxy = new hex.event.EventProxy( receiver, receiver.onMessage );
 	when( chat, hex.ioc.parser.xml.mock.MockChatModule.TEXT_INPUT )
 		.adapt( hex.ioc.parser.xml.mock.MockChatEventAdapterStrategyMacro )
 		.then( eventProxy );
 		
-	//Do that Instead
+	//If not, do this one
 	/*when( chat, hex.ioc.parser.xml.mock.MockChatModule.TEXT_INPUT )
 		.adapt( hex.ioc.parser.xml.mock.MockChatEventAdapterStrategyMacro )
 		.then( receiver.onMessage );*/

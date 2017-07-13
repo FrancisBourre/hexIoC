@@ -198,7 +198,10 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 			case ENew( t, params ):
 				this.parser.parseType( this.parser, constructorVO, value );
 				constructorVO.type = ExprTools.toString( value ).split( 'new ' )[ 1 ].split( '(' )[ 0 ];
-				
+			
+			case EBlock([]): // empty object
+				constructorVO.type = ContextTypeList.OBJECT;
+			
 			case EObjectDecl( fields ):
 				constructorVO.type = ContextTypeList.OBJECT;
 				constructorVO.arguments = [];

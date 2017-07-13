@@ -1,0 +1,15 @@
+<root name="applicationContext">
+
+    <service id="parser" type="hex.ioc.parser.xml.mock.MockMessageParserModule" map-type="hex.ioc.parser.xml.mock.IMockMessageParserModule" />
+   
+	<service id="sender" type="hex.ioc.parser.xml.mock.MockSenderModule"/>
+	
+    <module id="receiver" type="hex.ioc.parser.xml.mock.MockReceiverModule">
+        <listen ref="sender">
+            <event static-ref="hex.ioc.parser.xml.mock.MockChatModule.TEXT_INPUT"
+                   method="onMessageArgument"
+                   strategy="hex.ioc.parser.xml.mock.MockChatEventAdapterStrategyMacro"
+                   injectedInModule="false"/>
+        </listen>
+    </module>
+</root>

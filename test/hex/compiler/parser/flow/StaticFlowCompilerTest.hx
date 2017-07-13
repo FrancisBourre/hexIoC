@@ -663,6 +663,23 @@ class StaticFlowCompilerTest
 		Assert.equals( "BONJOUR", code.locator.receiver.message );
 	}
 	
+	@Async( "test event adapter strategy macro" )
+	public function testEventAdapterStrategyMacro() : Void
+	{
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/eventAdapterStrategyMacro.flow", "StaticFlowCompiler_testEventAdapterStrategyMacro" );
+		code.execute();
+
+		Assert.isNotNull( code.locator.sender );
+		Assert.isNotNull( code.locator.receiver );
+		Timer.delay( MethodRunner.asyncHandler( this._onEventAdapterStrategyMacro ), 350 );
+	}
+	
+	function _onEventAdapterStrategyMacro()
+	{
+		var receiver : MockReceiverModule = this._locate( "StaticFlowCompiler_testEventAdapterStrategyMacro", "receiver" );
+		Assert.equals( "HELLO RECEIVER:HTTP://GOOGLE.COM", receiver.message );
+	}
+	
 	@Test( "test building class reference" )
 	public function testBuildingClassReference() : Void
 	{
@@ -1514,5 +1531,19 @@ class StaticFlowCompilerTest
 		Assert.isNull( LazyClass.value  );
 		Assert.isNotNull( code.locator.o );
 		Assert.equals( 'test', LazyClass.value  );
+	}
+	
+	@Test( "test composite runtine parameters" )
+	public function testCompositeRuntimeParameters() : Void
+	{
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/static/compositeRuntimeParams.flow", "StaticFlowCompiler_testCompositeRuntimeParameters" );
+		var mock = new MockClass();
+		code.execute( { p:{x: 30, y: 40}, test:{p:mock} } );
+		
+		Assert.isInstanceOf( code.locator.size, Size );
+		Assert.equals( 30, code.locator.size.width );
+		Assert.equals( 40, code.locator.size.height );
+		
+		Assert.equals( mock, code.locator.alias );
 	}
 }

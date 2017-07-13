@@ -77,6 +77,8 @@ class StaticCompileTimeContextFactory
 		}
 		
 		var result = buildMethod( this._getFactoryVO( constructorVO ) );
+		
+		this._checkDependencies( constructorVO );
 
 		if ( id != null )
 		{

@@ -781,6 +781,23 @@ class StaticXmlCompilerTest
 		Assert.equals( "hello receiver", code.locator.receiver.message );
 	}
 	
+	@Async( "test event adapter strategy macro" )
+	public function testEventAdapterStrategyMacro() : Void
+	{
+		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/eventAdapterStrategyMacro.xml", "StaticXmlCompiler_testEventAdapterStrategyMacro" );
+		code.execute();
+
+		Assert.isNotNull( code.locator.sender );
+		Assert.isNotNull( code.locator.receiver );
+		Timer.delay( MethodRunner.asyncHandler( this._onEventAdapterStrategyMacro ), 350 );
+	}
+	
+	function _onEventAdapterStrategyMacro()
+	{
+		var receiver : MockReceiverModule = this._locate( "StaticXmlCompiler_testEventAdapterStrategyMacro", "receiver" );
+		Assert.equals( "HELLO RECEIVER:HTTP://GOOGLE.COM", receiver.message );
+	}
+	
 	@Test( "test target sub property" )
 	public function testTargetSubProperty() : Void
 	{

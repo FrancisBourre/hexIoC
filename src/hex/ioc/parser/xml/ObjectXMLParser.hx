@@ -45,6 +45,7 @@ class ObjectXMLParser extends AbstractXMLParser<BuildRequest>
 			if ( identifier != null )
 			{
 				shouldConstruct = false;
+				if ( identifier == "this" ) identifier = this._applicationContextName;
 			}
 			else
 			{
