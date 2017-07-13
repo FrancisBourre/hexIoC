@@ -124,6 +124,7 @@ class CompileTimeContextFactory
 		this.buildAllStateTransitions();
 		this.dispatchAssemblingStart();
 		this.buildAllObjects();
+		this.buildAllProperties();
 		this.assignAllDomainListeners();
 		this.callAllMethods();
 		this.callModuleInitialisation();
@@ -274,6 +275,20 @@ class CompileTimeContextFactory
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 		
 		StateTransitionFactory.flush( this._expressions, this._transitions );
+	}
+	
+	public function buildProperty( key : String ) : Void
+	{
+		if ( this._propertyVOLocator.isRegisteredWithKey( key ) )
+		{
+			this._propertyVOLocator.locate( key )
+				.map( function( property ) this._expressions.push( macro @:mergeBlock ${ PropertyFactory.build( this, property ) } ) );
+		}
+	}
+	
+	public function buildAllProperties() : Void
+	{
+		this._propertyVOLocator.keys().map( this.buildProperty );
 	}
 	
 	public function registerDomainListenerVO( domainListenerVO : DomainListenerVO ) : Void

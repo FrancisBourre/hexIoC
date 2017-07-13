@@ -231,6 +231,9 @@ class FlowCompilerTest
 		Assert.isTrue( obj.isWorking );
 		Assert.isFalse( obj.isSleeping );
 		Assert.equals( 1.75, this._getCoreFactory().locate( "obj.height" ) );
+		
+		var emptyObject = this._getCoreFactory().locate( "emptyObj" );
+		Assert.isNotNull( emptyObject );
 	}
 	
 	@Test( "test building simple instance without arguments" )
