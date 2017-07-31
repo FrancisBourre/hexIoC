@@ -299,8 +299,8 @@ class StaticXmlCompilerTest
 	{
 		var applicationAssembler = new ApplicationAssembler();
 		var code = StaticXmlCompiler.compile( applicationAssembler, "context/xml/multipleInstancesWithReferences.xml", "StaticXmlCompiler_testBuildingMultipleInstancesWithReferences" );
-		var code2 = StaticXmlCompiler.extend( code, "context/xml/simpleInstanceWithoutArguments.xml" );
-		var code3 = StaticXmlCompiler.extend( code, "context/xml/multipleInstancesWithReferencesReferenced.xml" );
+		var code2 = StaticXmlCompiler.extend( applicationAssembler, code, "context/xml/simpleInstanceWithoutArguments.xml" );
+		var code3 = StaticXmlCompiler.extend( applicationAssembler, code, "context/xml/multipleInstancesWithReferencesReferenced.xml" );
 		
 		var locator = code.locator;
 		var locator2 = code2.locator;
@@ -388,7 +388,7 @@ class StaticXmlCompilerTest
 		Assert.notEquals( code1.locator.StaticXmlCompiler_testApplicationContextBuilding1, code2.locator.StaticXmlCompiler_testApplicationContextBuilding2 );
 		
 		//Extended code generation uses the same application context
-		var code3 = StaticXmlCompiler.extend( code2, "context/xml/simpleInstanceWithoutArguments.xml", "StaticXmlCompiler_testApplicationContextBuilding2" );
+		var code3 = StaticXmlCompiler.extend( applicationAssembler, code2, "context/xml/simpleInstanceWithoutArguments.xml", "StaticXmlCompiler_testApplicationContextBuilding2" );
 		Assert.notEquals( code2, code3 );
 		Assert.equals( code2.applicationContext, code3.applicationContext );
 		Assert.equals( code2.locator.StaticXmlCompiler_testApplicationContextBuilding2, code3.locator.StaticXmlCompiler_testApplicationContextBuilding2 );
@@ -1053,7 +1053,7 @@ class StaticXmlCompilerTest
 		annotationProvider.registerMetaData( "color", this.getColorByName );
 		annotationProvider.registerMetaData( "language", this.getText );
 		
-		var code2 = StaticXmlCompiler.extend( code, "context/testAnnotationProviderWithInheritance.xml" );
+		var code2 = StaticXmlCompiler.extend( assembler, code, "context/testAnnotationProviderWithInheritance.xml" );
 		code2.execute();
 		
 		var mockObjectWithMetaData = code2.locator.mockObjectWithAnnotation;
@@ -1185,7 +1185,7 @@ class StaticXmlCompilerTest
 	public function testParsingTwice() : Void
 	{
 		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/parsingOnce.xml", "StaticXmlCompiler_testParsingTwice" );
-		var code2 = StaticXmlCompiler.extend( code, "context/xml/parsingTwice.xml" );
+		var code2 = StaticXmlCompiler.extend( this._applicationAssembler, code, "context/xml/parsingTwice.xml" );
 
 		code.execute();
 		Assert.isInstanceOf( code.locator.rect0, MockRectangle );
@@ -1223,7 +1223,7 @@ class StaticXmlCompilerTest
 		Assert.equals( 30, code.locator.rect.width );
 		Assert.equals( 40, code.locator.rect.height );
 		
-		var code2 = StaticXmlCompiler.extend( code, "context/xml/recursiveStaticCalls.xml" );
+		var code2 = StaticXmlCompiler.extend( this._applicationAssembler, code, "context/xml/recursiveStaticCalls.xml" );
 		code2.execute();
 		
 		Assert.isInstanceOf( code2.locator.rect2, MockRectangle );
@@ -1254,7 +1254,7 @@ class StaticXmlCompilerTest
 		var code1 = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/serviceToBeListened.xml", "StaticXmlCompiler_testModuleListeningServiceWith2Passes" );
 		code1.execute();
 		
-		var code = StaticXmlCompiler.extend( code1, "context/xml/moduleListener.xml" );
+		var code = StaticXmlCompiler.extend( this._applicationAssembler, code1, "context/xml/moduleListener.xml" );
 		code.execute();
 		
 		Assert.isNotNull( code.locator.myService );

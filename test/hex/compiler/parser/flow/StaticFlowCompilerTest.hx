@@ -102,7 +102,20 @@ class StaticFlowCompilerTest
 		Assert.equals( "hello", s );
 	}
 	
-	//Reading twice the same context cannot be tested
+	@Test( "test read twice the same context" )
+	public function testReadTwiceTheSameContext() : Void
+	{
+		var code1 = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/simpleInstanceWithoutArguments.flow", "StaticFlowCompiler_testReadTwiceTheSameContext" );
+		code1.execute();
+		
+		var code2 = code1.clone( new ApplicationAssembler() );
+		code2.execute();
+
+		Assert.isInstanceOf( code1.locator.instance, MockClassWithoutArgument );
+		Assert.isInstanceOf( code2.locator.instance, MockClassWithoutArgument );
+		
+		Assert.notEquals( code1.locator.instance, code2.locator.instance );
+	}
 	
 	@Test( "test overriding context name" )
 	public function testOverridingContextName() : Void
@@ -306,8 +319,8 @@ class StaticFlowCompilerTest
 	{
 		var applicationAssembler = new ApplicationAssembler();
 		var code = StaticFlowCompiler.compile( applicationAssembler, "context/flow/multipleInstancesWithReferences.flow", "StaticFlowCompiler_testBuildingMultipleInstancesWithReferences" );
-		var code2 = StaticFlowCompiler.extend( code, "context/flow/simpleInstanceWithoutArguments.flow" );
-		var code3 = StaticFlowCompiler.extend( code, "context/flow/multipleInstancesWithReferencesReferenced.flow" );
+		var code2 = StaticFlowCompiler.extend( applicationAssembler, code, "context/flow/simpleInstanceWithoutArguments.flow" );
+		var code3 = StaticFlowCompiler.extend( applicationAssembler, code, "context/flow/multipleInstancesWithReferencesReferenced.flow" );
 		
 		var locator = code.locator;
 		var locator2 = code2.locator;
@@ -395,7 +408,7 @@ class StaticFlowCompilerTest
 		Assert.notEquals( code1.locator.StaticFlowCompiler_testApplicationContextBuilding1, code2.locator.StaticFlowCompiler_testApplicationContextBuilding2 );
 		
 		//Extended code generation uses the same application context
-		var code3 = StaticFlowCompiler.extend( code2, "context/flow/simpleInstanceWithoutArguments.flow", "StaticFlowCompiler_testApplicationContextBuilding2" );
+		var code3 = StaticFlowCompiler.extend( applicationAssembler, code2, "context/flow/simpleInstanceWithoutArguments.flow", "StaticFlowCompiler_testApplicationContextBuilding2" );
 		Assert.notEquals( code2, code3 );
 		Assert.equals( code2.applicationContext, code3.applicationContext );
 		Assert.equals( code2.locator.StaticFlowCompiler_testApplicationContextBuilding2, code3.locator.StaticFlowCompiler_testApplicationContextBuilding2 );
@@ -970,7 +983,7 @@ class StaticFlowCompilerTest
 		annotationProvider.registerMetaData( "color", this.getColorByName );
 		annotationProvider.registerMetaData( "language", this.getText );
 		
-		var code2 = StaticFlowCompiler.extend( code, "context/flow/testAnnotationProviderWithInheritance.flow" );
+		var code2 = StaticFlowCompiler.extend( assembler, code, "context/flow/testAnnotationProviderWithInheritance.flow" );
 		code2.execute();
 		
 		var mockObjectWithMetaData = code2.locator.mockObjectWithAnnotation;
@@ -1147,7 +1160,7 @@ class StaticFlowCompilerTest
 		Assert.equals( 30, code.locator.rect.width );
 		Assert.equals( 40, code.locator.rect.height );
 		
-		var code2 = StaticFlowCompiler.extend( code, "context/flow/testRecursiveStaticCalls.flow" );
+		var code2 = StaticFlowCompiler.extend( this._myApplicationAssembler, code, "context/flow/testRecursiveStaticCalls.flow" );
 		code2.execute();
 		
 		Assert.isInstanceOf( code2.locator.rect2, MockRectangle );
@@ -1489,7 +1502,7 @@ class StaticFlowCompilerTest
 		var code1 = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/serviceToBeListened.flow", "StaticFlowCompiler_testModuleListeningServiceWith2Passes" );
 		code1.execute();
 		
-		var code = StaticFlowCompiler.extend( code1, "context/flow/moduleListener.flow" );
+		var code = StaticFlowCompiler.extend( this._myApplicationAssembler, code1, "context/flow/moduleListener.flow" );
 		code.execute();
 		
 		Assert.isNotNull( code.locator.myService );
