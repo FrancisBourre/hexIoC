@@ -1050,7 +1050,7 @@ class FlowCompilerTest
 	@Test( "test add custom parser" )
 	public function testAddCustomParser() : Void
 	{
-		MockCustomStaticFlowParser.prepareCompiler();
+		hex.compiler.parser.flow.custom.AddParser.activate();
 		this._applicationAssembler = FlowCompiler.compile( "context/flow/static/addParser.flow" );
 		
 		Assert.equals( 'hello world !', this._getCoreFactory().locate( "s" ) );
