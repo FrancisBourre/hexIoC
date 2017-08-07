@@ -1155,7 +1155,6 @@ class XmlCompilerTest
 		
 		//
 		var module : MockModuleWithAnnotationProviding = this._locate( "module" );
-		module.initialize( null );
 		var provider = module.getAnnotationProvider();
 		module.buildComponents();
 
@@ -1174,21 +1173,22 @@ class XmlCompilerTest
 	@Test( "Test Macro with annotation" )
 	public function testMacroWithAnnotation() : Void
 	{
+		this._applicationAssembler = new ApplicationAssembler();
+	
 		MockMacroWithAnnotation.lastResult = null;
 		MockCommandWithAnnotation.lastResult = null;
 		MockAsyncCommandWithAnnotation.lastResult = null;
 		
-		var applicationAssembler = new ApplicationAssembler();
-        var applicationContext = applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext );
+        var applicationContext = this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext );
         var injector = applicationContext.getInjector();
         
-        var annotationProvider = AnnotationProvider.getAnnotationProvider( applicationContext.getDomain() );
-        annotationProvider.registerMetaData( "Value", this._getValue );
+        var annotationProvider = AnnotationProvider.getAnnotationProvider( applicationContext.getDomain(), null, applicationContext );
+        var annotationProvider2 : IAnnotationProvider = this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getInjector().getInstance( IAnnotationProvider );
+		annotationProvider2.registerMetaData( "Value", this._getValue );
+		Assert.equals( annotationProvider, annotationProvider2 );
 		
-		this._applicationAssembler = XmlCompiler.compile( "context/macroWithAnnotation.xml" );
+		XmlCompiler.compileWithAssembler( this._applicationAssembler, "context/macroWithAnnotation.xml" );
 		
-		var annotationProvider : IAnnotationProvider = this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getInjector().getInstance( IAnnotationProvider );
-
 		Assert.equals( "value", MockMacroWithAnnotation.lastResult, "text should be the same" );
 		Assert.equals( "value", MockCommandWithAnnotation.lastResult, "text should be the same" );
 		Assert.equals( "value", MockAsyncCommandWithAnnotation.lastResult, "text should be the same" );

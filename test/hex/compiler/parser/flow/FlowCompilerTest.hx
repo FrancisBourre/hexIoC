@@ -957,7 +957,6 @@ class FlowCompilerTest
 		
 		//
 		var module : MockModuleWithAnnotationProviding = this._getCoreFactory().locate( "module" );
-		module.initialize( null );
 		var provider = module.getAnnotationProvider();
 		module.buildComponents();
 

@@ -74,7 +74,7 @@ class ApplicationContext extends AbstractApplicationContext
 		injector.mapToValue( ILogger, logger );
 		
 		//build annotation provider
-		var annotationProvider = AnnotationProvider.getAnnotationProvider( Domain.getDomain( applicationContextName ) );
+		var annotationProvider = AnnotationProvider.getAnnotationProvider( Domain.getDomain( applicationContextName ), null, this );
 		annotationProvider.registerInjector( injector );
 		injector.mapToValue( IAnnotationProvider, annotationProvider );
 		

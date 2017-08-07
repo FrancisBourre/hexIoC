@@ -994,7 +994,6 @@ class StaticFlowCompilerTest
 		Assert.isNull( mockObjectWithMetaData.propWithoutMetaData, "property should be null" );
 		
 		//
-		code2.locator.module.initialize( null );
 		var provider = code2.locator.module.getAnnotationProvider();
 		code2.locator.module.buildComponents();
 

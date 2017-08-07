@@ -1063,7 +1063,6 @@ class StaticXmlCompilerTest
 		Assert.isNull( mockObjectWithMetaData.propWithoutMetaData, "property should be null" );
 		
 		//
-		code2.locator.module.initialize( null );
 		var provider = code2.locator.module.getAnnotationProvider();
 		code2.locator.module.buildComponents();
 
@@ -1082,21 +1081,22 @@ class StaticXmlCompilerTest
 	@Test( "Test Macro with annotation" )
 	public function testMacroWithAnnotation() : Void
 	{
+		this._applicationAssembler = new ApplicationAssembler();
+		
 		MockMacroWithAnnotation.lastResult = null;
 		MockCommandWithAnnotation.lastResult = null;
 		MockAsyncCommandWithAnnotation.lastResult = null;
 		
-		var applicationAssembler = new ApplicationAssembler();
-        var applicationContext = applicationAssembler.getApplicationContext( "StaticXmlCompiler_testMacroWithAnnotation", ApplicationContext );
+        var applicationContext = this._applicationAssembler.getApplicationContext( "StaticXmlCompiler_testMacroWithAnnotation", ApplicationContext );
         var injector = applicationContext.getInjector();
         
-        var annotationProvider = AnnotationProvider.getAnnotationProvider( applicationContext.getDomain() );
-        annotationProvider.registerMetaData( "Value", this._getValue );
+        var annotationProvider = AnnotationProvider.getAnnotationProvider( applicationContext.getDomain(), null, applicationContext );
+        var annotationProvider2 : IAnnotationProvider = this._applicationAssembler.getApplicationContext( "StaticXmlCompiler_testMacroWithAnnotation", ApplicationContext ).getInjector().getInstance( IAnnotationProvider );
+		annotationProvider2.registerMetaData( "Value", this._getValue );
+		Assert.equals( annotationProvider, annotationProvider2 );
 		
 		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/macroWithAnnotation.xml", "StaticXmlCompiler_testMacroWithAnnotation" );
 		code.execute();
-		
-		var annotationProvider : IAnnotationProvider = this._applicationAssembler.getApplicationContext( "StaticXmlCompiler_testMacroWithAnnotation", ApplicationContext ).getInjector().getInstance( IAnnotationProvider );
 
 		Assert.equals( "value", MockMacroWithAnnotation.lastResult, "text should be the same" );
 		Assert.equals( "value", MockCommandWithAnnotation.lastResult, "text should be the same" );
