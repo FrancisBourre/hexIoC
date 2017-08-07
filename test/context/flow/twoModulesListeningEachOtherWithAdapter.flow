@@ -1,7 +1,7 @@
 @context( name = 'applicationContext' )
 {
-	chat = new hex.ioc.parser.xml.mock.MockChatModule();
-	translation = new hex.ioc.parser.xml.mock.MockTranslationModule();
+	chat = new hex.ioc.parser.xml.mock.MockChatModule( this );
+	translation = new hex.ioc.parser.xml.mock.MockTranslationModule( this );
 	
 	when( chat, hex.ioc.parser.xml.mock.MockChatModule.TEXT_INPUT )
 		.adapt( hex.ioc.parser.xml.mock.MockChatAdapterStrategy )

@@ -361,7 +361,7 @@ class CompileTimeContextFactory
 		var domains = this._moduleLocator.values();
 		for ( moduleName in domains )
 		{
-			this._expressions.push( macro @:mergeBlock { $i{moduleName}.initialize(); } );
+			this._expressions.push( macro @:mergeBlock { $i{moduleName}.initialize(applicationContext); } );
 		}
 		
 		this._moduleLocator.clear();

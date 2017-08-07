@@ -62,7 +62,7 @@ class StaticXmlCompilerTest
 	@After
 	public function tearDown() : Void
 	{
-		ApplicationDomainDispatcher.getInstance().clear();
+		ApplicationDomainDispatcher.getInstance( null ).clear();
 		this._applicationAssembler.release();
 	}
 
@@ -1063,6 +1063,7 @@ class StaticXmlCompilerTest
 		Assert.isNull( mockObjectWithMetaData.propWithoutMetaData, "property should be null" );
 		
 		//
+		code2.locator.module.initialize( null );
 		var provider = code2.locator.module.getAnnotationProvider();
 		code2.locator.module.buildComponents();
 

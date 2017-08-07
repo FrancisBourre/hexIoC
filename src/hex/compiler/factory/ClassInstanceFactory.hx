@@ -30,7 +30,7 @@ class ClassInstanceFactory
 				moduleExpr = macro @:mergeBlock{ $p{ _domainExpert() } .getInstance().registerDomain( $p{_domain()}.getDomain( $v{domainName} ) ); } 
 			}
 			
-			var exp = hex.compiletime.factory.ClassInstanceFactory.getResult( macro new $typePath( $a{ args } ), id, vo );
+			var exp = hex.compiletime.factory.ClassInstanceFactory.getResult( macro @:pos(vo.filePosition) new $typePath( $a { args } ), id, vo );
 			//Check if the instance is an IContextModule
 			return moduleExpr == null ? exp: macro @:pos( vo.filePosition ) @:mergeBlock { $moduleExpr; $exp; };
 		}

@@ -1,13 +1,19 @@
 <root name="applicationContext">
 
-    <chat id="chat" type="hex.ioc.parser.xml.mock.MockChatModule"/>
+    <chat id="chat" type="hex.ioc.parser.xml.mock.MockChatModule">
+		<argument ref="this"/>
+	</chat>
 
     <receiver id="receiver" type="hex.ioc.parser.xml.mock.MockReceiverModule">
+		<argument ref="this"/>
         <listen ref="chat">
             <event static-ref="hex.ioc.parser.xml.mock.MockChatModule.TEXT_INPUT" method="onMessage" strategy="hex.ioc.parser.xml.mock.MockChatEventAdapterStrategyWithInjection"/>
         </listen>
     </receiver>
 
-    <parser id="parser" type="hex.ioc.parser.xml.mock.MockMessageParserModule" map-type="hex.ioc.parser.xml.mock.IMockMessageParserModule"/>
+    <parser id="parser" type="hex.ioc.parser.xml.mock.MockMessageParserModule" 
+			map-type="hex.ioc.parser.xml.mock.IMockMessageParserModule">
+			<argument ref="this"/>
+	</parser>
 
 </root>

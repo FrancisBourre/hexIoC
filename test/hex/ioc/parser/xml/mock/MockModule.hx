@@ -1,5 +1,6 @@
 package hex.ioc.parser.xml.mock;
 
+import hex.core.IApplicationContext;
 import hex.di.IDependencyInjector;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.domain.Domain;
@@ -17,9 +18,9 @@ class MockModule implements IModule
 {
 	var _domainDispatcher 	: IDispatcher<{}>;
 	
-	public function new() 
+	public function new( context : IApplicationContext ) 
 	{
-		this._domainDispatcher = ApplicationDomainDispatcher.getInstance().getDomainDispatcher( this.getDomain() );
+		this._domainDispatcher = ApplicationDomainDispatcher.getInstance( context ).getDomainDispatcher( this.getDomain() );
 	}
 	
 	public function dispatchDomainEvent( messageType : MessageType, data : Array<Dynamic> ) : Void
@@ -32,7 +33,7 @@ class MockModule implements IModule
 		return DomainExpert.getInstance().getDomainFor( this );
 	}
 	
-	public function initialize() : Void 
+	public function initialize( context : IApplicationContext ) : Void 
 	{
 		
 	}

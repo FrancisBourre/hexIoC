@@ -81,7 +81,7 @@ class XmlCompilerTest
 	@After
 	public function tearDown() : Void
 	{
-		ApplicationDomainDispatcher.getInstance().clear();
+		ApplicationDomainDispatcher.getInstance( null ).clear();
 		this._applicationAssembler.release();
 	}
 	
@@ -1155,6 +1155,7 @@ class XmlCompilerTest
 		
 		//
 		var module : MockModuleWithAnnotationProviding = this._locate( "module" );
+		module.initialize( null );
 		var provider = module.getAnnotationProvider();
 		module.buildComponents();
 

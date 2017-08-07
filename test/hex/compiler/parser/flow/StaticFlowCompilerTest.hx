@@ -34,6 +34,7 @@ import hex.mock.MockProxy;
 import hex.mock.MockReceiver;
 import hex.mock.MockRectangle;
 import hex.mock.MockServiceProvider;
+import hex.mock.MockWeatherModel;
 import hex.runtime.ApplicationAssembler;
 import hex.structures.Point;
 import hex.structures.Size;
@@ -58,7 +59,7 @@ class StaticFlowCompilerTest
 	@After
 	public function tearDown() : Void
 	{
-		ApplicationDomainDispatcher.getInstance().clear();
+		ApplicationDomainDispatcher.release();
 		this._myApplicationAssembler.release();
 	}
 	
@@ -993,6 +994,7 @@ class StaticFlowCompilerTest
 		Assert.isNull( mockObjectWithMetaData.propWithoutMetaData, "property should be null" );
 		
 		//
+		code2.locator.module.initialize( null );
 		var provider = code2.locator.module.getAnnotationProvider();
 		code2.locator.module.buildComponents();
 
@@ -1030,14 +1032,14 @@ class StaticFlowCompilerTest
 		Assert.equals( "value", MockMacroWithAnnotation.lastResult, "text should be the same" );
 		Assert.equals( "value", MockCommandWithAnnotation.lastResult, "text should be the same" );
 		Assert.equals( "value", MockAsyncCommandWithAnnotation.lastResult, "text should be the same" );
-	}
+	}*/
 
 	function _getValue( key : String ) return "value";
 	
 	@Test( "test trigger injection" )
 	public function testTriggerInjection() : Void
 	{
-		var code = StaticFlowCompiler.compile( this._applicationAssembler, "context/flow/triggerInjection.flow", "StaticFlowCompiler_testTriggerInjection" );
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/triggerInjection.flow", "StaticFlowCompiler_testTriggerInjection" );
 		code.execute();
 
 		Assert.isInstanceOf( code.locator.model, MockWeatherModel );
@@ -1047,7 +1049,7 @@ class StaticFlowCompilerTest
 		
 		Assert.equals( 13, code.locator.module.temperature );
 		Assert.equals( 'sunny', code.locator.module.weather );
-	}*/
+	}
 	
 	//
 	@Test( "test file preprocessor with flow file" )

@@ -1,14 +1,16 @@
 package hex.ioc.parser.xml.mock;
 
+import hex.core.IApplicationContext;
+
 /**
  * ...
  * @author Francis Bourre
  */
 class MockReceiverModule extends MockModule
 {
-	public function new() 
+	public function new( context : IApplicationContext ) 
 	{
-		super();
+		super( context );
 	}
 	
 	public var message : String;
