@@ -50,7 +50,7 @@ import hex.mock.MockProxy;
 import hex.mock.MockReceiver;
 import hex.mock.MockRectangle;
 import hex.mock.MockServiceProvider;
-import hex.mock.MockWeatherListener;
+import hex.mock.MockWeatherListenerWithMappingDefinition;
 import hex.mock.MockWeatherModel;
 import hex.runtime.ApplicationAssembler;
 import hex.structures.Point;
@@ -1005,7 +1005,7 @@ class FlowCompilerTest
 		var model : MockWeatherModel = this._getCoreFactory().locate( "model" );
 		Assert.isInstanceOf( model, MockWeatherModel );
 		
-		var module : MockWeatherListener = this._getCoreFactory().locate( "module" );
+		var module : MockWeatherListenerWithMappingDefinition = this._getCoreFactory().locate( "module" );
 		
 		model.temperature.trigger( 13 );
 		model.weather.trigger( 'sunny' );
