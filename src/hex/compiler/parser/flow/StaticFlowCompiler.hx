@@ -28,6 +28,7 @@ import hex.preprocess.flow.MacroConditionalVariablesProcessor;
 import hex.util.MacroUtil;
 
 using hex.util.LambdaUtil;
+using tink.MacroApi;
 #end
 
 /**
@@ -41,8 +42,7 @@ class StaticFlowCompiler
 										?applicationContextName 		: String,
 										?preprocessingVariables 		: Expr,
 										?conditionalVariables 			: Expr,
-										?applicationAssemblerExpression : Expr,
-										isExtending 					: Bool = false ) : Expr
+										?applicationAssemblerExpression : Expr ) : Expr
 	{
 		LogManager.context 				= new MacroLoggerContext();
 		
@@ -57,7 +57,7 @@ class StaticFlowCompiler
 	
 		var assembler 					= new CompileTimeApplicationAssembler();
 		var assemblerExpression			= { name: '', expression: applicationAssemblerExpression };
-		var parser 						= new CompileTimeParser( new StaticParserCollection( assemblerExpression, fileName, isExtending, reader.getRuntimeParam() ) );
+		var parser 						= new CompileTimeParser( new StaticParserCollection( assemblerExpression, fileName, reader.getRuntimeParam() ) );
 		
 		parser.setImportHelper( new ClassImportHelper() );
 		parser.setExceptionReporter( new FlowAssemblingExceptionReporter() );
@@ -73,16 +73,17 @@ class StaticFlowCompiler
 											?preprocessingVariables : Expr, 
 											?conditionalVariables 	: Expr ) : Expr
 	{
-		return StaticFlowCompiler._readFile( fileName, applicationContextName, preprocessingVariables, conditionalVariables, assemblerExpr, false );
+		return StaticFlowCompiler._readFile( fileName, applicationContextName, preprocessingVariables, conditionalVariables, assemblerExpr );
 	}
 	
-	macro public static function extend<T>( context 				: ExprOf<T>, 
+	macro public static function extend<T>( assemblerExpr 			: Expr, 
+											context 				: ExprOf<T>, 
 											fileName 				: String, 
 											?preprocessingVariables : Expr, 
 											?conditionalVariables 	: Expr ) : ExprOf<T>
 	{
 		var contextName = StaticFlowCompiler._getContextName( context );
-		return StaticFlowCompiler._readFile( fileName, contextName, preprocessingVariables, conditionalVariables, null, true );
+		return StaticFlowCompiler._readFile( fileName, contextName, preprocessingVariables, conditionalVariables, assemblerExpr );
 	}
 	
 	#if macro
@@ -115,25 +116,23 @@ class StaticParserCollection extends AbstractParserCollection<AbstractExprParser
 	var _runtimeParam 			: hex.preprocess.RuntimeParam;
 	var _assemblerExpression 	: VariableExpression;
 	var _fileName 				: String;
-	var _isExtending 			: Bool;
 	
-	public function new( assemblerExpression : VariableExpression, fileName : String, isExtending : Bool = false, runtimeParam : hex.preprocess.RuntimeParam ) 
+	public function new( assemblerExpression : VariableExpression, fileName : String, runtimeParam : hex.preprocess.RuntimeParam ) 
 	{
 		this._runtimeParam			= runtimeParam;
 		this._assemblerExpression 	= assemblerExpression;
 		this._fileName 				= fileName;
-		this._isExtending 			= isExtending;
-		
+
 		super();
 	}
 	
 	override function _buildParserList() : Void
 	{
-		this._parserCollection.push( new StaticContextParser( this._assemblerExpression, this._isExtending ) );
+		this._parserCollection.push( new StaticContextParser( this._assemblerExpression ) );
 		this._parserCollection.push( new RuntimeParameterParser( this._runtimeParam ) );
 		this._parserCollection.push( new ImportContextParser( hex.compiletime.flow.parser.FlowExpressionParser.parser ) );
 		this._parserCollection.push( new hex.compiler.parser.flow.ObjectParser( hex.compiletime.flow.parser.FlowExpressionParser.parser, this._runtimeParam ) );
-		this._parserCollection.push( new StaticLauncher( this._assemblerExpression, this._fileName, this._isExtending, this._runtimeParam ) );
+		this._parserCollection.push( new StaticLauncher( this._assemblerExpression, this._fileName, this._runtimeParam ) );
 	}
 }
 
@@ -183,7 +182,7 @@ class ImportContextParser extends AbstractExprParser<hex.factory.BuildRequest>
 	function _parseImport( i : ContextImport )
 	{
 		var className = this._applicationContextName + '_' + i.id;
-		var e = this._getCompiler( i.fileName)( i.fileName, className, null, null, macro this._applicationAssembler  );
+		var e = this._getCompiler( i.fileName )( i.fileName, className, null, null, macro this._applicationAssembler  );
 		ContextBuilder.forceGeneration( className );
 		
 		var args = [ { className: 'hex.context.' + className/*this._getClassName( e )*/, expr: e, arg: i.arg } ];
@@ -253,13 +252,11 @@ class RuntimeParameterParser extends AbstractExprParser<hex.factory.BuildRequest
 class StaticContextParser extends AbstractExprParser<hex.factory.BuildRequest>
 {
 	var _assemblerVariable 	: VariableExpression;
-	var _isExtending 		: Bool;
 	
-	public function new( assemblerVariable : VariableExpression, isExtending : Bool = false ) 
+	public function new( assemblerVariable : VariableExpression ) 
 	{
 		super();
 		this._assemblerVariable = assemblerVariable;
-		this._isExtending 		= isExtending;
 	}
 	
 	override public function parse() : Void
@@ -269,7 +266,7 @@ class StaticContextParser extends AbstractExprParser<hex.factory.BuildRequest>
 		ContextBuilder.register( this._applicationAssembler.getFactory( this._factoryClass, this.getApplicationContext() ), this._applicationContextClass.name );
 		
 		//Create runtime applicationAssembler
-		if ( this._assemblerVariable.expression == null && !this._isExtending )
+		if ( this._assemblerVariable.expression == null )
 		{
 			var applicationAssemblerTypePath = MacroUtil.getTypePath( "hex.runtime.ApplicationAssembler" );
 			this._assemblerVariable.expression = macro new $applicationAssemblerTypePath();
@@ -297,16 +294,14 @@ class StaticLauncher extends AbstractExprParser<hex.factory.BuildRequest>
 {
 	var _assemblerVariable 	: VariableExpression;
 	var _fileName 			: String;
-	var _isExtending 		: Bool;
 	var _runtimeParam 		: hex.preprocess.RuntimeParam;
 	
-	public function new( assemblerVariable : VariableExpression, fileName : String, isExtending : Bool = false, runtimeParam : hex.preprocess.RuntimeParam = null ) 
+	public function new( assemblerVariable : VariableExpression, fileName : String, runtimeParam : hex.preprocess.RuntimeParam = null ) 
 	{
 		super();
 		
 		this._assemblerVariable = assemblerVariable;
 		this._fileName 			= fileName;
-		this._isExtending 		= isExtending;
 		this._runtimeParam 		= runtimeParam;
 	}
 	
@@ -350,24 +345,12 @@ class StaticLauncher extends AbstractExprParser<hex.factory.BuildRequest>
 		var applicationContextClassPack = MacroUtil.getPack( applicationContextClassName );
 		var applicationContextCT		= haxe.macro.TypeTools.toComplexType( haxe.macro.Context.getType( applicationContextClassName ) );
 				
-		if ( this._isExtending )
+		classExpr = macro class $className { public function new( assembler )
 		{
-			classExpr = macro class $className { public function new()
-			{
-				this.locator 				= hex.compiletime.CodeLocator.get( $v { contextName } );
-				this.applicationAssembler 	= ( cast locator )._applicationAssembler;
-				this.applicationContext 	= this.locator.$contextName;
-			}};
-		}
-		else
-		{
-			classExpr = macro class $className { public function new( assembler )
-			{
-				this.locator 				= hex.compiletime.CodeLocator.get( $v { contextName }, assembler );
-				this.applicationAssembler 	= assembler;
-				this.applicationContext 	= this.locator.$contextName;
-			}};
-		}
+			this.locator 				= hex.compiletime.CodeLocator.get( $v { contextName }, assembler );
+			this.applicationAssembler 	= assembler;
+			this.applicationContext 	= this.locator.$contextName;
+		}};
 
 		classExpr.pack = [ "hex", "context" ];
 		
@@ -396,10 +379,17 @@ class StaticLauncher extends AbstractExprParser<hex.factory.BuildRequest>
 		});
 		
 		var locatorArguments = if ( this._runtimeParam.type != null ) [ { name: 'param', type:_runtimeParam.type } ] else [];
-		
+
 		var locatorBody = this._runtimeParam.type != null ?
-			macro hex.compiletime.CodeLocator.get( $v { contextName } ).$file(param) :
-				macro hex.compiletime.CodeLocator.get( $v { contextName } ).$file();
+			macro hex.compiletime.CodeLocator.get( $v { contextName }, applicationAssembler ).$file(param) :
+				macro hex.compiletime.CodeLocator.get( $v { contextName }, applicationAssembler ).$file();
+				
+		var className = classExpr.pack.join( '.' ) + '.' + classExpr.name;
+		var cls = className.asTypePath();
+		var cloneBody = macro @:mergeBlock 
+		{
+			return new $cls( assembler ); 
+		};
 		
 		classExpr.fields.push(
 		{
@@ -414,17 +404,22 @@ class StaticLauncher extends AbstractExprParser<hex.factory.BuildRequest>
 			access: [ APublic ]
 		});
 		
+		classExpr.fields.push(
+		{
+			name: 'clone',
+			pos: haxe.macro.Context.currentPos(),
+			kind: FFun( 
+			{
+				args: [{name:'assembler', type:macro:hex.core.IApplicationAssembler}],
+				ret: className.asComplexType(),
+				expr: cloneBody
+			}),
+			access: [ APublic ]
+		});
+		
 		haxe.macro.Context.defineType( classExpr );
-		var typePath = MacroUtil.getTypePath( classExpr.pack.join( '.' ) + '.' + classExpr.name );
-
-		if ( this._isExtending )
-		{
-			assembler.setMainExpression( macro @:mergeBlock { new $typePath(); }  );
-		}
-		else
-		{
-			assembler.setMainExpression( macro @:mergeBlock { new $typePath( $assemblerVarExpression ); }  );
-		}
+		var typePath = MacroUtil.getTypePath( className );
+		assembler.setMainExpression( macro @:mergeBlock { new $typePath( $assemblerVarExpression ); }  );
 	}
 }
 #end

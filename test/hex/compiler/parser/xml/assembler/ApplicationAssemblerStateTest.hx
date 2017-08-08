@@ -33,7 +33,7 @@ class ApplicationAssemblerStateTest
 	@After
 	public function tearDown() : Void
 	{
-		ApplicationDomainDispatcher.getInstance().clear();
+		ApplicationDomainDispatcher.release();
 		this._applicationAssembler.release();
 		
 		MockStateCommand.callCount 						= 0;

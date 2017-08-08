@@ -1,5 +1,6 @@
 package hex.ioc.parser.xml.mock;
 
+import hex.core.IApplicationContext;
 import hex.event.MessageType;
 
 /**
@@ -10,9 +11,9 @@ class MockChatModule extends MockModule
 {
 	static public var TEXT_INPUT = new MessageType( "onTextInput" );
 	
-	public function new() 
+	public function new( context : IApplicationContext ) 
 	{
-		super();
+		super( context );
 	}
 	
 	public var translatedMessage 	: String;

@@ -28,7 +28,7 @@ class BuildTwoContextsWithStateTransitionsTest
 	@After
 	public function tearDown() : Void
 	{
-		ApplicationDomainDispatcher.getInstance().clear();
+		ApplicationDomainDispatcher.release();
 		applicationAssembler.release();
 	}
 	function _getCoreFactory() : ICoreFactory

@@ -84,7 +84,7 @@ class ContextFactory
 			
 			//settings
 			this._applicationContext = applicationContext;
-			this._contextDispatcher = ApplicationDomainDispatcher.getInstance().getDomainDispatcher( applicationContext.getDomain() );
+			this._contextDispatcher = ApplicationDomainDispatcher.getInstance( this._applicationContext ).getDomainDispatcher( applicationContext.getDomain() );
 			var injector = this._applicationContext.getInjector();
 			this._annotationProvider = injector.getInstance( IAnnotationProvider );
 			this._coreFactory = cast ( applicationContext.getCoreFactory(), IRunTimeCoreFactory );
@@ -353,7 +353,7 @@ class ContextFactory
 		var modules = this._moduleLocator.values();
 		for ( module in modules )
 		{
-			module.initialize();
+			module.initialize( this._applicationContext );
 		}
 		this._moduleLocator.clear();
 		

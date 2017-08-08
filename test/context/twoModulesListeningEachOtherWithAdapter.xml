@@ -1,10 +1,12 @@
 <root name="applicationContext">
 
     <chat id="chat" type="hex.ioc.parser.xml.mock.MockChatModule">
+		<argument ref="this"/>
         <listen ref="translation"/>
     </chat>
 
     <translation id="translation" type="hex.ioc.parser.xml.mock.MockTranslationModule">
+		<argument ref="this"/>
         <listen ref="chat">
             <event static-ref="hex.ioc.parser.xml.mock.MockChatModule.TEXT_INPUT" method="onTranslateWithTime" strategy="hex.ioc.parser.xml.mock.MockChatAdapterStrategy"/>
         </listen>

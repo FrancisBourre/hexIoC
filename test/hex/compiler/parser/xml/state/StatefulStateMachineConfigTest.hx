@@ -32,7 +32,7 @@ class StatefulStateMachineConfigTest
 
 		Assert.isTrue( myModule.commandWasCalled, "command should be called" );
 		
-		ApplicationDomainDispatcher.getInstance().clear();
+		ApplicationDomainDispatcher.release();
 		assembler.release();
 	}
 }

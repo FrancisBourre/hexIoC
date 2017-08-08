@@ -8,9 +8,12 @@ import hex.collection.ILocator;
 import hex.collection.ILocatorListener;
 import hex.collection.Locator;
 import hex.compiler.factory.DomainListenerFactory;
+import hex.compiler.factory.StateTransitionFactory;
+import hex.compiletime.basic.CompileTimeCoreFactory;
+import hex.compiletime.basic.IContextFactory;
+import hex.compiletime.basic.vo.FactoryVOTypeDef;
 import hex.compiletime.factory.FactoryUtil;
 import hex.compiletime.factory.PropertyFactory;
-import hex.compiler.factory.StateTransitionFactory;
 import hex.control.trigger.ICommandTrigger;
 import hex.core.ContextTypeList;
 import hex.core.HashCodeFactory;
@@ -22,18 +25,15 @@ import hex.core.SymbolTable;
 import hex.di.IInjectorContainer;
 import hex.event.IDispatcher;
 import hex.factory.BuildRequest;
-import hex.compiletime.basic.CompileTimeCoreFactory;
-import hex.compiletime.basic.IContextFactory;
 import hex.ioc.vo.DomainListenerVO;
-import hex.vo.MethodCallVO;
-import hex.vo.PropertyVO;
 import hex.ioc.vo.StateTransitionVO;
 import hex.ioc.vo.TransitionVO;
 import hex.metadata.IAnnotationProvider;
 import hex.module.IContextModule;
 import hex.util.MacroUtil;
 import hex.vo.ConstructorVO;
-import hex.compiletime.basic.vo.FactoryVOTypeDef;
+import hex.vo.MethodCallVO;
+import hex.vo.PropertyVO;
 
 using Lambda;
 
@@ -361,7 +361,7 @@ class CompileTimeContextFactory
 		var domains = this._moduleLocator.values();
 		for ( moduleName in domains )
 		{
-			this._expressions.push( macro @:mergeBlock { $i{moduleName}.initialize(); } );
+			this._expressions.push( macro @:mergeBlock { $i{moduleName}.initialize(applicationContext); } );
 		}
 		
 		this._moduleLocator.clear();

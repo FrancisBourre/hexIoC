@@ -62,7 +62,7 @@ class ApplicationContext extends AbstractApplicationContext
 	{
 		//build contextDispatcher
 		var domain = Domain.getDomain( applicationContextName );
-		var contextDispatcher = ApplicationDomainDispatcher.getInstance().getDomainDispatcher( domain );
+		var contextDispatcher = ApplicationDomainDispatcher.getInstance( this ).getDomainDispatcher( domain );
 		
 		//build injector
 		var injector : IDependencyInjector = cast Type.createInstance( Injector, [] );
@@ -74,7 +74,7 @@ class ApplicationContext extends AbstractApplicationContext
 		injector.mapToValue( ILogger, logger );
 		
 		//build annotation provider
-		var annotationProvider = AnnotationProvider.getAnnotationProvider( Domain.getDomain( applicationContextName ) );
+		var annotationProvider = AnnotationProvider.getAnnotationProvider( Domain.getDomain( applicationContextName ), null, this );
 		annotationProvider.registerInjector( injector );
 		injector.mapToValue( IAnnotationProvider, annotationProvider );
 		
@@ -92,7 +92,7 @@ class ApplicationContext extends AbstractApplicationContext
 		this._dispatcher = contextDispatcher;
 		this._initStateMachine();
 		
-		this.initialize();
+		this.initialize( null );
 	}
 	
 	/**

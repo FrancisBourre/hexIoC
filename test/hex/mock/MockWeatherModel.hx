@@ -9,7 +9,6 @@ import hex.event.ITriggerOwner;
  */
 class MockWeatherModel implements ITriggerOwner
 {
-
 	public var weather( default, never )  : ITrigger<String->Void>;
 	public var temperature( default, never )  : ITrigger<Int->Void>;
 	

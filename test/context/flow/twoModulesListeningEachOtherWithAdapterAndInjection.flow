@@ -1,8 +1,8 @@
 @context( name = 'applicationContext' )
 {
-	chat = new hex.ioc.parser.xml.mock.MockChatModule();
-	receiver = new hex.ioc.parser.xml.mock.MockReceiverModule();
-	@map_type( 'hex.ioc.parser.xml.mock.IMockMessageParserModule' ) parser = new hex.ioc.parser.xml.mock.MockMessageParserModule();
+	chat = new hex.ioc.parser.xml.mock.MockChatModule( this );
+	receiver = new hex.ioc.parser.xml.mock.MockReceiverModule( this );
+	@map_type( 'hex.ioc.parser.xml.mock.IMockMessageParserModule' ) parser = new hex.ioc.parser.xml.mock.MockMessageParserModule( this );
 
 	when( chat, hex.ioc.parser.xml.mock.MockChatModule.TEXT_INPUT )
 		.adapt( hex.ioc.parser.xml.mock.MockChatEventAdapterStrategyWithInjection )

@@ -1,17 +1,19 @@
 package hex.ioc.parser.xml.mock;
 
+import hex.core.IApplicationContext;
+
 /**
  * ...
  * @author Francis Bourre
  */
 class MockSenderModule extends MockModule
 {
-	public function new() 
+	public function new( context : IApplicationContext )  
 	{
-		super();
+		super( context );
 	}
 	
-	override public function initialize() : Void
+	override public function initialize( context : IApplicationContext ) : Void 
 	{
 		this.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "hello receiver" ] );
 	}

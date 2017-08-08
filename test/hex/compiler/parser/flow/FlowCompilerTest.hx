@@ -11,13 +11,27 @@ import hex.di.mapping.MappingChecker;
 import hex.di.mapping.MappingConfiguration;
 import hex.domain.ApplicationDomainDispatcher;
 import hex.error.NoSuchElementException;
+import hex.event.EventProxy;
 import hex.ioc.assembler.ApplicationContext;
 import hex.ioc.core.ContextFactory;
 import hex.ioc.parser.xml.ApplicationXMLParser;
+import hex.ioc.parser.xml.mock.AnotherMockModuleWithServiceCallback;
+import hex.ioc.parser.xml.mock.IMockDividerHelper;
+import hex.ioc.parser.xml.mock.IMockStubStatefulService;
+import hex.ioc.parser.xml.mock.MockAsyncCommandWithAnnotation;
+import hex.ioc.parser.xml.mock.MockBooleanVO;
 import hex.ioc.parser.xml.mock.MockChatModule;
+import hex.ioc.parser.xml.mock.MockCommandWithAnnotation;
+import hex.ioc.parser.xml.mock.MockIntVO;
+import hex.ioc.parser.xml.mock.MockMacroWithAnnotation;
+import hex.ioc.parser.xml.mock.MockMessageParserModule;
+import hex.ioc.parser.xml.mock.MockModuleWithAnnotationProviding;
+import hex.ioc.parser.xml.mock.MockModuleWithServiceCallback;
 import hex.ioc.parser.xml.mock.MockReceiverModule;
 import hex.ioc.parser.xml.mock.MockSenderModule;
 import hex.ioc.parser.xml.mock.MockTranslationModule;
+import hex.metadata.AnnotationProvider;
+import hex.metadata.IAnnotationProvider;
 import hex.mock.AnotherMockClass;
 import hex.mock.ArrayOfDependenciesOwner;
 import hex.mock.ClassWithConstantConstantArgument;
@@ -36,6 +50,8 @@ import hex.mock.MockProxy;
 import hex.mock.MockReceiver;
 import hex.mock.MockRectangle;
 import hex.mock.MockServiceProvider;
+import hex.mock.MockWeatherListenerWithMappingDefinition;
+import hex.mock.MockWeatherModel;
 import hex.runtime.ApplicationAssembler;
 import hex.structures.Point;
 import hex.structures.Size;
@@ -62,7 +78,7 @@ class FlowCompilerTest
 	@After
 	public function tearDown() : Void
 	{
-		ApplicationDomainDispatcher.getInstance().clear();
+		ApplicationDomainDispatcher.release();
 		this._applicationAssembler.release();
 	}
 	
@@ -703,7 +719,7 @@ class FlowCompilerTest
 	@Ignore( "test building mapping configuration with map names" )
 	public function testBuildingMappingConfigurationWithMapNames() : Void
 	{
-		this._applicationAssembler = XmlCompiler.readXmlFile( "context/mappingConfigurationWithMapNames.xml" );
+		this._applicationAssembler = FlowCompiler.readXmlFile( "context/mappingConfigurationWithMapNames.xml" );
 
 		var config : MappingConfiguration = this._getCoreFactory().locate( "config" );
 		Assert.isInstanceOf( config, MappingConfiguration, "" );
@@ -718,7 +734,7 @@ class FlowCompilerTest
 	@Ignore( "test building mapping configuration with singleton" )
 	public function testBuildingMappingConfigurationWithSingleton() : Void
 	{
-		this._applicationAssembler = XmlCompiler.readXmlFile( "context/mappingConfigurationWithSingleton.xml" );
+		this._applicationAssembler = FlowCompiler.readXmlFile( "context/mappingConfigurationWithSingleton.xml" );
 
 		var config = this._getCoreFactory().locate( "config" );
 		Assert.isInstanceOf( config, MappingConfiguration, "" );
@@ -744,7 +760,7 @@ class FlowCompilerTest
 	@Ignore( "test building mapping configuration with inject-into" )
 	public function testBuildingMappingConfigurationWithInjectInto() : Void
 	{
-		this._applicationAssembler = XmlCompiler.readXmlFile( "context/mappingConfigurationWithInjectInto.xml" );
+		this._applicationAssembler = FlowCompiler.readXmlFile( "context/mappingConfigurationWithInjectInto.xml" );
 
 		var config = this._getCoreFactory().locate( "config" );
 		Assert.isInstanceOf( config, MappingConfiguration, "" );
@@ -763,6 +779,242 @@ class FlowCompilerTest
 		Assert.isInstanceOf( mock1, MockInjectee, "" );
 		Assert.equals( domain, mock1.domain, "" );
 	}*/
+	
+	//
+	@Test( "test module listening service" )
+	public function testModuleListeningService() : Void
+	{
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/moduleListeningService.flow" );
+		
+		var myService : IMockStubStatefulService = this._getCoreFactory().locate( "myService" );
+		Assert.isNotNull( myService, "" );
+
+		var myModule : MockModuleWithServiceCallback = this._getCoreFactory().locate( "myModule" );
+		Assert.isNotNull( myModule, "" );
+
+		var booleanVO = new MockBooleanVO( true );
+		myService.setBooleanVO( booleanVO );
+		Assert.isTrue( myModule.getBooleanValue(), "" );
+	}
+	
+	@Test( "test module listening service with map-type" )
+	public function testModuleListeningServiceWithMapType() : Void
+	{
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/moduleListeningServiceWithMapType.flow" );
+
+		var myService : IMockStubStatefulService = this._getCoreFactory().locate( "myService" );
+		Assert.isNotNull( myService );
+
+		var myModule : MockModuleWithServiceCallback = this._getCoreFactory().locate( "myModule" );
+		Assert.isNotNull( myModule );
+
+		var booleanVO = new MockBooleanVO( true );
+		myService.setBooleanVO( booleanVO );
+		Assert.isTrue( myModule.getBooleanValue() );
+		
+		Assert.equals( myService, this._getCoreFactory().getInjector().getInstance( IMockStubStatefulService, "myService" ) );
+	}
+	
+	@Test( "test module listening service with strategy and module injection" )
+	public function testModuleListeningServiceWithStrategyAndModuleInjection() : Void
+	{
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/moduleListeningServiceWithStrategyAndModuleInjection.flow" );
+
+		var myService : IMockStubStatefulService = this._getCoreFactory().locate( "myService" );
+		Assert.isNotNull( myService, "" );
+
+		var myModule : MockModuleWithServiceCallback = this._getCoreFactory().locate( "myModule" );
+		Assert.isNotNull( myModule, "" );
+
+		var intVO = new MockIntVO( 7 );
+		myService.setIntVO( intVO );
+		Assert.equals( 3.5, ( myModule.getFloatValue() ), "" );
+	}
+	
+	@Test( "test module listening service with strategy and context injection" )
+	public function testModuleListeningServiceWithStrategyAndContextInjection() : Void
+	{
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/moduleListeningServiceWithStrategyAndContextInjection.flow" );
+
+		var mockDividerHelper : IMockDividerHelper = this._getCoreFactory().locate( "mockDividerHelper" );
+		Assert.isNotNull( mockDividerHelper, "" );
+
+		var myService : IMockStubStatefulService = this._getCoreFactory().locate( "myService" );
+		Assert.isNotNull( myService, "" );
+
+		var myModuleA : MockModuleWithServiceCallback = this._getCoreFactory().locate( "myModuleA" );
+		Assert.isNotNull( myModuleA, "" );
+
+		var myModuleB : AnotherMockModuleWithServiceCallback = this._getCoreFactory().locate( "myModuleB" );
+		Assert.isNotNull( myModuleB, "" );
+
+		myService.setIntVO( new MockIntVO( 7 ) );
+		Assert.equals( 3.5, ( myModuleA.getFloatValue() ), "" );
+
+		myService.setIntVO( new MockIntVO( 9 ) );
+		Assert.equals( 4.5, ( myModuleB.getFloatValue() ), "" );
+	}
+	
+	@Async( "test EventTrigger" )
+	public function testEventTrigger() : Void
+	{
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/eventTrigger.flow" );
+		
+		var chat : MockChatModule = this._getCoreFactory().locate( "chat" );
+		Assert.isNotNull( chat, "" );
+
+		var receiver : MockReceiverModule = this._getCoreFactory().locate( "receiver" );
+		Assert.isNotNull( receiver, "" );
+
+		var parser : MockMessageParserModule = this._getCoreFactory().locate( "parser" );
+		Assert.isNotNull( parser, "" );
+
+		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandler ), 500 );
+		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "bonjour" ] );
+	}
+	
+	@Async( "test EventProxy" )
+	public function testEventProxy() : Void
+	{
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/eventProxy.flow" );
+
+		var eventProxy : EventProxy = this._getCoreFactory().locate( "eventProxy" );
+		Assert.isNotNull( eventProxy, "" );
+
+		var chat : MockChatModule = this._getCoreFactory().locate( "chat" );
+		Assert.isNotNull( chat, "" );
+
+		var receiver : MockReceiverModule = this._getCoreFactory().locate( "receiver" );
+		Assert.isNotNull( receiver, "" );
+
+		var eventProxy : EventProxy = this._getCoreFactory().locate( "eventProxy" );
+		Assert.isNotNull( eventProxy, "" );
+
+		var parser : MockMessageParserModule = this._getCoreFactory().locate( "parser" );
+		Assert.isNotNull( parser, "" );
+
+		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandler ), 500 );
+		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "bonjour" ] );
+	}
+	
+	function _onCompleteHandler() : Void
+	{
+		var receiver : MockReceiverModule = this._getCoreFactory().locate( "receiver" );
+		Assert.equals( "BONJOUR:HTTP://GOOGLE.COM", receiver.message, "" );
+	}
+	
+	function getColorByName( name : String ) : Int
+	{
+		return name == "white" ? 0xFFFFFF : 0;
+	}
+
+	function getText( name : String ) : String
+	{
+		return name == "welcome" ? "Bienvenue" : null;
+	}
+	
+	function getAnotherText( name : String ) : String
+	{
+		return "anotherText";
+	}
+	
+	@Test( "Test MockObject with annotation" )
+	public function testMockObjectWithAnnotation() : Void
+	{
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/testMockObjectWithAnnotation.flow" );
+		
+		var annotationProvider : IAnnotationProvider = this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getInjector().getInstance( IAnnotationProvider );
+
+		annotationProvider.registerMetaData( "color", this.getColorByName );
+		annotationProvider.registerMetaData( "language", this.getText );
+		
+		var mockObjectWithMetaData = this._getCoreFactory().locate( "mockObjectWithAnnotation" );
+		
+		Assert.equals( 0xffffff, mockObjectWithMetaData.colorTest, "color should be the same" );
+		Assert.equals( "Bienvenue", mockObjectWithMetaData.languageTest, "text should be the same" );
+		Assert.isNull( mockObjectWithMetaData.propWithoutMetaData, "property should be null" );
+	}
+	
+	@Test( "Test AnnotationProvider with inheritance" )
+	public function testAnnotationProviderWithInheritance() : Void
+	{
+		var assembler = new ApplicationAssembler();
+		this._applicationAssembler = assembler;
+		
+		FlowCompiler.compileWithAssembler( assembler, "context/flow/testMockObjectWithAnnotation.flow" );
+		
+		var annotationProvider : IAnnotationProvider = this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getInjector().getInstance( IAnnotationProvider );
+		annotationProvider.registerMetaData( "color", this.getColorByName );
+		annotationProvider.registerMetaData( "language", this.getText );
+		
+		FlowCompiler.compileWithAssembler( assembler, "context/flow/testAnnotationProviderWithInheritance.flow" );
+		
+		var mockObjectWithMetaData = this._getCoreFactory().locate( "mockObjectWithAnnotation" );
+		
+		Assert.equals( 0xffffff, mockObjectWithMetaData.colorTest, "color should be the same" );
+		Assert.equals( "Bienvenue", mockObjectWithMetaData.languageTest, "text should be the same" );
+		Assert.isNull( mockObjectWithMetaData.propWithoutMetaData, "property should be null" );
+		
+		//
+		var module : MockModuleWithAnnotationProviding = this._getCoreFactory().locate( "module" );
+		var provider = module.getAnnotationProvider();
+		module.buildComponents();
+
+		Assert.equals( 0xffffff, module.mockObjectWithMetaData.colorTest, "color should be the same" );
+		Assert.equals( "Bienvenue", module.mockObjectWithMetaData.languageTest, "text should be the same" );
+		Assert.isNull( module.anotherMockObjectWithMetaData.languageTest, "property should be null when class is not implementing IAnnotationParsable" );
+		
+		provider.registerMetaData( "language", this.getAnotherText );
+		module.buildComponents();
+		
+		Assert.equals( 0xffffff, module.mockObjectWithMetaData.colorTest, "color should be the same" );
+		Assert.equals( "anotherText", module.mockObjectWithMetaData.languageTest, "text should be the same" );
+		Assert.isNull( module.anotherMockObjectWithMetaData.languageTest, "property should be null when class is not implementing IAnnotationParsable" );
+	}
+	
+	/*@Test( "Test Macro with annotation" )
+	public function testMacroWithAnnotation() : Void
+	{
+		MockMacroWithAnnotation.lastResult = null;
+		MockCommandWithAnnotation.lastResult = null;
+		MockAsyncCommandWithAnnotation.lastResult = null;
+		
+		var applicationAssembler = new ApplicationAssembler();
+        var applicationContext = applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext );
+        var injector = applicationContext.getInjector();
+        
+        var annotationProvider = AnnotationProvider.getAnnotationProvider( applicationContext.getDomain() );
+        annotationProvider.registerMetaData( "Value", this._getValue );
+		
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/macroWithAnnotation.flow" );
+		
+		var annotationProvider : IAnnotationProvider = this._applicationAssembler.getApplicationContext( "applicationContext", ApplicationContext ).getInjector().getInstance( IAnnotationProvider );
+
+		Assert.equals( "value", MockMacroWithAnnotation.lastResult, "text should be the same" );
+		Assert.equals( "value", MockCommandWithAnnotation.lastResult, "text should be the same" );
+		Assert.equals( "value", MockAsyncCommandWithAnnotation.lastResult, "text should be the same" );
+	}*/
+
+	function _getValue( key : String ) return "value";
+	
+	@Test( "test trigger injection" )
+	public function testTriggerInjection() : Void
+	{
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/triggerInjection.flow" );
+
+		var model : MockWeatherModel = this._getCoreFactory().locate( "model" );
+		Assert.isInstanceOf( model, MockWeatherModel );
+		
+		var module : MockWeatherListenerWithMappingDefinition = this._getCoreFactory().locate( "module" );
+		
+		model.temperature.trigger( 13 );
+		model.weather.trigger( 'sunny' );
+		
+		
+		Assert.equals( 13, module.temperature );
+		Assert.equals( 'sunny', module.weather );
+	}
+	//
 	
 	@Test( "test static-ref" )
 	public function testStaticRef() : Void
@@ -1050,7 +1302,7 @@ class FlowCompilerTest
 	@Test( "test add custom parser" )
 	public function testAddCustomParser() : Void
 	{
-		MockCustomStaticFlowParser.prepareCompiler();
+		hex.compiler.parser.flow.custom.AddParser.activate();
 		this._applicationAssembler = FlowCompiler.compile( "context/flow/static/addParser.flow" );
 		
 		Assert.equals( 'hello world !', this._getCoreFactory().locate( "s" ) );

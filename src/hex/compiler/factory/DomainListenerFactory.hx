@@ -174,7 +174,7 @@ class DomainListenerFactory
 							var domainVar = macro $i { DomainListenerFactory._getDomain( expressions, listenedDomainName, factoryVO ) };
 							expressions.push( macro @:mergeBlock 
 							{ 
-								$p { _applicationDomainDispatcherClass } .getInstance()
+								$p { _applicationDomainDispatcherClass } .getInstance( applicationContext )
 								.addHandler( $messageType, $listenerVar, $adapterExp, $domainVar ); 
 							} );
 						}
@@ -193,7 +193,7 @@ class DomainListenerFactory
 						{
 							var domainVar = macro $i { DomainListenerFactory._getDomain( expressions, listenedDomainName, factoryVO ) };
 							var messageType = MacroUtil.getStaticVariable( domainListenerArgument.staticRef, domainListenerArgument.filePosition );
-							expressions.push( macro @:pos( domainListenerArgument.filePosition ) @:mergeBlock { $p { _applicationDomainDispatcherClass } .getInstance().addHandler( $messageType, $listenerVar, $listenerVar.$method, $domainVar ); } );
+							expressions.push( macro @:pos( domainListenerArgument.filePosition ) @:mergeBlock { $p { _applicationDomainDispatcherClass } .getInstance( applicationContext ).addHandler( $messageType, $listenerVar, $listenerVar.$method, $domainVar ); } );
 						}
 					}
 				}
@@ -219,7 +219,7 @@ class DomainListenerFactory
 			var extVar = macro $i{ listenerID };
 
 			var domainVar = macro $i { DomainListenerFactory._getDomain( expressions, listenedDomainName, factoryVO ) };
-			expressions.push( macro @:mergeBlock { $p { _applicationDomainDispatcherClass }.getInstance().addListener( $extVar, $domainVar ); } );
+			expressions.push( macro @:mergeBlock { $p { _applicationDomainDispatcherClass }.getInstance( applicationContext ).addListener( $extVar, $domainVar ); } );
 
 			return true;
 		}

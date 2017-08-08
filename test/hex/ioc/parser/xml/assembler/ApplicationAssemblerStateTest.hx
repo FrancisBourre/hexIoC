@@ -34,7 +34,7 @@ class ApplicationAssemblerStateTest
 	@After
 	public function tearDown() : Void
 	{
-		ApplicationDomainDispatcher.getInstance().clear();
+		ApplicationDomainDispatcher.release();
 		if ( this._applicationAssembler != null )
 		{
 			this._applicationAssembler.release();

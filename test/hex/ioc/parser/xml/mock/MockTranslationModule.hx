@@ -1,6 +1,7 @@
 package hex.ioc.parser.xml.mock;
 
 import hex.collection.HashMap;
+import hex.core.IApplicationContext;
 import hex.event.MessageType;
 
 /**
@@ -13,9 +14,9 @@ class MockTranslationModule extends MockModule
 	
 	public static var TRANSLATION = new MessageType( "onTranslation" );
 	
-	public function new() 
+	public function new( context : IApplicationContext ) 
 	{
-		super();
+		super( context );
 		this._map.put( "Bonjour", "Hello" );
 	}
 	

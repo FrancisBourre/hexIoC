@@ -1,23 +1,11 @@
-/*
-<?xml version="1.0" encoding="utf-8" ?>
-<root name="applicationContext">
+@context( name = 'applicationContext' )
+{
+	model = new hex.mock.MockWeatherModel();
+	module = new hex.mock.MockWeatherListenerWithMappingDefinition( config );
 
-	<model id="model" type="hex.mock.MockWeatherModel"/>
-	
-    <config id="config" type="hex.di.mapping.MappingConfiguration">
-        <item map-name="temperature"> 
-			<key type="Class" value="hex.event.ITrigger<Int->Void>"/> 
-			<value ref="model.temperature"/>
-		</item>
-		<item map-name="weather"> 
-			<key type="Class" value="hex.event.ITrigger<String->Void>"/> 
-			<value ref="model.weather"/>
-		</item>
-    </config>
-	
-	<view id="module" type="hex.mock.MockWeatherListener">
-		<argument ref="config"/>
-	</view>
-
-</root>
-*/
+	config = new Array<hex.di.mapping.MappingDefinition>
+	(
+		mapping( { fromType: "hex.event.ITrigger<Int->Void>", toValue: model.temperature, withName: "temperature" } ),
+		mapping( { fromType: "hex.event.ITrigger<String->Void>", toValue: model.weather, withName: "weather" } )
+	);
+}
