@@ -102,8 +102,8 @@ class StaticXmlCompilerTest
 		var code = StaticXmlCompiler.compile( StaticXmlCompilerTest.applicationAssembler, "context/xml/primitives/string.xml", "StaticXmlCompiler_testBuildingStringWithAssemblerStaticProperty" );
 		code.execute();
 		
-		var s : String = StaticXmlCompilerTest.applicationAssembler.getApplicationContext( "StaticXmlCompiler_testBuildingStringWithAssemblerStaticProperty", ApplicationContext ).getCoreFactory().locate( "s" );
-		Assert.equals( "hello", s );
+		Assert.equals( StaticXmlCompilerTest.applicationAssembler, code.applicationAssembler );
+		Assert.equals( "hello", code.locator.s );
 	}
 	
 	@Test( "test overriding context name" )
@@ -789,12 +789,11 @@ class StaticXmlCompilerTest
 
 		Assert.isNotNull( code.locator.sender );
 		Assert.isNotNull( code.locator.receiver );
-		Timer.delay( MethodRunner.asyncHandler( this._onEventAdapterStrategyMacro ), 350 );
+		Timer.delay( MethodRunner.asyncHandler( this._onEventAdapterStrategyMacro, [code.locator.receiver] ), 350 );
 	}
 	
-	function _onEventAdapterStrategyMacro()
+	function _onEventAdapterStrategyMacro( receiver : MockReceiverModule )
 	{
-		var receiver : MockReceiverModule = this._locate( "StaticXmlCompiler_testEventAdapterStrategyMacro", "receiver" );
 		Assert.equals( "HELLO RECEIVER:HTTP://GOOGLE.COM", receiver.message );
 	}
 	
@@ -972,13 +971,12 @@ class StaticXmlCompilerTest
 		Assert.isNotNull( code.locator.receiver );
 		Assert.isNotNull( code.locator.parser );
 
-		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandlerEventTrigger ), 500 );
+		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandlerEventTrigger, [ code.locator.receiver ] ), 500 );
 		code.locator.chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "bonjour" ] );
 	}
 	
-	function _onCompleteHandlerEventTrigger() : Void
+	function _onCompleteHandlerEventTrigger( receiver : MockReceiverModule ) : Void
 	{
-		var receiver : MockReceiverModule = this._locate( "StaticXmlCompiler_testEventTrigger", "receiver" );
 		Assert.equals( "BONJOUR:HTTP://GOOGLE.COM", receiver.message, "" );
 	}
 	
@@ -994,13 +992,12 @@ class StaticXmlCompilerTest
 		Assert.isNotNull( code.locator.eventProxy );
 		Assert.isNotNull( code.locator.parser );
 
-		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandlerEventProxy ), 500 );
+		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandlerEventProxy, [ code.locator.receiver ] ), 500 );
 		code.locator.chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "bonjour" ] );
 	}
 	
-	function _onCompleteHandlerEventProxy() : Void
+	function _onCompleteHandlerEventProxy( receiver : MockReceiverModule ) : Void
 	{
-		var receiver : MockReceiverModule = this._locate( "StaticXmlCompiler_testEventProxy", "receiver" );
 		Assert.equals( "BONJOUR:HTTP://GOOGLE.COM", receiver.message, "" );
 	}
 	
