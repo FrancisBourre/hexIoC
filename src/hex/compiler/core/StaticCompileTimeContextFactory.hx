@@ -103,7 +103,7 @@ class StaticCompileTimeContextFactory
 
 			if ( !constructorVO.lazy )
 			{
-				this._expressions.push( macro @:mergeBlock { $finalResult;  coreFactory.register( $v { id }, $i { id } ); this.$id = $i { id }; } );
+				this._expressions.push( macro @:mergeBlock { $finalResult;  /*coreFactory.register( $v { id }, $i { id } );*/ this.$id = $i { id }; } );
 			}
 			
 			this._coreFactory.register( id, result );
