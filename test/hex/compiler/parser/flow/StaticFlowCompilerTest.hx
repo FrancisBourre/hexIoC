@@ -931,11 +931,6 @@ class StaticFlowCompilerTest
 		Assert.equals( "BONJOUR:HTTP://GOOGLE.COM", receiver.message, "" );
 	}
 	
-	function _locate( contextName : String, key : String ) : Dynamic
-	{
-		return this._myApplicationAssembler.getApplicationContext( contextName, ApplicationContext ).getCoreFactory().locate( key );
-	}
-	
 	function getColorByName( name : String ) : Int
 	{
 		return name == "white" ? 0xFFFFFF : 0;
@@ -1084,9 +1079,8 @@ class StaticFlowCompilerTest
 	{
 		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/includeWithIfAttribute.flow", "StaticFlowCompiler_testIncludeFailsWithIfAttribute", null, [ "prodz" => false, "testing" => true, "releasing" => true ] );
 		code.execute();
-		
-		var coreFactory = this._myApplicationAssembler.getApplicationContext( "StaticFlowCompiler_testIncludeFailsWithIfAttribute", ApplicationContext ).getCoreFactory();
-		Assert.methodCallThrows( NoSuchElementException, coreFactory, coreFactory.locate, [ "message" ], "'NoSuchElementException' should be thrown" );
+
+		Assert.isFalse( Reflect.hasField(code.locator, "message"), "locator shouldn't have message field" );
 	}
 	
 	@Test( "test building mapping configuration" )

@@ -1001,11 +1001,6 @@ class StaticXmlCompilerTest
 		Assert.equals( "BONJOUR:HTTP://GOOGLE.COM", receiver.message, "" );
 	}
 	
-	function _locate( contextName : String, key : String ) : Dynamic
-	{
-		return this._applicationAssembler.getApplicationContext( contextName, ApplicationContext ).getCoreFactory().locate( key );
-	}
-	
 	function getColorByName( name : String ) : Int
 	{
 		return name == "white" ? 0xFFFFFF : 0;
@@ -1141,9 +1136,8 @@ class StaticXmlCompilerTest
 	{
 		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/static/includeWithIfAttribute.xml", "StaticXmlCompiler_testIncludeFailsWithIfAttribute", null, [ "prodz2" => false, "testing2" => true, "releasing2" => true ] );
 		code.execute();
-		
-		var coreFactory = this._applicationAssembler.getApplicationContext( "BasicStaticXmlCompiler_testIncludeFailsWithIfAttribute", ApplicationContext ).getCoreFactory();
-		Assert.methodCallThrows( NoSuchElementException, coreFactory, coreFactory.locate, [ "message" ], "'NoSuchElementException' should be thrown" );
+
+		Assert.isFalse( Reflect.hasField(code.locator, "message"), "locator shouldn't have message field" );
 	}
 	
 	@Test( "test file preprocessor with Xml file" )
@@ -1175,7 +1169,7 @@ class StaticXmlCompilerTest
 		}
 		catch ( e : Exception )
         {
-            Assert.fail( e.message, "Exception on this._builderFactory.getCoreFactory().locate( \"message\" ) call" );
+            Assert.fail( e.message, "Exception on code.locator.message" );
         }
 	}
 	
