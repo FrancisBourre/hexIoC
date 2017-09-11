@@ -129,7 +129,6 @@ class CompileTimeContextFactory
 		this.callAllMethods();
 		this.callModuleInitialisation();
 		this.dispatchAssemblingEnd();
-		this.dispatchIdleMode();
 	}
 	
 	public function dispose() : Void
@@ -170,12 +169,6 @@ class CompileTimeContextFactory
 	public function dispatchAssemblingEnd() : Void
 	{
 		var messageType = MacroUtil.getStaticVariable( "hex.core.ApplicationAssemblerMessage.ASSEMBLING_END" );
-		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
-	}
-	
-	public function dispatchIdleMode() : Void
-	{
-		var messageType = MacroUtil.getStaticVariable( "hex.core.ApplicationAssemblerMessage.IDLE_MODE" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 	}
 	
