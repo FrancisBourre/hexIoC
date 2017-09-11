@@ -238,12 +238,7 @@ class CompileTimeContextFactory
 	//listen to CoreFactory
 	public function onRegister( key : String, instance : Dynamic ) : Void
 	{
-		if ( this._propertyVOLocator.isRegisteredWithKey( key ) )
-		{
-			var properties = this._propertyVOLocator.locate( key );
-			for ( property in properties )
-				this._expressions.push( macro @:mergeBlock ${ PropertyFactory.build( this, property ) } );
-		}
+		this.buildProperty( key );
 	}
 
     public function onUnregister( key : String ) : Void  { }
@@ -283,6 +278,7 @@ class CompileTimeContextFactory
 		{
 			this._propertyVOLocator.locate( key )
 				.map( function( property ) this._expressions.push( macro @:mergeBlock ${ PropertyFactory.build( this, property ) } ) );
+			this._propertyVOLocator.unregister( key );
 		}
 	}
 	
