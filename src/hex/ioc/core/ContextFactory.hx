@@ -147,7 +147,6 @@ class ContextFactory
 		this.callAllMethods();
 		this.callModuleInitialisation();
 		this.dispatchAssemblingEnd();
-		this.dispatchIdleMode();
 	}
 	
 	public function dispose() : Void
@@ -184,11 +183,6 @@ class ContextFactory
 	public function dispatchAssemblingEnd() : Void
 	{
 		this._contextDispatcher.dispatch( ApplicationAssemblerMessage.ASSEMBLING_END );
-	}
-	
-	public function dispatchIdleMode() : Void
-	{
-		this._contextDispatcher.dispatch( ApplicationAssemblerMessage.IDLE_MODE );
 	}
 	
 	public function registerStateTransitionVO( stateTransitionVO : StateTransitionVO ) : Void

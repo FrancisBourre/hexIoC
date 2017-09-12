@@ -129,7 +129,6 @@ class CompileTimeContextFactory
 		this.callAllMethods();
 		this.callModuleInitialisation();
 		this.dispatchAssemblingEnd();
-		this.dispatchIdleMode();
 	}
 	
 	public function dispose() : Void
@@ -170,12 +169,6 @@ class CompileTimeContextFactory
 	public function dispatchAssemblingEnd() : Void
 	{
 		var messageType = MacroUtil.getStaticVariable( "hex.core.ApplicationAssemblerMessage.ASSEMBLING_END" );
-		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
-	}
-	
-	public function dispatchIdleMode() : Void
-	{
-		var messageType = MacroUtil.getStaticVariable( "hex.core.ApplicationAssemblerMessage.IDLE_MODE" );
 		this._expressions.push( macro @:mergeBlock { applicationContext.dispatch( $messageType ); } );
 	}
 	
@@ -238,12 +231,7 @@ class CompileTimeContextFactory
 	//listen to CoreFactory
 	public function onRegister( key : String, instance : Dynamic ) : Void
 	{
-		if ( this._propertyVOLocator.isRegisteredWithKey( key ) )
-		{
-			var properties = this._propertyVOLocator.locate( key );
-			for ( property in properties )
-				this._expressions.push( macro @:mergeBlock ${ PropertyFactory.build( this, property ) } );
-		}
+		this.buildProperty( key );
 	}
 
     public function onUnregister( key : String ) : Void  { }
@@ -283,6 +271,7 @@ class CompileTimeContextFactory
 		{
 			this._propertyVOLocator.locate( key )
 				.map( function( property ) this._expressions.push( macro @:mergeBlock ${ PropertyFactory.build( this, property ) } ) );
+			this._propertyVOLocator.unregister( key );
 		}
 	}
 	

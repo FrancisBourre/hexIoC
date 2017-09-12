@@ -427,6 +427,15 @@ class FlowCompilerTest
 		Assert.isInstanceOf( service, MockServiceProvider );
 		Assert.equals( "http://localhost/amfphp/gateway.php", MockServiceProvider.getInstance().getGateway(), "" );
 	}
+
+	@Test( "test static method on class without classpath" )
+	public function testStaticMethodOnClassWitoutClasspath() : Void
+	{
+		this._applicationAssembler = FlowCompiler.compile( "context/flow/instanceWithStaticMethod.flow" );
+
+		var random = this._getCoreFactory().locate( "random" );
+		Assert.isInstanceOf( random, Float );
+	}
 	
 	@Test( "test building instance with static method and arguments" )
 	public function testBuildingInstanceWithStaticMethodAndArguments() : Void
