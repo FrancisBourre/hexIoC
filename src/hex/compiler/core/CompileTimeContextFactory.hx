@@ -431,7 +431,7 @@ class CompileTimeContextFactory
 		return null;
 	}
 	
-	function _getMappingDefinitions( e : Expr )
+	function _getMappingDefinitions( e : Expr )  : Array<hex.di.mapping.MappingDefinition>
 	{
 		var a = [];
 		switch( e.expr )
@@ -474,7 +474,7 @@ class CompileTimeContextFactory
 			case _:
 		}
 		
-		return a;
+		return cast a;
 	}
 	
 	function _checkDependencies( constructorVO : ConstructorVO ) : Void
@@ -484,9 +484,10 @@ class CompileTimeContextFactory
 			var mappings = constructorVO.arguments.filter(
 				function ( arg ) return arg.ref != null )
 			.map( function ( arg ) return this._coreFactory.locate( arg.ref ) )
-			.flatMap( _getMappingDefinitions );
+			.flatMap( _getMappingDefinitions )
+			.array();
 			
-			if ( !hex.di.mapping.MappingChecker.matchForClassName( constructorVO.className, cast mappings ) )
+			if ( !hex.di.mapping.MappingChecker.matchForClassName( constructorVO.className, mappings ) )
 			{
 				var missingMappings = hex.di.mapping.MappingChecker.getMissingMapping( constructorVO.className, cast mappings );
 				Context.fatalError( "Missing mappings:" + missingMappings, constructorVO.filePosition );
