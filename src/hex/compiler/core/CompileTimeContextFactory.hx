@@ -71,7 +71,7 @@ class CompileTimeContextFactory
 	var _domainListenerVOLocator 	: Locator<String, DomainListenerVO>;
 	var _stateTransitionVOLocator 	: Locator<String, StateTransitionVO>;
 	
-	var _transitions				: Array<TransitionVO>;
+	var _transitions				: Array<TransitionVO> = [];
 	
 	public function new( expressions : Array<Expr>, assemblerID : UInt )
 	{
