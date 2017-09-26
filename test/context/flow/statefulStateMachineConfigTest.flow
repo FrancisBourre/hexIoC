@@ -1,0 +1,8 @@
+@context( name = 'applicationContext' )
+{
+	initialState = hex.ioc.parser.xml.state.mock.MockStateEnum.INITIAL_STATE;
+	initialState.addTransition( hex.ioc.parser.xml.state.mock.MockStateMessage.TRIGGER_NEXT_STATE, hex.ioc.parser.xml.state.mock.MockStateEnum.NEXT_STATE );
+	initialState.addExitCommand( hex.ioc.parser.xml.state.mock.MockExitStateCommand, myModule );
+	stateConfig = new hex.state.config.stateful.StatefulStateMachineConfig( initialState );
+	myModule = new hex.ioc.parser.xml.state.mock.MockModuleWorkingWithStates( stateConfig );
+}

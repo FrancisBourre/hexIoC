@@ -2,6 +2,7 @@ package hex.compiler.parser.flow;
 
 import hex.compiler.parser.flow.FlowCompilerTest;
 import hex.compiler.parser.flow.context.ApplicationContextBuildingTest;
+import hex.compiler.parser.flow.state.StatefulStateMachineConfigTest;
 
 /**
  * ...
@@ -14,6 +15,7 @@ class CompilerFlowSuite
 	[ 
 		ApplicationContextBuildingTest, 
 		FlowCompilerTest,
-		StaticFlowCompilerTest
+		StaticFlowCompilerTest,
+		StatefulStateMachineConfigTest
 	];
 }
