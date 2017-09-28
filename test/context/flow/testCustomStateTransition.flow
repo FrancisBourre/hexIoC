@@ -1,0 +1,17 @@
+@context
+{
+	messageID = new hex.event.MessageType( 'messageName' );
+	anotherMessageID = new hex.event.MessageType( 'anotherMessageName' );
+	
+	customState = state()
+		.enter( method(module.callback) )
+		.transition( messageID, anotherCustomState );
+	
+	anotherCustomState = state()
+		.enter( hex.ioc.parser.xml.assembler.mock.MockStateCommand )
+		.exit( hex.ioc.parser.xml.assembler.mock.MockExitStateCommand )
+		.transition( anotherMessageID, customState );
+		
+	@map_type( 'hex.module.IModule' )
+	module = new hex.ioc.parser.xml.assembler.mock.MockModule();
+}
