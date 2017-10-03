@@ -481,11 +481,12 @@ class CompileTimeContextFactory
 	{
 		if ( MacroUtil.implementsInterface( this._getClassType( constructorVO.className ), _dependencyInterface ) )
 		{
-			var mappings = constructorVO.arguments.filter(
-				function ( arg ) return arg.ref != null )
-			.map( function ( arg ) return this._coreFactory.locate( arg.ref ) )
-			.flatMap( _getMappingDefinitions )
-			.array();
+			var mappings = constructorVO.arguments
+				.filter( function ( arg ) return arg.ref != null )
+					.map( function ( arg ) return this._coreFactory.locate( arg.ref ) )
+						.filter( function ( arg ) return arg != null )
+							.flatMap( _getMappingDefinitions )
+								.array();
 			
 			if ( !hex.di.mapping.MappingChecker.matchForClassName( constructorVO.className, mappings ) )
 			{
