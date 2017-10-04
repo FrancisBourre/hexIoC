@@ -1,0 +1,16 @@
+@context( 
+			name = 'applicationContext', 
+			type = hex.ioc.parser.xml.assembler.mock.MockApplicationContext )
+{
+	customState = state( ref( this.state.CUSTOM_STATE ) )
+		.enter( hex.ioc.parser.xml.assembler.mock.MockStateCommandWithModule, contextOwner( anotherModule ) );
+
+	anotherState = state( ref( this.state.ANOTHER_STATE ) )
+		.enter( hex.ioc.parser.xml.assembler.mock.MockStateCommand, fireOnce );
+	
+	@map_type( 'hex.module.IModule' )
+	module = new hex.ioc.parser.xml.assembler.mock.MockModule();
+	
+	@map_type( 'hex.module.IModule' )
+	anotherModule = new hex.ioc.parser.xml.assembler.mock.MockModule();
+}

@@ -103,9 +103,16 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 						
 					//TODO refactor - Should be part of the method parser	
 					case ECall( _.expr => EField( ref, field ), params ):
+						
 						var ident = ExpressionUtil.compressField( ref );
-						var args = params.map( function( param ) return this.parser.parseArgument( this.parser, ident, param ) );
-						this._builder.build( METHOD_CALL( new MethodCallVO( ident, field, args ) ) );
+						
+						//remove state checking
+						if ( ident.split('.')[0] != 'state' )
+						{
+							var ident = ExpressionUtil.compressField( ref );
+							var args = params.map( function( param ) return this.parser.parseArgument( this.parser, ident, param ) );
+							this._builder.build( METHOD_CALL( new MethodCallVO( ident, field, args ) ) );
+						}
 						
 					case _:
 						//TODO remove

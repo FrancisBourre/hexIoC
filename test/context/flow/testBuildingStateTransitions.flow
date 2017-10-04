@@ -1,0 +1,32 @@
+@context( name = 'applicationContext' )
+{
+	assemblingStart = 
+	state( ref( applicationContext.state.ASSEMBLING_START ) )
+		.enter( hex.ioc.parser.xml.assembler.mock.MockStateCommand )
+		.exit( hex.ioc.parser.xml.assembler.mock.MockStateCommand );
+
+	objectsBuilt = 
+	state( ref( applicationContext.state.OBJECTS_BUILT ) )
+		.enter( hex.ioc.parser.xml.assembler.mock.MockStateCommand )
+		.exit( hex.ioc.parser.xml.assembler.mock.MockStateCommand );
+	
+	domainListenersAssigned =
+	state( ref( applicationContext.state.DOMAIN_LISTENERS_ASSIGNED ) )
+		.enter( hex.ioc.parser.xml.assembler.mock.MockStateCommand )
+		.exit( hex.ioc.parser.xml.assembler.mock.MockStateCommand );
+	
+	methodsCalled =
+	state( ref( applicationContext.state.METHODS_CALLED ) )
+		.enter( hex.ioc.parser.xml.assembler.mock.MockStateCommand )
+		.exit( hex.ioc.parser.xml.assembler.mock.MockStateCommand );
+	
+	modulesInitialized =
+	state( ref( applicationContext.state.MODULES_INITIALIZED ) )
+		.enter( hex.ioc.parser.xml.assembler.mock.MockStateCommand )
+		.exit( hex.ioc.parser.xml.assembler.mock.MockStateCommand );
+	
+	assemblingEnd =
+	state( ref( applicationContext.state.ASSEMBLING_END ) )
+		.enter( hex.ioc.parser.xml.assembler.mock.MockStateCommand )
+		.exit( hex.ioc.parser.xml.assembler.mock.MockStateCommand );
+}
