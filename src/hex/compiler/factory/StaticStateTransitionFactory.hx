@@ -16,12 +16,9 @@ import hex.util.MacroUtil;
  * ...
  * @author Francis Bourre
  */
-class StateTransitionFactory
+class StaticStateTransitionFactory
 {
-	function new()
-	{
-
-	}
+	function new(){}
 	
 	#if macro
 	static public function build( vo : StateTransitionVO, contextFactory : IContextFactory ) : Array<TransitionVO>
@@ -42,7 +39,7 @@ class StateTransitionFactory
 		}
 
 		var stateVarName = vo.ID;
-		vo.expressions.push( macro @:mergeBlock { var $stateVarName = $stateExp; coreFactory.register( $v { vo.ID }, $i{stateVarName} ); } );
+		vo.expressions.push( macro @:mergeBlock { var $stateVarName = $stateExp; coreFactory.register( $v { stateVarName }, $i{stateVarName} ); this.$stateVarName = $i { stateVarName }; } );
 		
 		var StateUnmapperClass 			= MacroUtil.getPack( Type.getClassName( StateUnmapper )  );
 		var ContextOwnerWrapperClass 	= MacroUtil.getTypePath( Type.getClassName( ContextOwnerWrapper )  );

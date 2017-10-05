@@ -11,6 +11,7 @@ import hex.core.IApplicationContext;
 import hex.core.ICoreFactory;
 import hex.core.SymbolTable;
 import hex.vo.ConstructorVO;
+import hex.ioc.vo.TransitionVO;
 
 /**
  * ...
@@ -54,6 +55,25 @@ class StaticCompileTimeContextFactory
 			this._factoryMap = hex.compiler.core.CompileTimeSettings.factoryMap;
 			this._coreFactory.addListener( this );
 		}
+	}
+	
+	override public function buildStateTransition( key : String ) : Array<TransitionVO>
+	{
+		var transitions : Array<TransitionVO> = null;
+
+		if ( this._stateTransitionVOLocator.isRegisteredWithKey( key ) )
+		{
+			var stateTransitionVO = this._stateTransitionVOLocator.locate( key );
+			
+			hex.compiletime.util.ContextBuilder.getInstance( this )
+				.addField( key, ContextFactoryUtil.getComplexType( 'hex.state.State', stateTransitionVO.filePosition ), stateTransitionVO.filePosition );
+			
+			stateTransitionVO.expressions = this._expressions;
+			transitions = hex.compiler.factory.StaticStateTransitionFactory.build( stateTransitionVO, this );
+			this._stateTransitionVOLocator.unregister( key );
+		}
+
+		return transitions;
 	}
 
 	override public function buildVO( constructorVO : ConstructorVO, ?id : String ) : Dynamic
@@ -103,7 +123,7 @@ class StaticCompileTimeContextFactory
 
 			if ( !constructorVO.lazy )
 			{
-				this._expressions.push( macro @:mergeBlock { $finalResult;  /*coreFactory.register( $v { id }, $i { id } );*/ this.$id = $i { id }; } );
+				this._expressions.push( macro @:mergeBlock { $finalResult; coreFactory.register( $v { id }, $i { id } ); this.$id = $i { id }; } );
 			}
 			
 			this._coreFactory.register( id, result );

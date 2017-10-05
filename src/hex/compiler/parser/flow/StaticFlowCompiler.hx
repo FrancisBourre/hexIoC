@@ -131,6 +131,7 @@ class StaticParserCollection extends AbstractParserCollection<AbstractExprParser
 		this._parserCollection.push( new StaticContextParser( this._assemblerExpression ) );
 		this._parserCollection.push( new RuntimeParameterParser( this._runtimeParam ) );
 		this._parserCollection.push( new ImportContextParser( hex.compiletime.flow.parser.FlowExpressionParser.parser ) );
+		this._parserCollection.push( new StateParser( hex.compiletime.flow.parser.FlowExpressionParser.parser ) );//
 		this._parserCollection.push( new hex.compiler.parser.flow.ObjectParser( hex.compiletime.flow.parser.FlowExpressionParser.parser, this._runtimeParam ) );
 		this._parserCollection.push( new StaticLauncher( this._assemblerExpression, this._fileName, this._runtimeParam ) );
 	}
