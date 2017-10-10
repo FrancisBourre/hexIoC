@@ -38,6 +38,12 @@ using tink.MacroApi;
 class StaticFlowCompiler 
 {
 	#if macro
+	public static var ParserCollectionConstructor : VariableExpression
+					->String
+					->hex.preprocess.RuntimeParam
+					->hex.parser.AbstractParserCollection<hex.compiletime.flow.AbstractExprParser<hex.factory.BuildRequest>>
+					= StaticParserCollection.new;
+											
 	public static function _readFile(	fileName 				: String,
 										?applicationContextName 		: String,
 										?preprocessingVariables 		: Expr,
@@ -57,7 +63,7 @@ class StaticFlowCompiler
 	
 		var assembler 					= new CompileTimeApplicationAssembler();
 		var assemblerExpression			= { name: '', expression: applicationAssemblerExpression };
-		var parser 						= new CompileTimeParser( new StaticParserCollection( assemblerExpression, fileName, reader.getRuntimeParam() ) );
+		var parser 						= new CompileTimeParser( ParserCollectionConstructor( assemblerExpression, fileName, reader.getRuntimeParam() ) );
 		
 		parser.setImportHelper( new ClassImportHelper() );
 		parser.setExceptionReporter( new FlowAssemblingExceptionReporter() );
@@ -131,7 +137,7 @@ class StaticParserCollection extends AbstractParserCollection<AbstractExprParser
 		this._parserCollection.push( new StaticContextParser( this._assemblerExpression ) );
 		this._parserCollection.push( new RuntimeParameterParser( this._runtimeParam ) );
 		this._parserCollection.push( new ImportContextParser( hex.compiletime.flow.parser.FlowExpressionParser.parser ) );
-		this._parserCollection.push( new StateParser( hex.compiletime.flow.parser.FlowExpressionParser.parser ) );//
+		this._parserCollection.push( new StateParser( hex.compiletime.flow.parser.FlowExpressionParser.parser ) );
 		this._parserCollection.push( new hex.compiler.parser.flow.ObjectParser( hex.compiletime.flow.parser.FlowExpressionParser.parser, this._runtimeParam ) );
 		this._parserCollection.push( new StaticLauncher( this._assemblerExpression, this._fileName, this._runtimeParam ) );
 	}
