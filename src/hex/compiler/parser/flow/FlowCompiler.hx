@@ -24,6 +24,10 @@ import hex.preprocess.flow.MacroConditionalVariablesProcessor;
 class FlowCompiler 
 {
 	#if macro
+	public static var ParserCollectionConstructor : hex.core.VariableExpression
+					->hex.parser.AbstractParserCollection<hex.compiletime.flow.AbstractExprParser<hex.factory.BuildRequest>>
+					= ParserCollection.new;
+					
 	public static function _readFile(	fileName 						: String,
 										?applicationContextName 		: String,
 										?preprocessingVariables 		: Expr,
