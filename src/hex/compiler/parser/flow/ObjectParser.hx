@@ -74,6 +74,10 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 			case macro @lazy( $a{ args } ) $e:
 				constructorVO.lazy = true;
 				this._parseExpression ( e, constructorVO );
+				
+			case macro @public( $a{ args } ) $e:
+				constructorVO.isPublic = true;
+				this._parseExpression ( e, constructorVO );
 
 			case macro when( $a{ when } ).then( $a{ then } ):
 				var vo = _getDomainListenerVO( when, then );
