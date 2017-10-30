@@ -30,10 +30,12 @@ class MockWeatherListener extends Module
 			.connect( this.setWeather );
 	}
 	
+	#if debug
 	override function _getRuntimeDependencies() : IRuntimeDependencies 
 	{
 		return new RuntimeDependencies();
 	}
+	#end
 	
 	public function setTemperature( temperature : Int ) : Void
 	{

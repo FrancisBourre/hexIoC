@@ -25,8 +25,10 @@ class MockMappedModule extends Module implements IMockMappedModule implements IA
 		
 	}
 	
+	#if debug
 	override function _getRuntimeDependencies() : IRuntimeDependencies
 	{
 		return new RuntimeDependencies();
 	}
+	#end
 }
