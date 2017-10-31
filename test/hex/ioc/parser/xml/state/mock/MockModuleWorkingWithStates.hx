@@ -25,8 +25,10 @@ class MockModuleWorkingWithStates extends Module
 		super._onInitialisation();
 	}
 	
+	#if debug
 	override function _getRuntimeDependencies() : IRuntimeDependencies
 	{
 		return new RuntimeDependencies();
 	}
+	#end
 }

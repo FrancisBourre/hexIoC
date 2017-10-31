@@ -19,10 +19,12 @@ class MockBuilderModule extends Module
 		super();
 	}
 	
+	#if debug
 	override function _getRuntimeDependencies() : IRuntimeDependencies 
 	{
 		return new RuntimeDependencies();
 	}
+	#end
 	
 	public function build( state : State ) : Void
 	{

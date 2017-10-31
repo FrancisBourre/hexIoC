@@ -1,5 +1,7 @@
 @context( name = 'applicationContext' )
 {
+	emptyState = state();
+	
 	assemblingStart = 
 	state( ref( this.state.ASSEMBLING_START ) )
 		.enter( hex.ioc.parser.xml.assembler.mock.MockStateCommand )

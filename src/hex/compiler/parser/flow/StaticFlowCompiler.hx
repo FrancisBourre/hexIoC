@@ -173,6 +173,7 @@ class ImportContextParser extends AbstractExprParser<hex.factory.BuildRequest>
 			case macro $i{ident} = new Context( $a{params} ):
 				Transformed( {
 								id:ident, 
+								isPublic: false,
 								fileName: 	switch( params[ 0 ].expr )
 											{
 												case EConst(CString(s)): s; 
@@ -181,6 +182,19 @@ class ImportContextParser extends AbstractExprParser<hex.factory.BuildRequest>
 								arg: params.length>1 ? this._parser.parseArgument( this._parser, ident, params[ 1 ] ): null,
 								pos:e.pos 
 							});
+							
+			case macro @public $i{ident} = new Context( $a{params} ):
+				Transformed( {
+								id:ident, 
+								isPublic: true,
+								fileName: 	switch( params[ 0 ].expr )
+											{
+												case EConst(CString(s)): s; 
+												case _: ''; 
+											}, 
+								arg: params.length>1 ? this._parser.parseArgument( this._parser, ident, params[ 1 ] ): null,
+								pos:e.pos 
+								});
 			
 			case _: Original( e );
 		}

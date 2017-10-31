@@ -27,8 +27,10 @@ class AnotherMockModuleWithServiceCallback extends Module
 		return this._floatValue;
 	}
 	
+	#if debug
 	override function _getRuntimeDependencies() : IRuntimeDependencies
 	{
 		return new RuntimeDependencies();
 	}
+	#end
 }

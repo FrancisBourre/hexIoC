@@ -39,8 +39,10 @@ class MockModuleWithServiceCallback extends Module
 		return this._booleanValue;
 	}
 	
+	#if debug
 	override function _getRuntimeDependencies() : IRuntimeDependencies
 	{
 		return new RuntimeDependencies();
 	}
+	#end
 }

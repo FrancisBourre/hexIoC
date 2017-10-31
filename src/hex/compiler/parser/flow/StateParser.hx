@@ -63,6 +63,11 @@ class StateParser extends AbstractExprParser<hex.factory.BuildRequest>
 							return Transformed( {vo: vo, expr: value } );
 						}
 						
+					case ECall( _.expr => EConst(CIdent( 'state' )), params ):
+						var vo = new StateTransitionVO( id, null, null, [], [], [] );
+						vo.filePosition = value.pos;
+						return Transformed( {vo: vo, expr: value } );
+						
 					case _:
 				}
 
