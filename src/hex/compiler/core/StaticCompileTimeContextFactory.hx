@@ -117,15 +117,22 @@ class StaticCompileTimeContextFactory
 						constructorVO.cType;
 							else 								
 								ContextFactoryUtil.getComplexType( constructorVO.type, constructorVO.filePosition );
-					
-			hex.compiletime.util.ContextBuilder.getInstance( this )
-				.addField( id, type, constructorVO.filePosition, (constructorVO.lazy?finalResult:null) );
-
-			if ( !constructorVO.lazy )
-			{
-				this._expressions.push( macro @:mergeBlock { $finalResult; coreFactory.register( $v { id }, $i { id } ); this.$id = $i { id }; } );
-			}
 			
+			if ( constructorVO.isPublic )
+			{
+				hex.compiletime.util.ContextBuilder.getInstance( this )
+					.addField( id, type, constructorVO.filePosition, (constructorVO.lazy?finalResult:null) );
+					
+				if ( !constructorVO.lazy )
+				{
+					this._expressions.push( macro @:mergeBlock { $finalResult; coreFactory.register( $v { id }, $i { id } ); this.$id = $i { id }; } );
+				}
+			}
+			else
+			{
+				this._expressions.push( macro @:mergeBlock { $finalResult; coreFactory.register( $v { id }, $i { id } ); } );
+			}
+
 			this._coreFactory.register( id, result );
 		}
 

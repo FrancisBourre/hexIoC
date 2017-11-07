@@ -2,5 +2,6 @@
 			name = 'applicationContext', 
 			type = hex.ioc.parser.xml.context.mock.MockApplicationContext )
 {
+	@public
 	test = 'Hola Mundo';
 }

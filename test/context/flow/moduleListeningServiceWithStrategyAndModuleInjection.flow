@@ -1,6 +1,9 @@
 @context( name = 'applicationContext' )
 {
+	@public
 	myService = new hex.ioc.parser.xml.mock.MockStubStatefulService();
+	
+	@public
 	myModule = new hex.ioc.parser.xml.mock.MockModuleWithServiceCallback();
 	
 	when( myService, hex.ioc.parser.xml.mock.MockStubStatefulService.INT_VO_UPDATE )
