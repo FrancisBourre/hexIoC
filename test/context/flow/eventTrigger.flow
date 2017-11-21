@@ -1,10 +1,13 @@
 @context( name = 'applicationContext' )
 {
+	@public
 	chat = new hex.ioc.parser.xml.mock.MockChatModule( this );
 	
+	@public
 	@map_type( 'hex.ioc.parser.xml.mock.MockReceiverModule' ) 
 	receiver = new hex.ioc.parser.xml.mock.MockReceiverModule( this );
 	
+	@public
 	@map_type( 'hex.ioc.parser.xml.mock.IMockMessageParserModule' ) 
 	parser = new hex.ioc.parser.xml.mock.MockMessageParserModule( this );
 

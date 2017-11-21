@@ -1,10 +1,16 @@
 @context( name = 'applicationContext' )
 {
+	@public
 	@map_type( 'hex.ioc.parser.xml.mock.IMockDividerHelper' )
 	mockDividerHelper = new hex.ioc.parser.xml.mock.MockDividerHelper();
 	
+	@public
 	myService = new hex.ioc.parser.xml.mock.MockStubStatefulService();
+	
+	@public
 	myModuleA = new hex.ioc.parser.xml.mock.MockModuleWithServiceCallback();
+	
+	@public
 	myModuleB = new hex.ioc.parser.xml.mock.AnotherMockModuleWithServiceCallback();
 	
 	when( myService, hex.ioc.parser.xml.mock.MockStubStatefulService.INT_VO_UPDATE )

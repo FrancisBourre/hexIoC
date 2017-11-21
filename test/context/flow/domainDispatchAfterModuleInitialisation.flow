@@ -1,6 +1,9 @@
 @context( name = 'applicationContext' )
 {
+	@public
 	sender = new hex.ioc.parser.xml.mock.MockSenderModule( this );
+	
+	@public
 	receiver = new hex.ioc.parser.xml.mock.MockReceiverModule( this );
 	
 	when( sender, hex.ioc.parser.xml.mock.MockChatModule.TEXT_INPUT )

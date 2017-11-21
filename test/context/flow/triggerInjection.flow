@@ -1,6 +1,9 @@
 @context( name = 'applicationContext' )
 {
+	@public
 	model = new hex.mock.MockWeatherModel();
+	
+	@public
 	module = new hex.mock.MockWeatherListenerWithMappingDefinition( config );
 
 	config = new Array<hex.di.mapping.MappingDefinition>

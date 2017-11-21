@@ -208,6 +208,7 @@ class ImportContextParser extends AbstractExprParser<hex.factory.BuildRequest>
 		
 		var args = [ { className: 'hex.context.' + className/*this._getClassName( e )*/, expr: e, arg: i.arg } ];
 		var vo = new ConstructorVO( i.id, ContextTypeList.CONTEXT, args );
+		vo.isPublic = true;
 		vo.filePosition = i.pos;
 		this._builder.build( OBJECT( vo ) );
 	}

@@ -3,7 +3,10 @@
 	@map_type( 'hex.ioc.parser.xml.mock.IMockMessageParserModule' )
 	parser = new hex.ioc.parser.xml.mock.MockMessageParserModule( this );
 	
+	@public
 	sender = new hex.ioc.parser.xml.mock.MockSenderModule( this );
+	
+	@public
 	receiver = new hex.ioc.parser.xml.mock.MockReceiverModule( this );
 	
 	when( sender, hex.ioc.parser.xml.mock.MockChatModule.TEXT_INPUT )

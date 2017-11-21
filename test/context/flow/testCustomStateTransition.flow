@@ -1,6 +1,9 @@
 @context
 {
+	@public
 	messageID = new hex.event.MessageType( 'messageName' );
+	
+	@public
 	anotherMessageID = new hex.event.MessageType( 'anotherMessageName' );
 	
 	customState = state()
@@ -12,6 +15,7 @@
 		.exit( hex.ioc.parser.xml.assembler.mock.MockExitStateCommand )
 		.transition( anotherMessageID, customState );
 		
+	@public
 	@map_type( 'hex.module.IModule' )
 	module = new hex.ioc.parser.xml.assembler.mock.MockModule();
 }

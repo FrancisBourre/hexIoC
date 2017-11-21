@@ -8,9 +8,11 @@
 	anotherState = state( ref( this.state.ANOTHER_STATE ) )
 		.enter( hex.ioc.parser.xml.assembler.mock.MockStateCommand, fireOnce );
 	
+	@public
 	@map_type( 'hex.module.IModule' )
 	module = new hex.ioc.parser.xml.assembler.mock.MockModule();
 	
+	@public
 	@map_type( 'hex.module.IModule' )
 	anotherModule = new hex.ioc.parser.xml.assembler.mock.MockModule();
 }
