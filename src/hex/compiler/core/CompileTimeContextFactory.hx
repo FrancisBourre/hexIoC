@@ -538,12 +538,14 @@ class CompileTimeContextFactory
 	{
 		if ( !constructorVO.injectInto && MacroUtil.implementsInterface( this._getClassType( constructorVO.className ), _commandTriggerInterface ) )
 		{
-			result = macro 	@:pos( constructorVO.filePosition ) 
-							@:mergeBlock
-							{ 
-								$result; 
-								__applicationContextInjector.injectInto( $i{ constructorVO.ID } ); 
-							};
+			//TODO throws an error if interface is not implemented
+			this._injectedInto.push( 
+				macro 	@:pos( constructorVO.filePosition )
+						@:mergeBlock
+						{ 
+							__applicationContextInjector.injectInto( $i{ constructorVO.ID } ); 
+						}
+			);
 		}
 		
 		return result;
