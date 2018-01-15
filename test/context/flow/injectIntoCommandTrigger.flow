@@ -1,0 +1,8 @@
+@context()
+{
+	@public
+	commandTrigger = new hex.mock.MockCommandTriggerImpl();
+	
+	@map_type( 'Int' )
+	i = 3;
+}

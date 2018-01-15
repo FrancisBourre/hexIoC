@@ -1560,4 +1560,28 @@ class StaticFlowCompilerTest
 		
 		Assert.equals( mock, code.locator.alias );
 	}
+	
+	@Test( "test building public string" )
+	public function testBuildingPublicString() : Void
+	{
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/primitives/publicString.flow", "StaticFlowCompiler_testBuildingPublicString" );
+		code.execute();
+		
+		Assert.equals( 'isPublic', code.locator.isPublic );
+		Assert.equals( 'isPrivate', code.locator.wasPrivate );
+		Assert.equals( '3', code.locator.isLazy );
+		Assert.equals( '4', code.locator.wasPrivateAndLazy );
+		//Assert.equals( 4, code.locator.isPrivateAndLazy );
+	}
+	
+	@Test( "test inject into CommandTrigger" )
+	public function testInjectIntoCommandTrigger() : Void
+	{
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/injectIntoCommandTrigger.flow", "StaticFlowCompiler_testCompositeRuntimeParameters" );
+		code.applicationContext.getInjector().mapToValue( String, 'test' );
+		code.execute();
+		
+		Assert.equals( 'test', code.locator.commandTrigger.test );
+		Assert.equals( 3, code.locator.commandTrigger.i );
+	}
 }

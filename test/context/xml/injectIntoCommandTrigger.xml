@@ -1,0 +1,7 @@
+<root name="applicationContext">
+	
+    <bean id="commandTrigger" type="hex.mock.MockCommandTriggerImpl"/>
+	
+    <bean id="i" type="Int" value="3" map-type="Int"/>
+
+</root>

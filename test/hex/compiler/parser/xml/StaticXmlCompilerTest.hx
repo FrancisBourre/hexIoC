@@ -1256,4 +1256,15 @@ class StaticXmlCompilerTest
 		code.locator.myService.setBooleanVO( booleanVO );
 		Assert.isTrue( code.locator.myModule.getBooleanValue() );
 	}
+	
+	@Test( "test inject into CommandTrigger" )
+	public function testInjectIntoCommandTrigger() : Void
+	{
+		var code = StaticXmlCompiler.compile( this._applicationAssembler, "context/xml/injectIntoCommandTrigger.xml", "StaticXmlCompiler_testCompositeRuntimeParameters" );
+		code.applicationContext.getInjector().mapToValue( String, 'test' );
+		code.execute();
+		
+		Assert.equals( 'test', code.locator.commandTrigger.test );
+		Assert.equals( 3, code.locator.commandTrigger.i );
+	}
 }
