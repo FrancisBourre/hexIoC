@@ -283,9 +283,17 @@ class ObjectParser extends AbstractExprParser<hex.factory.BuildRequest>
 				switch( e.expr )
 				{
 					case EField( ee, ff ):
-						constructorVO.type = ExpressionUtil.compressField( e );
 						constructorVO.arguments = [];
-						constructorVO.staticCall = field;
+						if ( field != 'bind' )
+						{
+							constructorVO.type = ExpressionUtil.compressField( e );
+							constructorVO.staticCall = field;
+						}
+						else
+						{
+							constructorVO.type = ContextTypeList.CLOSURE;
+							constructorVO.ref = ExpressionUtil.compressField( e );
+						}
 						
 					case ECall( ee, pp ):
 

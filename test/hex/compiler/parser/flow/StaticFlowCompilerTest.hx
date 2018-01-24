@@ -1584,4 +1584,23 @@ class StaticFlowCompilerTest
 		Assert.equals( 'test', code.locator.commandTrigger.test );
 		Assert.equals( 3, code.locator.commandTrigger.i );
 	}
+	
+	@Test( "test bind on closure assignment" )
+	public function testClosureAssignmentWithBind() : Void
+	{
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/closureWithBind.flow", "StaticFlowCompiler_testClosureAssignmentWithBind" );
+		code.execute();
+		
+		Assert.equals( 'test3', code.locator.binded('test') );
+		Assert.equals( 'test3', code.locator.staticBinded('test') );
+		
+		Assert.equals( 'test3', code.locator.recursive.f1('test') );
+		Assert.equals( 'test3', code.locator.recursive.f2('test') );
+		
+		Assert.equals( 'test3', code.locator.recursive.f3('test') );
+		Assert.equals( 'test3', code.locator.recursive.f4('test') );
+		
+		Assert.equals( 'test3', (cast code.locator.mapping1.toValue)('test') );
+		Assert.equals( 'test3', (cast code.locator.mapping2.toValue)('test') );
+	}
 }
