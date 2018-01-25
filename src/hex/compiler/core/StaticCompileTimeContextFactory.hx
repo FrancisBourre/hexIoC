@@ -5,13 +5,13 @@ import hex.collection.Locator;
 import hex.compiler.factory.DomainListenerFactory;
 import hex.compiletime.basic.CompileTimeCoreFactory;
 import hex.compiletime.basic.ContextFactoryUtil;
+import hex.compiletime.basic.MappingDependencyChecker;
 import hex.compiletime.basic.vo.FactoryVOTypeDef;
-import hex.core.ContextTypeList;
 import hex.core.IApplicationContext;
 import hex.core.ICoreFactory;
 import hex.core.SymbolTable;
-import hex.vo.ConstructorVO;
 import hex.ioc.vo.TransitionVO;
+import hex.vo.ConstructorVO;
 
 /**
  * ...
@@ -50,6 +50,7 @@ class StaticCompileTimeContextFactory
 			this._moduleLocator 					= new Locator();
 			this._mappedTypes 						= [];
 			this._injectedInto 						= [];
+			this._dependencyChecker					= new MappingDependencyChecker( this._coreFactory, this._typeLocator );
 			
 			DomainListenerFactory.domainLocator = new Map();
 			this._factoryMap = hex.compiler.core.CompileTimeSettings.factoryMap;
@@ -98,7 +99,7 @@ class StaticCompileTimeContextFactory
 		
 		var result = buildMethod( this._getFactoryVO( constructorVO ) );
 		
-		this._checkDependencies( constructorVO );
+		this._dependencyChecker.checkDependencies( constructorVO );
 
 		if ( id != null )
 		{
