@@ -789,7 +789,7 @@ class StaticXmlCompilerTest
 
 		Assert.isNotNull( code.locator.sender );
 		Assert.isNotNull( code.locator.receiver );
-		Timer.delay( MethodRunner.asyncHandler( this._onEventAdapterStrategyMacro, [code.locator.receiver] ), 350 );
+		Timer.delay( MethodRunner.asyncHandler.bind( this._onEventAdapterStrategyMacro.bind(code.locator.receiver) ), 350 );
 	}
 	
 	function _onEventAdapterStrategyMacro( receiver : MockReceiverModule )
@@ -971,7 +971,7 @@ class StaticXmlCompilerTest
 		Assert.isNotNull( code.locator.receiver );
 		Assert.isNotNull( code.locator.parser );
 
-		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandlerEventTrigger, [ code.locator.receiver ] ), 500 );
+		Timer.delay( MethodRunner.asyncHandler.bind( this._onCompleteHandlerEventTrigger.bind(code.locator.receiver) ), 500 );
 		code.locator.chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "bonjour" ] );
 	}
 	
@@ -992,7 +992,7 @@ class StaticXmlCompilerTest
 		Assert.isNotNull( code.locator.eventProxy );
 		Assert.isNotNull( code.locator.parser );
 
-		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandlerEventProxy, [ code.locator.receiver ] ), 500 );
+		Timer.delay( MethodRunner.asyncHandler.bind( this._onCompleteHandlerEventProxy.bind(code.locator.receiver) ), 500 );
 		code.locator.chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "bonjour" ] );
 	}
 	

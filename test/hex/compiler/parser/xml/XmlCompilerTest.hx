@@ -812,7 +812,7 @@ class XmlCompilerTest
 
 		Assert.isNotNull( this._getCoreFactory().locate( "sender" ) );
 		Assert.isNotNull( this._getCoreFactory().locate( "receiver" ) );
-		Timer.delay( MethodRunner.asyncHandler( this._onEventAdapterStrategyMacro ), 350 );
+		Timer.delay( MethodRunner.asyncHandler.bind( this._onEventAdapterStrategyMacro.bind()), 350 );
 	}
 	
 	function _onEventAdapterStrategyMacro()
@@ -1067,7 +1067,7 @@ class XmlCompilerTest
 		var parser : MockMessageParserModule = this._locate( "parser" );
 		Assert.isNotNull( parser, "" );
 
-		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandler ), 500 );
+		Timer.delay( MethodRunner.asyncHandler.bind( this._onCompleteHandler.bind() ), 500 );
 		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "bonjour" ] );
 	}
 	
@@ -1091,7 +1091,7 @@ class XmlCompilerTest
 		var parser : MockMessageParserModule = this._locate( "parser" );
 		Assert.isNotNull( parser, "" );
 
-		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandler ), 500 );
+		Timer.delay( MethodRunner.asyncHandler.bind( this._onCompleteHandler.bind() ), 500 );
 		chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "bonjour" ] );
 	}
 	
