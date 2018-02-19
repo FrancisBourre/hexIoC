@@ -694,7 +694,7 @@ class StaticFlowCompilerTest
 
 		Assert.isNotNull( code.locator.sender );
 		Assert.isNotNull( code.locator.receiver );
-		Timer.delay( MethodRunner.asyncHandler( this._onEventAdapterStrategyMacro, [code.locator.receiver] ), 350 );
+		Timer.delay( MethodRunner.asyncHandler.bind( this._onEventAdapterStrategyMacro.bind(code.locator.receiver) ), 350 );
 	}
 	
 	function _onEventAdapterStrategyMacro( receiver : MockReceiverModule )
@@ -910,7 +910,7 @@ class StaticFlowCompilerTest
 		Assert.isNotNull( code.locator.receiver );
 		Assert.isNotNull( code.locator.parser );
 
-		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandlerEventTrigger, [ code.locator.receiver ] ), 500 );
+		Timer.delay( MethodRunner.asyncHandler.bind( this._onCompleteHandlerEventTrigger.bind(code.locator.receiver) ), 500 );
 		code.locator.chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "bonjour" ] );
 	}
 	
@@ -931,7 +931,7 @@ class StaticFlowCompilerTest
 		Assert.isNotNull( code.locator.eventProxy );
 		Assert.isNotNull( code.locator.parser );
 
-		Timer.delay( MethodRunner.asyncHandler( this._onCompleteHandlerEventProxy, [ code.locator.receiver ] ), 500 );
+		Timer.delay( MethodRunner.asyncHandler.bind( this._onCompleteHandlerEventProxy.bind(code.locator.receiver) ), 500 );
 		code.locator.chat.dispatchDomainEvent( MockChatModule.TEXT_INPUT, [ "bonjour" ] );
 	}
 	
@@ -1583,5 +1583,24 @@ class StaticFlowCompilerTest
 		
 		Assert.equals( 'test', code.locator.commandTrigger.test );
 		Assert.equals( 3, code.locator.commandTrigger.i );
+	}
+	
+	@Test( "test bind on closure assignment" )
+	public function testClosureAssignmentWithBind() : Void
+	{
+		var code = StaticFlowCompiler.compile( this._myApplicationAssembler, "context/flow/closureWithBind.flow", "StaticFlowCompiler_testClosureAssignmentWithBind" );
+		code.execute();
+		
+		Assert.equals( 'test3', code.locator.binded('test') );
+		Assert.equals( 'test3', code.locator.staticBinded('test') );
+		
+		Assert.equals( 'test3', code.locator.recursive.f1('test') );
+		Assert.equals( 'test3', code.locator.recursive.f2('test') );
+		
+		Assert.equals( 'test3', code.locator.recursive.f3('test') );
+		Assert.equals( 'test3', code.locator.recursive.f4('test') );
+		
+		Assert.equals( 'test3', (cast code.locator.mapping1.toValue)('test') );
+		Assert.equals( 'test3', (cast code.locator.mapping2.toValue)('test') );
 	}
 }

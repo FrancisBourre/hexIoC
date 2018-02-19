@@ -1,9 +1,7 @@
 package hex.compiler.core;
 
 #if macro
-import haxe.macro.Context;
 import haxe.macro.Expr;
-import haxe.macro.Type.ClassType;
 import hex.collection.ILocator;
 import hex.collection.ILocatorListener;
 import hex.collection.Locator;
@@ -11,6 +9,7 @@ import hex.compiler.factory.DomainListenerFactory;
 import hex.compiler.factory.StateTransitionFactory;
 import hex.compiletime.basic.CompileTimeCoreFactory;
 import hex.compiletime.basic.IContextFactory;
+import hex.compiletime.basic.MappingDependencyChecker;
 import hex.compiletime.basic.vo.FactoryVOTypeDef;
 import hex.compiletime.factory.FactoryUtil;
 import hex.compiletime.factory.PropertyFactory;
@@ -50,8 +49,7 @@ class CompileTimeContextFactory
 	static var _commandTriggerInterface 	= MacroUtil.getClassType( Type.getClassName( ICommandTrigger ) );
 	static var _injectorContainerInterface 	= MacroUtil.getClassType( Type.getClassName( IInjectorContainer ) );
 	static var _moduleInterface 			= MacroUtil.getClassType( Type.getClassName( IContextModule ) );
-	static var _dependencyInterface 		= MacroUtil.getClassType( Type.getClassName( hex.di.mapping.IDependencyOwner ) );
-	
+
 	var _isInitialized				: Bool;
 	var _expressions 				: Array<Expr>;
 	var _mappedTypes 				: Array<Expr>;
@@ -70,6 +68,7 @@ class CompileTimeContextFactory
 	var _typeLocator 				: Locator<String, String>;
 	var _domainListenerVOLocator 	: Locator<String, DomainListenerVO>;
 	var _stateTransitionVOLocator 	: Locator<String, StateTransitionVO>;
+	var _dependencyChecker 			: MappingDependencyChecker;
 	
 	var _transitions				: Array<TransitionVO>;
 	
@@ -99,6 +98,7 @@ class CompileTimeContextFactory
 			this._moduleLocator 					= new Locator();
 			this._mappedTypes 						= [];
 			this._injectedInto 						= [];
+			this._dependencyChecker					= new MappingDependencyChecker( this._coreFactory, this._typeLocator );
 			
 			DomainListenerFactory.domainLocator = new Map();
 			this._factoryMap = hex.compiler.core.CompileTimeSettings.factoryMap;
@@ -133,6 +133,7 @@ class CompileTimeContextFactory
 	
 	public function dispose() : Void
 	{
+		this._dependencyChecker = null;
 		this._coreFactory.removeListener( this );
 		this._coreFactory.clear();
 		this._constructorVOLocator.release();
@@ -386,7 +387,7 @@ class CompileTimeContextFactory
 		
 		var result = buildMethod( this._getFactoryVO( constructorVO ) );
 		
-		this._checkDependencies( constructorVO );
+		this._dependencyChecker.checkDependencies( constructorVO );
 
 		if ( id != null )
 		{
@@ -407,98 +408,9 @@ class CompileTimeContextFactory
 		return result;
 	}
 	
-	function _getMappingDefinition( e )
-	{
-		switch( e.expr )
-		{
-			case EObjectDecl( fields ):
-
-				return fields.fold ( 
-					function (f, o) 
-					{
-						switch( f.field )
-						{
-							case 'fromType': Reflect.setField( o, f.field, haxe.macro.ExprTools.getValue( f.expr ) );
-							case 'withName': Reflect.setField( o, f.field, haxe.macro.ExprTools.getValue( f.expr ) );
-							case _:
-						}
-						return o;
-					}, {} );
-
-			case _:
-		}
-		
-		return null;
-	}
-	
-	function _getMappingDefinitions( e : Expr )  : Array<hex.di.mapping.MappingDefinition>
-	{
-		var a = [];
-		switch( e.expr )
-		{
-			case EVars( vars ) :
-				if ( vars[ 0 ].type != null )
-				{
-					if ( haxe.macro.ComplexTypeTools.toString( vars[ 0 ].type ) == 'Array<hex.di.mapping.MappingDefinition>' )
-					{
-						switch( vars[ 0 ].expr.expr )
-						{
-							case EArrayDecl( values ):
-								for ( value in values ) 
-								{
-									switch( value.expr )
-									{
-										case EObjectDecl( fields ):
-											var mapping = _getMappingDefinition( value );
-											if ( mapping != null ) a.push( mapping );
-											
-										case EConst(CIdent(ident)):
-											a = a.concat( _getMappingDefinitions( this._coreFactory.locate( ident ) ) );
-											
-										case wtf:
-											trace( 'wtf', wtf );
-									}
-								}
-
-							case _:
-						}
-						
-					}
-					else if ( haxe.macro.ComplexTypeTools.toString( vars[ 0 ].type ) == 'hex.di.mapping.MappingDefinition' )
-					{
-						var mapping = _getMappingDefinition( vars[ 0 ].expr );
-						if ( mapping != null ) a.push( mapping );
-					}
-				}
-				
-			case _:
-		}
-		
-		return cast a;
-	}
-	
-	function _checkDependencies( constructorVO : ConstructorVO ) : Void
-	{
-		if ( MacroUtil.implementsInterface( this._getClassType( constructorVO.className ), _dependencyInterface ) )
-		{
-			var mappings = constructorVO.arguments
-				.filter( function ( arg ) return arg.ref != null )
-					.map( function ( arg ) return this._coreFactory.locate( arg.ref ) )
-						.filter( function ( arg ) return arg != null )
-							.flatMap( _getMappingDefinitions )
-								.array();
-			
-			if ( !hex.di.mapping.MappingChecker.matchForClassName( constructorVO.className, mappings ) )
-			{
-				var missingMappings = hex.di.mapping.MappingChecker.getMissingMapping( constructorVO.className, cast mappings );
-				Context.fatalError( "Missing mappings:" + missingMappings, constructorVO.filePosition );
-			}
-		}
-	}
-	
 	function _tryToRegisterModule( constructorVO : ConstructorVO ) : Void
 	{
-		if ( MacroUtil.implementsInterface( this._getClassType( constructorVO.className ), _moduleInterface ) )
+		if ( MacroUtil.implementsInterface( MacroUtil.getClassType( constructorVO.className, null, false ), _moduleInterface ) )
 		{
 			this._moduleLocator.register( constructorVO.ID, constructorVO.ID );
 		}
@@ -506,7 +418,7 @@ class CompileTimeContextFactory
 	
 	function _parseInjectInto( constructorVO : ConstructorVO ) : Void
 	{
-		if ( constructorVO.injectInto && MacroUtil.implementsInterface( this._getClassType( constructorVO.className ), _injectorContainerInterface ) )
+		if ( constructorVO.injectInto && MacroUtil.implementsInterface( MacroUtil.getClassType( constructorVO.className, null, false ), _injectorContainerInterface ) )
 		{
 			//TODO throws an error if interface is not implemented
 			this._injectedInto.push( 
@@ -521,7 +433,7 @@ class CompileTimeContextFactory
 
 	function _parseAnnotation( constructorVO : ConstructorVO, result : Expr ) : Expr
 	{
-		if ( MacroUtil.implementsInterface( this._getClassType( constructorVO.className ), _annotationParsableInterface ) )
+		if ( MacroUtil.implementsInterface( MacroUtil.getClassType( constructorVO.className, null, false ), _annotationParsableInterface ) )
 		{
 			result = macro 	@:pos( constructorVO.filePosition ) 
 							@:mergeBlock 
@@ -536,7 +448,7 @@ class CompileTimeContextFactory
 	
 	function _parseCommandTrigger( constructorVO : ConstructorVO, result : Expr ) : Expr
 	{
-		if ( !constructorVO.injectInto && MacroUtil.implementsInterface( this._getClassType( constructorVO.className ), _commandTriggerInterface ) )
+		if ( !constructorVO.injectInto && MacroUtil.implementsInterface( MacroUtil.getClassType( constructorVO.className, null, false ), _commandTriggerInterface ) )
 		{
 			//TODO throws an error if interface is not implemented
 			this._injectedInto.push( 
@@ -581,23 +493,6 @@ class CompileTimeContextFactory
 	function _getFactoryVO( constructorVO : ConstructorVO = null ) : FactoryVOTypeDef
 	{
 		return { constructorVO : constructorVO, contextFactory : this };
-	}
-	
-	//helper
-	function _getClassType( className : String ) : ClassType
-	{
-		try
-		{
-			return switch Context.getType( className ) 
-			{
-				case TInst( t, _ ): t.get();
-				default: null;
-			}
-		}
-		catch ( e : Dynamic )
-		{
-			return null;
-		}
 	}
 }
 #end
